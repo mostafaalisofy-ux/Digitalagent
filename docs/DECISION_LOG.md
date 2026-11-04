@@ -9,6 +9,9 @@ Format: ID · date · decision · decided by · rationale · source.
 | ID | Date | Decision | By | Rationale / source |
 |---|---|---|---|---|
 | D-001 | 2026-11-04 | Brand foundation (idea, promise, personality, values, tagline system, palette, typefaces, master symbol) is treated as fixed | Owner (brief: "non-negotiable foundation") | Brand Bible 2026 |
+| D-002 | 2026-11-04 | Owner confirms the right to use **all content** in the Infinity Corp e-commerce portfolio and the nsm+ case studies deck ("انا ليا الحق استغل كل الموجود هنا") | Owner | Rights to use are confirmed; attribution (who did the work) still follows the A/B/C/D framework. See `PORTFOLIO_AND_CASE_STUDIES.md` |
+| D-003 | 2026-11-04 | **All services listed on steps-ksa.com become SayTamm services** (9 services) | Owner ("كل الخدمات اللي ف الموقع ده هتكون خدمات say tamm") | Replaces the 4-line proposal (former P-003). Grouping into 4 pillars remains a recommendation |
+| D-004 | 2026-11-04 | 57357 case: the targeting of "Gulf princes'" locations is never published in any form | Claude (risk control; reversible only by explicit owner decision with legal advice) | Reputational and legal risk in the Saudi market |
 
 ## Working rules adopted for documentation (reversible, low-risk)
 
@@ -26,7 +29,10 @@ Format: ID · date · decision · decided by · rationale · source.
 |---|---|---|
 | P-001 | Two-tone Signature mark approved for hero use | OQ-02 |
 | P-002 | Wordmark direction: mixed-case "SayTamm" | OQ-03 |
-| P-003 | Four service lines (Strategy · Media · Performance · Data & Growth); Creative sits within Performance | OQ-13 |
+| ~~P-003~~ | ~~Four service lines~~. **Superseded by D-003**; replaced by P-010 | — |
+| P-010 | Group the 9 services under 4 pillars: Strategy & Brand · Media & Performance · Content & Social · Data & Conversion | OQ-13 |
+| P-011 | Scenario A (Steps rebrands to SayTamm) with a 301 migration, if the facts allow | OQ-30, `STEPS_TRANSITION.md` |
+| P-012 | Feature K.S Furniture, Muriya and the fashion & beauty scale-up as Tier-1 proof | `PORTFOLIO_AND_CASE_STUDIES.md` §5 |
 | P-004 | Say → Tamm → Prove operating narrative | OQ-12 |
 | P-005 | Sitemap: merge Work and Case Studies; add Approach; defer Insights | `WEBSITE_SITEMAP.md` |
 | P-006 | Astro + plain CSS tokens + Git content | OQ-20 |

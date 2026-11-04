@@ -17,11 +17,16 @@ Navigation (5 items + CTA): **Work · Services · Approach · About · Insights*
 
 ```
 /{lang}/                              Home
-/{lang}/services/                     Services overview
-/{lang}/services/strategy/
-/{lang}/services/media-buying/
-/{lang}/services/performance-marketing/
-/{lang}/services/data-analytics/
+/{lang}/services/                                  Services overview (4 pillars, 9 services; D-003 / P-010)
+/{lang}/services/digital-marketing-strategy/        Pillar 01 Strategy & Brand
+/{lang}/services/branding/
+/{lang}/services/performance-marketing/             Pillar 02 Media & Performance (paid media: Google, Meta, Snapchat, TikTok, LinkedIn)
+/{lang}/services/seo/
+/{lang}/services/social-media-marketing/            Pillar 03 Content & Social
+/{lang}/services/content-marketing/
+/{lang}/services/media-production/
+/{lang}/services/website-development-cro/           Pillar 04 Data & Conversion
+/{lang}/services/analytics-growth/
 /{lang}/approach/                     How we work: Say → Tamm → Prove
 /{lang}/work/                         Work index      (launch when ≥ 2 approved studies)
 /{lang}/work/{slug}/                  Case study
@@ -59,7 +64,7 @@ The page follows the brand's own logic: **Say → Tamm → Prove → Start.**
 |---|---|---|---|
 | 01 | **Hero** | Display line (e.g. *"Say it. Tamm it."* or *"From brief to measurable outcome."*), a one-sentence value proposition, primary CTA, and the T-frame or diagonal motion moment | Dark canvas, signature mark, low-opacity pattern. The only saturated colour is the CTA. Logo-motion principle on load (fast, not a loading screen) |
 | 02 | **The belief** | "Marketing without direction is just activity." Short manifesto: 3–4 lines | Brand philosophy. Editorial type, lots of space |
-| 03 | **What we do** | Four service lines (Strategy · Media · Performance · Data & Growth), each with outcome line and sub-tagline | **Not generic cards.** A numbered editorial list with the diagonal as the divider/indicator |
+| 03 | **What we do** | Four pillars (Strategy & Brand · Media & Performance · Content & Social · Data & Conversion), each with its outcome line and its services listed as links | **Not nine generic cards.** A numbered editorial list with the diagonal as the divider/indicator |
 | 04 | **How we move** | Say → Tamm → Prove. Three steps, each with what happens and what the client gets | Scroll-linked diagonal progress indicator |
 | 05 | **Proof** | Approved case studies (large campaign imagery) **or**, before launch-ready work exists, leadership experience plus the audit offer | Never fabricated. Swaps to real work when approved |
 | 06 | **Numbers that matter** | Only verified KPIs, in large type with purple on the one number that matters | **Omitted entirely** until verified figures exist |

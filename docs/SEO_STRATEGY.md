@@ -21,6 +21,14 @@
 
 \* City terms are used **only if SayTamm has a real presence there** (OQ-09). Do not build city pages without an address and team.
 
+Additional clusters from the 9-service catalogue (D-003): **SEO services** (شركة سيو في السعودية), **social media marketing** (إدارة حسابات التواصل الاجتماعي), **branding** (تصميم هوية تجارية), **content marketing** (تسويق المحتوى), **media production** (إنتاج إعلاني / تصوير منتجات), **website development** (تصميم مواقع), **Snapchat / TikTok ads Saudi** (إعلانات سناب شات / تيك توك). Each gets its own service page, and none of them is duplicated across pages.
+
+## Existing search equity: steps-ksa.com [RECOMMENDATION — depends on OQ-30]
+
+steps-ksa.com already targets "Growth Marketing Agency Saudi Arabia" and "Performance Marketing Agency in Saudi Arabia", with EN + AR pages and service pages.
+- **Scenario A (rebrand):** crawl every URL, map 1:1 to SayTamm URLs, 301-redirect, use Search Console *Change of Address*, keep redirects permanently, and monitor 404s and rankings for 90 days.
+- **Scenario B (sister brands):** the two sites would compete for the same queries. Split keyword ownership explicitly, or reposition one brand.
+
 ## On-page standards
 - Title: `[Primary intent] | SayTamm` (≤ 60 chars), localised; Arabic titles written natively.
 - Meta description: ≤ 155 chars, with the outcome and a CTA verb.

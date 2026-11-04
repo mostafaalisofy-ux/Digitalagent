@@ -30,8 +30,8 @@ Full register with hashes: [`/brand/SOURCES.md`](../brand/SOURCES.md).
 | Guidelines | Bible (`.md` only), Visual Identity Guidelines 2026 (`.pptx`/`.pdf`/`.md`), Full Visual Guidelines (`.pptx` + summary `.pdf`) | **Bible `.pptx` and Professional Guidelines v2 arrived empty**; the "Master Brand System" decks cited by the guidelines were never received |
 | Concept boards | 5 application and mockup boards (AI-assisted) | — |
 | Company profile | **None** | Company profile, legal entity, CR number, office location |
-| Portfolio / case studies | **None received** | All Steps Agency materials, plus attribution approvals |
-| Business info | **None verified** | Domain, email, phone, WhatsApp, social handles, team, client list |
+| Portfolio / case studies | *Updated 2026-11-04:* Infinity Corp e-commerce deck, nsm+ case studies deck, steps-ksa.com case studies (see `PORTFOLIO_AND_CASE_STUDIES.md`) | Original data exports, dates, full-resolution visuals, SayTamm–Steps relationship (OQ-30) |
+| Business info | Steps KSA's public details (Jeddah office, phone, email, socials; see `STEPS_TRANSITION.md`). **None confirmed as SayTamm's** | SayTamm domain, email, phone, legal entity, team |
 | Photography | **None** | Team, workspace, real work moments |
 
 ## 3. Brand conflicts found across sources
