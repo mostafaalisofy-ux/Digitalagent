@@ -22,16 +22,17 @@ const { x, y, w, h: bh } = SYMBOL.bladeBox;
 </section>
 <style>
   .final { position: relative; overflow: hidden; padding-block: var(--s-12); isolation: isolate; }
-  .final__blade { position: absolute; z-index: -1; inset-inline-end: -8%; bottom: -18%; height: 115%; width: auto; fill: var(--accent); opacity: 0.9; }
-  [dir='rtl'] .final__blade { transform: none; }
+  .final { border-top: 1px solid var(--line); }
+  .final__blade { position: absolute; z-index: -1; inset-inline-end: -6%; bottom: -22%; height: 125%; width: auto; fill: var(--c-graphite); }
+  :global([dir='rtl']) .final__blade { transform: none; }
   .final__in { display: grid; gap: var(--s-5); }
   .final .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
   .final .eyebrow .num { color: var(--text-strong); }
   .final__title { font-size: var(--fs-display); line-height: 1; letter-spacing: var(--track-tight); max-width: 16ch; }
-  [dir='rtl'] .final__title { line-height: 1.05; letter-spacing: 0; }
+  :global([dir='rtl']) .final__title { line-height: 1.05; letter-spacing: 0; }
   .final__body { font-size: var(--fs-lead); color: var(--text); max-width: 30ch; }
   .final__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-5); margin-top: var(--s-3); }
   .final__or { color: var(--text-muted); font-size: var(--fs-small); }
   .final__or a { color: var(--text-strong); }
-  @media (max-width: 767px) { .final__blade { opacity: 0.55; height: 70%; bottom: -10%; inset-inline-end: -30%; } }
+  @media (max-width: 767px) { .final__blade { height: 70%; bottom: -10%; inset-inline-end: -30%; } }
 </style>

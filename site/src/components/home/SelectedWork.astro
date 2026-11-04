@@ -1,63 +1,164 @@
 ---
-import SectionHead from '../SectionHead.astro';
-import CaseVisual from '../CaseVisual.astro';
-import { featured } from '../../data/cases';
+// Selected work as large editorial chapters (direction lock §4.3). Real campaign assets only;
+// a project without supplied visuals gets a data-led typographic composition, never a fake image.
+import { homeSelection } from '../../data/cases';
+import { SYMBOL } from '../../lib/logo';
 import { type Lang } from '../../config/site';
 import { href } from '../../i18n/paths';
-import { t } from '../../i18n/ui';
 import { h } from '../../i18n/home';
+import { t } from '../../i18n/ui';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-const d = t(lang).work;
+const d = h(lang).selected;
+const w = t(lang).work;
+const fmtSar = (n: number) => `${(n / 1e6).toFixed(2)}M`;
+const { x, y, w: bw, h: bh } = SYMBOL.bladeBox;
 ---
-<section class="section work" aria-labelledby="work-title">
+<section class="section sw" id="work" aria-labelledby="sw-title">
   <div class="container">
-    <div class="work__head">
-      <SectionHead eyebrow={h(lang).work.eyebrow} title={h(lang).work.title} id="work-title" size="h1" />
-      <p class="work__label" data-reveal><span class="placeholder-tag">{lang === 'ar' ? 'سجل الفريق' : 'Track record'}</span>{d.label}</p>
-    </div>
-    <ul role="list" class="work__grid">
-      {featured.map((c, i) => {
-        const k = c.kpis.find((x) => x.accent) ?? c.kpis[0];
-        return (
-          <li class:list={['wc', `wc--${i}`]}>
-            <a class="wc__link" href={href(lang, 'work', c.slug)} data-track="case_study_view" data-cta-id={c.slug} data-cta-location="home_work">
-              <CaseVisual id={`home-${c.slug}`} label={d.visual} kpi={k.value} ratio={i === 0 ? '16 / 11' : '4 / 3'} />
-              <div class="wc__meta">
-                <p class="wc__tags"><span>{c.sector[lang]}</span><span>{c.market[lang]}</span>{c.period && <span>{c.period[lang]}</span>}</p>
-                <h3 class="wc__client">{c.client[lang]}</h3>
-                <p class="wc__headline">{c.headline[lang]}</p>
-                <p class="wc__kpi"><span class="num latin">{k.value}</span><span>{k.label[lang]}</span></p>
-              </div>
-            </a>
-          </li>
-        );
-      })}
-    </ul>
-    <div class="work__foot"><a class="btn" href={href(lang, 'work')} data-track="cta_click" data-cta-id="explore_work" data-cta-location="home_work">{h(lang).work.all}<span class="arrow" aria-hidden="true"></span></a></div>
+    <header class="sw__head">
+      <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
+      <h2 class="sw__title" id="sw-title" data-reveal-group><span class="line"><span>{d.title}</span></span></h2>
+      <p class="sw__intro" data-reveal>{d.intro} <span class="sw__label">{d.label}</span></p>
+    </header>
   </div>
+
+  {homeSelection.map((c, i) => {
+    const lead = c.kpis.find((k) => k.accent) ?? c.kpis[0];
+    const rest = c.kpis.filter((k) => k !== lead).slice(0, 3);
+    const kind = c.visual ? c.visual.caption : 'data';
+    return (
+      <article class:list={['ch', `ch--${kind}`, { 'ch--flip': i % 2 === 1 }]} aria-labelledby={`ch-${c.slug}`}>
+        <div class="container ch__grid">
+          <div class="ch__text">
+            <p class="ch__meta"><span>{c.sector[lang]}</span><span>{c.market[lang]}</span>{c.period && <span>{c.period[lang]}</span>}</p>
+            <h3 class="ch__client" id={`ch-${c.slug}`}>{c.client[lang]}</h3>
+            <p class="ch__headline">{c.headline[lang]}</p>
+            <p class="ch__lead"><span class="num latin">{lead.value}</span><span>{lead.label[lang]}</span></p>
+            <dl class="ch__kpis">
+              {rest.map((k) => <div><dt>{k.label[lang]}</dt><dd class="num latin">{k.value}</dd></div>)}
+            </dl>
+            {c.resultsNote && <p class="ch__note">{c.resultsNote[lang]}</p>}
+            <a class="link-diag ch__link" href={href(lang, 'work', c.slug)} data-track="case_study_view" data-cta-id={c.slug} data-cta-location="home_work">{lang === 'ar' ? 'دراسة الحالة' : 'Read the case'}</a>
+          </div>
+
+          <div class="ch__visual">
+            {kind === 'photo' && (
+              <figure class="photos">
+                {c.visual!.images.map((im, k) => (
+                  <div class={`photos__item photos__item--${k}`} data-reveal="wipe" style={`--delay:${k * 140}ms`}>
+                    <img src={im.src} width={im.w} height={im.h} alt={im.alt[lang]} loading="lazy" decoding="async" />
+                  </div>
+                ))}
+                <figcaption class="ch__caption">{d.photoCaption}</figcaption>
+              </figure>
+            )}
+            {kind === 'screen' && (
+              <figure class="screens">
+                <div class="screens__desk" data-reveal="wipe"><img src={c.visual!.images[0].src} width={c.visual!.images[0].w} height={c.visual!.images[0].h} alt={c.visual!.images[0].alt[lang]} loading="lazy" decoding="async" /></div>
+                {c.visual!.images[1] && <div class="screens__phone" data-reveal style="--delay:220ms"><img src={c.visual!.images[1].src} width={c.visual!.images[1].w} height={c.visual!.images[1].h} alt={c.visual!.images[1].alt[lang]} loading="lazy" decoding="async" /></div>}
+                <figcaption class="ch__caption">{d.screenCaption}</figcaption>
+              </figure>
+            )}
+            {kind === 'data' && c.bar && (
+              <figure class="data" aria-label={`${c.bar.spendLabel[lang]} ${fmtSar(c.bar.spend)} → ${c.bar.resultLabel[lang]} ${fmtSar(c.bar.result)}`}>
+                <svg class="data__blade" viewBox={`${x} ${y} ${bw} ${bh}`} aria-hidden="true" focusable="false"><path d={SYMBOL.blade} /></svg>
+                <p class="data__giant num latin" aria-hidden="true">{fmtSar(c.bar.result)}<span class="data__unit">{lang === 'ar' ? 'ريال' : 'SAR'}</span></p>
+                <p class="data__sub">{c.bar.resultLabel[lang]} · {c.bar.spendLabel[lang]}: <bdi class="latin">{(c.bar.spend / 1e3).toFixed(0)}K</bdi></p>
+                <div class="data__bars" data-reveal-group>
+                  <div class="bar2"><span class="bar2__k">{c.bar.spendLabel[lang]}</span><span class="bar2__track"><span class="bar2__fill bar2__fill--spend" style={`--w:${(c.bar.spend / c.bar.result) * 100}%`}></span></span><span class="bar2__v num latin">{(c.bar.spend / 1e3).toFixed(0)}K {lang === 'ar' ? 'ريال' : 'SAR'}</span></div>
+                  <div class="bar2"><span class="bar2__k">{c.bar.resultLabel[lang]}</span><span class="bar2__track"><span class="bar2__fill bar2__fill--result" style="--w:100%"></span></span><span class="bar2__v num latin">{fmtSar(c.bar.result)} {lang === 'ar' ? 'ريال' : 'SAR'}</span></div>
+                </div>
+                <figcaption class="ch__caption">{d.noVisual}</figcaption>
+              </figure>
+            )}
+          </div>
+        </div>
+      </article>
+    );
+  })}
+
+  <div class="container sw__foot"><a class="btn" href={href(lang, 'work')} data-track="cta_click" data-cta-id="explore_work" data-cta-location="home_work">{d.all}<span class="arrow" aria-hidden="true"></span></a></div>
 </section>
+
 <style>
-  .work__head { display: grid; gap: var(--s-5); margin-bottom: var(--s-8); }
-  .work__label { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); color: var(--text-muted); font-size: var(--fs-small); max-width: 60ch; }
-  .work__grid { display: grid; gap: var(--s-8) var(--gutter); }
-  .wc__link { display: grid; gap: var(--s-4); }
-  .wc__meta { display: grid; gap: var(--s-2); }
-  .wc__tags { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); font-size: var(--fs-caption); color: var(--text-muted); }
-  .wc__tags span:not(:last-child)::after { content: '·'; margin-inline-start: var(--s-3); }
-  .wc__client { font-size: var(--fs-h2); letter-spacing: var(--track-tight); transition: color var(--d-2); }
-  .wc__headline { color: var(--text); max-width: 44ch; }
-  .wc__kpi { display: flex; align-items: baseline; gap: var(--s-3); margin-top: var(--s-2); color: var(--text-muted); font-size: var(--fs-small); }
-  .wc__kpi .num { font-size: var(--fs-h1); font-weight: 700; color: var(--text-strong); line-height: 1; }
-  .wc__link:hover .wc__client { color: var(--accent-text); }
-  .work__foot { margin-top: var(--s-9); display: flex; justify-content: center; }
+  .sw { padding-bottom: var(--s-10); }
+  .sw__head { display: grid; gap: var(--s-5); max-width: 980px; }
+  .sw .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .sw__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); }
+  .sw__intro { color: var(--text-muted); font-size: var(--fs-lead); max-width: 52ch; }
+  .sw__label { display: block; margin-top: var(--s-2); font-size: var(--fs-caption); }
+
+  .ch { padding-block: var(--s-10); border-bottom: 1px solid var(--line); }
+  .ch:first-of-type { margin-top: var(--s-6); border-top: 1px solid var(--line); }
+  .ch__grid { display: grid; gap: var(--s-7); align-items: center; }
+  .ch__text { display: grid; gap: var(--s-4); align-content: start; }
+  .ch__meta { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4); font-size: var(--fs-caption); color: var(--text-muted); letter-spacing: 0.02em; }
+  .ch__client { font-size: var(--fs-h1); letter-spacing: var(--track-tight); line-height: 1; }
+  .ch__headline { font-size: var(--fs-lead); line-height: 1.45; max-width: 32ch; }
+  .ch__lead { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--s-3); color: var(--text-muted); padding-block: var(--s-4); border-block: 1px solid var(--line); }
+  .ch__lead .num { font-size: var(--fs-kpi); font-weight: 700; line-height: 0.9; letter-spacing: -0.045em; color: var(--text-strong); }
+  .ch__kpis { display: flex; flex-wrap: wrap; gap: var(--s-5) var(--s-7); }
+  .ch__kpis div { display: flex; flex-direction: column-reverse; gap: 2px; }
+  .ch__kpis dd { font-size: var(--fs-h2); font-weight: 700; line-height: 1; color: var(--text-strong); }
+  .ch__kpis dt, .ch__note, .ch__caption { font-size: var(--fs-caption); color: var(--text-muted); }
+  .ch__link { justify-self: start; color: var(--text-strong); margin-top: var(--s-2); }
+  .ch__caption { margin-top: var(--s-3); }
+  .ch__visual { min-width: 0; }
+
+  /* photo triptych: staggered, editorial crop */
+  .photos { margin: 0; display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: var(--s-3); align-items: start; }
+  .photos__item { overflow: hidden; background: var(--surface); }
+  .photos__item img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 2 / 3; transition: transform var(--d-5) var(--ease-out); }
+  .photos__item--1 { margin-top: var(--s-9); }
+  .photos__item--2 { margin-top: var(--s-5); }
+  .photos .ch__caption { grid-column: 1 / -1; }
+  .ch--photo:hover .photos__item img { transform: scale(1.025); }
+
+  /* screens: desktop + overlapping phone */
+  .screens { margin: 0; position: relative; padding-bottom: var(--s-6); }
+  .screens__desk { background: #000; overflow: hidden; }
+  .screens__desk img { width: 100%; height: auto; }
+  .screens__phone { position: absolute; inset-inline-end: -2%; bottom: 0; width: 24%; filter: drop-shadow(0 24px 40px rgb(0 0 0 / 0.55)); }
+  .screens__phone img { width: 100%; height: auto; }
+
+  /* data-led composition (no visuals supplied) */
+  .data { margin: 0; position: relative; overflow: hidden; background: var(--surface); padding: var(--s-7) var(--s-6) var(--s-5); min-height: 420px; display: grid; align-content: end; gap: var(--s-5); isolation: isolate; }
+  .data__blade { position: absolute; z-index: -1; inset-inline-end: -10%; top: -20%; height: 150%; width: auto; fill: var(--bg); opacity: 0.7; }
+  .data__giant { font-size: clamp(4.5rem, 2rem + 9vw, 10.5rem); font-weight: 700; line-height: 0.85; letter-spacing: -0.06em; color: var(--text-strong); }
+  .data__unit { font-size: 0.22em; letter-spacing: 0; margin-inline-start: 0.25em; color: var(--text-muted); font-weight: 500; }
+  .data__sub { font-size: var(--fs-caption); color: var(--text-muted); margin-top: calc(var(--s-4) * -1); }
+  .data__bars { display: grid; gap: var(--s-3); }
+  .bar2 { display: grid; grid-template-columns: 7.5em 1fr auto; align-items: center; gap: var(--s-3); font-size: var(--fs-caption); }
+  .bar2__k { color: var(--text-muted); }
+  .bar2__track { position: relative; height: 10px; background: rgb(245 243 250 / 0.06); }
+  .bar2__fill { position: absolute; inset-block: 0; inset-inline-start: 0; width: var(--w); min-width: 3px; transform-origin: left; transform: scaleX(0); transition: transform var(--d-5) var(--ease-out); }
+  :global([dir='rtl']) .bar2__fill { transform-origin: right; }
+  .bar2__fill--spend { background: var(--text-muted); }
+  .bar2__fill--result { background: var(--accent); transition-delay: 220ms; }
+  .data__bars.is-in .bar2__fill, :global(html:not(.js)) .bar2__fill { transform: none; }
+  .bar2__v { font-weight: 700; color: var(--text-strong); }
+
+  .sw__foot { margin-top: var(--s-9); }
+
   @media (min-width: 1024px) {
-    .work__head { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: end; column-gap: var(--gutter); }
-    .work__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); }
-    .wc--0 { grid-column: 1 / span 7; }
-    .wc--1 { grid-column: 9 / span 4; margin-top: var(--s-12); }
-    .wc--2 { grid-column: 2 / span 5; }
-    .wc--3 { grid-column: 8 / span 5; margin-top: calc(var(--s-10) * -1); }
-    .wc--0 .wc__client { font-size: var(--fs-h1); }
+    .ch__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
+    .ch__text { grid-column: 1 / span 5; grid-row: 1; }
+    .ch__visual { grid-column: 7 / -1; grid-row: 1; }
+    .ch--flip .ch__text { grid-column: 8 / -1; }
+    .ch--flip .ch__visual { grid-column: 1 / span 6; }
+    .ch--screen .ch__visual { grid-column: 6 / -1; }
+    .ch--screen.ch--flip .ch__visual { grid-column: 1 / span 7; }
   }
+  @media (max-width: 767px) {
+    .photos { grid-template-columns: 1fr 1fr; }
+    .photos__item--0 { grid-column: 1 / -1; }
+    .photos__item--0 img { aspect-ratio: 4 / 5; }
+    .photos__item--1 { margin-top: 0; }
+    .photos__item--2 { margin-top: var(--s-6); }
+    .screens__phone { width: 30%; }
+    .data { min-height: 340px; padding: var(--s-6) var(--s-4) var(--s-4); }
+    .bar2 { grid-template-columns: 6em 1fr auto; }
+  }
+  @media (prefers-reduced-motion: reduce) { .bar2__fill { transform: none !important; } }
 </style>

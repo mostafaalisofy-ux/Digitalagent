@@ -11,7 +11,7 @@ const lead = c.kpis.find((k) => k.accent) ?? c.kpis[0];
 const flip = index % 2 === 1;
 ---
 <article class:list={['cs', { 'cs--flip': flip }]} id={c.slug} aria-labelledby={`cs-${c.slug}`}>
-  <div class="cs__visual"><CaseVisual id={`work-${c.slug}`} label={d.visual} kpi={lead.value} ratio="5 / 4" /></div>
+  <div class="cs__visual"><CaseVisual id={`work-${c.slug}`} label={d.visual} kpi={lead.value} ratio="5 / 4" src={c.visual?.images[0].src ?? null} alt={c.visual?.images[0].alt[lang] ?? ''} /></div>
   <div class="cs__body">
     <p class="cs__tags"><span class="num cs__i">{String(index + 1).padStart(2, '0')}</span><span>{c.sector[lang]}</span><span>{c.market[lang]}</span><span>{c.period ? c.period[lang] : d.periodTbc}</span></p>
     <h2 class="cs__client" id={`cs-${c.slug}`}>{c.client[lang]}</h2>

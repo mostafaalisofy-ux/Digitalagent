@@ -56,14 +56,15 @@ for src, out in PAGES.items():
     html = re.sub(r'<script type="module" src="(/_astro/[^"]+\.js)"></script>',
                   lambda m: '<script type="module">' + open(SRC + m.group(1), encoding='utf-8').read() + '</script>', html)
     html = re.sub(r'<link rel="preload"[^>]*>', '', html)
+    html = re.sub(r'src="(/work/[^"]+\.webp)"', lambda m: f'src="{b64(SRC + m.group(1), "image/webp")}"', html)
     html = re.sub(r'<link rel="icon"[^>]*href="(/brand/[^"]+\.svg)"[^>]*>', lambda m: f'<link rel="icon" type="image/svg+xml" href="{b64(SRC + m.group(1), "image/svg+xml")}">', html)
     html = re.sub(r'(href)="(/[^"]*)"', link, html)
     open(f'{OUT}/{out}', 'w', encoding='utf-8').write(html)
     leftovers = re.findall(r'(?:href|src)="/(?!/)[^"]*"', html)
     print(f'  {out:32s} {os.path.getsize(f"{OUT}/{out}")//1024:4d} KB' + (f'  ⚠ unresolved: {leftovers[:3]}' if leftovers else ''))
 
-zpath = f'{OUT}/SayTamm_Website_v0.2_review.zip'
+zpath = f'{OUT}/SayTamm_Website_v0.3_review.zip'
 with zipfile.ZipFile(zpath, 'w', zipfile.ZIP_DEFLATED) as z:
     for out in PAGES.values():
-        z.write(f'{OUT}/{out}', f'SayTamm_Website_v0.2/{out}')
+        z.write(f'{OUT}/{out}', f'SayTamm_Website_v0.3/{out}')
 print(f'[review-html] {len(PAGES)} pages + {zpath} ({os.path.getsize(zpath)//1024} KB)')

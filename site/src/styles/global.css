@@ -31,7 +31,6 @@ p { text-wrap: pretty; }
 .grid { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); column-gap: var(--gutter); }
 .section { padding-block: var(--section); position: relative; }
 .section--surface { background: var(--surface); }
-.section--light { background: var(--c-soft-white); color: var(--c-obsidian); --text: var(--c-obsidian); --text-strong: var(--c-obsidian); --text-muted: #4a4a52; --line: rgb(10 10 13 / 0.12); --line-strong: rgb(10 10 13 / 0.3); --accent-text: var(--c-purple); }
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .skip-link { position: absolute; inset-inline-start: var(--s-3); top: -100px; z-index: 100; background: var(--c-white); color: var(--c-obsidian); padding: var(--s-2) var(--s-3); font-weight: 700; }
 .skip-link:focus { top: var(--s-3); }
@@ -101,7 +100,7 @@ p { text-wrap: pretty; }
 }
 
 /* ---------- Reveal system (progressive enhancement: content visible without JS) ---------- */
-.js [data-reveal] { opacity: 0; transform: translate3d(0, 28px, 0); transition: opacity var(--d-4) var(--ease-out), transform var(--d-4) var(--ease-out); transition-delay: var(--delay, 0ms); }
+.js [data-reveal] { opacity: 0; transform: translate3d(0, 28px, 0); transition: opacity var(--d-3) var(--ease-out), transform var(--d-3) var(--ease-out); transition-delay: var(--delay, 0ms); }
 .js [data-reveal].is-in { opacity: 1; transform: none; }
 .js [data-reveal='mask'] { opacity: 1; transform: none; clip-path: inset(0 0 100% 0); transition: clip-path var(--d-5) var(--ease-out); transition-delay: var(--delay, 0ms); }
 .js [data-reveal='mask'].is-in { clip-path: inset(0 0 0 0); }
@@ -113,7 +112,7 @@ p { text-wrap: pretty; }
 /* Line-by-line headline reveal */
 .line { display: block; overflow: hidden; padding-bottom: 0.16em; margin-bottom: -0.16em; }
 .line > span { display: inline-block; }
-.js .line > span { transform: translate3d(0, 105%, 0); transition: transform var(--d-5) var(--ease-out); transition-delay: var(--delay, 0ms); }
+.js .line > span { transform: translate3d(0, 105%, 0); transition: transform var(--d-4) var(--ease-out); transition-delay: var(--delay, 0ms); }
 .js .is-in .line > span, .js .line.is-in > span { transform: none; }
 
 @media (prefers-reduced-motion: reduce) {

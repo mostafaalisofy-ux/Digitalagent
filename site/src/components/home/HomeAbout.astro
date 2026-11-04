@@ -2,8 +2,9 @@
 import { type Lang } from '../../config/site';
 import { href } from '../../i18n/paths';
 import { h } from '../../i18n/home';
-interface Props { lang: Lang; showMore?: boolean }
-const { lang, showMore = true } = Astro.props;
+import { CLIENTS } from '../../data/clients';
+interface Props { lang: Lang; showMore?: boolean; showClients?: boolean }
+const { lang, showMore = true, showClients = true } = Astro.props;
 const d = h(lang).about;
 ---
 <section class="section about" id="about" aria-labelledby="about-title">
@@ -14,8 +15,14 @@ const d = h(lang).about;
       {d.body.map((p, i) => <p class="about__body" data-reveal style={`--delay:${80 + i * 60}ms`}>{p}</p>)}
       <div class="about__name" data-reveal>
         <h3>{d.nameTitle}</h3>
-        <p>{d.name}</p>
+        <p set:html={d.name.replace(/(“?قول تم”?|«قول تم»)/, '<bdi lang="ar">$1</bdi>')} />
       </div>
+      {showClients && (
+        <div class="about__clients" data-reveal>
+          <p class="eyebrow">{h(lang).clients.title}</p>
+          <ul role="list">{CLIENTS.map((c) => <li>{c.name[lang]}</li>)}</ul>
+        </div>
+      )}
       {showMore && <a class="link-diag about__more" href={href(lang, 'about')}>{d.more}</a>}
     </div>
     <dl class="about__facts">
@@ -30,6 +37,7 @@ const d = h(lang).about;
 </section>
 <style>
   .about { border-top: 1px solid var(--line); }
+  .about__name { background: var(--surface); }
   .about__grid { display: grid; gap: var(--s-8); }
   .about__text { display: grid; gap: var(--s-4); align-content: start; }
   .about .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
@@ -38,6 +46,10 @@ const d = h(lang).about;
   .about__name { margin-top: var(--s-4); padding: var(--s-5); background: var(--surface); border-inline-start: 4px solid var(--accent); display: grid; gap: var(--s-2); max-width: 58ch; }
   .about__name h3 { font-size: var(--fs-h3); }
   .about__name p { color: var(--text-muted); }
+  .about__clients { margin-top: var(--s-5); display: grid; gap: var(--s-3); max-width: 64ch; }
+  .about__clients ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-2) var(--s-5); padding-top: var(--s-3); border-top: 1px solid var(--line); }
+  @media (min-width: 768px) { .about__clients ul { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .about__clients li { font-size: var(--fs-small); font-weight: 500; color: var(--text); }
   .about__more { justify-self: start; margin-top: var(--s-2); color: var(--text-strong); }
   .about__facts { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); align-self: start; }
   .fact { background: var(--bg); padding: var(--s-5); display: grid; gap: var(--s-2); align-content: start; }

@@ -52,9 +52,8 @@ const ui = t(lang);
   .cl__name { font-size: clamp(1.125rem, 1rem + 0.8vw, 1.6rem); font-weight: 700; color: var(--text-strong); letter-spacing: var(--track-head); line-height: 1.15; }
   .cl__meta { font-size: var(--fs-caption); color: var(--text-muted); }
   .cl__case { font-size: var(--fs-caption); font-weight: 700; color: var(--accent-text); }
-  .cl--cta { grid-column: span 1; background: var(--c-purple); }
-  .cl--cta .cl__name, .cl--cta .cl__case { color: var(--c-white); }
-  .cl--cta a.cl__in:hover { background: color-mix(in srgb, var(--c-purple), var(--c-obsidian) 15%); }
+  .cl--cta { grid-column: span 1; background: var(--surface); }
+  .cl--cta .cl__case { color: var(--accent-text); }
   @media (min-width: 768px) { .wall { grid-template-columns: repeat(3, minmax(0, 1fr)); } .cl--cta { grid-column: span 2; } .cl__in { min-height: 160px; padding: var(--s-5); } }
   @media (min-width: 1024px) { .wall { grid-template-columns: repeat(4, minmax(0, 1fr)); } .cl--cta { grid-column: span 3; } }
 </style>

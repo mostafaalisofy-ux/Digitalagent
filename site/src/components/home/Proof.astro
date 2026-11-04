@@ -1,0 +1,76 @@
+---
+// Performance proof: spend vs outcome drawn to scale, each row with its market, period, platforms
+// and attribution note (direction lock §4.6). Only figures present in source case documents.
+import { CASES } from '../../data/cases';
+import { type Lang } from '../../config/site';
+import { h } from '../../i18n/home';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = h(lang).proof;
+const unitLabel = (u: string) => (u === 'SAR' ? (lang === 'ar' ? 'ريال' : 'SAR') : u === 'EGP' ? (lang === 'ar' ? 'جنيه' : 'EGP') : '');
+const fmt = (n: number, u: string) => {
+  const s = n >= 1e6 ? `${(n / 1e6).toFixed(2).replace(/\.?0+$/, '')}M` : `${Math.round(n / 1e3)}K`;
+  return u === 'USD' ? `$${s}` : `${s} ${unitLabel(u)}`;
+};
+const rows = CASES.filter((c) => c.bar).map((c) => ({ c, b: c.bar!, mult: c.kpis.find((k) => k.accent)?.value ?? '', pct: Math.max((c.bar!.spend / c.bar!.result) * 100, 0.6) }));
+---
+<section class="section section--surface proof" id="proof" aria-labelledby="proof-title">
+  <div class="container">
+    <div class="proof__head">
+      <div>
+        <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
+        <h2 class="proof__title" id="proof-title" data-reveal-group><span class="line"><span>{d.title}</span></span></h2>
+      </div>
+      <p class="proof__intro" data-reveal>{d.intro}</p>
+    </div>
+    <ol role="list" class="proof__rows">
+      {rows.map(({ c, b, mult, pct }, i) => (
+        <li class="pr" data-reveal-group style={`--pct:${pct}%;--delay:${i * 110}ms`}>
+          <div class="pr__who">
+            <h3 class="pr__name">{c.client[lang]}</h3>
+            <p class="pr__ctx">{c.market[lang]}{c.period ? ` · ${c.period[lang]}` : ''}</p>
+            <p class="pr__ctx latin">{c.platforms.join(' · ')}</p>
+            {c.resultsNote && <p class="pr__ctx">{c.resultsNote[lang]}</p>}
+          </div>
+          <div class="pr__bars" role="img" aria-label={`${b.spendLabel[lang]} ${fmt(b.spend, b.unit)}, ${b.resultLabel[lang]} ${fmt(b.result, b.unit)}`}>
+            <div class="pb"><span class="pb__k">{b.spendLabel[lang]}</span><span class="pb__track"><span class="pb__fill pb__fill--spend"></span></span><span class="pb__v num latin">{fmt(b.spend, b.unit)}</span></div>
+            <div class="pb"><span class="pb__k">{b.resultLabel[lang]}</span><span class="pb__track"><span class="pb__fill pb__fill--result"></span></span><span class="pb__v num latin">{fmt(b.result, b.unit)}</span></div>
+          </div>
+          <p class="pr__mult"><span class="num latin">{mult}</span><span>{c.kpis.find((k) => k.accent)?.label[lang]}</span></p>
+        </li>
+      ))}
+    </ol>
+    <p class="proof__note">{d.note}</p>
+  </div>
+</section>
+<style>
+  .proof__head { display: grid; gap: var(--s-5); margin-bottom: var(--s-8); }
+  .proof .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .proof__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); margin-top: var(--s-5); }
+  .proof__intro { color: var(--text-muted); font-size: var(--fs-lead); max-width: 38ch; }
+  .proof__rows { border-top: 1px solid var(--line-strong); }
+  .pr { display: grid; gap: var(--s-4); padding-block: var(--s-6); border-bottom: 1px solid var(--line); }
+  .pr__who { display: grid; gap: 2px; }
+  .pr__name { font-size: var(--fs-h3); }
+  .pr__ctx { font-size: var(--fs-caption); color: var(--text-muted); }
+  .pr__bars { display: grid; gap: var(--s-2); }
+  .pb { display: grid; grid-template-columns: 8em 1fr 6.5em; align-items: center; gap: var(--s-3); font-size: var(--fs-caption); }
+  .pb__k { color: var(--text-muted); }
+  .pb__track { position: relative; height: 12px; background: rgb(245 243 250 / 0.06); }
+  .pb__fill { position: absolute; inset-block: 0; inset-inline-start: 0; transform-origin: left; transform: scaleX(0); transition: transform var(--d-5) var(--ease-out); transition-delay: var(--delay); }
+  :global([dir='rtl']) .pb__fill { transform-origin: right; }
+  .pb__fill--spend { width: var(--pct); min-width: 3px; background: var(--text-muted); }
+  .pb__fill--result { width: 100%; background: var(--accent); transition-delay: calc(var(--delay) + 220ms); }
+  .pr.is-in .pb__fill, :global(html:not(.js)) .pb__fill { transform: none; }
+  .pb__v { font-weight: 700; color: var(--text-strong); text-align: end; }
+  .pr__mult { display: flex; align-items: baseline; gap: var(--s-3); color: var(--text-muted); font-size: var(--fs-caption); }
+  .pr__mult .num { font-size: clamp(2.75rem, 1.6rem + 3vw, 4.75rem); font-weight: 700; line-height: 1; letter-spacing: -0.04em; color: var(--text-strong); }
+  .proof__note { margin-top: var(--s-5); font-size: var(--fs-caption); color: var(--text-muted); max-width: 80ch; }
+  @media (min-width: 1024px) {
+    .proof__head { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: end; column-gap: var(--gutter); }
+    .pr { grid-template-columns: minmax(0, 3fr) minmax(0, 6fr) minmax(0, 3fr); column-gap: var(--s-7); align-items: center; }
+    .pr__mult { flex-direction: column; align-items: flex-end; gap: var(--s-1); text-align: end; }
+  }
+  @media (max-width: 767px) { .pb { grid-template-columns: 6.5em 1fr auto; } }
+  @media (prefers-reduced-motion: reduce) { .pb__fill { transform: none !important; } }
+</style>

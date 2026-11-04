@@ -24,7 +24,7 @@ const a = h(lang).aboutPage;
       <div class="story__body">{a.story.map((p, i) => <p data-reveal style={`--delay:${i * 80}ms`}>{p}</p>)}</div>
     </div>
   </section>
-  <HomeAbout lang={lang} showMore={false} />
+  <HomeAbout lang={lang} showMore={false} showClients={false} />
   <section class="section section--surface values" aria-labelledby="values-title">
     <div class="container">
       <h2 id="values-title" class="values__h" data-reveal>{a.valuesTitle}</h2>

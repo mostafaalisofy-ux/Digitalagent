@@ -10,8 +10,10 @@ export const SITE = {
   address: null as string | null, // OQ-09
   legal: { entity: null, cr: null, vat: null } as Record<string, string | null>, // OQ-09
   social: [] as { label: string; href: string }[], // OQ-24 — verified handles only
-  /** Preview mode: shows the review bar and sets noindex. Turn off only at authorised launch. */
-  preview: true,
+  /** Staging is the default for every build: review bar + noindex + robots Disallow.
+   *  Only `npm run build:production` (PUBLIC_STAGE=production) produces an indexable site —
+   *  run it only for the authorised launch. */
+  preview: import.meta.env.PUBLIC_STAGE !== 'production',
 } as const;
 
 export const LOCALES = ['en', 'ar'] as const;

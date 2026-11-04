@@ -8,27 +8,27 @@
 @font-face { font-family: 'Satoshi'; src: url('/fonts/satoshi/Satoshi-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
 
 :root {
-  /* — Colour: approved palette — */
-  --c-obsidian: #0A0A0D;      /* Brand Black — primary background */
-  --c-graphite: #17171C;      /* Neutral 900 — secondary surfaces */
-  --c-white: #FFFFFF;         /* Brand White — display type, logo */
-  --c-soft-white: #F5F5F7;    /* Neutral 100 — primary text on dark */
-  --c-muted: #A4A4AE;         /* Neutral 500 — secondary text (8.0:1 on obsidian) */
-  --c-purple: #6C35FF;        /* Electric Purple — action, signature (fills, large type only on dark) */
-  --c-purple-100: #8B5CF6;
-  --c-purple-200: #A78BFA;    /* purple TEXT < 24px on dark (7.27:1) */
-  --c-purple-900: #24105C;
+  /* — Colour: website palette LOCKED by the owner (D-013, "Dark Editorial Performance").
+       Logo files keep their own official values; these are the interface colours. — */
+  --c-obsidian: #09090D;      /* primary background */
+  --c-graphite: #17171E;      /* secondary surfaces */
+  --c-soft-white: #F5F3FA;    /* primary text */
+  --c-muted: #96939F;         /* secondary text — 6.6:1 on obsidian */
+  --c-white: #FFFFFF;         /* logo only */
+  --c-purple: #6C35FF;        /* Electric Purple — primary CTAs, selected highlights, key data. Sparingly. */
+  --c-purple-200: #A78BFA;    /* purple TEXT under 24px on dark (accessible tint of the accent) */
+  --c-purple-900: #24105C;    /* deep tint, sculpture side walls only */
 
   /* — Semantic — */
   --bg: var(--c-obsidian);
   --surface: var(--c-graphite);
   --text: var(--c-soft-white);
-  --text-strong: var(--c-white);
+  --text-strong: var(--c-soft-white);
   --text-muted: var(--c-muted);
   --accent: var(--c-purple);
   --accent-text: var(--c-purple-200);
-  --line: rgb(245 245 247 / 0.10);
-  --line-strong: rgb(245 245 247 / 0.22);
+  --line: rgb(245 243 250 / 0.09);
+  --line-strong: rgb(245 243 250 / 0.2);
   --focus: var(--c-purple-200);
 
   /* — Type — */
@@ -36,7 +36,7 @@
   --font-ar: 'IBM Plex Sans Arabic', 'Satoshi', ui-sans-serif, system-ui, sans-serif;
   --font: var(--font-en);
 
-  --fs-mega: clamp(4.6rem, 0.9rem + 15vw, 13rem);   /* hero only */
+  --fs-mega: clamp(4.6rem, min(0.9rem + 15vw, 19vh), 13rem);   /* hero only — also capped by viewport height so the CTA stays above the fold on laptops */
   --fs-display: clamp(3rem, 1.9rem + 4.8vw, 6.5rem);
   --fs-h1: clamp(2.25rem, 1.7rem + 2.4vw, 4rem);
   --fs-h2: clamp(1.75rem, 1.45rem + 1.3vw, 2.75rem);

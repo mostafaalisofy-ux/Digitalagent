@@ -56,6 +56,8 @@ for f in os.listdir(f'{SRC}/_astro'):
     elif f.endswith('.js'):
         shutil.copy(f'{SRC}/_astro/{f}', f'{OUT}/assets/{f}')
 
+shutil.copytree(f'{SRC}/work', f'{OUT}/work')  # real campaign images
+
 for page in PAGES:
     depth = page.count('/')
     lang = page.split('/')[0]

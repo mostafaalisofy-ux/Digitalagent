@@ -6,12 +6,14 @@ import type { Lang } from '../config/site';
 type T = Record<Lang, string>;
 export interface Kpi { value: string; label: T; accent?: boolean }
 export interface Bar { label: T; spend: number; result: number; unit: string; spendLabel: T; resultLabel: T }
+export interface Visual { src: string; w: number; h: number; alt: T }
 export interface Case {
   slug: string; tier: 1 | 2;
   client: T; sector: T; market: T; period: T | null; platforms: string[];
   headline: T; challenge: T; approach: T; resultsNote?: T;
   kpis: Kpi[]; bar?: Bar;
-  visual: null;                      // original campaign visuals not yet supplied (OQ-32)
+  /** Real campaign assets from received decks (rights D-002). null = not supplied → no fake image. */
+  visual: { images: Visual[]; caption: 'photo' | 'screen' } | null;
   verified: 'source-checked';
 }
 
@@ -75,7 +77,11 @@ export const CASES: Case[] = [
     bar: { label: { en: 'Account A · EGP', ar: 'الحساب A · جنيه' }, spend: 534833, result: 7403781, unit: 'EGP',
       spendLabel: { en: 'Ad spend', ar: 'الإنفاق الإعلاني' }, resultLabel: { en: 'Purchase value', ar: 'قيمة المشتريات' } },
     resultsNote: { en: 'Meta-attributed purchase value.', ar: 'قيمة مشتريات منسوبة من Meta.' },
-    visual: null, verified: 'source-checked',
+    visual: { caption: 'photo', images: [
+      { src: '/work/fashion-01.webp', w: 641, h: 963, alt: { en: 'Fashion campaign photography: model in a sports jacket outdoors', ar: 'تصوير حملة أزياء: عارضة بسترة رياضية في الخارج' } },
+      { src: '/work/fashion-02.webp', w: 549, h: 824, alt: { en: 'Product photography: lacing white sneakers at sunset', ar: 'تصوير منتج: ربط حذاء رياضي أبيض وقت الغروب' } },
+      { src: '/work/fashion-03.webp', w: 548, h: 824, alt: { en: 'Lifestyle photography: sportswear towel on a wooden chair', ar: 'تصوير أسلوب حياة: منشفة رياضية على كرسي خشبي' } },
+    ] }, verified: 'source-checked',
   },
   {
     slug: 'electronics-q4', tier: 1,
@@ -126,6 +132,28 @@ export const CASES: Case[] = [
     ],
     visual: null, verified: 'source-checked',
   },
+  {
+    slug: 'qnb-ramadan', tier: 1,
+    client: { en: 'QNB Al Ahli', ar: 'QNB الأهلي' },
+    sector: { en: 'Banking · Media innovation', ar: 'بنوك · ابتكار إعلامي' },
+    market: { en: 'Egypt', ar: 'مصر' },
+    period: { en: 'Ramadan 2015', ar: 'رمضان 2015' },
+    platforms: ['Filfan', 'FilGoal', 'Facebook', 'Google Display'],
+    headline: { en: 'Every Ramadan series in one place, sponsored by one bank.', ar: 'كل مسلسلات رمضان في مكان واحد، برعاية بنك واحد.' },
+    challenge: { en: 'Promote the m.visa product during Ramadan, when sponsorship of individual series was sold out and far above budget.', ar: 'الترويج لخدمة m.visa في رمضان، بينما رعاية المسلسلات مباعة مسبقاً وأعلى بكثير من الميزانية.' },
+    approach: { en: 'Instead of buying one series, we partnered with the entertainment portal Filfan to build a single hub, "Ramadan Series Sponsored by QNB", gathering every series in one place, then drove traffic to it from FilGoal, Facebook and Google Display.', ar: 'بدلاً من شراء مسلسل واحد، عقدنا شراكة مع بوابة فيلفان لبناء منصة واحدة «مسلسلات رمضان برعاية QNB» تجمع كل المسلسلات، ثم وجّهنا الزيارات إليها من فيلجول وفيسبوك وشبكة Google الإعلانية.' },
+    kpis: [
+      { value: '7M', label: { en: 'Video views', ar: 'مشاهدة فيديو' }, accent: true },
+      { value: '25M', label: { en: 'Impressions', ar: 'ظهور' } },
+      { value: '50K', label: { en: 'Clicks to m.visa', ar: 'نقرة إلى m.visa' } },
+    ],
+    visual: { caption: 'screen', images: [
+      { src: '/work/qnb-ramadan-desktop.webp', w: 1536, h: 918, alt: { en: 'Filfan desktop page: Ramadan series hub sponsored by QNB', ar: 'صفحة فيلفان: منصة مسلسلات رمضان برعاية QNB' } },
+      { src: '/work/qnb-ramadan-mobile.webp', w: 549, h: 1031, alt: { en: 'FilGoal mobile page with the QNB Ramadan placement', ar: 'صفحة فيلجول على الجوال مع إعلان QNB الرمضاني' } },
+    ] }, verified: 'source-checked',
+  },
 ];
 
 export const featured = CASES.filter((c) => c.tier === 1);
+/** Homepage editorial selection, in order. */
+export const homeSelection = ['fashion-beauty-scale', 'ks-furniture', 'qnb-ramadan'].map((s) => CASES.find((c) => c.slug === s)!);

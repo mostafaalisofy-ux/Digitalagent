@@ -1,13 +1,13 @@
 ---
-// Homepage v0.2 — owner feedback: clear order. Hero → About → Services → Clients → Work → Process → Why → Contact.
+// Homepage v0.3 — "Dark Editorial Performance" direction lock (D-013):
+// Hero → Selected work → Services → Our approach → Performance proof → About → Final CTA.
 import Base from '../../layouts/Base.astro';
 import Hero from '../../components/home/Hero.astro';
-import HomeAbout from '../../components/home/HomeAbout.astro';
-import HomeServices from '../../components/home/HomeServices.astro';
-import HomeClients from '../../components/home/HomeClients.astro';
 import SelectedWork from '../../components/home/SelectedWork.astro';
-import Process from '../../components/home/Process.astro';
-import WhyUs from '../../components/home/WhyUs.astro';
+import HomeServices from '../../components/home/HomeServices.astro';
+import Approach from '../../components/home/Approach.astro';
+import Proof from '../../components/home/Proof.astro';
+import HomeAbout from '../../components/home/HomeAbout.astro';
 import FinalCta from '../../components/home/FinalCta.astro';
 import { staticLangPaths } from '../../i18n/paths';
 import { t } from '../../i18n/ui';
@@ -18,11 +18,10 @@ const d = t(lang);
 ---
 <Base lang={lang} page="home" title={d.meta.homeTitle} description={d.meta.homeDesc}>
   <Hero lang={lang} />
-  <HomeAbout lang={lang} />
-  <HomeServices lang={lang} />
-  <HomeClients lang={lang} />
   <SelectedWork lang={lang} />
-  <Process lang={lang} />
-  <WhyUs lang={lang} />
+  <HomeServices lang={lang} />
+  <Approach lang={lang} />
+  <Proof lang={lang} />
+  <HomeAbout lang={lang} />
   <FinalCta lang={lang} />
 </Base>

@@ -7,6 +7,7 @@
     "fonts": "node scripts/fetch-satoshi.mjs",
     "dev": "npm run fonts && astro dev",
     "build": "npm run fonts && astro build",
+    "build:production": "npm run fonts && PUBLIC_STAGE=production astro build",
     "preview": "astro preview",
     "build:preview-link": "PUBLIC_DEPLOY_TARGET=artifact astro build && python3 scripts/make-preview-link.py"
   },

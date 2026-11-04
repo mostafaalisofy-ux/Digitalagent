@@ -28,15 +28,13 @@ const idx = Array.from({ length: layers }, (_, i) => i);
 
 <style>
   .sculpture {
-    --rx: 0deg; --ry: 0deg;
     position: relative; width: 100%; aspect-ratio: 600 / 721;
     perspective: 1500px; perspective-origin: 50% 40%;
   }
   .sculpture__defs { position: absolute; }
   .sculpture__rig {
     position: absolute; inset: 0; transform-style: preserve-3d;
-    transform: rotateX(calc(7deg + var(--rx))) rotateY(calc(-21deg + var(--ry)));
-    transition: transform 1.2s var(--ease-out);
+    transform: rotateX(7deg) rotateY(-21deg);
   }
   .stack { position: absolute; inset: 0; transform-style: preserve-3d; }
   .layer { position: absolute; inset: 0; width: 100%; height: 100%; transform: translateZ(calc(var(--i) * var(--depth) * -1)); }
@@ -52,9 +50,9 @@ const idx = Array.from({ length: layers }, (_, i) => i);
   /* Intro (transform-only inside the 3D context — opacity there would flatten the extrusion):
      the whole piece fades in from the outer wrapper, the T settles, then the blade arrives
      along its own 45° axis — "the diagonal moves decisively into position". */
-  :global(.js) .sculpture { opacity: 0; animation: st-fade 0.7s var(--ease-out) 0.1s forwards; }
-  :global(.js) .stack--t { transform: translate3d(0, 5%, 0); animation: st-t 1.1s var(--ease-out) 0.1s forwards; }
-  :global(.js) .stack--b { transform: translate3d(22%, -22%, 0); animation: st-b 1.3s var(--ease-out) 0.55s forwards; }
+  :global(.js) .sculpture { opacity: 0; animation: st-fade 0.5s var(--ease-out) 0.05s forwards; }
+  :global(.js) .stack--t { transform: translate3d(0, 5%, 0); animation: st-t 0.8s var(--ease-out) 0.05s forwards; }
+  :global(.js) .stack--b { transform: translate3d(22%, -22%, 0); animation: st-b 0.9s var(--ease-out) 0.35s forwards; }
   @keyframes st-fade { to { opacity: 1; } }
   @keyframes st-t { to { transform: none; } }
   @keyframes st-b { to { transform: none; } }
@@ -64,27 +62,3 @@ const idx = Array.from({ length: layers }, (_, i) => i);
     :global(.js) .sculpture, :global(.js) .stack--t, :global(.js) .stack--b { opacity: 1; transform: none; animation: none; }
   }
 </style>
-
-<script>
-  // Subtle pointer parallax (fine pointers only, reduced-motion respected, rAF-throttled).
-  const fine = matchMedia('(pointer: fine)').matches;
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (fine && !still) {
-    document.querySelectorAll<HTMLElement>('[data-sculpture]').forEach((el) => {
-      const host = el.closest('[data-sculpture-host]') ?? el;
-      let raf = 0;
-      host.addEventListener('pointermove', (e) => {
-        const ev = e as PointerEvent;
-        cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(() => {
-          const r = (host as HTMLElement).getBoundingClientRect();
-          const px = (ev.clientX - r.left) / r.width - 0.5;
-          const py = (ev.clientY - r.top) / r.height - 0.5;
-          el.style.setProperty('--ry', `${(px * 14).toFixed(2)}deg`);
-          el.style.setProperty('--rx', `${(-py * 8).toFixed(2)}deg`);
-        });
-      });
-      host.addEventListener('pointerleave', () => { el.style.setProperty('--ry', '0deg'); el.style.setProperty('--rx', '0deg'); });
-    });
-  }
-</script>

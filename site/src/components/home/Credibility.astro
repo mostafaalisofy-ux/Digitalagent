@@ -32,7 +32,7 @@ const rows = [d.markets, d.sectors, d.platforms];
   .cred__row li { position: relative; }
   @media (max-width: 1023px) { .cred__row ul { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--s-4); } .cred__row li::before { display: none; } }
   .cred__row li:not(:first-child)::before { content: ''; position: absolute; inset-inline-start: calc(var(--s-6) / -2 - 3px); top: 50%; width: 6px; height: 6px; background: var(--accent); transform: translateY(-50%) skewX(-45deg); }
-  [dir='rtl'] .cred__row li:not(:first-child)::before { transform: translateY(-50%) skewX(45deg); }
+  :global([dir='rtl']) .cred__row li:not(:first-child)::before { transform: translateY(-50%) skewX(45deg); }
   @media (min-width: 1024px) {
     .cred__in { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; padding-block: var(--s-8); }
     .cred__title { grid-column: 1 / span 3; padding-top: var(--s-4); }

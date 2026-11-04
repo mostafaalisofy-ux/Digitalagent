@@ -23,7 +23,7 @@ const c = d.contact;
         </div>
         <div class="contact__mark" aria-hidden="true"><Logo variant="signature" height="100%" decorative /></div>
       </div>
-      <div class="contact__form" data-reveal style="--delay:150ms"><ContactForm lang={lang} /></div>
+      <div class="contact__form"><ContactForm lang={lang} /></div>  <!-- no reveal: a form must never move while being used -->
     </div>
   </section>
 </Base>

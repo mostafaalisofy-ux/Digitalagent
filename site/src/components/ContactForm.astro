@@ -73,8 +73,9 @@ const opts = [...PILLARS.map((p) => ({ id: p.id, label: p.name[lang] })), { id: 
   .field input::placeholder { color: rgb(164 164 174 / 0.6); }
   .field input:focus, .field textarea:focus { outline: none; border-bottom-color: var(--accent); box-shadow: 0 1px 0 0 var(--accent); }
   .field [aria-invalid='true'] { border-bottom-color: #ff6b6b !important; }
-  .field__err { min-height: 1.2em; font-size: var(--fs-caption); color: #ff8f8f; }
-  .field__err:empty { min-height: 0; }
+  /* the error line is always reserved: clearing a message on blur must never shift the layout
+     under the pointer (that swallowed clicks on the next control) */
+  .field__err { min-height: 1.4em; font-size: var(--fs-caption); line-height: 1.4; color: #ff8f8f; }
   .chips { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-2); }
   .chip { position: relative; cursor: pointer; }
   .chip input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }

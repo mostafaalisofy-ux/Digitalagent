@@ -1,0 +1,52 @@
+---
+// Our approach: strategy → creative → media → performance as one loop (direction lock §4.5).
+import { type Lang } from '../../config/site';
+import { h } from '../../i18n/home';
+import { SYMBOL } from '../../lib/logo';
+const { x, y, w, h: bh } = SYMBOL.bladeBox;
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = h(lang).approach;
+---
+<section class="section ap" id="approach" aria-labelledby="ap-title">
+  <div class="container">
+    <div class="ap__head">
+      <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
+      <h2 class="ap__title" id="ap-title" data-reveal-group><span class="line"><span>{d.title}</span></span></h2>
+      <p class="ap__intro" data-reveal>{d.intro}</p>
+    </div>
+    <ol role="list" class="ap__loop" data-reveal-group>
+      {d.steps.map((s, i) => (
+        <li class="ap__step" style={`--delay:${i * 120}ms`}>
+          <span class="ap__dot" aria-hidden="true"></span>
+          <h3 class="ap__k">{s.k}</h3>
+          <p class="ap__d">{s.d}</p>
+        </li>
+      ))}
+    </ol>
+    <p class="ap__close" data-reveal><svg class="ap__mark" viewBox={`${x} ${y} ${w} ${bh}`} aria-hidden="true" focusable="false"><path d={SYMBOL.blade} /></svg>{d.loop}</p>
+  </div>
+</section>
+<style>
+  .ap__head { display: grid; gap: var(--s-5); max-width: 860px; }
+  .ap .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .ap__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); }
+  .ap__intro { color: var(--text-muted); font-size: var(--fs-lead); max-width: 46ch; }
+  .ap__loop { position: relative; display: grid; gap: var(--s-7); margin-top: var(--s-9); }
+  .ap__step { position: relative; display: grid; gap: var(--s-3); padding-inline-start: var(--s-6); }
+  .ap__dot { position: absolute; inset-inline-start: 0; top: 0.55em; width: 12px; height: 12px; border: 2px solid var(--accent); transform: rotate(45deg); background: var(--bg); }
+  .ap__step:last-child .ap__dot { background: var(--accent); }
+  .ap__loop::before { content: ''; position: absolute; inset-inline-start: 5px; top: 0.9em; bottom: 0.9em; width: 2px; background: var(--line-strong); }
+  .ap__k { font-size: var(--fs-h2); letter-spacing: var(--track-tight); }
+  .ap__d { color: var(--text-muted); max-width: 34ch; }
+  .ap__close { display: flex; align-items: center; gap: var(--s-4); margin-top: var(--s-8); font-size: var(--fs-h3); font-weight: 700; color: var(--text-strong); }
+  .ap__mark { width: 20px; height: auto; fill: var(--accent); flex: none; }
+  @media (min-width: 1024px) {
+    .ap__loop { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gutter); }
+    .ap__step { padding-inline-start: 0; padding-top: var(--s-7); }
+    .ap__dot { top: 0; }
+    .ap__loop::before { inset-inline: 6px 0; top: 6px; bottom: auto; width: auto; height: 2px; transform-origin: left; transform: scaleX(0); transition: transform var(--d-5) var(--ease-out); background: var(--accent); }
+    :global([dir='rtl']) .ap__loop::before { transform-origin: right; }
+    .ap__loop.is-in::before, :global(html:not(.js)) .ap__loop::before { transform: scaleX(1); }
+  }
+</style>

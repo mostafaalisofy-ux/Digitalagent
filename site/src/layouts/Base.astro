@@ -13,7 +13,13 @@ interface Props { lang: Lang; page: PageKey; title: string; description: string 
 const { lang, page, title, description } = Astro.props;
 const d = t(lang);
 const url = (l: Lang) => new URL(href(l, page), SITE.url).href;
-const jsonLd = {
+const jsonLd = [{
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'SayTamm',
+  url: SITE.url,
+  inLanguage: ['en', 'ar'],
+}, {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: SITE.name,
@@ -23,7 +29,8 @@ const jsonLd = {
   logo: new URL('/brand/SayTamm_Symbol_Black.png', SITE.url).href,
   slogan: 'Say it. Tamm it.',
   areaServed: 'SA',
-};
+  knowsLanguage: ['en', 'ar'],
+}];
 ---
 <!doctype html>
 <html lang={lang} dir={DIR[lang]}>
@@ -43,8 +50,14 @@ const jsonLd = {
   <meta property="og:description" content={description} />
   <meta property="og:url" content={url(lang)} />
   <meta property="og:locale" content={lang === 'ar' ? 'ar_SA' : 'en_US'} />
+  <meta property="og:image" content={new URL(`/og/saytamm-og-${lang}.png`, SITE.url).href} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content={lang === 'ar' ? 'قول تم — شعار SayTamm' : 'SayTamm logo — Say it. Tamm it.'} />
+  <meta property="og:locale:alternate" content={lang === 'ar' ? 'en_US' : 'ar_SA'} />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="theme-color" content="#0A0A0D" />
+  <meta name="twitter:image" content={new URL(`/og/saytamm-og-${lang}.png`, SITE.url).href} />
+  <meta name="theme-color" content="#09090D" />
   <link rel="icon" href="/brand/SayTamm_Symbol_Signature_Black-Purple.svg" type="image/svg+xml" media="(prefers-color-scheme: light)" />
   <link rel="icon" href="/brand/SayTamm_Symbol_Signature_White-Purple.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)" />
   {lang === 'en' && <link rel="preload" href="/fonts/satoshi/Satoshi-700.woff2" as="font" type="font/woff2" crossorigin />}
@@ -86,6 +99,6 @@ const jsonLd = {
 </html>
 
 <style>
-  .preview-bar { display: flex; align-items: center; justify-content: center; gap: var(--s-2); padding: 8px var(--margin); background: var(--c-purple-900); color: var(--c-soft-white); font-size: var(--fs-caption); font-weight: 500; text-align: center; }
+  .preview-bar { display: flex; align-items: center; justify-content: center; gap: var(--s-2); padding: 8px var(--margin); background: var(--c-graphite); border-bottom: 1px solid var(--line); color: var(--c-soft-white); font-size: var(--fs-caption); font-weight: 500; text-align: center; }
   .preview-bar__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-purple-200); }
 </style>

@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
 import CaseStudy from '../../components/CaseStudy.astro';
-import Results from '../../components/home/Results.astro';
+import Proof from '../../components/home/Proof.astro';
 import FinalCta from '../../components/home/FinalCta.astro';
 import { CASES } from '../../data/cases';
 import { staticLangPaths } from '../../i18n/paths';
@@ -18,7 +18,7 @@ const d = t(lang);
     <p class="work-list__label"><span class="placeholder-tag">{lang === 'ar' ? 'سجل الفريق' : 'Track record'}</span>{d.work.label} {d.work.verified}</p>
     {CASES.map((c, i) => <CaseStudy c={c} lang={lang} index={i} />)}
   </section>
-  <Results lang={lang} />
+  <Proof lang={lang} />
   <FinalCta lang={lang} />
 </Base>
 <style>
