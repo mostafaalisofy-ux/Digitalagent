@@ -1,12 +1,13 @@
 ---
+// Homepage v0.2 — owner feedback: clear order. Hero → About → Services → Clients → Work → Process → Why → Contact.
 import Base from '../../layouts/Base.astro';
 import Hero from '../../components/home/Hero.astro';
-import Credibility from '../../components/home/Credibility.astro';
-import Philosophy from '../../components/home/Philosophy.astro';
-import Capabilities from '../../components/home/Capabilities.astro';
+import HomeAbout from '../../components/home/HomeAbout.astro';
+import HomeServices from '../../components/home/HomeServices.astro';
+import HomeClients from '../../components/home/HomeClients.astro';
 import SelectedWork from '../../components/home/SelectedWork.astro';
-import Results from '../../components/home/Results.astro';
-import Method from '../../components/home/Method.astro';
+import Process from '../../components/home/Process.astro';
+import WhyUs from '../../components/home/WhyUs.astro';
 import FinalCta from '../../components/home/FinalCta.astro';
 import { staticLangPaths } from '../../i18n/paths';
 import { t } from '../../i18n/ui';
@@ -17,11 +18,11 @@ const d = t(lang);
 ---
 <Base lang={lang} page="home" title={d.meta.homeTitle} description={d.meta.homeDesc}>
   <Hero lang={lang} />
-  <Credibility lang={lang} />
-  <Philosophy lang={lang} />
-  <Capabilities lang={lang} />
+  <HomeAbout lang={lang} />
+  <HomeServices lang={lang} />
+  <HomeClients lang={lang} />
   <SelectedWork lang={lang} />
-  <Results lang={lang} />
-  <Method lang={lang} />
+  <Process lang={lang} />
+  <WhyUs lang={lang} />
   <FinalCta lang={lang} />
 </Base>

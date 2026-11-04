@@ -37,6 +37,7 @@ Format: ID · date · decision · decided by · rationale · source.
 | W-011 | 2026-11-04 | Header and footer use the **symbol only** until the drawn wordmark exists | Brief: never approximate the logo with ordinary text |
 | W-012 | 2026-11-04 | Contact form opens a pre-filled email to info@saytamm.com until a server endpoint and CRM exist, and says so on the form | Functional and honest; no fake "sent" state |
 | W-013 | 2026-11-04 | Private preview link published on the owner's claude.ai account (https://claude.ai/artifact/1T1HBDghRXiKtQND2Fk72Q), built by `npm run build:preview-link` | Owner asked to see the site without setting up hosting. The link host allows Google Fonts only and Satoshi's licence forbids third-party hosting, so the preview uses Figtree as a labelled stand-in; the real site keeps Satoshi |
+| D-012 | 2026-11-04 | **Website structure v0.2**: Hero → About → Services (all 9 visible) → Clients → Work → How we work → Why SayTamm → Contact; new About page; nav = About · Services · Clients · Work · Contact | Owner feedback: v0.1 content and structure were unclear ("محتاج يبقى في مكان عن الشركة، بعدها الخدمات، والعملاء السابقين") | Replaces the abstract philosophy / method / pillar narrative of v0.1 |
 
 ## Proposed — awaiting owner
 

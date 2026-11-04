@@ -23,9 +23,10 @@ const year = new Date().getFullYear();
       <nav class="ftr__col" aria-label={d.footer.nav}>
         <h2 class="eyebrow">{d.footer.nav}</h2>
         <ul role="list">
-          <li><a href={href(lang, 'work')}>{d.nav.work}</a></li>
+          <li><a href={href(lang, 'about')}>{d.nav.about}</a></li>
           <li><a href={href(lang, 'services')}>{d.nav.services}</a></li>
-          <li><a href={href(lang, 'home', 'method')}>{d.nav.method}</a></li>
+          <li><a href={href(lang, 'home', 'clients')}>{d.nav.clients}</a></li>
+          <li><a href={href(lang, 'work')}>{d.nav.work}</a></li>
           <li><a href={href(lang, 'contact')}>{d.nav.contact}</a></li>
         </ul>
       </nav>

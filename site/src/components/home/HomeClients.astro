@@ -1,0 +1,60 @@
+---
+// Typographic client wall (logos not supplied yet). Names come only from received case material.
+import { CLIENTS } from '../../data/clients';
+import { type Lang } from '../../config/site';
+import { href } from '../../i18n/paths';
+import { h } from '../../i18n/home';
+import { t } from '../../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = h(lang).clients;
+const ui = t(lang);
+---
+<section class="section clients" id="clients" aria-labelledby="clients-title">
+  <div class="container">
+    <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
+    <h2 class="clients__title" id="clients-title" data-reveal>{d.title}</h2>
+    <p class="clients__note" data-reveal>{d.note}</p>
+    <ul role="list" class="wall">
+      {CLIENTS.map((c, i) => (
+        <li class="cl" data-reveal style={`--delay:${(i % 4) * 60}ms`}>
+          {c.caseSlug ? (
+            <a class="cl__in" href={href(lang, 'work', c.caseSlug)}>
+              <span class="cl__name">{c.name[lang]}</span>
+              <span class="cl__meta">{c.sector[lang]} · {c.market[lang]}</span>
+              <span class="cl__case">{d.viewCase}</span>
+            </a>
+          ) : (
+            <div class="cl__in">
+              <span class="cl__name">{c.name[lang]}</span>
+              <span class="cl__meta">{c.sector[lang]} · {c.market[lang]}</span>
+            </div>
+          )}
+        </li>
+      ))}
+      <li class="cl cl--cta">
+        <a class="cl__in" href={href(lang, 'contact')} data-track="cta_click" data-cta-id="start_project" data-cta-location="clients">
+          <span class="cl__name">{lang === 'ar' ? 'علامتك هي التالية؟' : 'Your brand next?'}</span>
+          <span class="cl__case">{ui.nav.cta}</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+<style>
+  .clients .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .clients__title { font-size: var(--fs-h1); letter-spacing: var(--track-tight); margin-top: var(--s-4); max-width: 20ch; }
+  .clients__note { color: var(--text-muted); font-size: var(--fs-small); margin-top: var(--s-3); max-width: 62ch; }
+  .wall { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: var(--s-7); }
+  .cl { background: var(--bg); }
+  .cl__in { display: grid; gap: var(--s-2); align-content: center; min-height: 140px; padding: var(--s-4); height: 100%; transition: background var(--d-2) var(--ease-out); }
+  a.cl__in:hover, a.cl__in:focus-visible { background: var(--surface); }
+  .cl__name { font-size: clamp(1.125rem, 1rem + 0.8vw, 1.6rem); font-weight: 700; color: var(--text-strong); letter-spacing: var(--track-head); line-height: 1.15; }
+  .cl__meta { font-size: var(--fs-caption); color: var(--text-muted); }
+  .cl__case { font-size: var(--fs-caption); font-weight: 700; color: var(--accent-text); }
+  .cl--cta { grid-column: span 1; background: var(--c-purple); }
+  .cl--cta .cl__name, .cl--cta .cl__case { color: var(--c-white); }
+  .cl--cta a.cl__in:hover { background: color-mix(in srgb, var(--c-purple), var(--c-obsidian) 15%); }
+  @media (min-width: 768px) { .wall { grid-template-columns: repeat(3, minmax(0, 1fr)); } .cl--cta { grid-column: span 2; } .cl__in { min-height: 160px; padding: var(--s-5); } }
+  @media (min-width: 1024px) { .wall { grid-template-columns: repeat(4, minmax(0, 1fr)); } .cl--cta { grid-column: span 3; } }
+</style>

@@ -1,6 +1,6 @@
 import { SITE, LOCALES } from '../config/site';
 import { href, type PageKey } from '../i18n/paths';
-const PAGES: PageKey[] = ['home', 'services', 'work', 'contact'];
+const PAGES: PageKey[] = ['home', 'about', 'services', 'work', 'contact'];
 export function GET() {
   const url = (l: (typeof LOCALES)[number], p: PageKey) => new URL(href(l, p), SITE.url).href;
   const body = PAGES.flatMap((p) => LOCALES.map((l) => `  <url><loc>${url(l, p)}</loc>${LOCALES.map((a) => `<xhtml:link rel="alternate" hreflang="${a}" href="${url(a, p)}"/>`).join('')}<xhtml:link rel="alternate" hreflang="x-default" href="${url('en', p)}"/></url>`)).join('\n');

@@ -2,21 +2,21 @@
 import { SYMBOL } from '../../lib/logo';
 import { SITE, type Lang } from '../../config/site';
 import { href } from '../../i18n/paths';
-import { t } from '../../i18n/ui';
+import { h } from '../../i18n/home';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-const d = t(lang).final;
-const { x, y, w, h } = SYMBOL.bladeBox;
+const d = h(lang).contact;
+const { x, y, w, h: bh } = SYMBOL.bladeBox;
 ---
 <section class="final" aria-labelledby="final-title">
-  <svg class="final__blade" viewBox={`${x} ${y} ${w} ${h}`} aria-hidden="true" focusable="false" data-reveal="wipe"><path d={SYMBOL.blade} /></svg>
+  <svg class="final__blade" viewBox={`${x} ${y} ${w} ${bh}`} aria-hidden="true" focusable="false" data-reveal="wipe"><path d={SYMBOL.blade} /></svg>
   <div class="container final__in">
-    <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span><span class="num">07</span><span>{d.eyebrow}</span></p>
+    <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span><span>{d.eyebrow}</span></p>
     <h2 class="final__title" id="final-title" data-reveal-group><span class="line"><span>{d.title}</span></span></h2>
     <p class="final__body" data-reveal style="--delay:150ms">{d.body}</p>
     <div class="final__ctas" data-reveal style="--delay:250ms">
       <a class="btn btn--primary" href={href(lang, 'contact')} data-track="cta_click" data-cta-id="start_project" data-cta-location="final">{d.cta}<span class="arrow" aria-hidden="true"></span></a>
-      <p class="final__or">{d.or} <a class="link-diag latin" href={`mailto:${SITE.email}`} data-track="email_click" data-cta-location="final">{SITE.email}</a></p>
+      <p class="final__or">{d.email}: <a class="link-diag latin" href={`mailto:${SITE.email}`} data-track="email_click" data-cta-location="final">{SITE.email}</a></p>
     </div>
   </div>
 </section>
@@ -27,7 +27,7 @@ const { x, y, w, h } = SYMBOL.bladeBox;
   .final__in { display: grid; gap: var(--s-5); }
   .final .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
   .final .eyebrow .num { color: var(--text-strong); }
-  .final__title { font-size: var(--fs-mega); line-height: 0.86; letter-spacing: -0.055em; }
+  .final__title { font-size: var(--fs-display); line-height: 1; letter-spacing: var(--track-tight); max-width: 16ch; }
   [dir='rtl'] .final__title { line-height: 1.05; letter-spacing: 0; }
   .final__body { font-size: var(--fs-lead); color: var(--text); max-width: 30ch; }
   .final__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-5); margin-top: var(--s-3); }

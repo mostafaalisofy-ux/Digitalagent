@@ -17,6 +17,8 @@ Status: `open` · `answered` (move the outcome to `DECISION_LOG.md`).
 | OQ-31 | Owner's role on Infinity Corp and nsm+ projects? | — | — | **answered: led them (D-006)** |
 | OQ-37 | Steps cases | — | **Rights answered (D-009).** One wording point remains: may the case pages say where each was delivered (e.g. "delivered by our team at Steps KSA")? This ties to OQ-33 | partly answered |
 | OQ-38 | Any ongoing role, shareholding or agreement (non-compete / non-solicit / confidentiality) with Steps KSA, Infinity Corp or nsm+ that limits SayTamm offering the same services, approaching the same clients, or naming them? | Legal risk: SayTamm now competes directly with Steps in the same market and services | Confirm with a legal advisor before launch | open |
+| OQ-39 | Client wall: confirm the list (13 names drawn from received case material) and send **logo files** with permission to show them. Should Hyde Park, Orange and EgyptAir (named in the brief, no material received) be added? | open |
+| OQ-40 | About page: founder photo, short bio, Arabic spelling of the founder's name, founding year of SayTamm, team size | open |
 | OQ-20 | Stack | Framework choice | **Built on Astro 7 (W-008).** Still worth confirming: are a client portal or app features planned in the next 12 months? If yes, revisit | partly answered |
 | OQ-01 | Repo | Where the site lives | **Site built in `/site` of this repo (W-008)**; move it to a dedicated repo later if preferred | partly answered |
 

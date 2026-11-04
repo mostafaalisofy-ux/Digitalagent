@@ -62,7 +62,11 @@ Optional later: `/{lang}/performance-audit/` (offer landing page, if the audit o
 | About | Trust: people, principles, experience, legal presence | Start a project | Approach |
 | Contact | Convert a qualified inquiry | Submit | WhatsApp (if approved) |
 
-## Homepage narrative [RECOMMENDATION — refines the brief's hypothesis]
+## Homepage structure v0.2 [APPROVED direction — D-012]
+
+Hero → About SayTamm → Services (all 9, grouped in 4 pillars) → Clients (typographic wall) → Work (case results) → How we work (4 steps) → Why SayTamm → Contact. Plus a dedicated **About** page (story, facts, values, leadership, markets, clients, process).
+
+## Homepage narrative v0.1 [SUPERSEDED by D-012]
 
 The page follows the brand's own logic: **Say → Tamm → Prove → Start.**
 

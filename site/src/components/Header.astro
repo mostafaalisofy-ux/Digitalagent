@@ -6,10 +6,11 @@ import { t } from '../i18n/ui';
 interface Props { lang: Lang; page: PageKey }
 const { lang, page } = Astro.props;
 const d = t(lang);
-const links: { key: PageKey | 'method'; label: string; to: string }[] = [
-  { key: 'work', label: d.nav.work, to: href(lang, 'work') },
+const links: { key: PageKey | 'clients'; label: string; to: string }[] = [
+  { key: 'about', label: d.nav.about, to: href(lang, 'about') },
   { key: 'services', label: d.nav.services, to: href(lang, 'services') },
-  { key: 'method', label: d.nav.method, to: href(lang, 'home', 'method') },
+  { key: 'clients', label: d.nav.clients, to: href(lang, 'home', 'clients') },
+  { key: 'work', label: d.nav.work, to: href(lang, 'work') },
   { key: 'contact', label: d.nav.contact, to: href(lang, 'contact') },
 ];
 const alt = other(lang);

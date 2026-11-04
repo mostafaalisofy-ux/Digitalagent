@@ -26,7 +26,7 @@ if not os.path.isdir(SRC):
 shutil.rmtree(OUT, ignore_errors=True)
 os.makedirs(OUT)
 
-PAGES = ['en/index.html', 'ar/index.html', 'en/services/index.html', 'ar/services/index.html',
+PAGES = ['en/index.html', 'ar/index.html', 'en/about/index.html', 'ar/about/index.html', 'en/services/index.html', 'ar/services/index.html',
          'en/work/index.html', 'ar/work/index.html', 'en/contact/index.html', 'ar/contact/index.html']
 
 def rel(target: str, depth: int) -> str:
