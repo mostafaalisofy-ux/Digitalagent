@@ -17,11 +17,11 @@ Status: `open` · `answered` (move the outcome to `DECISION_LOG.md`).
 | OQ-31 | Owner's role on Infinity Corp and nsm+ projects? | — | — | **answered: led them (D-006)** |
 | OQ-37 | Steps cases | — | **Rights answered (D-009).** One wording point remains: may the case pages say where each was delivered (e.g. "delivered by our team at Steps KSA")? This ties to OQ-33 | partly answered |
 | OQ-38 | Any ongoing role, shareholding or agreement (non-compete / non-solicit / confidentiality) with Steps KSA, Infinity Corp or nsm+ that limits SayTamm offering the same services, approaching the same clients, or naming them? | Legal risk: SayTamm now competes directly with Steps in the same market and services | Confirm with a legal advisor before launch | open |
-| OQ-39 | **Brands wall (12 brands, owner list 2026-11-04):** send the **official logo files** (SVG preferred) and confirm we may display each one. Confirm the wording "professional experience, not SayTamm clients". Saudi GEA is a government entity — confirm display is permitted. Note: STC's current wordmark is lower-case "stc"; the name is shown as supplied | open |
-| OQ-40 | About page: founder photo, short bio, Arabic spelling of the founder's name, founding year of SayTamm, team size | open |
+| OQ-39 | **Brands wall (12 brands, owner list 2026-11-04):** send the **official logo files** (SVG preferred) and confirm we may display each one. Confirm the wording "professional experience, not SayTamm clients". Saudi GEA is a government entity — confirm display is permitted. **Sprint 2: Saudi GEA is shown in staging (tagged) and hidden in the production build until permission is confirmed.** Note: STC's current wordmark is lower-case "stc"; the name is shown as supplied | open |
+| OQ-40 | **About page / leadership.** Sprint 2 shows only the founder's name and role, with no placeholders. Still needed: photo (portrait, at least 1200 px), a 60–100-word bio, the Arabic spelling of the name, LinkedIn URL (optional), SayTamm's founding year, team size, and whether other team members are shown | open |
 | OQ-41 | Campaign visuals for K.S Furniture, Muriya, DAMAC and Bio-Group, plus agency photography (team, workspace) for About | open |
 | OQ-43 | Arabic headings: the brief wrote «أربع تخصصات»; the site uses the grammatical «أربعة تخصصات» (تخصص is masculine). Confirm in native review | open |
-| OQ-44 | **Approve each case for publication** (all 7 are `pending`; production shows none of their figures until approved): K.S Furniture (year, revenue attribution), fashion & beauty A/B (original Meta exports), QNB (bank name with figures), Muriya (period, sales matching), electronics Q4 (export), Bio-Group (market, year), DAMAC (period, volume, naming permission) | open |
+| OQ-44 | **Approve each case for publication** (Sprint 2: the K.S Furniture budget split is also treated as withheld campaign data) (all 7 are `pending`; production shows none of their figures until approved): K.S Furniture (year, revenue attribution), fashion & beauty A/B (original Meta exports), QNB (bank name with figures), Muriya (period, sales matching), electronics Q4 (export), Bio-Group (market, year), DAMAC (period, volume, naming permission) | open |
 | OQ-42 | Confirm the Arabic hero line "تسويق رقمي يقوده الأداء، لعلامات تتحرك بسرعة وتقيس كل شيء" and the Arabic approach terms (الاستراتيجية · الإبداع · الإعلانات · الأداء) after native review | open |
 | OQ-20 | Stack | Framework choice | **Built on Astro 7 (W-008).** Still worth confirming: are a client portal or app features planned in the next 12 months? If yes, revisit | partly answered |
 | OQ-01 | Repo | Where the site lives | **Site built in `/site` of this repo (W-008)**; move it to a dedicated repo later if preferred | partly answered |
@@ -37,7 +37,7 @@ Status: `open` · `answered` (move the outcome to `DECISION_LOG.md`).
 | OQ-11 | Rights to show previous work | **Answered for Infinity Corp and nsm+ material (D-002).** Steps rights follow from OQ-30 | answered / partly |
 | OQ-32 | Original **Ads Manager / analytics exports** for K.S Furniture, Muriya, Bio-Group, DAMAC and the Infinity fashion and electronics campaigns (the Infinity screenshots have corrupted digits), plus campaign dates and years for the Steps cases | open |
 | OQ-33 | Should previous agencies (Infinity Corp, nsm+, Steps) be **named** publicly in the founder's experience, or described generically ("a Cairo performance agency")? | open |
-| OQ-34 | Real scope for SEO, Content Marketing, Media Production, Website & CRO and Analytics & Growth (Steps has no detail pages for these) | open |
+| OQ-34 | **Scope for 5 services** (Sprint 2: the site shows their one-line summary only, with no capability list). Needed for each: what is included, typical deliverables, who delivers it (in-house or partner). **SEO:** technical, Arabic, content, local, links? **Content Marketing:** articles, video series, newsletters, lead magnets? **Media Production:** in-house crew or studio, photography, video, motion, audio? **Website & CRO:** platforms and stack, CRO method, testing tools? **Analytics & Growth:** GA4, GTM, server-side/CAPI, dashboards, attribution, reporting cadence? | open |
 | OQ-35 | Results for Marseilia 2018 (leads by market) and 57357 Ramadan 2018 (donations), if available | open |
 | OQ-36 | ~~Steps' public claims~~: not applicable to SayTamm (D-005) | closed |
 | OQ-12 | Approve **Say → Tamm → Prove** as the operating narrative? (from concept board 1; not in the Bible) | open |
@@ -46,11 +46,13 @@ Status: `open` · `answered` (move the outcome to `DECISION_LOG.md`).
 | OQ-15 | Which ad platforms does SayTamm actively run (Meta, Google, Snap, TikTok, X, LinkedIn, YouTube)? Any official partner status or certifications? | open |
 | OQ-16 | Arabic tagline and sub-taglines: written natively and approved | open |
 | OQ-18 | Satoshi licence: confirm the Fontshare terms and archive the licence; who holds the font files? | open |
-| OQ-19 | CRM / lead destination (HubSpot, Zoho, Pipedrive, email only?) and who receives leads | open |
+| OQ-19 | **Form backend / CRM.** The form currently opens the visitor's email app (mailto) and says so on screen. To connect a real endpoint we need: (1) the destination (HubSpot, Zoho, Pipedrive, a form service, or a serverless function sending to info@saytamm.com); (2) who receives and owns the leads; (3) spam protection (keep the honeypot; add Turnstile or reCAPTCHA?); (4) the privacy notice and consent wording (OQ-49); (5) the API key stored as a host environment variable, never in code. See `PROJECT_HANDOVER.md` §8 | open |
 | OQ-21 | Hosting preference and who owns the accounts (domain, hosting, analytics, GTM) | open |
 | OQ-23 | Leadership bios and photos: who is named on the site (founder, team)? | open |
 | OQ-24 | Verified social handles (the decks show `@SAYTAMM` as a placeholder) | open |
-| OQ-25 | Who reviews Arabic copy natively, and who signs off legal (privacy notice, PDPL)? | open |
+| OQ-25 | Who reviews Arabic copy natively, and who signs off legal (privacy notice, PDPL)? Sprint 2 rewrote the Arabic throughout, and it still needs native review | open |
+| OQ-49 | **Privacy notice and consent (PDPL).** There is no privacy page yet. The form's consent line is a draft. A cookie or consent banner is needed once analytics is added | open |
+| OQ-50 | **Operating commitments** documented from the adopted service scope (strategy in 2–4 weeks, brand build in 6–10 weeks, weekly performance reports, free audit within 3 business days). They are **not published** until SayTamm confirms it will keep them (links to OQ-14) | open |
 
 ## P2 — can be decided later
 

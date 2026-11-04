@@ -1,7 +1,7 @@
 // The 9 services SayTamm offers (D-003), organised in 4 disciplines (owner brief, final redesign).
 // Only these services are published. Capabilities listed under "includes" are limited to what the
 // adopted service scope or the team's case material supports. Scope for five services is still
-// being finalised (OQ-34) and is shown as such.
+// being finalised (OQ-34): those show their one-line summary only — no capability list is implied.
 import type { Lang } from '../config/site';
 type T = Record<Lang, string>;
 export interface Service { id: string; name: T; summary: T; includes: Record<Lang, string[]>; scopePending?: boolean }
@@ -19,8 +19,8 @@ export const DISCIPLINES: Discipline[] = [
         name: { en: 'Digital Marketing Strategy', ar: 'استراتيجية التسويق الرقمي' },
         summary: { en: 'A written plan that ties every channel and every riyal to a business objective.', ar: 'خطة مكتوبة تربط كل قناة وكل ريال بهدف واضح لعملك.' },
         includes: {
-          en: ['Market and competitor research for Saudi Arabia and the Gulf', 'High-value customer profile', 'Positioning and value proposition', 'Channel priorities and budget allocation', 'Seasonal campaign planning, such as Ramadan and National Day', '90-day roadmap'],
-          ar: ['دراسة السوق والمنافسين في السعودية والخليج', 'ملف العميل الأعلى قيمة', 'التموضع والقيمة المقدّمة', 'أولويات القنوات وتوزيع الميزانية', 'تخطيط الحملات الموسمية مثل رمضان واليوم الوطني', 'خارطة طريق لتسعين يوماً'],
+          en: ['Market and competitor research across Saudi Arabia and the Gulf', 'High-value customer profile, in Arabic and English buying behaviour', 'Positioning statement and value proposition', 'Messaging framework', 'Channel priority plan and budget allocation model', 'Go-to-market sequencing and seasonal planning, such as Ramadan and National Day', 'A written marketing plan with a 90-day roadmap'],
+          ar: ['دراسة السوق والمنافسين في السعودية والخليج', 'ملف العميل الأعلى قيمة، وفق سلوك الشراء بالعربية والإنجليزية', 'بيان التموضع والقيمة المقدّمة', 'إطار الرسائل التسويقية', 'خطة أولويات القنوات ونموذج توزيع الميزانية', 'تسلسل دخول السوق والتخطيط الموسمي مثل رمضان واليوم الوطني', 'خطة تسويق مكتوبة مع خارطة طريق لتسعين يوماً'],
         } },
     ],
   },
@@ -33,15 +33,15 @@ export const DISCIPLINES: Discipline[] = [
         name: { en: 'Branding & Identity', ar: 'الهوية والعلامة التجارية' },
         summary: { en: 'Positioning first, design second — Arabic and English developed together.', ar: 'التموضع أولاً ثم التصميم، بالعربية والإنجليزية معاً.' },
         includes: {
-          en: ['Brand strategy and positioning', 'Naming, messaging and tone of voice', 'Logo and visual identity system', 'Brand guidelines and asset library'],
-          ar: ['استراتيجية العلامة وتموضعها', 'التسمية والرسائل ونبرة الصوت', 'الشعار ونظام الهوية البصرية', 'دليل الهوية ومكتبة الأصول'],
+          en: ['Brand strategy: market and competitor analysis, positioning and differentiation', 'Naming and tagline, when needed', 'Messaging and tone-of-voice guidelines', 'Logo, variations and visual identity system', 'Brand guidelines and asset library'],
+          ar: ['استراتيجية العلامة: تحليل السوق والمنافسين، والتموضع، والتمايز', 'التسمية والشعار اللفظي عند الحاجة', 'إرشادات الرسائل ونبرة الصوت', 'الشعار وصيغه ونظام الهوية البصرية', 'دليل الهوية ومكتبة الأصول'],
         } },
       { id: 'social-media-marketing',
         name: { en: 'Social Media Marketing', ar: 'التسويق عبر منصات التواصل' },
         summary: { en: 'Platform-native content and community management, measured by what it moves.', ar: 'محتوى بلغة كل منصة وإدارة للمجتمع، يُقاس بما يحققه.' },
         includes: {
-          en: ['Social strategy and content pillars', 'Bilingual design, copy and short-form video', 'Community management', 'Influencer and creator campaigns'],
-          ar: ['استراتيجية المنصات وركائز المحتوى', 'تصميم وكتابة وفيديو قصير بلغتين', 'إدارة المجتمع والتفاعل', 'حملات المؤثرين وصنّاع المحتوى'],
+          en: ['Channel audits, audience and competitor analysis', 'Social strategy and monthly content calendars built around Saudi cultural moments', 'Bilingual design, copy and short-form video', 'Community management in Arabic and English', 'Influencer and creator campaigns, with results reporting', 'Monthly performance report'],
+          ar: ['تدقيق القنوات، وتحليل الجمهور والمنافسين', 'استراتيجية المنصات وتقويم محتوى شهري حول المناسبات السعودية', 'تصميم وكتابة وفيديو قصير بلغتين', 'إدارة المجتمع بالعربية والإنجليزية', 'حملات المؤثرين وصنّاع المحتوى مع تقارير النتائج', 'تقرير أداء شهري'],
         } },
       { id: 'content-marketing',
         name: { en: 'Content Marketing', ar: 'تسويق المحتوى' },
@@ -62,8 +62,8 @@ export const DISCIPLINES: Discipline[] = [
         name: { en: 'Performance Marketing', ar: 'التسويق بالأداء والإعلانات الممولة' },
         summary: { en: 'Paid search and paid social, planned, tested and scaled against revenue — not reach.', ar: 'إعلانات البحث والتواصل، تُخطط وتُختبر وتتوسع وفق الإيراد لا الوصول.' },
         includes: {
-          en: ['Google Ads: Search, Shopping and YouTube', 'Meta: Facebook and Instagram', 'Snapchat and TikTok', 'LinkedIn for B2B lead generation', 'Retargeting and A/B testing', 'Lead-generation campaigns for real estate'],
-          ar: ['إعلانات Google: البحث والتسوق ويوتيوب', 'Meta: فيسبوك وإنستغرام', 'سناب شات وتيك توك', 'لينكدإن لتوليد العملاء في قطاع الأعمال', 'إعادة الاستهداف واختبارات A/B', 'حملات توليد العملاء للعقارات'],
+          en: ['Google Ads: Search, Display, Shopping and YouTube, in Arabic and English', 'Meta: Facebook and Instagram, with creative tested before budgets scale', 'Snapchat and TikTok', 'LinkedIn for B2B lead generation', 'Cross-platform retargeting and A/B testing of copy, creative and landing pages', 'Lead-generation campaigns, including real estate'],
+          ar: ['إعلانات Google: البحث والشبكة الإعلانية والتسوق ويوتيوب، بالعربية والإنجليزية', 'Meta: فيسبوك وإنستغرام، مع اختبار المحتوى الإعلاني قبل رفع الميزانيات', 'سناب شات وتيك توك', 'لينكدإن لتوليد العملاء في قطاع الأعمال', 'إعادة الاستهداف عبر المنصات، واختبارات A/B للنصوص والتصاميم وصفحات الهبوط', 'حملات توليد العملاء، ومنها العقارات'],
         } },
     ],
   },

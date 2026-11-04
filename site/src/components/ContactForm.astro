@@ -15,8 +15,8 @@ const done = preview ? (lang === 'ar' ? 'تم التحقق من البيانات
 const opts = [...DISCIPLINES.map((p) => ({ id: p.id, label: p.name[lang] })), { id: 'unsure', label: d.unsure }];
 ---
 <form class="cf" novalidate data-form data-email={SITE.email} data-lang={lang} data-mode={preview ? 'preview' : 'live'}
-  data-msg-required={d.errors.required} data-msg-email={d.errors.email} data-msg-services={d.errors.services} data-msg-consent={d.errors.consent}>
-  <p class="placeholder-tag cf__notice">{notice}</p>
+  data-msg-required={d.errors.required} data-msg-email={d.errors.email} data-msg-services={d.errors.services} data-msg-consent={d.errors.consent} data-msg-phone={d.errors.phone} data-msg-website={d.errors.website} data-msg-copied={d.copied}>
+  <p class="cf__notice" id="cf-notice"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M3 6h18v12H3zM3 7l9 7 9-7"/></svg><span>{notice}</span></p>
   <div class="cf__summary" role="alert" aria-live="assertive" data-summary hidden>{d.errors.summary}</div>
 
   <div class="cf__row">
@@ -39,8 +39,8 @@ const opts = [...DISCIPLINES.map((p) => ({ id: p.id, label: p.name[lang] })), { 
   </fieldset>
 
   <div class="cf__row">
-    <div class="field"><label for="f-phone">{f.phone}</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" dir="ltr" placeholder="+966" /></div>
-    <div class="field"><label for="f-website">{f.website}</label><input id="f-website" name="website" type="url" inputmode="url" dir="ltr" placeholder="https://" /></div>
+    <div class="field"><label for="f-phone">{f.phone}</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" dir="ltr" placeholder="+966" aria-describedby="e-phone" /><p class="field__err" id="e-phone"></p></div>
+    <div class="field"><label for="f-website">{f.website}</label><input id="f-website" name="website" type="url" inputmode="url" dir="ltr" placeholder="https://" aria-describedby="e-website" /><p class="field__err" id="e-website"></p></div>
   </div>
   <div class="field"><label for="f-budget">{f.budget}</label><input id="f-budget" name="budget" inputmode="text" /></div>
   <div class="field"><label for="f-message">{f.message}</label><textarea id="f-message" name="message" rows="5" required aria-describedby="e-message"></textarea><p class="field__err" id="e-message"></p></div>
@@ -53,14 +53,22 @@ const opts = [...DISCIPLINES.map((p) => ({ id: p.id, label: p.name[lang] })), { 
   <div class="hp" aria-hidden="true"><label>Leave empty<input name="company_url" tabindex="-1" autocomplete="off" /></label></div>
 
   <div class="cf__actions">
-    <button class="btn btn--primary" type="submit" data-submit><span data-label>{d.submit}</span><span class="arrow" aria-hidden="true"></span></button>
+    <button class="btn btn--primary" type="submit" data-submit aria-describedby="cf-notice"><span data-label>{d.submit}</span><span class="arrow" aria-hidden="true"></span></button>
   </div>
-  <p class="cf__done" role="status" aria-live="polite" data-done hidden>{done}</p>
+  <div class="cf__done" role="status" aria-live="polite" data-done hidden>
+    <p>{done}</p>
+    <div class="cf__fallback">
+      <button class="btn" type="button" data-copy>{d.copy}</button>
+      <a class="link-diag latin" href={`mailto:${SITE.email}`} data-track="email_click" data-cta-location="form_fallback">{SITE.email}</a>
+      <span class="cf__copied" data-copied aria-live="polite"></span>
+    </div>
+  </div>
 </form>
 
 <style>
   .cf { display: grid; gap: var(--s-5); }
-  .cf__notice { justify-self: start; }
+  .cf__notice { display: flex; gap: var(--s-3); align-items: flex-start; padding: var(--s-3) var(--s-4); border: 1px solid var(--line-strong); color: var(--text); font-size: var(--fs-small); line-height: 1.5; }
+  .cf__notice svg { flex: none; margin-top: 2px; color: var(--accent-text); }
   .cf__summary { padding: var(--s-3) var(--s-4); border-inline-start: 3px solid #ff6b6b; background: rgb(255 107 107 / 0.08); color: var(--text-strong); font-weight: 500; }
   .cf__row { display: grid; gap: var(--s-5); }
   .field { display: grid; gap: var(--s-2); border: 0; padding: 0; min-width: 0; }
@@ -86,7 +94,10 @@ const opts = [...DISCIPLINES.map((p) => ({ id: p.id, label: p.name[lang] })), { 
   .consent input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--c-purple); flex: none; }
   .hp { position: absolute; inset-inline-start: -9999px; width: 1px; height: 1px; overflow: hidden; }
   .cf__actions { padding-top: var(--s-2); }
-  .cf__done { padding: var(--s-4); border-inline-start: 3px solid var(--accent); background: rgb(108 53 255 / 0.12); color: var(--text-strong); }
+  .cf__done { display: grid; gap: var(--s-4); padding: var(--s-4); border-inline-start: 3px solid var(--accent); background: rgb(108 53 255 / 0.12); color: var(--text-strong); }
+  .cf__done[hidden] { display: none; }
+  .cf__fallback { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-5); }
+  .cf__copied { font-size: var(--fs-small); color: var(--accent-text); }
   @media (min-width: 768px) { .cf__row { grid-template-columns: 1fr 1fr; gap: var(--s-6); } }
 </style>
 
@@ -111,16 +122,24 @@ const opts = [...DISCIPLINES.map((p) => ({ id: p.id, label: p.name[lang] })), { 
       if (el.name === 'consent') { const ok = (el as HTMLInputElement).checked; setErr(el, id, ok ? '' : msg.msgConsent!); return ok; }
       if (el.required && !el.value.trim()) { setErr(el, id, msg.msgRequired!); return false; }
       if (el.type === 'email' && el.value && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(el.value.trim())) { setErr(el, id, msg.msgEmail!); return false; }
+      if (el.name === 'phone' && el.value.trim() && !/^\+?[\d\s()-]{7,20}$/.test(el.value.trim())) { setErr(el, id, msg.msgPhone!); return false; }
+      if (el.name === 'website' && el.value.trim()) { try { const u = new URL(el.value.trim()); if (!/^https?:$/.test(u.protocol) || !u.hostname.includes('.')) throw 0; } catch { setErr(el, id, msg.msgWebsite!); return false; } }
       setErr(el, id, ''); return true;
     };
-    form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[required]').forEach((el) => el.addEventListener('blur', () => validate(el)));
+    const checked = '[required], [name="phone"], [name="website"]';
+    form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(checked).forEach((el) => el.addEventListener('blur', () => validate(el)));
+    let lastMessage = '';
+    form.querySelector<HTMLButtonElement>('[data-copy]')?.addEventListener('click', async () => {
+      const out = form.querySelector<HTMLElement>('[data-copied]')!;
+      try { await navigator.clipboard.writeText(lastMessage); out.textContent = msg.msgCopied!; } catch { out.textContent = ''; }
+    });
 
     form.addEventListener('submit', (ev) => {
       ev.preventDefault();
       const fd = new FormData(form);
       if (fd.get('company_url')) return; // honeypot
       let ok = true;
-      form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[required]').forEach((el) => { if (!validate(el)) ok = false; });
+      form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(checked).forEach((el) => { if (!validate(el)) ok = false; });
       const services = [...form.querySelectorAll<HTMLInputElement>('input[name="services"]:checked')];
       const sErr = form.querySelector<HTMLElement>('#e-services')!;
       sErr.textContent = services.length ? '' : msg.msgServices!;
@@ -139,6 +158,7 @@ const opts = [...DISCIPLINES.map((p) => ({ id: p.id, label: p.name[lang] })), { 
       ];
       const subject = `New project enquiry — ${fd.get('company')}`;
       dl.push({ event: 'form_submit', form_id: 'inquiry', services: services.map((s) => s.value).join(','), language: msg.lang });
+      lastMessage = `${subject}\n\n${lines.join('\n')}`;
       form.querySelector<HTMLElement>('[data-done]')!.hidden = false;
       if (msg.mode === 'preview') return;
       location.href = `mailto:${msg.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;

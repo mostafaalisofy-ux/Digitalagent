@@ -41,7 +41,7 @@ const [l2, d2] = split(d.l2);
 
 <style>
   .hero { position: relative; overflow: hidden; padding-top: var(--s-5); isolation: isolate; }
-  .hero__grid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-items: end; min-height: calc(100svh - 132px); padding-bottom: var(--s-6); }
+  .hero__grid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-items: end; padding-block: var(--s-3) var(--s-6); } /* mobile/tablet: compact, so the CTA is always in the first view */
   .hero__copy { position: relative; z-index: 2; display: grid; gap: var(--s-5); align-content: end; }
   .hero__eyebrow { padding-inline-end: 96px; }
   .hero__eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
@@ -95,6 +95,12 @@ const [l2, d2] = split(d.l2);
     .hero { padding-top: var(--s-3); }
     .hero__copy { gap: var(--s-4); }
     .hero__grid { min-height: 0; padding-bottom: var(--s-4); }
+  }
+  /* very short phones (≈640px tall): Arabic headline and supporting copy step down so the CTA stays in view */
+  @media (max-width: 767px) and (max-height: 700px) {
+    :global([dir='rtl']) .hero__title { font-size: calc(var(--fs-mega) * 1.08); }
+    .hero__sub { font-size: var(--fs-body); }
+    .hero__copy { gap: var(--s-3); }
   }
   @media (prefers-reduced-motion: reduce) {
     .hero__track span { animation: none; transform: none; }

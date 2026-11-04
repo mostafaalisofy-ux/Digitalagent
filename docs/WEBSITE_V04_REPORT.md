@@ -1,5 +1,7 @@
 # Website v0.4: final redesign report
 
+> **Superseded in part by Sprint 2** (`docs/SPRINT_2_REPORT.md`): case narratives reworded (no profitability claims), business context added, services scope completed, Saudi GEA hidden in production, the Results section omitted in production until a case is approved, About placeholders removed, and type checking and accessibility QA added. The metric list in §2 still applies, and every case is still pending.
+
 Date: 2026-11-04 · Branch `claude/saytamm-brand-strategy-d2shzo` · Brief: "Final website redesign & implementation".
 Screenshots: `site/docs/preview/v04-*`.
 

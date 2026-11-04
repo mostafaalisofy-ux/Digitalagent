@@ -1,7 +1,7 @@
 // Renders 1200x630 OG images from the approved symbol SVG + brand fonts.
 const { chromium } = require('playwright'); const fs = require('fs');
 (async () => {
-  const site = '/home/user/Digitalagent/site';
+  const site = require('path').resolve(__dirname, '..'); // project root (site/), no machine-specific path
   const svg = fs.readFileSync(`${site}/public/brand/SayTamm_Symbol_Signature_White-Purple.svg`, 'utf8').replace(/width="\d+" height="\d+"/, 'width="100%" height="100%"');
   const font = (f) => 'data:font/woff2;base64,' + fs.readFileSync(f).toString('base64');
   const sat = font(`${site}/public/fonts/satoshi/Satoshi-700.woff2`);

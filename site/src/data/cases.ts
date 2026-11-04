@@ -4,11 +4,15 @@
 // carries `evidence.status: 'pending'`. Pending figures render in staging (with a visible
 // "pending confirmation" tag) and are WITHHELD from the production build (see `showFigures`).
 // Never add a figure, date or claim here that is not in a source document.
+// Wording rule: ROAS is revenue ÷ ad spend. It is not profit — never describe a result as
+// "profitable" without financial evidence (margins, costs) from the client.
 import { SITE, type Lang } from '../config/site';
 type T = Record<Lang, string>;
 export interface Kpi { value: string; label: T; accent?: boolean }
 export interface Bar { spend: number; result: number; unit: T; spendLabel: T; resultLabel: T }
 export interface Visual { src: string; w: number; h: number; alt: T }
+// visual.images: the first three are the portrait set used on the homepage; any further images
+// (landscape) appear on the case page only.
 export interface Evidence {
   source: T;        // where the figure comes from
   measured: T;      // what the headline figure measures, and how it was attributed
@@ -17,8 +21,9 @@ export interface Evidence {
 }
 export interface Case {
   slug: string; tier: 1 | 2;
-  client: T; sector: T; market: T; period: T | null; channels: string[]; services: string[];
+  client: T; sector: T; market: T | null; period: T | null; channels: string[]; services: string[];
   headline: T;      // one-line story
+  context: T;       // business context: who the client is and the situation
   objective: T; challenge: T; strategy: T; execution: T; outcome: T;
   kpis: Kpi[]; bar?: Bar; note?: T;
   /** Real campaign assets from received decks (rights D-002). null = none supplied → no image is faked. */
@@ -37,9 +42,10 @@ export const CASES: Case[] = [
     market: { en: 'Egypt', ar: 'مصر' },
     period: { en: '10 Mar – 30 May 2022', ar: '10 مارس – 30 مايو 2022' },
     channels: ['Meta'], services: ['performance-marketing'],
-    headline: { en: 'Two online stores scaled to high-volume, profitable sales in one quarter.', ar: 'متجران إلكترونيان وصلا إلى مبيعات كبيرة ومربحة خلال ربع واحد.' },
-    objective: { en: 'Grow sales volume quickly on two fashion and beauty stores without giving up profitability.', ar: 'رفع حجم المبيعات بسرعة في متجرين للأزياء والتجميل دون التضحية بالربحية.' },
-    challenge: { en: 'Spend had to rise fast, and every additional pound of spend still had to return more than it cost.', ar: 'كان لا بد من رفع الإنفاق بسرعة، مع أن يبقى كل جنيه إضافي مربحاً.' },
+    headline: { en: 'Two online stores grew purchase volume in a single quarter while keeping return on ad spend high.', ar: 'متجران إلكترونيان وسّعا حجم المشتريات خلال ربع واحد، مع الحفاظ على عائد إعلاني مرتفع.' },
+    context: { en: 'Two fashion and beauty brands selling through their own online stores in Egypt, with Meta as the paid channel for the campaign period.', ar: 'علامتان للأزياء والتجميل تبيعان عبر متجريهما الإلكترونيين في مصر، وكانت Meta القناة الإعلانية المدفوعة خلال فترة الحملة.' },
+    objective: { en: 'Grow online purchase volume quickly for both stores without letting return on ad spend fall as budgets rose.', ar: 'رفع حجم المشتريات بسرعة في المتجرين دون أن يتراجع العائد على الإنفاق الإعلاني مع زيادة الميزانيات.' },
+    challenge: { en: 'Scaling spend quickly usually lowers the return on each additional pound. The plan had to grow volume without that drop.', ar: 'رفع الإنفاق بسرعة يُضعف عادةً العائد على كل جنيه إضافي، وكان على الخطة أن تزيد الحجم دون هذا التراجع.' },
     strategy: { en: 'Concentrate budget on middle- and bottom-of-funnel audiences with purchase intent, and build creative to be tested rather than simply published.', ar: 'تركيز الميزانية على جماهير منتصف ونهاية مسار الشراء ممن لديهم نية شراء، وبناء محتوى إعلاني للاختبار لا للنشر فقط.' },
     execution: { en: 'Twelve Meta campaigns on the larger account. Budget was moved daily toward the ad sets producing purchases and away from those that were not.', ar: 'اثنتا عشرة حملة على Meta للحساب الأكبر، مع تحريك الميزانية يومياً نحو المجموعات الإعلانية التي تحقق مشتريات وبعيداً عن غيرها.' },
     outcome: { en: 'Account A returned 13.84× on EGP 535K of spend across 82 days; account B returned 8.91×.', ar: 'حقق الحساب A عائداً بلغ ‎13.84×‎ على إنفاق 535 ألف جنيه خلال 82 يوماً، وحقق الحساب B عائداً بلغ ‎8.91×‎.' },
@@ -56,6 +62,8 @@ export const CASES: Case[] = [
       { src: '/work/fashion-01.webp', w: 641, h: 963, alt: { en: 'Fashion campaign photography: model in a sports jacket outdoors', ar: 'تصوير حملة أزياء: عارضة بسترة رياضية في الخارج' } },
       { src: '/work/fashion-02.webp', w: 549, h: 824, alt: { en: 'Product photography: lacing white sneakers at sunset', ar: 'تصوير منتج: ربط حذاء رياضي أبيض وقت الغروب' } },
       { src: '/work/fashion-03.webp', w: 548, h: 824, alt: { en: 'Lifestyle photography: sportswear towel on a wooden chair', ar: 'تصوير أسلوب حياة: منشفة رياضية على كرسي خشبي' } },
+      { src: '/work/fashion-04.webp', w: 549, h: 400, alt: { en: 'Studio photography: model in a light-blue shirt and headscarf', ar: 'تصوير استوديو: عارضة بقميص أزرق فاتح وحجاب' } },
+      { src: '/work/fashion-05.webp', w: 549, h: 381, alt: { en: 'Product photography: running shoe mid-stride outdoors', ar: 'تصوير منتج: حذاء جري أثناء الحركة في الخارج' } },
     ] },
     evidence: { source: META_REPORT, status: 'pending',
       measured: { en: 'Return on ad spend = Meta-attributed purchase value ÷ ad spend, per ad account.', ar: 'العائد على الإنفاق = قيمة المشتريات المنسوبة من Meta ÷ الإنفاق الإعلاني، لكل حساب.' },
@@ -68,12 +76,13 @@ export const CASES: Case[] = [
     market: { en: 'Saudi Arabia', ar: 'السعودية' },
     period: { en: 'Saudi National Day season', ar: 'موسم اليوم الوطني السعودي' },
     channels: ['Google', 'Instagram', 'Snapchat'], services: ['performance-marketing', 'digital-marketing-strategy'],
-    headline: { en: 'A crowded national season, won without leaning on discounts.', ar: 'موسم وطني مزدحم، كسبته العلامة دون الاعتماد على الخصومات.' },
-    objective: { en: 'Turn the Saudi National Day season into profitable online furniture sales.', ar: 'تحويل موسم اليوم الوطني السعودي إلى مبيعات أثاث إلكترونية مربحة.' },
-    challenge: { en: 'One of the most competitive retail weeks of the year, and a brief to stand out without heavy discounts or influencers.', ar: 'واحد من أكثر أسابيع التجزئة تنافساً في العام، مع مطلب التميّز دون خصومات كبيرة أو مؤثرين.' },
+    headline: { en: 'A crowded national season, driven by product offers rather than deep discounts.', ar: 'موسم وطني مزدحم، قادته عروض المنتجات لا الخصومات الكبيرة.' },
+    context: { en: 'A Saudi furniture retailer selling online, going into Saudi National Day, one of the busiest retail periods of the year.', ar: 'متجر أثاث سعودي يبيع عبر الإنترنت، مقبل على اليوم الوطني السعودي، أحد أكثر مواسم التجزئة ازدحاماً في العام.' },
+    objective: { en: 'Grow online furniture sales over the National Day season without relying on deep discounts.', ar: 'تنمية مبيعات الأثاث عبر الإنترنت في موسم اليوم الوطني دون الاعتماد على خصومات كبيرة.' },
+    challenge: { en: 'Every retailer competes for attention in the same week, and the brief ruled out heavy discounting and influencers.', ar: 'كل المتاجر تتنافس على الانتباه في الأسبوع نفسه، والمطلوب التميّز دون خصومات كبيرة أو مؤثرين.' },
     strategy: { en: 'Lead with hero products and bundle offers instead of price cuts, keep every discount under 20%, and weight the budget 90/10 toward conversion over awareness.', ar: 'تقديم المنتجات الرئيسية وعروض الباقات بدلاً من خفض الأسعار، وإبقاء الخصومات تحت 20%، وتوزيع الميزانية 90/10 لصالح التحويل على حساب الوعي.' },
-    execution: { en: 'SAR 100K across Google (40K), Instagram (40K) and Snapchat (20K), with abandoned-cart retargeting to bring back shoppers who left before checkout.', ar: '100 ألف ريال موزعة على Google (‏40 ألفاً) وإنستغرام (40 ألفاً) وسناب شات (20 ألفاً)، مع إعادة استهداف السلال المتروكة لاستعادة المتسوقين قبل إتمام الشراء.' },
-    outcome: { en: 'SAR 1.09M in sales from a SAR 100K media budget: 507 orders, with 446 first-time customers.', ar: '1.09 مليون ريال مبيعات من ميزانية إعلانية قدرها 100 ألف ريال: 507 طلبات، و446 عميلاً يشترون لأول مرة.' },
+    execution: { en: 'A media plan split across Google, Instagram and Snapchat, weighted toward Google and Instagram, with abandoned-cart retargeting to bring back shoppers who left before checkout.', ar: 'خطة إعلانية موزعة على Google وإنستغرام وسناب شات، بثقل أكبر لـ Google وإنستغرام، مع إعادة استهداف السلال المتروكة لاستعادة المتسوقين قبل إتمام الشراء.' },
+    outcome: { en: 'SAR 1.09M in sales from a SAR 100K media budget (Google 40K, Instagram 40K, Snapchat 20K): 507 orders, with 446 first-time customers.', ar: '1.09 مليون ريال مبيعات من ميزانية إعلانية قدرها 100 ألف ريال (Google ‏40 ألفاً، إنستغرام 40 ألفاً، سناب شات 20 ألفاً): 507 طلبات، و446 عميلاً يشترون لأول مرة.' },
     kpis: [
       { value: '10.9×', label: { en: 'Return on ad spend', ar: 'العائد على الإنفاق الإعلاني' }, accent: true },
       { value: '507', label: { en: 'Orders', ar: 'طلب' } },
@@ -94,6 +103,7 @@ export const CASES: Case[] = [
     period: { en: 'Ramadan 2015', ar: 'رمضان 2015' },
     channels: ['Filfan', 'FilGoal', 'Facebook', 'Google Display'], services: ['digital-marketing-strategy', 'performance-marketing'],
     headline: { en: 'Every Ramadan series in one place, sponsored by one bank.', ar: 'كل مسلسلات رمضان في مكان واحد، برعاية بنك واحد.' },
+    context: { en: 'QNB Al Ahli wanted to promote m.visa, its mobile payment service, during Ramadan, when audiences in Egypt gather around the season’s TV series.', ar: 'أراد بنك QNB الأهلي الترويج لخدمة الدفع عبر الجوال m.visa خلال رمضان، حين يجتمع الجمهور في مصر حول مسلسلات الموسم.' },
     objective: { en: 'Build awareness and traffic for the bank’s m.visa service during Ramadan.', ar: 'بناء الوعي وجذب الزيارات لخدمة m.visa من البنك خلال رمضان.' },
     challenge: { en: 'Sponsorship of individual Ramadan series was sold out, and priced far above the budget.', ar: 'رعاية المسلسلات الرمضانية الفردية كانت مباعة مسبقاً، وبأسعار تفوق الميزانية بكثير.' },
     strategy: { en: 'Instead of sponsoring one series, own the whole category: a single destination for every Ramadan series, carrying the bank’s name.', ar: 'بدلاً من رعاية مسلسل واحد، امتلاك الفئة كلها: وجهة واحدة لكل مسلسلات رمضان تحمل اسم البنك.' },
@@ -119,7 +129,8 @@ export const CASES: Case[] = [
     sector: { en: 'Real estate · Lead generation', ar: 'عقارات · توليد العملاء' },
     market: { en: 'Oman', ar: 'عُمان' },
     period: null, channels: ['Meta'], services: ['performance-marketing'],
-    headline: { en: 'High-value homes sold from a five-figure media budget.', ar: 'وحدات سكنية عالية القيمة بيعت بميزانية إعلانية محدودة.' },
+    headline: { en: 'High-value homes sold through paid social, optimised for buyers rather than leads.', ar: 'وحدات سكنية عالية القيمة بيعت عبر إعلانات التواصل، بالتركيز على المشترين لا على العملاء المحتملين.' },
+    context: { en: 'An Omani real estate developer selling high-value residential units.', ar: 'مطوّر عقاري عُماني يبيع وحدات سكنية عالية القيمة.' },
     objective: { en: 'Sell high-value residential units through paid social.', ar: 'بيع وحدات سكنية عالية القيمة عبر الإعلانات على منصات التواصل.' },
     challenge: { en: 'Reach buyers ready to commit to a high-value purchase — not just people willing to leave a phone number.', ar: 'الوصول إلى مشترين جاهزين لقرار شراء كبير، لا مجرد أشخاص يتركون رقم هاتف.' },
     strategy: { en: 'Judge the campaign by units sold rather than by cost per lead.', ar: 'تقييم الحملة بعدد الوحدات المباعة، لا بتكلفة العميل المحتمل.' },
@@ -145,6 +156,7 @@ export const CASES: Case[] = [
     period: { en: '1 Oct 2021 – 18 Jan 2022', ar: '1 أكتوبر 2021 – 18 يناير 2022' },
     channels: ['Meta'], services: ['performance-marketing'],
     headline: { en: 'A high-ticket peak season built on purchase intent, not volume.', ar: 'موسم ذروة عالي القيمة مبني على نية الشراء، لا على الكثرة.' },
+    context: { en: 'An Egyptian online retailer of high-ticket electronics, going into the fourth-quarter peak season.', ar: 'متجر إلكتروني مصري لبيع الأجهزة الإلكترونية مرتفعة الثمن، مقبل على موسم ذروة الربع الرابع.' },
     objective: { en: 'Grow high-value orders through the Q4 peak season.', ar: 'تنمية الطلبات عالية القيمة خلال موسم ذروة الربع الرابع.' },
     challenge: { en: 'High-ticket products, a minimal budget and the busiest season of the year.', ar: 'منتجات مرتفعة الثمن، وميزانية محدودة، وأكثر مواسم السنة ازدحاماً.' },
     strategy: { en: 'Spend only where purchase intent was already visible: middle- and bottom-of-funnel audiences.', ar: 'الإنفاق فقط حيث تظهر نية الشراء: جماهير منتصف ونهاية مسار الشراء.' },
@@ -165,11 +177,12 @@ export const CASES: Case[] = [
     slug: 'bio-group', tier: 2,
     client: { en: 'Bio-Group', ar: 'بايو جروب' },
     sector: { en: 'Retail → E-commerce', ar: 'تجزئة ← تجارة إلكترونية' },
-    market: { en: 'Market to be confirmed', ar: 'السوق قيد التأكيد' },
+    market: null,
     period: null, channels: ['Meta', 'Google'], services: ['performance-marketing'],
-    headline: { en: 'An offline retailer’s online return doubled in two weeks.', ar: 'عائد متجر تقليدي على الإنترنت تضاعف خلال أسبوعين.' },
-    objective: { en: 'Move an established offline retailer into profitable e-commerce.', ar: 'نقل متجر تقليدي راسخ إلى تجارة إلكترونية مربحة.' },
-    challenge: { en: 'A brand known in stores, with no track record of selling online.', ar: 'علامة معروفة في المتاجر، بلا سجل سابق في البيع الإلكتروني.' },
+    headline: { en: 'An offline retailer’s return on ad spend doubled within two weeks of launching online.', ar: 'تضاعف العائد على الإنفاق الإعلاني لمتجر تقليدي خلال أسبوعين من إطلاقه على الإنترنت.' },
+    context: { en: 'An established offline retailer moving into online sales for the first time.', ar: 'متجر تقليدي راسخ يتجه إلى البيع عبر الإنترنت لأول مرة.' },
+    objective: { en: 'Launch online sales for an established offline retailer and improve return on ad spend quickly.', ar: 'إطلاق البيع الإلكتروني لمتجر تقليدي راسخ، وتحسين العائد على الإنفاق الإعلاني بسرعة.' },
+    challenge: { en: 'No online sales history to learn from, so early decisions had to be made on very little data.', ar: 'لا يوجد سجل مبيعات إلكترونية يُبنى عليه، فكان لا بد من اتخاذ القرارات الأولى ببيانات قليلة جداً.' },
     strategy: { en: 'Run for conversion from day one, and let early purchase data decide where the budget goes.', ar: 'العمل على التحويل من اليوم الأول، وترك بيانات الشراء الأولى تحدد وجهة الميزانية.' },
     execution: { en: 'Conversion campaigns on Meta and Google.', ar: 'حملات تحويل على Meta وGoogle.' },
     outcome: { en: 'ROAS rose from 2× to 4× within two weeks, across 2,970 purchases.', ar: 'ارتفع العائد من ‎2×‎ إلى ‎4×‎ خلال أسبوعين، عبر 2,970 عملية شراء.' },
@@ -190,6 +203,7 @@ export const CASES: Case[] = [
     market: { en: 'UAE', ar: 'الإمارات' },
     period: null, channels: ['Meta'], services: ['performance-marketing'],
     headline: { en: 'Qualified leads for a limited-time offer, at a low cost per lead.', ar: 'عملاء مؤهلون لعرض محدود المدة، بتكلفة منخفضة للعميل.' },
+    context: { en: 'DAMAC was marketing a limited-time offer on residences at Paramount Tower in the UAE.', ar: 'كانت داماك تسوّق عرضاً محدود المدة على وحدات سكنية في برج باراماونت بالإمارات.' },
     objective: { en: 'Generate qualified buyer leads for a limited-time Paramount Tower offer.', ar: 'جذب عملاء مؤهلين لعرض محدود المدة على برج باراماونت.' },
     challenge: { en: 'A short offer window, where lead quality mattered more than volume.', ar: 'نافذة عرض قصيرة، تهم فيها جودة العملاء أكثر من عددهم.' },
     strategy: { en: 'Tune lead-generation campaigns for qualification rather than raw lead count.', ar: 'ضبط حملات توليد العملاء على التأهيل لا على عدد العملاء.' },

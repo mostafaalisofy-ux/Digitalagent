@@ -10,7 +10,7 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = h(lang).selected;
 const r = h(lang).results;
-const story = ['objective', 'challenge', 'strategy', 'execution'] as const;
+const story = ['context', 'challenge', 'strategy', 'execution'] as const;
 ---
 <section class="section sw" id="work" aria-labelledby="sw-title">
   <div class="container">
@@ -34,7 +34,7 @@ const story = ['objective', 'challenge', 'strategy', 'execution'] as const;
             <h3 class="ch__client" id={`ch-${c.slug}`}>{c.client[lang]}</h3>
             <dl class="ch__meta">
               <div><dt>{d.f.industry}</dt><dd>{c.sector[lang]}</dd></div>
-              <div><dt>{d.f.market}</dt><dd>{c.market[lang]}</dd></div>
+              {c.market && <div><dt>{d.f.market}</dt><dd>{c.market[lang]}</dd></div>}
               {c.period && <div><dt>{d.f.period}</dt><dd>{c.period[lang]}</dd></div>}
             </dl>
           </header>

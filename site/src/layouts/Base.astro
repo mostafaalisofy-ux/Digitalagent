@@ -81,7 +81,7 @@ const jsonLd = [{
     let ticking = false;
     const check = () => {
       ticking = false;
-      const limit = innerHeight * 0.9;
+      const limit = innerHeight * 0.98; // anything that starts in view is revealed (a CTA near the fold must never stay hidden)
       pending = pending.filter((el) => { if (el.getBoundingClientRect().top < limit) { el.classList.add('is-in'); return false; } return true; });
       if (!pending.length) { removeEventListener('scroll', onScroll); removeEventListener('resize', onScroll); }
     };

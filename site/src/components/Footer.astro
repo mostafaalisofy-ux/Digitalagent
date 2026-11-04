@@ -8,51 +8,63 @@ const { lang, page, altHref } = Astro.props;
 const d = t(lang);
 const alt = other(lang);
 const year = new Date().getFullYear();
+const nav: [PageKey, string][] = [['work', d.nav.work], ['services', d.nav.services], ['about', d.nav.about], ['contact', d.nav.contact]];
 ---
 <footer class="ftr">
   <div class="container">
-    <div class="ftr__top grid">
+    <div class="ftr__top">
       <div class="ftr__brand">
-        <Logo variant="white" height={56} decorative />
-        <p class="ftr__line" lang={lang === 'ar' ? 'ar' : 'en'}>{d.footer.line}</p>
+        <a href={href(lang)} aria-label={d.nav.home}><Logo variant="signature" height={52} decorative /></a>
+        <p class="ftr__line" lang={lang}>{d.footer.line}</p>
+        <p class="ftr__desc">{d.footer.desc}</p>
       </div>
-      <div class="ftr__col">
-        <h2 class="eyebrow">{d.footer.email}</h2>
+      <div class="ftr__col ftr__contact">
+        <h2 class="ftr__h">{d.footer.contact}</h2>
         <a class="link-diag latin ftr__mail" href={`mailto:${SITE.email}`} data-track="email_click" data-cta-location="footer">{SITE.email}</a>
+        <a class="ftr__start" href={href(lang, 'contact')} data-track="cta_click" data-cta-id="start_project" data-cta-location="footer">{d.nav.cta}<span class="arrow" aria-hidden="true"></span></a>
       </div>
-      <nav class="ftr__col" aria-label={d.footer.nav}>
-        <h2 class="eyebrow">{d.footer.nav}</h2>
-        <ul role="list">
-          <li><a href={href(lang, 'work')}>{d.nav.work}</a></li>
-          <li><a href={href(lang, 'services')}>{d.nav.services}</a></li>
-          <li><a href={href(lang, 'about')}>{d.nav.about}</a></li>
-          <li><a href={href(lang, 'contact')}>{d.nav.contact}</a></li>
-        </ul>
+      <nav class="ftr__col ftr__nav" aria-label={d.footer.nav}>
+        <h2 class="ftr__h">{d.footer.nav}</h2>
+        <ul role="list">{nav.map(([k, label]) => <li><a href={href(lang, k)} aria-current={k === page ? 'page' : undefined}>{label}</a></li>)}</ul>
       </nav>
-      <div class="ftr__col">
-        <h2 class="eyebrow">{d.footer.lang}</h2>
-        <a href={altHref ?? href(alt, page)} hreflang={alt} lang={alt}>{d.nav.switch}</a>
+      <div class="ftr__col ftr__lang">
+        <h2 class="ftr__h">{d.footer.lang}</h2>
+        <a href={altHref ?? href(alt, page)} hreflang={alt} lang={alt} data-track="language_switch">{d.nav.switch}</a>
       </div>
     </div>
     <div class="ftr__bottom">
-      <p>© {year} SayTamm · قول تم. {d.footer.rights}</p>
+      <p>© {year} SayTamm · <bdi lang="ar">قول تم</bdi>. {d.footer.rights}</p>
       <p class="latin">saytamm.com</p>
     </div>
   </div>
 </footer>
 
 <style>
-  .ftr { border-top: 1px solid var(--line); padding-block: var(--s-10) var(--s-6); position: relative; overflow: hidden; }
-  .ftr__top { row-gap: var(--s-7); }
-  .ftr__brand { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-4); }
-  .ftr__line { font-size: var(--fs-h3); font-weight: 700; color: var(--text-strong); letter-spacing: var(--track-head); }
-  .ftr__col { grid-column: span 2; display: flex; flex-direction: column; gap: var(--s-3); }
+  .ftr { border-top: 1px solid var(--line); padding-block: var(--s-10) var(--s-6); background: var(--bg); }
+  .ftr__top { display: grid; gap: var(--s-7) var(--gutter); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ftr__brand { grid-column: 1 / -1; display: grid; gap: var(--s-3); justify-items: start; }
+  .ftr__line { font-size: var(--fs-h2); font-weight: 700; color: var(--text-strong); letter-spacing: var(--track-tight); line-height: 1.1; margin-top: var(--s-2); }
+  .ftr__desc { color: var(--text-muted); font-size: var(--fs-small); }
+  .ftr__col { display: flex; flex-direction: column; gap: var(--s-3); align-items: flex-start; }
+  .ftr__contact { grid-column: 1 / -1; }
+  .ftr__h { font-size: var(--fs-eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--text-muted); font-weight: 500; }
+  :global([dir='rtl']) .ftr__h { text-transform: none; letter-spacing: 0; font-size: var(--fs-caption); }
   .ftr__col ul { display: grid; gap: var(--s-2); }
-  .ftr__col a:not(.link-diag) { color: var(--text-muted); transition: color var(--d-2); }
-  .ftr__col a:hover { color: var(--text-strong); }
-  .ftr__mail { font-size: var(--fs-lead); color: var(--text-strong); align-self: flex-start; }
-  .ftr__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-3); margin-top: var(--s-10); padding-top: var(--s-5); border-top: 1px solid var(--line); font-size: var(--fs-caption); color: var(--text-muted); }
-  .ftr__col:nth-of-type(2) { grid-column: 1 / -1; }
-  @media (min-width: 768px) { .ftr__brand { grid-column: span 3; } .ftr__col, .ftr__col:nth-of-type(2) { grid-column: span 2; } .ftr__col:nth-of-type(2) { grid-column: span 3; } }
-  @media (min-width: 1024px) { .ftr__brand { grid-column: span 5; } .ftr__col:nth-of-type(2) { grid-column: 6 / span 3; } .ftr__col { grid-column: span 2; } }
+  .ftr__col a:not(.link-diag):not(.ftr__start) { color: var(--text); transition: color var(--d-2); }
+  .ftr__col a:not(.link-diag):not(.ftr__start):hover, .ftr__col a[aria-current='page'] { color: var(--text-strong); }
+  .ftr__mail { font-size: var(--fs-lead); color: var(--text-strong); }
+  .ftr__start { display: inline-flex; align-items: center; gap: var(--s-3); font-weight: 700; color: var(--accent-text); text-decoration: none; }
+  .ftr__start .arrow { display: inline-block; width: 18px; height: 2px; background: currentColor; position: relative; transition: transform var(--d-3) var(--ease-out); }
+  .ftr__start .arrow::after { content: ''; position: absolute; inset-inline-end: 0; top: -4px; width: 10px; height: 10px; border-top: 2px solid currentColor; border-inline-end: 2px solid currentColor; transform: rotate(45deg); }
+  :global([dir='rtl']) .ftr__start .arrow::after { transform: rotate(-45deg); }
+  .ftr__start:hover .arrow { transform: translateX(4px); }
+  :global([dir='rtl']) .ftr__start:hover .arrow { transform: translateX(-4px); }
+  .ftr__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-3); margin-top: var(--s-9); padding-top: var(--s-5); border-top: 1px solid var(--line); font-size: var(--fs-caption); color: var(--text-muted); }
+  @media (min-width: 768px) {
+    .ftr__top { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+    .ftr__brand { grid-column: 1 / span 5; }
+    .ftr__contact { grid-column: 6 / span 3; }
+    .ftr__nav { grid-column: 9 / span 2; }
+    .ftr__lang { grid-column: 11 / span 2; }
+  }
 </style>

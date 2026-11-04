@@ -1,30 +1,37 @@
 ---
 // Brands we've worked with: the team's professional experience (owner-supplied list), framed so it
-// never reads as SayTamm's direct client roster. Official logo files are dropped into BRANDS[].logo
-// when supplied with permission; until then each brand is set as its name, never a drawn logo.
-import { BRANDS } from '../../data/clients';
-import { type Lang } from '../../config/site';
+// never reads as SayTamm's direct client roster. Official logo files go in BRANDS[].logo when supplied
+// with permission; until then each brand is set as its name, never a drawn or sourced logo.
+import { visibleBrands } from '../../data/clients';
+import { SITE, type Lang } from '../../config/site';
 import { caseHref } from '../../i18n/paths';
 import { h } from '../../i18n/home';
-interface Props { lang: Lang; headingLevel?: 'h2' | 'h3' }
-const { lang, headingLevel: H = 'h2' } = Astro.props;
+interface Props { lang: Lang }
+const { lang } = Astro.props;
 const d = h(lang).brands;
+const brands = visibleBrands();
+const sectors = new Set(brands.map((b) => b.sector.en)).size;
 ---
 <section class="section brands" id="brands" aria-labelledby="brands-title">
   <div class="container brands__grid">
     <header class="brands__head">
       <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
-      <H class="brands__title" id="brands-title" data-reveal>{d.title}</H>
+      <h2 class="brands__title" id="brands-title" data-reveal>{d.title}</h2>
       <p class="brands__intro" data-reveal>{d.intro}</p>
+      <p class="brands__count num latin-digits" data-reveal>{d.count(brands.length, sectors)}</p>
     </header>
     <ul role="list" class="wall" data-reveal-group>
-      {BRANDS.map((b, i) => (
+      {brands.map((b, i) => (
         <li class="wall__cell" style={`--delay:${(i % 4) * 60}ms`}>
+          <span class="wall__n num latin" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
           {b.logo
             ? <img class="wall__logo" src={b.logo.src} width={b.logo.w} height={b.logo.h} alt={b.name} loading="lazy" decoding="async" />
             : <span class="wall__name latin" lang="en">{b.name}</span>}
-          <span class="wall__foot"><span class="wall__sector">{b.sector[lang]}</span>
-          {b.caseSlug && <a class="wall__case" href={caseHref(lang, b.caseSlug)} data-track="case_study_view" data-cta-id={b.caseSlug} data-cta-location="brands">{d.caseLink}<span class="sr-only"> — {b.name}</span></a>}</span>
+          <span class="wall__foot">
+            <span class="wall__sector">{b.sector[lang]}</span>
+            {b.caseSlug && <a class="wall__case" href={caseHref(lang, b.caseSlug)} data-track="case_study_view" data-cta-id={b.caseSlug} data-cta-location="brands">{d.caseLink}<span class="sr-only"> — {b.name}</span></a>}
+            {SITE.preview && b.permission === 'pending' && <span class="tag-pending">{d.permission}</span>}
+          </span>
         </li>
       ))}
     </ul>
@@ -38,20 +45,21 @@ const d = h(lang).brands;
   .brands .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
   .brands__title { font-size: var(--fs-h1); letter-spacing: var(--track-tight); line-height: var(--lh-head); }
   .brands__intro { color: var(--text); font-size: var(--fs-lead); max-width: 36ch; }
+  .brands__count { font-size: var(--fs-small); font-weight: 700; color: var(--accent-text); padding-top: var(--s-3); border-top: 1px solid var(--line); justify-self: start; }
   .wall { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); border-inline-start: 1px solid var(--line); }
-  .wall__cell { position: relative; display: grid; align-content: space-between; gap: var(--s-4); min-height: 136px; padding: var(--s-4); border-bottom: 1px solid var(--line); border-inline-end: 1px solid var(--line); opacity: 1; transition: background var(--d-2) var(--ease-out); }
+  .wall__cell { position: relative; display: grid; grid-template-rows: auto 1fr auto; gap: var(--s-3); min-height: 150px; padding: var(--s-4); border-bottom: 1px solid var(--line); border-inline-end: 1px solid var(--line); transition: background var(--d-2) var(--ease-out); }
   .wall__cell:hover { background: rgb(245 243 250 / 0.025); }
-  .wall__name { font-size: clamp(1.125rem, 0.95rem + 0.7vw, 1.625rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; color: var(--text-strong); }
-  .wall__logo { max-height: 44px; max-width: 70%; width: auto; height: auto; object-fit: contain; }
-  .wall__sector { font-size: var(--fs-caption); color: var(--text-muted); }
+  .wall__n { font-size: var(--fs-caption); color: var(--text-muted); }
+  .wall__name { align-self: center; font-size: clamp(1.25rem, 1rem + 0.9vw, 1.875rem); font-weight: 700; letter-spacing: -0.025em; line-height: 1.05; color: var(--text-strong); }
+  .wall__logo { align-self: center; max-height: 44px; max-width: 70%; width: auto; height: auto; object-fit: contain; }
   .wall__foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: var(--s-1) var(--s-3); }
+  .wall__sector { font-size: var(--fs-caption); color: var(--text-muted); }
   .wall__case { font-size: var(--fs-caption); color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
   .wall__case:hover { color: var(--text-strong); }
   .brands__note { font-size: var(--fs-small); color: var(--text-muted); max-width: 72ch; }
-  /* staggered row reveal */
   :global(.js) .wall__cell { opacity: 0; transform: translate3d(0, 16px, 0); transition: opacity var(--d-3) var(--ease-out), transform var(--d-3) var(--ease-out), background var(--d-2); transition-delay: var(--delay); }
   :global(.js) .wall:global(.is-in) .wall__cell { opacity: 1; transform: none; }
-  @media (min-width: 768px) { .wall { grid-template-columns: repeat(3, minmax(0, 1fr)); } .wall__cell { min-height: 156px; padding: var(--s-5); } }
+  @media (min-width: 768px) { .wall { grid-template-columns: repeat(3, minmax(0, 1fr)); } .wall__cell { min-height: 172px; padding: var(--s-5); } }
   @media (min-width: 1024px) {
     .brands__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
     .brands__head { grid-column: 1 / span 4; position: sticky; top: 120px; align-self: start; }

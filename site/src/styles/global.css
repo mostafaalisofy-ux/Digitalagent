@@ -47,7 +47,10 @@ p { text-wrap: pretty; }
 .accent { color: var(--accent); }        /* large display text / glyphs only */
 .accent-text { color: var(--accent-text); }
 .num { font-variant-numeric: tabular-nums lining-nums; letter-spacing: var(--track-tight); }
+[hidden] { display: none !important; }
 .latin { font-family: var(--font-en); direction: ltr; unicode-bidi: isolate; }
+/* a block-level .latin keeps LTR shaping but must sit on the Arabic reading edge */
+[dir='rtl'] .latin { text-align: right; }
 
 /* T-frame rule: the T-bar as a headline anchor (rounded terminals like the mark) */
 .t-rule { display: block; width: 56px; height: 6px; border-radius: var(--r-pill); background: currentColor; }

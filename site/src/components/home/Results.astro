@@ -7,11 +7,12 @@ import { SITE, type Lang } from '../../config/site';
 import { caseHref } from '../../i18n/paths';
 import { h } from '../../i18n/home';
 interface Props { lang: Lang; cases?: Case[] }
-const { lang, cases = homeResults } = Astro.props;
+const { lang, cases: all = homeResults } = Astro.props;
+// Production: only approved cases; the whole section is omitted while none is approved.
+const cases = all.filter(showFigures);
 const d = h(lang).results;
-const cp = h(lang).casePage;
 ---
-<section class="section section--surface res" id="results" aria-labelledby="res-title">
+{cases.length > 0 && <section class="section section--surface res" id="results" aria-labelledby="res-title">
   <div class="container">
     <header class="res__head">
       <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
@@ -26,7 +27,7 @@ const cp = h(lang).casePage;
           <li class="row" data-reveal>
             <div class="row__who">
               <h3 class="row__client"><a href={caseHref(lang, c.slug)} data-track="case_study_view" data-cta-id={c.slug} data-cta-location="home_results">{c.client[lang]}</a></h3>
-              <p class="row__ctx">{c.sector[lang]} · {c.market[lang]}</p>
+              <p class="row__ctx">{[c.sector[lang], c.market?.[lang]].filter(Boolean).join(' · ')}</p>
             </div>
             <div class="row__fig">
               {figures ? <>
@@ -37,7 +38,7 @@ const cp = h(lang).casePage;
             <dl class="row__ev">
               <div><dt>{d.cols.outcome}</dt><dd>{figures ? c.outcome[lang] : '—'}</dd></div>
               <div><dt>{d.cols.measured}</dt><dd>{c.evidence.measured[lang]}</dd></div>
-              <div><dt>{d.cols.period}</dt><dd>{c.period ? c.period[lang] : d.periodTbc}</dd></div>
+              {(c.period || SITE.preview) && <div><dt>{d.cols.period}</dt><dd>{c.period ? c.period[lang] : d.periodTbc}</dd></div>}
               <div><dt>{d.cols.source}</dt><dd>{c.evidence.source[lang]}{SITE.preview && isPending(c) && <> <span class="tag-pending">{d.pending}</span></>}</dd></div>
             </dl>
           </li>
@@ -46,7 +47,7 @@ const cp = h(lang).casePage;
     </ol>
     <p class="res__note">{d.note}</p>
   </div>
-</section>
+</section>}
 <style>
   .res__head { display: grid; gap: var(--s-4); max-width: 900px; }
   .res .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }

@@ -1,8 +1,10 @@
 ---
-// Case visuals. Real campaign assets only (W-014). A case without supplied visuals gets a
-// to-scale data composition (spend vs result) — never stock, AI or mock imagery.
+// Case visuals. Real campaign assets only (W-014). Without supplied visuals: a to-scale data
+// composition when figures may be shown, otherwise an editorial panel of verified facts
+// (channels, sector, market). Never stock, AI or mock imagery.
 import type { Case } from '../../data/cases';
 import { showFigures } from '../../data/cases';
+import { serviceName } from '../../data/services';
 import { SYMBOL } from '../../lib/logo';
 import type { Lang } from '../../config/site';
 import { h } from '../../i18n/home';
@@ -10,16 +12,25 @@ interface Props { c: Case; lang: Lang; size?: 'chapter' | 'page' }
 const { c, lang, size = 'chapter' } = Astro.props;
 const d = h(lang).selected;
 const fmt = (n: number) => (n >= 1e6 ? `${(n / 1e6).toFixed(2)}M` : `${Math.round(n / 1e3)}K`);
-const kind = c.visual ? c.visual.kind : c.bar && showFigures(c) ? 'data' : null;
+const kind = c.visual ? c.visual.kind : c.bar && showFigures(c) ? 'data' : 'editorial';
+const portraits = c.visual?.images.slice(0, 3) ?? [];
+const extra = size === 'page' ? (c.visual?.images.slice(3) ?? []) : [];
 const { x, y, w: bw, h: bh } = SYMBOL.bladeBox;
 ---
 {kind === 'photo' && (
-  <figure class:list={['media photos', `media--${size}`]}>
-    {c.visual!.images.map((im, k) => (
-      <div class={`photos__item photos__item--${k}`} data-reveal="wipe" style={`--delay:${k * 140}ms`}>
-        <img src={im.src} width={im.w} height={im.h} alt={im.alt[lang]} loading="lazy" decoding="async" />
+  <figure class:list={['media', `media--${size}`]}>
+    <div class="photos">
+      {portraits.map((im, k) => (
+        <div class={`photos__item photos__item--${k}`} data-reveal="wipe" style={`--delay:${k * 140}ms`}>
+          <img src={im.src} width={im.w} height={im.h} alt={im.alt[lang]} loading="lazy" decoding="async" />
+        </div>
+      ))}
+    </div>
+    {extra.length > 0 && (
+      <div class="photos2">
+        {extra.map((im, k) => <div class="photos2__item" data-reveal="wipe" style={`--delay:${k * 140}ms`}><img src={im.src} width={im.w} height={im.h} alt={im.alt[lang]} loading="lazy" decoding="async" /></div>)}
       </div>
-    ))}
+    )}
     <figcaption class="media__cap">{c.visual!.caption[lang]}</figcaption>
   </figure>
 )}
@@ -42,17 +53,30 @@ const { x, y, w: bw, h: bh } = SYMBOL.bladeBox;
     <figcaption class="media__cap">{d.dataCaption}</figcaption>
   </figure>
 )}
+{kind === 'editorial' && (
+  <div class:list={['media ed', `media--${size}`]} role="presentation">
+    <svg class="data__blade" viewBox={`${x} ${y} ${bw} ${bh}`} aria-hidden="true" focusable="false"><path d={SYMBOL.blade} /></svg>
+    <p class="ed__k">{d.f.channels}</p>
+    <p class="ed__channels latin">{c.channels.map((ch) => <span>{ch}</span>)}</p>
+    <dl class="ed__facts">
+      <div><dt>{d.f.industry}</dt><dd>{c.sector[lang]}</dd></div>
+      {c.market && <div><dt>{d.f.market}</dt><dd>{c.market[lang]}</dd></div>}
+      <div><dt>{d.f.services}</dt><dd>{c.services.map((id) => serviceName(id, lang)).join(lang === 'ar' ? '، ' : ', ')}</dd></div>
+    </dl>
+  </div>
+)}
 <style>
   .media { margin: 0; min-width: 0; }
   .media__cap { margin-top: var(--s-3); font-size: var(--fs-caption); color: var(--text-muted); max-width: 60ch; }
 
   .photos { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: var(--s-3); align-items: start; }
-  .photos__item { overflow: hidden; background: var(--surface); }
+  .photos__item, .photos2__item { overflow: hidden; background: var(--surface); }
   .photos__item img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 2 / 3; transition: transform var(--d-5) var(--ease-out); }
   .photos__item--1 { margin-top: var(--s-9); }
   .photos__item--2 { margin-top: var(--s-5); }
-  .photos .media__cap { grid-column: 1 / -1; }
   .photos:hover .photos__item img { transform: scale(1.02); }
+  .photos2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); margin-top: var(--s-3); }
+  .photos2__item img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 3 / 2; }
 
   .screens { position: relative; padding-bottom: var(--s-6); }
   .screens__desk { background: #000; overflow: hidden; }
@@ -60,10 +84,10 @@ const { x, y, w: bw, h: bh } = SYMBOL.bladeBox;
   .screens__phone { position: absolute; inset-inline-end: -2%; bottom: var(--s-6); width: 24%; filter: drop-shadow(0 24px 40px rgb(0 0 0 / 0.55)); }
   .screens__phone img { width: 100%; height: auto; }
 
-  .data { position: relative; overflow: hidden; background: var(--surface); padding: var(--s-7) var(--s-6) var(--s-5); min-height: 420px; display: grid; align-content: end; gap: var(--s-4); isolation: isolate; }
+  .data, .ed { position: relative; overflow: hidden; background: var(--surface); padding: var(--s-7) var(--s-6) var(--s-5); min-height: 420px; display: grid; align-content: end; gap: var(--s-4); isolation: isolate; }
   .data__blade { position: absolute; z-index: -1; inset-inline-end: -10%; top: -20%; height: 150%; width: auto; fill: var(--bg); opacity: 0.7; }
   .data__giant { display: flex; align-items: baseline; gap: 0.08em; font-size: clamp(4.25rem, 2rem + 8vw, 10rem); font-weight: 700; line-height: 0.85; letter-spacing: -0.06em; color: var(--text-strong); }
-  :global([dir='rtl']) .data__giant { justify-content: flex-start; }
+  :global([dir='rtl']) .data__giant, :global([dir='rtl']) .ed__channels { justify-content: flex-end; }
   .data__unit { font-size: 0.22em; letter-spacing: 0; color: var(--text-muted); font-weight: 500; }
   .data__sub { font-size: var(--fs-small); color: var(--text-muted); }
   .data__bars { display: grid; gap: var(--s-3); margin-top: var(--s-3); }
@@ -77,15 +101,25 @@ const { x, y, w: bw, h: bh } = SYMBOL.bladeBox;
   .data__bars:global(.is-in) .bar2__fill, :global(html:not(.js)) .bar2__fill { transform: none; }
   .bar2__v { font-weight: 700; color: var(--text-strong); }
 
+  /* editorial panel: verified facts only */
+  .ed__k { font-size: var(--fs-eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--text-muted); font-weight: 500; }
+  :global([dir='rtl']) .ed__k { text-transform: none; letter-spacing: 0; font-size: var(--fs-caption); }
+  .ed__channels { display: flex; flex-wrap: wrap; gap: 0 0.45em; font-size: clamp(2.25rem, 1.2rem + 3.6vw, 4.5rem); font-weight: 700; line-height: 1; letter-spacing: -0.04em; color: var(--text-strong); }
+  .ed__channels span:not(:last-child)::after { content: ' ·'; color: var(--accent); }
+  .ed__facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--s-4); padding-top: var(--s-4); margin-top: var(--s-3); border-top: 1px solid var(--line-strong); }
+  .ed__facts dt { font-size: var(--fs-caption); color: var(--text-muted); }
+  .ed__facts dd { font-size: var(--fs-small); color: var(--text-strong); margin-top: 2px; }
+
   @media (max-width: 767px) {
     .photos { grid-template-columns: 1fr 1fr; }
     .photos__item--0 { grid-column: 1 / -1; }
     .photos__item--0 img { aspect-ratio: 4 / 5; }
     .photos__item--1 { margin-top: 0; }
     .photos__item--2 { margin-top: var(--s-6); }
+    .photos2 { grid-template-columns: 1fr; }
     .screens__phone { width: 30%; }
-    .data { min-height: 320px; padding: var(--s-6) var(--s-4) var(--s-4); }
+    .data, .ed { min-height: 300px; padding: var(--s-6) var(--s-4) var(--s-4); }
     .bar2 { grid-template-columns: 6.5em 1fr auto; }
   }
-  @media (prefers-reduced-motion: reduce) { .bar2__fill { transform: none !important; } }
+  @media (prefers-reduced-motion: reduce) { .bar2__fill { transform: none !important; } .photos:hover .photos__item img { transform: none; } }
 </style>

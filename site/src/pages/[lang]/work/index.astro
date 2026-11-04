@@ -29,7 +29,7 @@ const r = h(lang).results;
                 <span class="num latin item__n">{String(i + 1).padStart(2, '0')}</span>
                 <span class="item__main">
                   <span class="item__client">{c.client[lang]}</span>
-                  <span class="item__ctx">{c.sector[lang]} · {c.market[lang]}{c.period && ` · ${c.period[lang]}`}</span>
+                  <span class="item__ctx">{[c.sector[lang], c.market?.[lang], c.period?.[lang]].filter(Boolean).join(' · ')}</span>
                   <span class="item__headline">{c.headline[lang]}</span>
                 </span>
                 <span class="item__fig">

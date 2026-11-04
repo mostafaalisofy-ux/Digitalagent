@@ -29,9 +29,10 @@ const a = h(lang).aboutPage;
   <section class="section section--surface lead-sec" aria-labelledby="lead-title">
     <div class="container lead__grid">
       <h2 id="lead-title" class="story__h" data-reveal>{a.founderTitle}</h2>
+      <!-- Name and role only. Photo and biography appear here once supplied by the owner (OQ-40). -->
       <div class="person" data-reveal>
-        <div class="person__photo" aria-hidden="true"><Logo variant="signature" height={64} decorative /><span class="placeholder-tag">{a.photoTbc}</span></div>
-        <div class="person__text"><p class="person__name latin">{a.founderName}</p><p class="person__role">{a.founderRole}</p><p class="placeholder-tag">{a.founderBio}</p></div>
+        <Logo variant="signature" height={40} decorative />
+        <div class="person__text"><p class="person__name latin" lang="en">{a.founderName}</p><p class="person__role">{a.founderRole}</p></div>
       </div>
     </div>
   </section>
@@ -54,11 +55,10 @@ const a = h(lang).aboutPage;
   .values__list li { padding-block: var(--s-5); border-bottom: 1px solid var(--line); display: grid; gap: var(--s-2); }
   .values__list h3 { font-size: var(--fs-h3); }
   .values__list p { color: var(--text-muted); }
-  .person { display: grid; gap: var(--s-5); align-items: center; }
-  .person__photo { aspect-ratio: 1; max-width: 260px; background: var(--bg); display: grid; place-items: center; align-content: center; gap: var(--s-4); }
-  .person__text { display: grid; gap: var(--s-2); justify-items: start; }
+  .person { display: flex; align-items: center; gap: var(--s-5); padding-block: var(--s-5); border-block: 1px solid var(--line-strong); }
+  .person__text { display: grid; gap: var(--s-1); justify-items: start; }
   .person__name { font-size: var(--fs-h2); font-weight: 700; color: var(--text-strong); }
   .person__role { color: var(--accent-text); font-weight: 500; }
-  @media (min-width: 768px) { .values__list { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: var(--gutter); } .person { grid-template-columns: 260px 1fr; } }
+  @media (min-width: 768px) { .values__list { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: var(--gutter); } }
   @media (min-width: 1024px) { .story__grid, .lead__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); } .story__h { grid-column: 1 / span 4; } .story__body, .person { grid-column: 5 / -1; } }
 </style>

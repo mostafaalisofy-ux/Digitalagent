@@ -9,10 +9,15 @@
     "build": "npm run fonts && astro build",
     "build:production": "npm run fonts && PUBLIC_STAGE=production astro build",
     "preview": "astro preview",
-    "build:preview-link": "PUBLIC_DEPLOY_TARGET=artifact astro build && python3 scripts/make-preview-link.py"
+    "build:preview-link": "PUBLIC_DEPLOY_TARGET=artifact astro build && python3 scripts/make-preview-link.py",
+    "check": "astro check"
   },
   "dependencies": {
     "@fontsource/ibm-plex-sans-arabic": "^5.3.0",
     "astro": "^7.4.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "typescript": "^5.9.3"
   }
 }

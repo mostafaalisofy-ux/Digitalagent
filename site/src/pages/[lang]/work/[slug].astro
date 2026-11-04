@@ -1,5 +1,6 @@
 ---
-// Case study page (template: docs/PORTFOLIO_AND_CASE_STUDIES.md §6).
+// Case study page: client & industry → context → objective → challenge → approach → execution →
+// outcomes (with how each figure was measured) → visuals. Template: docs/PORTFOLIO_AND_CASE_STUDIES.md §6.
 import Base from '../../../layouts/Base.astro';
 import CaseMedia from '../../../components/work/CaseMedia.astro';
 import FinalCta from '../../../components/home/FinalCta.astro';
@@ -17,13 +18,25 @@ const s = h(lang).selected;
 const p = h(lang).casePage;
 const i = CASES.indexOf(c);
 const next = CASES[(i + 1) % CASES.length];
+const prev = CASES[(i - 1 + CASES.length) % CASES.length];
 const figures = showFigures(c);
-const story = ['objective', 'challenge', 'strategy', 'execution'] as const;
+const steps = ['challenge', 'strategy', 'execution'] as const;
 const paths = { en: caseHref('en', c.slug), ar: caseHref('ar', c.slug) };
+const sep = lang === 'ar' ? '، ' : ', ';
+const facts = [
+  { k: s.f.industry, v: c.sector[lang] },
+  c.market && { k: s.f.market, v: c.market[lang] },
+  c.period && { k: s.f.period, v: c.period[lang] },
+  { k: p.channels, v: c.channels.join(' · '), latin: true },
+  { k: p.services, v: c.services.map((id) => serviceName(id, lang)).join(sep) },
+].filter(Boolean) as { k: string; v: string; latin?: boolean }[];
+const description = `${c.headline[lang]} ${[c.sector[lang], c.market?.[lang]].filter(Boolean).join(sep)}.`;
 const schema = [{
-  '@context': 'https://schema.org', '@type': 'Article', headline: `${c.client[lang]} — ${c.headline[lang]}`,
-  inLanguage: lang, about: c.sector[lang], publisher: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+  '@context': 'https://schema.org', '@type': 'Article', headline: `${c.client[lang]} — ${c.headline[lang]}`, description,
+  inLanguage: lang, about: c.sector[lang], author: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+  publisher: { '@type': 'Organization', name: SITE.name, url: SITE.url, logo: { '@type': 'ImageObject', url: new URL('/brand/SayTamm_Symbol_Black.png', SITE.url).href } },
   mainEntityOfPage: new URL(paths[lang], SITE.url).href,
+  ...(c.visual ? { image: new URL(c.visual.images[0].src, SITE.url).href } : {}),
 }, {
   '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
     { '@type': 'ListItem', position: 1, name: d.nav.work, item: new URL(href(lang, 'work'), SITE.url).href },
@@ -31,28 +44,32 @@ const schema = [{
   ],
 }];
 ---
-<Base lang={lang} page="work" paths={paths} schema={schema} title={`${c.client[lang]} — ${d.meta.caseSuffix}`} description={`${c.headline[lang]} ${c.sector[lang]}, ${c.market[lang]}.`}>
-  <article class="case">
+<Base lang={lang} page="work" paths={paths} schema={schema} title={`${c.client[lang]} — ${d.meta.caseSuffix}`} description={description}>
+  <article class="case" aria-labelledby="case-title">
     <header class="container case__head">
-      <nav class="crumbs" aria-label={lang === 'ar' ? 'مسار التنقل' : 'Breadcrumb'}><a href={href(lang, 'work')}>{p.back}</a><span aria-hidden="true">/</span><span aria-current="page">{c.client[lang]}</span></nav>
+      <nav class="crumbs" aria-label={lang === 'ar' ? 'مسار التنقل' : 'Breadcrumb'}>
+        <ol role="list"><li><a href={href(lang, 'work')}>{p.back}</a></li><li aria-current="page">{c.client[lang]}</li></ol>
+      </nav>
       <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{c.sector[lang]}</p>
-      <h1 class="case__title" data-reveal-group><span class="line"><span>{c.client[lang]}</span></span></h1>
-      <p class="case__headline" data-reveal>{c.headline[lang]}</p>
+      <h1 class="case__title" id="case-title" data-reveal-group><span class="line"><span>{c.client[lang]}</span></span></h1>
+      <div class="case__intro">
+        <p class="case__headline" data-reveal>{c.headline[lang]}</p>
+        <p class="case__context" data-reveal><span class="case__k">{s.f.context}</span>{c.context[lang]}</p>
+      </div>
       <dl class="case__facts" data-reveal>
-        <div><dt>{s.f.industry}</dt><dd>{c.sector[lang]}</dd></div>
-        <div><dt>{s.f.market}</dt><dd>{c.market[lang]}</dd></div>
-        <div><dt>{s.f.period}</dt><dd>{c.period ? c.period[lang] : h(lang).results.periodTbc}</dd></div>
-        <div><dt>{p.channels}</dt><dd class="latin">{c.channels.join(' · ')}</dd></div>
-        <div><dt>{p.services}</dt><dd>{c.services.map((id) => serviceName(id, lang)).join(lang === 'ar' ? '، ' : ', ')}</dd></div>
+        {facts.map((f) => <div><dt>{f.k}</dt><dd class:list={{ latin: f.latin }}>{f.v}</dd></div>)}
       </dl>
     </header>
 
     <div class="container case__media"><CaseMedia c={c} lang={lang} size="page" /></div>
 
-    <section class="container case__story" aria-labelledby="story-h">
-      <h2 class="case__h2" id="story-h">{p.story}</h2>
+    <section class="container case__work" aria-labelledby="work-h">
+      <div class="case__workhead">
+        <h2 class="case__h2" id="work-h">{p.story}</h2>
+        <p class="case__objective" data-reveal><span class="case__k">{s.f.objective}</span>{c.objective[lang]}</p>
+      </div>
       <ol role="list" class="steps">
-        {story.map((k, n) => <li data-reveal><span class="num latin steps__n">{String(n + 1).padStart(2, '0')}</span><h3>{s.f[k]}</h3><p>{c[k][lang]}</p></li>)}
+        {steps.map((k, n) => <li data-reveal style={`--delay:${n * 80}ms`}><span class="num latin steps__n">{String(n + 1).padStart(2, '0')}</span><h3>{s.f[k]}</h3><p>{c[k][lang]}</p></li>)}
       </ol>
     </section>
 
@@ -60,80 +77,97 @@ const schema = [{
       <div class="container case__rgrid">
         <div class="case__rhead">
           <h2 class="case__h2" id="res-h">{p.results}</h2>
-          {figures && <p class="case__outcome">{c.outcome[lang]}</p>}
+          {figures ? <p class="case__outcome">{c.outcome[lang]}</p> : <p class="case__withheld">{p.withheld}</p>}
+          {figures && SITE.preview && isPending(c) && <span class="tag-pending">{p.statusPending}</span>}
         </div>
-        {figures ? (
-          <dl class="kpis">{c.kpis.map((k) => <div class:list={{ 'is-accent': k.accent }}><dt>{k.label[lang]}</dt><dd><bdi class="num latin">{k.value}</bdi></dd></div>)}</dl>
-        ) : <p class="case__withheld">{p.withheld}</p>}
-        <div class="ev">
-          <h3 class="ev__h">{p.evidence}</h3>
-          <dl class="ev__list">
-            <div><dt>{p.measured}</dt><dd>{c.evidence.measured[lang]}{c.note && ` ${c.note[lang]}`}</dd></div>
-            <div><dt>{p.source}</dt><dd>{c.evidence.source[lang]}</dd></div>
-            <div><dt>{p.status}</dt><dd>{isPending(c) ? <span class="tag-pending">{p.statusPending}</span> : p.statusApproved}</dd></div>
-            {SITE.preview && isPending(c) && <div><dt>{p.open}</dt><dd>{c.evidence.open[lang]}</dd></div>}
-          </dl>
-        </div>
+        {figures && <dl class="kpis">{c.kpis.map((k) => <div class:list={{ 'is-accent': k.accent }}><dt>{k.label[lang]}</dt><dd><bdi class="num latin">{k.value}</bdi></dd></div>)}</dl>}
+        {figures && (
+          <aside class="ev" aria-labelledby="ev-h">
+            <h3 class="ev__h" id="ev-h">{p.evidence}</h3>
+            <dl class="ev__list">
+              <div><dt>{p.measured}</dt><dd>{c.evidence.measured[lang]}{c.note && ` ${c.note[lang]}`}</dd></div>
+              <div><dt>{p.source}</dt><dd>{c.evidence.source[lang]}</dd></div>
+              <div><dt>{p.status}</dt><dd>{isPending(c) ? p.statusPending : p.statusApproved}</dd></div>
+              {SITE.preview && isPending(c) && <div><dt>{p.open}</dt><dd>{c.evidence.open[lang]}</dd></div>}
+            </dl>
+          </aside>
+        )}
       </div>
     </section>
 
-    <div class="container case__foot">
+    <footer class="container case__foot">
       <p class="case__attr">{p.attribution}</p>
-      <a class="next" href={caseHref(lang, next.slug)} data-track="case_study_view" data-cta-id={next.slug} data-cta-location="case_next">
-        <span class="next__k">{p.next}</span><span class="next__v">{next.client[lang]}</span>
-      </a>
-    </div>
+      <nav class="pager" aria-label={lang === 'ar' ? 'دراسات الحالة' : 'Case studies'}>
+        <a class="pager__a pager__a--prev" href={caseHref(lang, prev.slug)} rel="prev"><span class="pager__k">{p.prev}</span><span class="pager__v">{prev.client[lang]}</span></a>
+        <a class="pager__a pager__a--next" href={caseHref(lang, next.slug)} rel="next" data-track="case_study_view" data-cta-id={next.slug} data-cta-location="case_next"><span class="pager__k">{p.next}</span><span class="pager__v">{next.client[lang]}</span></a>
+      </nav>
+    </footer>
   </article>
   <FinalCta lang={lang} />
 </Base>
 <style>
-  .case__head { display: grid; gap: var(--s-4); padding-block: var(--s-8) var(--s-7); }
-  .crumbs { display: flex; flex-wrap: wrap; gap: var(--s-2); font-size: var(--fs-small); color: var(--text-muted); margin-bottom: var(--s-4); }
+  .case__head { display: grid; gap: var(--s-4); padding-block: var(--s-7) var(--s-7); }
+  .crumbs ol { display: flex; flex-wrap: wrap; gap: var(--s-2); font-size: var(--fs-small); color: var(--text-muted); margin-bottom: var(--s-4); }
+  .crumbs li + li::before { content: '/'; margin-inline-end: var(--s-2); color: var(--line-strong); }
   .crumbs a { color: var(--text); }
   .case .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
-  .case__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); }
-  .case__headline { font-size: var(--fs-h3); line-height: 1.35; color: var(--text-strong); max-width: 36ch; }
+  .case__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); overflow-wrap: break-word; }
+  .case__intro { display: grid; gap: var(--s-5); margin-top: var(--s-2); }
+  .case__headline { font-size: var(--fs-h3); line-height: 1.35; font-weight: 500; color: var(--text-strong); max-width: 34ch; }
+  .case__context, .case__objective { display: grid; gap: var(--s-2); color: var(--text); line-height: 1.6; max-width: 52ch; }
+  .case__k, .case__facts dt, .ev__list dt { font-size: var(--fs-eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--text-muted); font-weight: 500; }
+  :global([dir='rtl']) .case__k, :global([dir='rtl']) .case__facts dt, :global([dir='rtl']) .ev__list dt { text-transform: none; letter-spacing: 0; font-size: var(--fs-caption); }
   .case__facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); margin-top: var(--s-5); padding-top: var(--s-5); border-top: 1px solid var(--line); }
-  .case__facts dt, .ev__list dt { font-size: var(--fs-eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--text-muted); font-weight: 500; }
-  :global([dir='rtl']) .case__facts dt, :global([dir='rtl']) .ev__list dt { text-transform: none; letter-spacing: 0; font-size: var(--fs-caption); }
   .case__facts dd { margin-top: 4px; font-size: var(--fs-small); color: var(--text-strong); }
   .case__media { padding-bottom: var(--s-9); }
-  .case__h2 { font-size: var(--fs-h2); letter-spacing: var(--track-tight); }
-  .case__story { display: grid; gap: var(--s-6); padding-bottom: var(--s-10); }
+  .case__h2 { font-size: var(--fs-h2); letter-spacing: var(--track-tight); line-height: var(--lh-head); }
+  .case__work { display: grid; gap: var(--s-7); padding-bottom: var(--s-10); }
+  .case__workhead { display: grid; gap: var(--s-5); align-content: start; }
+  .case__objective { padding-inline-start: var(--s-4); border-inline-start: 3px solid var(--accent); font-size: var(--fs-lead); color: var(--text-strong); }
   .steps { display: grid; gap: var(--s-6); }
-  .steps li { display: grid; gap: var(--s-2); padding-top: var(--s-4); border-top: 1px solid var(--line-strong); }
+  .steps li { display: grid; gap: var(--s-2); align-content: start; padding-top: var(--s-4); border-top: 1px solid var(--line-strong); }
   .steps__n { color: var(--accent-text); font-weight: 700; font-size: var(--fs-small); }
   .steps h3 { font-size: var(--fs-h3); }
   .steps p { color: var(--text); line-height: 1.6; max-width: 46ch; }
   .case__rgrid { display: grid; gap: var(--s-7); }
-  .case__rhead { display: grid; gap: var(--s-4); }
-  .case__outcome { font-size: var(--fs-lead); max-width: 40ch; }
-  .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .case__rhead { display: grid; gap: var(--s-4); align-content: start; justify-items: start; }
+  .case__outcome { font-size: var(--fs-lead); line-height: 1.5; max-width: 40ch; color: var(--text-strong); }
+  .case__withheld { color: var(--text); max-width: 46ch; }
+  .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); align-self: start; }
+  .kpis:has(> :nth-child(3):last-child) div:first-child { grid-column: 1 / -1; }
   .kpis div { background: var(--surface); padding: var(--s-5); display: flex; flex-direction: column-reverse; gap: var(--s-2); }
   .kpis dd .num { font-size: var(--fs-h1); font-weight: 700; line-height: 1; letter-spacing: -0.04em; color: var(--text-strong); }
   .kpis .is-accent dd .num { color: var(--accent-text); }
   .kpis dt { font-size: var(--fs-small); color: var(--text-muted); }
-  .case__withheld { color: var(--text-muted); }
-  .ev { display: grid; gap: var(--s-4); padding: var(--s-5); border: 1px solid var(--line); }
+  .ev { display: grid; gap: var(--s-4); padding: var(--s-5); border: 1px solid var(--line); align-self: start; }
   .ev__h { font-size: var(--fs-body); }
   .ev__list { display: grid; gap: var(--s-4); }
   .ev__list dd { margin-top: 4px; font-size: var(--fs-small); line-height: 1.55; }
   .case__foot { display: grid; gap: var(--s-7); padding-block: var(--s-9); }
   .case__attr { font-size: var(--fs-small); color: var(--text-muted); max-width: 70ch; }
-  .next { display: grid; gap: var(--s-2); padding-top: var(--s-5); border-top: 1px solid var(--line-strong); text-decoration: none; color: inherit; justify-self: stretch; }
-  .next__k { font-size: var(--fs-small); color: var(--text-muted); }
-  .next__v { font-size: var(--fs-h1); font-weight: 700; letter-spacing: var(--track-tight); color: var(--text-strong); transition: color var(--d-2); }
-  .next:hover .next__v { color: var(--accent-text); }
-  @media (min-width: 768px) { .case__facts { grid-template-columns: repeat(5, minmax(0, 1fr)); } .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--gutter); } }
+  .pager { display: grid; gap: 1px; background: var(--line); border-block: 1px solid var(--line-strong); }
+  .pager__a { display: grid; gap: var(--s-2); padding: var(--s-5) 0; background: var(--bg); text-decoration: none; color: inherit; }
+  .pager__k { font-size: var(--fs-small); color: var(--text-muted); }
+  .pager__v { font-size: var(--fs-h2); font-weight: 700; letter-spacing: var(--track-tight); line-height: 1.1; color: var(--text-strong); transition: color var(--d-2); }
+  .pager__a:hover .pager__v, .pager__a:focus-visible .pager__v { color: var(--accent-text); }
+  @media (min-width: 768px) {
+    .case__facts { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+    .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--gutter); }
+    .pager { grid-template-columns: 1fr 1fr; }
+    .pager__a--next { text-align: end; padding-inline-start: var(--s-5); }
+  }
   @media (min-width: 1024px) {
     .case__head { padding-block: var(--s-9) var(--s-8); }
-    .case__story { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
-    .case__story .case__h2 { grid-column: 1 / span 3; }
-    .steps { grid-column: 4 / -1; row-gap: var(--s-8); }
-    .case__rgrid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
+    .case__intro { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
+    .case__headline { grid-column: 1 / span 6; }
+    .case__context { grid-column: 8 / -1; }
+    .case__work { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
+    .case__workhead { grid-column: 1 / span 4; position: sticky; top: 120px; align-self: start; }
+    .steps { grid-column: 6 / -1; grid-template-columns: 1fr; row-gap: var(--s-7); }
+    .case__rgrid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
     .case__rhead { grid-column: 1 / span 4; }
-    .kpis, .case__withheld { grid-column: 5 / span 5; }
+    .kpis { grid-column: 5 / span 5; }
     .ev { grid-column: 10 / -1; }
-    .kpis:has(> :nth-child(3):last-child) div:first-child { grid-column: 1 / -1; }
+    .case__withheld { max-width: 60ch; }
   }
 </style>

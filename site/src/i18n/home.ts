@@ -11,14 +11,16 @@ export const HOME = {
       intro: 'Selected projects that bring strategy, creative execution and measurable results together.',
       label: 'Team track record: work delivered by SayTamm’s team before the agency was founded.',
       all: 'Explore all work', read: 'Read the full case',
-      f: { client: 'Client', industry: 'Industry', market: 'Market', period: 'Period', objective: 'Objective', challenge: 'Challenge', strategy: 'Strategy', execution: 'Execution', outcome: 'Outcome' },
-      dataCaption: 'Campaign visuals not yet supplied. Figures shown to scale.',
+      f: { client: 'Client', industry: 'Industry', market: 'Market', period: 'Period', context: 'Context', objective: 'Objective', challenge: 'Challenge', strategy: 'Approach', execution: 'Execution', outcome: 'Outcome', channels: 'Channels', services: 'Services' },
+      dataCaption: 'Media budget against reported sales revenue, drawn to scale.',
     },
     brands: {
       eyebrow: 'Experience', title: 'Brands we’ve worked with.',
       intro: 'Our team’s professional experience spans brands across multiple industries and markets.',
       note: 'Brands members of our team have worked on in previous roles and agencies. Listed as professional experience, not as SayTamm clients or endorsements.',
       caseLink: 'See the case',
+      count: (b: number, s: number) => `${b} brands · ${s} sectors`,
+      permission: 'Display permission pending',
     },
     services: {
       eyebrow: 'Services', title: 'Nine services. One objective.',
@@ -27,7 +29,7 @@ export const HOME = {
     },
     approach: {
       eyebrow: 'How we work', title: 'Four disciplines. One connected plan.',
-      intro: 'Strategy, creative, media and measurement are planned together and owned by one team, so nothing is lost between briefs and every decision can be traced to a result.',
+      intro: 'Strategy, creative, media and measurement are planned together by one team. Nothing is lost between handovers, and every decision can be traced to a result.',
       steps: [
         { k: 'Strategy', d: 'Defines the objective, the audience and the budget — and the number that will show it worked.' },
         { k: 'Creative', d: 'Turns the strategy into ideas and assets built for each platform, with variations ready to test.' },
@@ -69,7 +71,7 @@ export const HOME = {
     aboutPage: {
       title: ['About', 'SayTamm.'],
       intro: 'A Saudi-focused digital marketing and performance agency that combines strategy, creativity, media and technology — and measures the result.',
-      storyTitle: 'Why we exist',
+      storyTitle: 'Why SayTamm exists',
       story: [
         'Many businesses have plenty of marketing activity and too little evidence of what it returns. SayTamm was founded to close that gap.',
         'Our founder has led campaign and performance work since 2015, for e-commerce, real estate, banking and non-profit brands in Saudi Arabia, the Gulf and Egypt. SayTamm brings that experience into one agency, where strategy, creative, media and measurement are planned together and judged by the same number.',
@@ -85,11 +87,9 @@ export const HOME = {
       founderTitle: 'Leadership',
       founderName: 'Mostafa Sofy',
       founderRole: 'Founder',
-      founderBio: 'Biography and photograph to be supplied.',
-      photoTbc: 'Photo to be supplied',
     },
     casePage: {
-      back: 'All work', facts: 'At a glance', story: 'The story', results: 'Results', evidence: 'How these figures were measured',
+      back: 'All work', facts: 'At a glance', story: 'The work', results: 'Outcomes', prev: 'Previous case', evidence: 'How these figures were measured',
       source: 'Source', measured: 'What was measured', status: 'Status', open: 'Still to confirm',
       statusPending: 'Pending confirmation against original data', statusApproved: 'Confirmed',
       channels: 'Channels', services: 'Services involved',
@@ -103,14 +103,16 @@ export const HOME = {
       intro: 'مشاريع تعكس كيف تتحول الاستراتيجية والتنفيذ الإبداعي إلى نتائج يمكن قياسها.',
       label: 'سجل إنجاز الفريق: أعمال نفّذها فريق قول تم قبل تأسيس الوكالة.',
       all: 'استكشف كل الأعمال', read: 'اقرأ دراسة الحالة كاملة',
-      f: { client: 'العميل', industry: 'القطاع', market: 'السوق', period: 'الفترة', objective: 'الهدف', challenge: 'التحدي', strategy: 'الاستراتيجية', execution: 'التنفيذ', outcome: 'النتيجة' },
-      dataCaption: 'صور الحملة لم تُزوَّد بعد. الأرقام معروضة بمقياسها الحقيقي.',
+      f: { client: 'العميل', industry: 'القطاع', market: 'السوق', period: 'الفترة', context: 'السياق', objective: 'الهدف', challenge: 'التحدي', strategy: 'المنهج', execution: 'التنفيذ', outcome: 'النتيجة', channels: 'القنوات', services: 'الخدمات' },
+      dataCaption: 'الميزانية الإعلانية مقابل الإيرادات المُبلّغ عنها، بمقياسها الحقيقي.',
     },
     brands: {
       eyebrow: 'الخبرة', title: 'علامات تجارية عمل فريقنا معها.',
       intro: 'تمتد خبرات فريقنا عبر علامات تجارية وقطاعات وأسواق متنوعة.',
       note: 'علامات عمل عليها أعضاء فريقنا خلال أدوار ووكالات سابقة. تُذكر خبرةً مهنية، لا بوصفها عملاء لقول تم أو تزكية منها.',
       caseLink: 'دراسة الحالة',
+      count: (b: number, s: number) => `${b} علامة · ${s} قطاعات`,
+      permission: 'بانتظار إذن العرض',
     },
     services: {
       eyebrow: 'خدماتنا', title: 'تسع خدمات. هدف واحد.',
@@ -119,7 +121,7 @@ export const HOME = {
     },
     approach: {
       eyebrow: 'كيف نعمل', title: 'أربعة تخصصات. خطة واحدة.',
-      intro: 'نخطط للاستراتيجية والإبداع والإعلانات والقياس معاً، ويتولاها فريق واحد؛ فلا يضيع شيء بين التسليمات، ويمكن ربط كل قرار بنتيجته.',
+      intro: 'يخطط فريق واحد للاستراتيجية والإبداع والإعلانات والقياس معاً؛ فلا يضيع شيء بين مرحلة وأخرى، ويمكن تتبّع كل قرار إلى نتيجته.',
       steps: [
         { k: 'الاستراتيجية', d: 'تحدد الهدف والجمهور والميزانية، والرقم الذي سيبيّن أن العمل نجح.' },
         { k: 'الإبداع', d: 'يحوّل الاستراتيجية إلى أفكار ومواد مصممة لكل منصة، مع بدائل جاهزة للاختبار.' },
@@ -161,7 +163,7 @@ export const HOME = {
     aboutPage: {
       title: ['من نحن.'],
       intro: 'وكالة تسويق رقمي وأداء تركّز على السوق السعودي، تجمع الاستراتيجية والإبداع والإعلانات والتقنية، وتقيس النتيجة.',
-      storyTitle: 'لماذا وُجدنا',
+      storyTitle: 'لماذا قول تم',
       story: [
         'لدى كثير من الشركات نشاط تسويقي كبير، ودليل قليل على ما يعود به. تأسست قول تم لسد هذه الفجوة.',
         'يقود مؤسسنا أعمال الحملات والأداء منذ 2015، لعلامات في التجارة الإلكترونية والعقارات والبنوك والقطاع غير الربحي في السعودية والخليج ومصر. وتجمع قول تم هذه الخبرة في وكالة واحدة، يُخطَّط فيها للاستراتيجية والإبداع والإعلانات والقياس معاً، ويُحكم عليها بالرقم نفسه.',
@@ -177,11 +179,9 @@ export const HOME = {
       founderTitle: 'القيادة',
       founderName: 'Mostafa Sofy', // Arabic spelling to confirm (OQ-40)
       founderRole: 'المؤسس',
-      founderBio: 'النبذة والصورة بانتظار التزويد.',
-      photoTbc: 'الصورة بانتظار التزويد',
     },
     casePage: {
-      back: 'كل الأعمال', facts: 'نظرة سريعة', story: 'القصة', results: 'النتائج', evidence: 'كيف قيست هذه الأرقام',
+      back: 'كل الأعمال', facts: 'نظرة سريعة', story: 'العمل', results: 'النتائج', prev: 'الحالة السابقة', evidence: 'كيف قيست هذه الأرقام',
       source: 'المصدر', measured: 'ما الذي قيس', status: 'الحالة', open: 'ما يلزم تأكيده',
       statusPending: 'بانتظار التأكيد من البيانات الأصلية', statusApproved: 'مؤكد',
       channels: 'القنوات', services: 'الخدمات',

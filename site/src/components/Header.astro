@@ -28,7 +28,7 @@ const alt = other(lang);
       </ul>
     </nav>
     <div class="hdr__actions">
-      <a class="hdr__lang" href={altHref ?? href(alt, page)} hreflang={alt} lang={alt} aria-label={d.nav.switchLabel} data-track="language_switch">{d.nav.switch}</a>
+      <a class="hdr__lang" href={altHref ?? href(alt, page)} hreflang={alt} lang={alt} data-track="language_switch">{d.nav.switch}<span class="sr-only" lang={lang}> — {d.nav.switchLabel}</span></a>
       <a class="btn btn--primary hdr__cta" href={href(lang, 'contact')} data-track="cta_click" data-cta-id="start_project" data-cta-location="header">{d.nav.cta}</a>
       <button class="hdr__burger" type="button" aria-expanded="false" aria-controls="menu" data-menu-open>
         <span class="visually-hidden">{d.nav.menu}</span><span class="bars" aria-hidden="true"></span>

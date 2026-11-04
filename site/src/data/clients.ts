@@ -2,9 +2,13 @@
 // EXPERIENCE, not as SayTamm's direct clients. Names exactly as supplied. Never imply a contract,
 // partnership or endorsement. Logos: only official files with permission to display (OQ-39);
 // until a file is supplied, the brand name is set as text — no logo is redrawn or approximated.
-import type { Lang } from '../config/site';
+import { SITE, type Lang } from '../config/site';
 type T = Record<Lang, string>;
-export interface Brand { name: string; sector: T; logo?: { src: string; w: number; h: number }; caseSlug?: string }
+export interface Brand {
+  name: string; sector: T; logo?: { src: string; w: number; h: number }; caseSlug?: string;
+  /** 'pending' = display permission not yet confirmed: shown in staging (tagged), hidden in production. */
+  permission?: 'pending';
+}
 
 const S = {
   fnb: { en: 'Food & beverage', ar: 'أغذية ومشروبات' },
@@ -29,5 +33,8 @@ export const BRANDS: Brand[] = [
   { name: 'QNB', sector: S.banking, caseSlug: 'qnb-ramadan' },
   { name: 'Air Arabia', sector: S.aviation },
   { name: 'Radisson Blu', sector: S.hospitality },
-  { name: 'Saudi GEA', sector: S.government },
+  { name: 'Saudi GEA', sector: S.government, permission: 'pending' }, // government entity: display permission outstanding (OQ-39)
 ];
+
+/** Brands that may be displayed in this build. */
+export const visibleBrands = () => BRANDS.filter((b) => SITE.preview || b.permission !== 'pending');
