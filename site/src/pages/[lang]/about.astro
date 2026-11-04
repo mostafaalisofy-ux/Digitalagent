@@ -28,6 +28,9 @@ const schema = [{
       <div class="story__body">{a.story.map((p, i) => <p data-reveal style={`--delay:${i * 80}ms`}>{p}</p>)}</div>
     </div>
   </section>
+  <figure class="atmo" aria-hidden="true">
+    <img src="/visuals/about-atmosphere.webp" srcset="/visuals/about-atmosphere-1200.webp 1200w, /visuals/about-atmosphere.webp 2560w" sizes="100vw" width="2560" height="1100" alt="" loading="lazy" decoding="async" data-reveal="wipe" />
+  </figure>
   <HomeAbout lang={lang} showMore={false} />
   <Approach lang={lang} />
   <Brands lang={lang} />
@@ -63,6 +66,9 @@ const schema = [{
   <FinalCta lang={lang} />
 </Base>
 <style>
+  .atmo { margin: 0; }
+  .atmo img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; background: var(--surface); }
+  @media (min-width: 768px) { .atmo img { aspect-ratio: 2560 / 1100; } }
   .story__grid, .lead__grid { display: grid; gap: var(--s-5); }
   .story__h { font-size: var(--fs-h2); letter-spacing: var(--track-tight); }
   .story__body { display: grid; gap: var(--s-4); }

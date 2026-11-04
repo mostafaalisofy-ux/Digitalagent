@@ -162,7 +162,8 @@ Every page is generated for both locales via `getStaticPaths` (`staticLangPaths(
 | Logo used by the site | `src/assets/logo/symbol.svg` (read by `lib/logo.ts` → `components/Logo.astro`, `Pattern.astro`) and `public/brand/*` (favicons, JSON-LD logo) |
 | Portfolio images | `public/work/*.webp` (referenced from `cases.ts`) |
 | Founder photo | `public/team/mostafa-sofy.webp` (900 px, used on About); original in `brand/people/` |
-| OG images | `public/og/saytamm-og-{en,ar}.png` |
+| OG images | `public/og/saytamm-og-{en,ar}.png`, rebuilt by `scripts/make-og-images.cjs` from `public/visuals/og-bg-en.webp` + the official logo SVG + brand fonts |
+| Illustrative visuals (AI-generated, decorative only) | `public/visuals/*.webp`; masters in `brand/visuals-ai/`. Never use them as case or client material (`docs/AI_VISUAL_PROMPTS.md`) |
 | Fonts | `public/fonts/satoshi/` (Satoshi); `@fontsource/ibm-plex-sans-arabic` via npm (Arabic) |
 | Full logo set and brand originals | `/brand` (see `brand/SOURCES.md` and `brand/production/logo/README.md`) |
 

@@ -1,5 +1,7 @@
 # AI visual prompts for the SayTamm website
 
+> **Status (2026-11-04): all 9 received and placed** (W-020). Masters are in `brand/visuals-ai/`; web versions in `site/public/visuals/`, trimmed 24 px per edge (more on Contact and 404) to remove generation edge lines. `services-creative` uses about 15% purple, above the 10% guideline, and is accepted. `og-bg-ar` is not used: both OG images share `og-bg-en`, because the brand diagonal is never mirrored.
+
 For generating supporting visuals with an image model (for example ChatGPT image generation). Date: 2026-11-04.
 
 ## 1. What may and may not be generated

@@ -25,6 +25,9 @@ const d = t(lang);
 
   {DISCIPLINES.map((g, gi) => (
     <section class:list={['disc', { 'disc--alt': gi % 2 === 1 }]} id={g.id} aria-labelledby={`h-${g.id}`}>
+      <figure class="container disc__media" aria-hidden="true">
+        <img src={`/visuals/services-${g.id}.webp`} srcset={`/visuals/services-${g.id}-1200.webp 1200w, /visuals/services-${g.id}.webp 2400w`} sizes="(min-width: 1440px) 1300px, 100vw" width="2400" height="1350" alt="" loading="lazy" decoding="async" data-reveal="wipe" />
+      </figure>
       <div class="container disc__grid">
         <header class="disc__head" data-reveal>
           <span class="disc__n num latin" aria-hidden="true">{g.n}</span>
@@ -63,6 +66,10 @@ const d = t(lang);
 
   .disc { padding-block: var(--s-10); border-top: 1px solid var(--line); scroll-margin-top: 80px; }
   .disc--alt { background: var(--surface); }
+  /* illustrative imagery (AI-generated, decorative only — never case material: docs/AI_VISUAL_PROMPTS.md) */
+  .disc__media { margin: 0 auto var(--s-8); }
+  .disc__media img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; display: block; background: var(--surface); }
+  @media (min-width: 1024px) { .disc__media img { aspect-ratio: 21 / 8; } }
   .disc__grid { display: grid; gap: var(--s-7); }
   .disc__head { display: grid; gap: var(--s-3); align-content: start; }
   .disc__n { font-size: clamp(4rem, 2.5rem + 6vw, 8.5rem); font-weight: 700; line-height: 0.85; letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 1.5px var(--c-purple-200); }
