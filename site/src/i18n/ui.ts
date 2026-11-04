@@ -27,7 +27,7 @@ export const UI = {
       scroll: 'Selected work below',
     },
     services: { eyebrow: 'Services', title: ['Nine services.', 'One objective.'], intro: 'Every engagement is planned around one business objective. Hire us for a single service, or for the connected plan.', includes: 'Includes', pending: 'Scope to be confirmed', cta: 'Discuss this service', index: 'Disciplines', count: (n: number) => (n === 1 ? '1 service' : `${n} services`) },
-    workPage: { eyebrow: 'Work', title: ['Work that', 'moved the number.'], intro: 'Case studies from the SayTamm team across e-commerce, real estate and banking, in Saudi Arabia, the Gulf and Egypt. Each shows what was measured and where the figure comes from.', label: 'Team track record: delivered by members of the SayTamm team before the agency was founded.' },
+    workPage: { eyebrow: 'Work', title: ['Work that', 'moved the number.'], intro: 'Case studies from the SayTamm team across e-commerce, real estate and banking, in Saudi Arabia, the Gulf and Egypt. Each shows what was measured and where the figure comes from.', label: 'Team track record: projects led by members of the SayTamm team, including work delivered at other agencies.' },
     contact: {
       eyebrow: 'Start a project', title: ['Tell us about', 'the project.'],
       intro: 'Share your objective, your market and your timeline. We’ll reply with how we would approach it and what we would need from you to start.',
@@ -69,7 +69,7 @@ export const UI = {
       scroll: 'أعمال مختارة في الأسفل',
     },
     services: { eyebrow: 'خدماتنا', title: ['تسع خدمات.', 'هدف واحد.'], intro: 'نخطط كل تعاون حول هدف تجاري واحد. اطلب خدمة واحدة، أو الخطة المتكاملة.', includes: 'تشمل', pending: 'النطاق بانتظار التأكيد', cta: 'ناقش هذه الخدمة', index: 'التخصصات', count: (n: number) => (n === 1 ? 'خدمة واحدة' : n === 2 ? 'خدمتان' : `${n} خدمات`) },
-    workPage: { eyebrow: 'أعمالنا', title: ['أعمال', 'صنعت فرقاً.'], intro: 'دراسات حالة من فريق قول تم في التجارة الإلكترونية والعقارات والبنوك، في السعودية والخليج ومصر. ولكل منها ما الذي قيس ومن أين جاء الرقم.', label: 'سجل إنجاز الفريق: أعمال نفّذها أعضاء من فريق قول تم قبل تأسيس الوكالة.' },
+    workPage: { eyebrow: 'أعمالنا', title: ['أعمال', 'صنعت فرقاً.'], intro: 'دراسات حالة من فريق قول تم في التجارة الإلكترونية والعقارات والبنوك، في السعودية والخليج ومصر. ولكل منها ما الذي قيس ومن أين جاء الرقم.', label: 'سجل إنجاز الفريق: مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.' },
     contact: {
       eyebrow: 'ابدأ مشروعك', title: ['حدّثنا', 'عن مشروعك.'],
       intro: 'شاركنا هدفك وسوقك وجدولك الزمني، وسنرد عليك بالطريقة التي نقترحها للعمل، وبما نحتاجه منك لنبدأ.',

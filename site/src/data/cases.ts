@@ -31,7 +31,7 @@ export interface Case {
   evidence: Evidence;
 }
 
-const PUBLISHED_CASE: T = { en: 'Published case study from the team’s previous agency', ar: 'دراسة حالة منشورة من الوكالة السابقة للفريق' };
+const PUBLISHED_CASE: T = { en: 'Published agency case study', ar: 'دراسة حالة منشورة لوكالة' };
 const META_REPORT: T = { en: 'Meta Ads Manager report in the campaign deck', ar: 'تقرير Meta Ads Manager في ملف الحملة' };
 
 export const CASES: Case[] = [

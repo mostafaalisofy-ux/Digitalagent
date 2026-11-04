@@ -9,7 +9,7 @@ export const HOME = {
     selected: {
       eyebrow: 'Selected work', title: 'Work that moved the number.',
       intro: 'Selected projects that bring strategy, creative execution and measurable results together.',
-      label: 'Team track record: work delivered by SayTamm’s team before the agency was founded.',
+      label: 'Team track record: projects led by members of the SayTamm team, including work delivered at other agencies.',
       all: 'Explore all work', read: 'Read the full case',
       f: { client: 'Client', industry: 'Industry', market: 'Market', period: 'Period', context: 'Context', objective: 'Objective', challenge: 'Challenge', strategy: 'Approach', execution: 'Execution', outcome: 'Outcome', channels: 'Channels', services: 'Services' },
       dataCaption: 'Media budget against reported sales revenue, drawn to scale.',
@@ -56,10 +56,10 @@ export const HOME = {
       nameTitle: 'Why “SayTamm”?',
       name: 'In Saudi dialect, “قول تم” is what you hear when a request is as good as done. You tell us the goal; we take responsibility for getting there.',
       facts: [
-        { v: '2015', k: 'Campaigns led by our founder since' },
+        { v: '2021', k: 'Founded' },
+        { v: '30', k: 'People on the team' },
+        { v: '15+', k: 'Years of digital marketing leadership behind the agency' },
         { v: '5', k: 'Markets in the team’s track record: Saudi Arabia, UAE, Kuwait, Oman, Egypt' },
-        { v: '9', k: 'Services across four disciplines' },
-        { v: 'AR · EN', k: 'Arabic and English, each written in its own language' },
       ],
       more: 'More about us',
     },
@@ -74,7 +74,7 @@ export const HOME = {
       storyTitle: 'Why SayTamm exists',
       story: [
         'Many businesses have plenty of marketing activity and too little evidence of what it returns. SayTamm was founded to close that gap.',
-        'Our founder has led campaign and performance work since 2015, for e-commerce, real estate, banking and non-profit brands in Saudi Arabia, the Gulf and Egypt. SayTamm brings that experience into one agency, where strategy, creative, media and measurement are planned together and judged by the same number.',
+        'Founded in 2021, SayTamm brings together a team of 30 and more than 15 years of leadership in digital marketing across Saudi Arabia, Egypt and the wider region. Strategy, creative, media and measurement are planned together and judged by the same number.',
       ],
       valuesTitle: 'What we stand for',
       values: [
@@ -87,6 +87,16 @@ export const HOME = {
       founderTitle: 'Leadership',
       founderName: 'Mostafa Sofy',
       founderRole: 'Founder',
+      // Owner-supplied biography (2026-11-04), edited for the site. Deliberately omitted: the current
+      // role at another agency (OQ-38), the unverified "double-digit ROAS" claim, and named employers
+      // other than the early career (OQ-33). First person: the founder's own voice.
+      bio: [
+        'I have spent more than 15 years building and leading digital marketing operations across Saudi Arabia, Egypt and the wider MENA region, starting at Yellow Pages during Egypt’s early digital transformation.',
+        'Since then I have held senior leadership roles at performance and digital agencies: leading country operations and client portfolios, and building teams from the ground up. Along the way I have worked with more than 200 brands across 20+ industries, from retail, FMCG and F&B to automotive, hospitality, real estate, fashion and e-commerce.',
+        'I started SayTamm on one belief: great marketing isn’t random campaigns. It is the right strategy, the right people and the right steps, measured by what they move.',
+      ],
+      expertiseTitle: 'Expertise',
+      expertise: ['Digital marketing strategy', 'Performance marketing', 'Media buying', 'Brand strategy', 'Agency leadership', 'Team building'],
       photoAlt: 'Mostafa Sofy, founder of SayTamm',
     },
     casePage: {
@@ -94,7 +104,7 @@ export const HOME = {
       source: 'Source', measured: 'What was measured', status: 'Status', open: 'Still to confirm',
       statusPending: 'Pending confirmation against original data', statusApproved: 'Confirmed',
       channels: 'Channels', services: 'Services involved',
-      attribution: 'Delivered by members of the SayTamm team before SayTamm was founded. Shown as the team’s track record.',
+      attribution: 'Led by members of the SayTamm team, including work delivered at other agencies. Shown as the team’s track record.',
       next: 'Next case', withheld: 'Results for this project will be published once confirmed against the original platform data.',
     },
   },
@@ -102,7 +112,7 @@ export const HOME = {
     selected: {
       eyebrow: 'أعمال مختارة', title: 'أعمال صنعت فرقاً.',
       intro: 'مشاريع تعكس كيف تتحول الاستراتيجية والتنفيذ الإبداعي إلى نتائج يمكن قياسها.',
-      label: 'سجل إنجاز الفريق: أعمال نفّذها فريق قول تم قبل تأسيس الوكالة.',
+      label: 'سجل إنجاز الفريق: مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.',
       all: 'استكشف كل الأعمال', read: 'اقرأ دراسة الحالة كاملة',
       f: { client: 'العميل', industry: 'القطاع', market: 'السوق', period: 'الفترة', context: 'السياق', objective: 'الهدف', challenge: 'التحدي', strategy: 'المنهج', execution: 'التنفيذ', outcome: 'النتيجة', channels: 'القنوات', services: 'الخدمات' },
       dataCaption: 'الميزانية الإعلانية مقابل الإيرادات المُبلّغ عنها، بمقياسها الحقيقي.',
@@ -149,10 +159,10 @@ export const HOME = {
       nameTitle: 'لماذا «قول تم»؟',
       name: '«قول تم» عبارة نقولها حين يكون الطلب في حكم المُنجَز. أنت تحدد الهدف، ونحن نتحمل مسؤولية الوصول إليه.',
       facts: [
-        { v: '2015', k: 'يقود مؤسسنا الحملات منذ عام' },
+        { v: '2021', k: 'سنة التأسيس' },
+        { v: '30', k: 'عضواً في الفريق' },
+        { v: '+15', k: 'عاماً من قيادة التسويق الرقمي خلف الوكالة' },
         { v: '5', k: 'أسواق في سجل الفريق: السعودية، الإمارات، الكويت، عُمان، مصر' },
-        { v: '9', k: 'خدمات في أربعة تخصصات' },
-        { v: 'AR · EN', k: 'العربية والإنجليزية، تُكتب كل منهما بلغتها' },
       ],
       more: 'المزيد عنّا',
     },
@@ -167,7 +177,7 @@ export const HOME = {
       storyTitle: 'لماذا قول تم',
       story: [
         'لدى كثير من الشركات نشاط تسويقي كبير، ودليل قليل على ما يعود به. تأسست قول تم لسد هذه الفجوة.',
-        'يقود مؤسسنا أعمال الحملات والأداء منذ 2015، لعلامات في التجارة الإلكترونية والعقارات والبنوك والقطاع غير الربحي في السعودية والخليج ومصر. وتجمع قول تم هذه الخبرة في وكالة واحدة، يُخطَّط فيها للاستراتيجية والإبداع والإعلانات والقياس معاً، ويُحكم عليها بالرقم نفسه.',
+        'تأسست قول تم عام 2021، وتجمع فريقاً من 30 عضواً وأكثر من 15 عاماً من قيادة التسويق الرقمي في السعودية ومصر والمنطقة. نخطط للاستراتيجية والإبداع والإعلانات والقياس معاً، ونحكم عليها بالرقم نفسه.',
       ],
       valuesTitle: 'قيمنا',
       values: [
@@ -178,16 +188,23 @@ export const HOME = {
         { t: 'الأثر', d: 'نقدّم ما يحرّك العمل.' },
       ],
       founderTitle: 'القيادة',
-      founderName: 'Mostafa Sofy', // Arabic spelling to confirm (OQ-40)
+      founderName: 'مصطفى صوفي',
       founderRole: 'المؤسس',
-      photoAlt: 'Mostafa Sofy، مؤسس قول تم',
+      bio: [
+        'أمضيت أكثر من 15 عاماً في بناء عمليات التسويق الرقمي وقيادتها في السعودية ومصر ومنطقة الشرق الأوسط وشمال أفريقيا، بدأتها في Yellow Pages خلال مرحلة التحوّل الرقمي المبكرة في مصر.',
+        'ومنذ ذلك الحين شغلت مناصب قيادية في وكالات الأداء والتسويق الرقمي: قدت عمليات على مستوى الدول ومحافظ عملاء، وبنيت فرقاً من الصفر. وعملت خلال هذه المسيرة مع أكثر من 200 علامة تجارية في أكثر من 20 قطاعاً، من التجزئة والسلع الاستهلاكية والأغذية والمشروبات إلى السيارات والضيافة والعقارات والأزياء والتجارة الإلكترونية.',
+        'أسست قول تم على قناعة واحدة: التسويق الجيد ليس حملات عشوائية، بل الاستراتيجية الصحيحة، والفريق الصحيح، والخطوات الصحيحة، ويُقاس بما يحققه.',
+      ],
+      expertiseTitle: 'مجالات الخبرة',
+      expertise: ['استراتيجية التسويق الرقمي', 'التسويق بالأداء', 'شراء الوسائط الإعلانية', 'استراتيجية العلامة', 'قيادة الوكالات', 'بناء الفرق'],
+      photoAlt: 'مصطفى صوفي، مؤسس قول تم',
     },
     casePage: {
       back: 'كل الأعمال', facts: 'نظرة سريعة', story: 'العمل', results: 'النتائج', prev: 'الحالة السابقة', evidence: 'كيف قيست هذه الأرقام',
       source: 'المصدر', measured: 'ما الذي قيس', status: 'الحالة', open: 'ما يلزم تأكيده',
       statusPending: 'بانتظار التأكيد من البيانات الأصلية', statusApproved: 'مؤكد',
       channels: 'القنوات', services: 'الخدمات',
-      attribution: 'نفّذها أعضاء من فريق قول تم قبل تأسيس الوكالة، وتُعرض بوصفها سجل إنجاز الفريق.',
+      attribution: 'قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى، وتُعرض بوصفها سجل إنجاز الفريق.',
       next: 'الحالة التالية', withheld: 'تُنشر نتائج هذا المشروع بعد تأكيدها من بيانات المنصات الأصلية.',
     },
   },
