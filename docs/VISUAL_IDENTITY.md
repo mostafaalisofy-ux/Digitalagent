@@ -10,8 +10,9 @@ This is the single working spec for designers and developers. It reconciles the 
 - **Anatomy:** T-bar (rounded terminals) · T-stem (vertical anchor, with an angled cut parallel to the blade) · diagonal blade · inner negative space (never closed).
 - **Measured [CONFIRMED, 2026-11-04]:** W:H ≈ **0.83 : 1**. Diagonal ≈ **45°** from horizontal (edge 44.3°, principal axis 47.2°).
   > ⚠️ The 2026 Guidelines, PDF and asset README state "≈ 65°". **That is a measurement error.** Use 45° for every derived element (pattern, icons, dividers, wipes).
-- **Master files:** `/brand/assets/logo/*.png` (verified at 99.2–99.97% overlap against the owner's master renders).
-- **[MISSING] Vector master.** Needed before any production use (OQ-05). We will not auto-trace and publish without approval: a trace counts as a redraw. **[RECOMMENDATION]** The original designer supplies the vector. Failing that, we produce a precision trace, verify it against the master (IoU ≥ 0.995 at 1254 px), and submit it for written approval.
+- **Approved logo [APPROVED — D-011]:** the owner's solid black, outline black and outline white renders (`/brand/production/logo/source/`).
+- **Production files [W-007]:** `/brand/production/logo/` holds SVG + PNG for Black, White, Purple, Signature (two-tone, both grounds) and Outline (black/white). They are recoloured and traced from the approved logo, never redrawn. Solid SVG fidelity: IoU 0.9992, edge deviation ≤ 1 px. **Use these for all digital work.**
+- **Rejected:** the asset zip with a pointed T-stem and a literal checkmark (navy/orange source). It is a different mark (W-006).
 
 ### Versions
 | Version | Status | Use |

@@ -6,7 +6,7 @@ Last updated: 2026-11-04
 
 | Source | Origin | Period | Owner statement |
 |---|---|---|---|
-| **Steps KSA website** (steps-ksa.com) | Steps, Jeddah-based growth marketing agency. **A separate company (D-005)** | Undated (site © 2026) | Services adopted (D-003). Cases **not SayTamm work**; usable only if founder-led and agreed (OQ-37) |
+| **Steps KSA website** (steps-ksa.com) | Steps, Jeddah-based growth marketing agency. A separate company (D-005) | Undated (site © 2026) | Services adopted (D-003). **Full legal rights to use the case studies (D-009)** |
 | **Infinity Corp, E-commerce Performance Portfolio** (15 pp, PDF created 2025-09-23) | Infinity Corp, Egypt (infinitycorpeg.com). Every page states *"All materials are sole property of Infinity Corp."* | Campaigns Oct 2021 – May 2022 | Owner: "I have the right to use everything here" (D-002) |
 | **nsm+ (New Step Media), Case Studies** (32 pp, authored by Mostafa Sofy, 2019) | nsm+ / New Step Media, Egypt | 2015 – 2018 | Same rights statement (D-002) |
 
@@ -25,13 +25,13 @@ Rights to *use* material (now confirmed by the owner) are separate from the ques
 | **C. Leadership experience** | Work led by SayTamm's founder or team at other companies (Infinity Corp, nsm+) | About page, founder bio, proposals. **Never in the Work grid or in SayTamm totals** | "Led by our founder at [company], [year]" |
 | **D. Internal only** | Unverifiable, incomplete, or sensitive | Not published | — |
 
-**Category C precondition:** the owner's personal role. **Met for Infinity Corp and nsm+ (D-006). Open for Steps cases (OQ-37).**
+**Category C precondition:** rights plus the team's role. **Met for Infinity Corp and nsm+ (D-002, D-006) and for Steps cases (D-009).** All three sources are presented as the **SayTamm team's track record**, never as work delivered by SayTamm the company.
 
 ## 3. Case inventory and verification
 
 Legend: ✅ arithmetic reconciles · ⚠️ issue to fix before publishing · ❌ do not publish as is.
 
-### From Steps KSA: not SayTamm work (D-005). Category C only if founder-led (OQ-37); otherwise D
+### From Steps KSA: Category C, team track record (D-009)
 | Case | Market / sector | Published figures | Check | Issues |
 |---|---|---|---|---|
 | **K.S Furniture** | KSA · e-commerce · National Day | 100K SAR budget (Google 40K, Instagram 40K, Snap 20K) → **1,086,534 SAR revenue** (10.9× ROAS); 935,215 SAR net; 507 orders; 446 new / 39 returning customers | ✅ ROAS · ⚠️ | 446 + 39 = 485, not 507; the 91.96% "first-time share" is calculated on 485. **No year stated.** Client testimonial exists |
@@ -69,21 +69,22 @@ Legend: ✅ arithmetic reconciles · ⚠️ issue to fix before publishing · �
 4. ⚠️ **Celebrity creative** (Tamer Hosny, Cheb Khalid ads for 57357): showing thumbnails as portfolio is common practice, but confirm that no talent restrictions apply.
 5. ⚠️ Remove Infinity Corp and nsm+ branding from any reuse, and restyle material into the SayTamm system. Name the companies in text only, if the owner wants them named (OQ-33).
 
-## 5. What to feature [RECOMMENDATION — updated after D-005 / D-006]
+## 5. What to feature [RECOMMENDATION — updated after D-009]
 
-SayTamm has **no Category A work yet**. All proof at launch is **founder-led experience (Category C)**, labelled as such. That is honest, and with strong numbers it is still persuasive: buyers hire people.
+SayTamm has **no company-delivered (Category A) work yet**. All proof at launch is the **team's track record (Category C)**, labelled as such. With these numbers it is still strong proof: buyers hire people.
 
 | Tier | Cases | Use |
 |---|---|---|
-| **1 — Lead proof** | **Fashion & beauty e-commerce scale-up** (Meta: ROAS 13.84× and 8.91×, ~34.6K purchases, EGP 10.6M attributed revenue, Mar–May 2022) · **Electronics e-commerce Q4** ($897K attributed revenue, 747 orders, $1.2K AOV; ROAS shown with context) | Homepage "Track record" module, founder bio, Performance page, credentials deck |
-| **1 — Saudi relevance** | **Marseilia 2018**: multi-market lead generation including **KSA** and Kuwait, WhatsApp funnel, office-capacity balancing. **Needs the lead numbers (OQ-35)** | Real estate / lead-gen story. Upgrades to lead proof once the numbers exist |
-| **2 — Supporting** | **57357 Ramadan 2018**, sanitised (personas, multilingual creative, behaviour-based retargeting, Gulf Snapchat): needs results · **QNB 2015** Ramadan series hub (7M views, 25M impressions, 50K clicks): media ingenuity | Approach page examples, About, proposals |
-| **3 — Experience line** | Banque Misr 2015–16 (won a 5-agency pitch; audience growth) · fashion product photography and content | About "Experience" strip |
-| **Conditional** | Steps cases (K.S Furniture, Muriya, DAMAC, Bio-Group) | **Only if founder-led and Steps agrees (OQ-37).** K.S Furniture would then become the single best Saudi proof point |
+| **1 — Lead proof (Saudi)** | **K.S Furniture**: KSA e-commerce, National Day; 100K SAR → **1.09M SAR revenue (10.9×)**, 507 orders, 446 new customers · **Muriya**: GCC real estate; $18.2K → **$1.51M, 13 units, 83×** | Homepage track record (first position), Performance page, real estate story, credentials deck |
+| **1 — Lead proof (e-commerce scale)** | **Fashion & beauty scale-up**: Meta ROAS 13.84× and 8.91×, ~34.6K purchases, EGP 10.6M attributed revenue, Mar–May 2022 · **Electronics Q4**: $897K attributed revenue, 747 orders, $1.2K AOV | Track record, Performance page, e-commerce proposals |
+| **2 — Supporting** | **Bio-Group** (ROAS 2× → 4× in 2 weeks, 2,970 purchases) · **DAMAC Paramount** ($8 CPL, 15% qualified) · **Marseilia 2018** (KSA + Kuwait lead gen; needs the numbers, OQ-35) · **57357 Ramadan 2018**, sanitised (needs results) · **QNB 2015** Ramadan hub (7M views, 25M impressions) · Steps strategy cases (Clean Basket, Electa, Jora, DC Block) as method stories | Track record index, service pages, Approach page, proposals |
+| **3 — Experience line** | Banque Misr 2015–16 · fashion product photography and content · Jora / Altopiano social | About "Experience" strip |
 | **Internal only** | QNB 2017 · the 57357 targeting detail (D-004) · corrupted screenshots | — |
 
+Still excluded unless separately confirmed: Steps **testimonials** (they were given to Steps; reuse needs each client's consent), **client logo walls**, and Steps' **aggregate claims**.
+
 **Website implication:** launch **without a "Work" index**. Use a clearly labelled **"Track record: led by our founder"** module on Home and About, linking to 2–3 in-depth experience case pages. Add the Work index once SayTamm delivers and gets approval for its own projects.
-Suggested label: *"Before SayTamm, our founder led performance programmes for e-commerce, real estate, banking and non-profit brands across Egypt and the Gulf."*
+Suggested label: *"Our team's track record: performance programmes for e-commerce, real estate, banking and non-profit brands across Saudi Arabia, the Gulf and Egypt, delivered before SayTamm."* Each case page states its year and market. Whether it names the previous agency is OQ-33 / OQ-37.
 
 ## 6. Case study template [APPROVED structure — SOURCE: brief]
 
@@ -109,8 +110,8 @@ Rules: every metric carries its period and source; platform-attributed metrics a
 
 - [x] OQ-30: SayTamm and Steps are separate (D-005)
 - [x] OQ-31: founder led the Infinity Corp and nsm+ projects (D-006)
-- [ ] OQ-37: founder-led Steps cases, if any, and Steps' agreement
-- [ ] OQ-32: original Ads Manager exports (Infinity fashion and electronics, plus any approved Steps cases)
+- [x] D-009: legal rights to all case studies, Steps included
+- [ ] OQ-32: original Ads Manager / analytics exports (Infinity fashion and electronics, K.S Furniture, Muriya, Bio-Group, DAMAC), plus **years** for the Steps cases
 - [ ] OQ-33: name previous agencies publicly, or describe them generically?
 - [ ] Results for Marseilia and 57357
 - [ ] Original campaign visuals at full resolution (Steps cases especially)

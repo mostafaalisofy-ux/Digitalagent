@@ -4,7 +4,7 @@ Last reviewed: 2026-11-04 · Maintainer: project team
 
 This file records every brand source received, its status, and which source wins when they conflict.
 
-> **Storage status (2026-11-04):** the files listed below (`assets/`, `source/`, `reference/`) are **not yet committed** to this repository. They are held outside Git until the owner decides what may be stored in the remote: all files, the production asset package only, or none. See OQ-29 in `docs/OPEN_QUESTIONS.md`. Paths in this manifest describe the intended layout.
+> **Storage status (2026-11-04):** `production/logo/` is committed. The files listed below (`assets/`, `source/`, `reference/`) are **not yet committed** to this repository. They are held outside Git until the owner decides what may be stored in the remote: all files, the production asset package only, or none. See OQ-29 in `docs/OPEN_QUESTIONS.md`. Paths in this manifest describe the intended layout.
 Nothing in `/brand` has been redrawn, re-exported or edited. Files were copied byte-for-byte from the uploads, and some were renamed for clarity.
 
 ## Authority order (when sources conflict)
@@ -34,6 +34,13 @@ Nothing in `/brand` has been redrawn, re-exported or edited. Files were copied b
 |---|---|
 | `SayTamm_Brand_Bible_2026.pptx` | Upload arrived 0 bytes (3 attempts). The `.md` export covers its text, not its visuals |
 | `SayTamm_Professional_Brand_Guidelines_v2.pptx` | Upload arrived 0 bytes (3 attempts). **Content unknown.** Needs re-sending via another channel (Drive link or zip) |
+
+### Approved logo and production files (2026-11-04)
+- **D-011:** the owner confirmed that the solid black, outline black and outline white renders are **the approved logo**. Copies are in `production/logo/source/`.
+- **Production files v1:** `production/logo/` (SVG + PNG, all colourways including the approved two-tone Signature). See its README for method and verification.
+
+### Rejected package (W-006)
+- A third `SayTamm_Brand_Assets.zip` (135 KB, files dated 24 Aug 2026 13:47) contains a **different mark**: a pointed T-stem with a literal checkmark, navy `#12213B` / orange `#C1622E` "source" files, W:H 1.17, IoU 0.40 against the approved logo. Its README cites a 57° "checkmark stroke". **Not used. Do not circulate.**
 
 ### Older duplicates (not copied)
 - `SayTamm_Brand_Assets_1.zip` (24 Aug 2026) has the same logo PNGs (identical hashes) but an **older pattern** that tiles the complete logo. The Bible prohibits that ("Do not repeatedly draw the complete logo as decoration"). It is superseded by the 27 Aug package.

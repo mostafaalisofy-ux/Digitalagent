@@ -8,7 +8,7 @@
 
 | Area | Rule |
 |---|---|
-| Case studies (K.S Furniture, Muriya, DAMAC Paramount, Bio-Group, strategy cases) | **Not SayTamm work.** Usable only as founder experience, **only where the founder personally led them** and Steps agrees (OQ-37). Until then: not used |
+| Case studies (K.S Furniture, Muriya, DAMAC Paramount, Bio-Group, strategy cases) | **Usable: full legal rights (D-009).** Presented as the SayTamm *team's* track record with year and market, never as work delivered by SayTamm the company |
 | Testimonials (DC Block, Altopiano, Musalli, Bitumat, Alqimma, K.S Furniture) | Not used |
 | Client logos (STC, Zara, Saudi GEA, Air Arabia, etc.) | Not used |
 | Phone, WhatsApp, email, office (Jeddah) | Not used. SayTamm needs its own (OQ-07/08/09) |

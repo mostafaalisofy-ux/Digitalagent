@@ -15,6 +15,9 @@ Format: ID · date · decision · decided by · rationale · source.
 | D-006 | 2026-11-04 | The owner **personally led** the Infinity Corp (2021–22) and nsm+ (2015–18) projects | Owner | These become Category C ("led by our founder"), publishable subject to red-flag rules and data verification |
 | D-007 | 2026-11-04 | **Two-tone Signature mark approved** for hero moments (white/black T + Electric Purple blade); solid mono stays the default | Owner | Resolves C1 / OQ-02 (former P-001) |
 | D-008 | 2026-11-04 | **Wordmark direction: "SayTamm"** in mixed case (Satoshi Bold base, to be custom-drawn); "Tamm" in purple allowed on the Signature lockup only | Owner | Resolves C9 / OQ-03 (former P-002) |
+| D-009 | 2026-11-04 | **SayTamm has full legal rights to use all case studies**, including the Steps KSA cases (K.S Furniture, Muriya, DAMAC Paramount, Bio-Group, strategy cases) | Owner ("لنا كل الحق ف استخدام كل الكيس ستديز بشكل قانوني") | Updates D-005 for case studies only. They are presented as the **team's track record**, with honest context about where they were delivered. Testimonials, client logos and Steps' aggregate claims remain excluded unless separately confirmed |
+| D-010 | 2026-11-04 | Domain **www.saytamm.com**. Primary email **tamm@saytamm.com**. Public contact email **info@saytamm.com** | Owner | Resolves OQ-07 |
+| D-011 | 2026-11-04 | **Approved logo = the solid black, outline black and outline white renders** supplied on 2026-11-04 (T-form + separate diagonal blade) | Owner ("ده اللوجو المعتمد اللي هنستخدمه") | Identical files to the master renders. Production files v1 in `brand/production/logo/` derive from them |
 | D-004 | 2026-11-04 | 57357 case: the targeting of "Gulf princes'" locations is never published in any form | Claude (risk control; reversible only by explicit owner decision with legal advice) | Reputational and legal risk in the Saudi market |
 
 ## Working rules adopted for documentation (reversible, low-risk)
@@ -26,6 +29,8 @@ Format: ID · date · decision · decided by · rationale · source.
 | W-003 | 2026-11-04 | Diagonal angle documented as ≈ 45° (measured), replacing "≈ 65°" | Direct pixel measurement of the master artwork; matches the Full Visual Guidelines |
 | W-004 | 2026-11-04 | The 27 Aug asset package is authoritative; the 24 Aug package (`_1.zip`) is superseded | The older pattern tiles the full logo, which the Bible prohibits |
 | W-005 | 2026-11-04 | Brand source files committed to `/brand` unmodified, with renamed copies only | Uploads do not persist between sessions; the project needs a durable source of truth |
+| W-006 | 2026-11-04 | **Rejected** the third asset zip (`SayTamm_Brand_Assets.zip`, 135 KB, 24 Aug 13:47) | It contains a **different, unapproved mark**: a pointed T-stem plus a literal checkmark, navy/orange "source" files, W:H 1.17 (IoU 0.40 vs the approved logo). It contradicts D-011 and the Bible |
+| W-007 | 2026-11-04 | Production logo files v1 built by recolour and verified trace of the approved logo | Website and digital use need SVG; the fidelity checks are in `brand/production/logo/README.md` |
 
 ## Proposed — awaiting owner
 

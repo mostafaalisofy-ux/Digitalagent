@@ -11,11 +11,11 @@ Status: `open` · `answered` (move the outcome to `DECISION_LOG.md`).
 | OQ-02 | Two-tone Signature mark? | — | — | **answered: approved (D-007)** |
 | OQ-03 | Wordmark style? Who draws the final wordmark? | — | — | **Style answered: "SayTamm" (D-008).** Still open: who draws the final vector wordmark (see OQ-05) |
 | OQ-04 | Canonical Arabic spelling: **قول تم** or **قول تمّ**? | Used in the logo lockup, site and all comms | Choose one and lock it. "تمّ" is the fully vocalised form; "تم" matches the Bible and everyday usage | open |
-| OQ-05 | Can the original designer supply **vector masters** (SVG/AI/EPS) for the symbol, the wordmark and all lockups? | Required for web (SVG), print and OG images. Raster-only today | Request them from the designer. Otherwise approve a precision trace that we verify against the master | open |
+| OQ-05 | Vector masters | — | **Symbol: done.** v1 SVGs traced from the approved logo (D-011, W-007), with an edge deviation of 1 px or less. Still open: the **drawn "SayTamm" wordmark (EN) and an Arabic wordmark/lockup**. Who designs them? Should I draft wordmark options for approval? A designer's original vector of the symbol, if one exists, would still be preferable for print | partly answered |
 | OQ-10 | Portfolio materials | Work section, proof, case studies | **Partly answered 2026-11-04:** Infinity Corp deck, nsm+ deck and the steps-ksa.com cases received. Still needed: see OQ-32 and the intake list in `PORTFOLIO_AND_CASE_STUDIES.md` §7 | partly answered |
 | OQ-30 | SayTamm ↔ Steps relationship? | — | — | **answered: separate companies (D-005)** |
 | OQ-31 | Owner's role on Infinity Corp and nsm+ projects? | — | — | **answered: led them (D-006)** |
-| OQ-37 | Did you **personally lead** any Steps KSA projects (K.S Furniture, Muriya, DAMAC Paramount, Bio-Group, strategy cases)? If yes, which ones, and does Steps agree to their use as founder experience? | Decides whether SayTamm can cite its strongest Saudi results at all | Only cite cases the founder led, with Steps' agreement | open |
+| OQ-37 | Steps cases | — | **Rights answered (D-009).** One wording point remains: may the case pages say where each was delivered (e.g. "delivered by our team at Steps KSA")? This ties to OQ-33 | partly answered |
 | OQ-38 | Any ongoing role, shareholding or agreement (non-compete / non-solicit / confidentiality) with Steps KSA, Infinity Corp or nsm+ that limits SayTamm offering the same services, approaching the same clients, or naming them? | Legal risk: SayTamm now competes directly with Steps in the same market and services | Confirm with a legal advisor before launch | open |
 | OQ-20 | Approve **Astro** as the stack? Are a client portal or app features planned in the next 12 months? | Framework choice | Astro, unless app features are planned (then Next.js) | open |
 
@@ -24,7 +24,7 @@ Status: `open` · `answered` (move the outcome to `DECISION_LOG.md`).
 | ID | Question | Status |
 |---|---|---|
 | OQ-06 | Default language and URL strategy: both prefixed (`/en`, `/ar`), and which serves as `x-default`? Target KSA only (`ar-SA`/`en-SA`) or wider GCC? | open |
-| OQ-07 | Verified domain (is `saytamm.com` owned?) and public email address(es). Not Steps' (D-005) | open |
+| OQ-07 | Domain and emails | **answered (D-010):** www.saytamm.com · tamm@saytamm.com · info@saytamm.com (public contact) | answered |
 | OQ-08 | SayTamm's own public phone and WhatsApp Business number. **Not Steps'** (D-005) | open |
 | OQ-09 | SayTamm's legal entity name, CR number, VAT number, office address(es)/city | open |
 | OQ-11 | Rights to show previous work | **Answered for Infinity Corp and nsm+ material (D-002).** Steps rights follow from OQ-30 | answered / partly |
@@ -53,5 +53,5 @@ Status: `open` · `answered` (move the outcome to `DECISION_LOG.md`).
 | OQ-22 | Access to a keyword research tool for KSA search volumes | open |
 | OQ-26 | Will SayTamm advertise its own services (affects the offer landing page and tracking setup)? | open |
 | OQ-27 | Resend `SayTamm_Professional_Brand_Guidelines_v2.pptx` and `SayTamm_Brand_Bible_2026.pptx` via Drive or zip. Both arrived as 0-byte files three times | open |
-| OQ-29 | What brand files may be stored in this GitHub repo: everything (decks, concept boards, assets), the production asset package only, or none? They are currently held outside Git | open |
+| OQ-29 | What brand files may be stored in this GitHub repo? **Production logo files are now committed** (they will be public on the website anyway). Guideline decks, concept boards and portfolio PDFs are still held outside Git until you confirm | partly answered |
 | OQ-28 | Do the "Master Brand System", "Art Direction System" and "Content & Communication System" decks cited by the 2026 Guidelines exist? If so, please send them | open |

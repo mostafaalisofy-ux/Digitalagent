@@ -1,7 +1,9 @@
 # Technical Architecture
 
 ## Current state [CONFIRMED]
-Empty repository (README only). No framework, no dependencies, no hosting, no domain configured. Greenfield.
+No website code yet; the repo holds the knowledge base and brand production files. **Domain: www.saytamm.com (D-010).** Emails: tamm@saytamm.com (primary), info@saytamm.com (public contact, used on the site and for lead notifications unless told otherwise). DNS and hosting are not configured, and **nothing changes on DNS without explicit authorisation.**
+
+[RECOMMENDATION] Canonical host `https://www.saytamm.com`, with the apex `saytamm.com` 301-redirecting to it. Set SPF, DKIM and DMARC on the domain before sending form notifications, so lead emails don't land in spam.
 
 ## Recommended stack [RECOMMENDATION — needs approval, OQ-20]
 
