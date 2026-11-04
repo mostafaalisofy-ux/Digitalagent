@@ -28,6 +28,8 @@ async function settle(page) {
       await page.waitForTimeout(1500);
       const first = await page.evaluate(() => { const c = document.querySelector('.hero .btn--primary'); if (!c) return null; const b = c.getBoundingClientRect(); return { bottom: b.bottom, hidden: getComputedStyle(c.closest('[data-reveal]') || c).opacity !== '1' }; });
       await settle(page);
+      // lazy images below the fold may still be downloading after the scroll: give them up to 5 s
+      await page.evaluate(async () => { await Promise.all([...document.images].filter((i) => i.offsetParent && !i.complete).map((i) => new Promise((res) => { i.addEventListener('load', res, { once: true }); i.addEventListener('error', res, { once: true }); setTimeout(res, 5000); }))); });
       const r = await page.evaluate(() => {
         const over = document.documentElement.scrollWidth - innerWidth;
         const imgs = [...document.images].filter((i) => i.offsetParent && (!i.complete || !i.naturalWidth)).map((i) => i.src);
