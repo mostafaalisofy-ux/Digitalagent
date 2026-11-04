@@ -212,7 +212,7 @@ No API keys, tokens, passwords or `.env` files are included or required.
 2. **Brand logos** for the 12 brands are not supplied; the wall shows names as text (OQ-39). Saudi GEA (a government entity) needs display permission.
 3. **Arabic copy** needs native review (OQ-25, OQ-42, OQ-43).
 4. **Five services** have scope pending: SEO, Content Marketing, Media Production, Website & CRO, Analytics & Growth (OQ-34).
-5. **Founder:** the photo is in place. The bio and Arabic name spelling are still missing; the About page shows name and role only, with no placeholders (OQ-40).
+5. **Founder:** the photo, bio, Arabic name, founding year (2021) and team size (30) are in place (D-015). Naming previous employers (OQ-33) and the legal check on the founder's current role at Steps (OQ-38) are still open.
 6. Campaign visuals are missing for K.S Furniture, Muriya, Bio-Group, DAMAC and Electronics (OQ-41).
 7. There is no drawn "SayTamm" wordmark yet, so the header shows the symbol only (OQ-05). Phone, WhatsApp, legal entity, CR and address are unknown (OQ-08, OQ-09). Social handles are unconfirmed (OQ-24).
 
