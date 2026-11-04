@@ -17,7 +17,7 @@ Date: 2026-11-04 · Branch `claude/saytamm-brand-strategy-d2shzo` · Base: v0.4 
 | `site/src/pages/[lang]/work/index.astro` | Unknown market/period omitted |
 | `site/src/pages/[lang]/about.astro` | Placeholders removed. Leadership shows the **founder photo supplied by the owner** (unedited, square), name and role; AboutPage JSON-LD with the founder |
 | `site/public/team/mostafa-sofy.webp`, `brand/people/Mostafa_Sofy_Founder_original.webp` (new) | Founder portrait: a 900 px web version and the original 1254 px file |
-| Founder bio and company facts (D-015) | The owner's bio was edited into a first-person, 3-paragraph site bio (EN + AR) with an expertise list; Arabic name «مصطفى صوفي». About facts are now 2021 founded · 30 people · 15+ years · 5 markets. Case attribution was reworded: the e-commerce cases (2021–22) postdate the 2021 founding, so "before SayTamm was founded" became "led by members of the SayTamm team, including work delivered at other agencies". **Left out on purpose:** the current Managing Director role at Steps (OQ-38), "double-digit ROAS" (OQ-51) and named employers other than Yellow Pages (OQ-33) |
+| Founder bio and company facts (D-015) | The owner's bio was edited into a first-person, 3-paragraph site bio (EN + AR) with an expertise list; Arabic name «مصطفى صوفي». About facts are now 2021 founded · 30 people · 15+ years · 5 markets. Case attribution was reworded: the e-commerce cases (2021–22) postdate the 2021 founding, so "before SayTamm was founded" became "led by members of the SayTamm team, including work delivered at other agencies". The About story now states the owner's founding reason (closing the client–agency gap, fast communication, goal- and number-driven work). **Left out on purpose:** all employer names (owner decision, OQ-33), the current Managing Director role at Steps (OQ-38) and "double-digit ROAS" (OQ-51) |
 | `site/src/pages/404.astro` | Numeral contrast fixed |
 | `site/src/components/work/CaseMedia.astro` | Case-page gallery (portrait triptych + landscape pair). A new **editorial panel** (channels, sector, market, services: verified facts only) for projects without visuals once figures are withheld. RTL alignment fixed |
 | `site/src/components/home/SelectedWork.astro` | Story order Context → Challenge → Approach → Execution; unknown market omitted |
@@ -89,7 +89,7 @@ Date: 2026-11-04 · Branch `claude/saytamm-brand-strategy-d2shzo` · Base: v0.4 
 1. All 7 cases: figures, client naming, years and periods (OQ-44, OQ-32, OQ-33).
 2. Saudi GEA display permission, and official logos for the 12 brands (OQ-39).
 3. Native Arabic review of all copy (OQ-25, OQ-42, OQ-43).
-4. Founder facts are received and in use (D-015). Still to decide: naming previous employers (OQ-33) and the legal check on the current Steps role (OQ-38).
+4. Founder facts are received and in use (D-015). Still open: the legal check on the current Steps role (OQ-38).
 5. Scope for SEO, Content Marketing, Media Production, Website & CRO, Analytics & Growth (OQ-34).
 6. Operating commitments (timelines, reporting cadence, audit offer) before they are published (OQ-50, OQ-14).
 

@@ -73,8 +73,8 @@ export const HOME = {
       intro: 'A Saudi-focused digital marketing and performance agency that combines strategy, creativity, media and technology — and measures the result.',
       storyTitle: 'Why SayTamm exists',
       story: [
-        'Many businesses have plenty of marketing activity and too little evidence of what it returns. SayTamm was founded to close that gap.',
-        'Founded in 2021, SayTamm brings together a team of 30 and more than 15 years of leadership in digital marketing across Saudi Arabia, Egypt and the wider region. Strategy, creative, media and measurement are planned together and judged by the same number.',
+        'SayTamm was founded in 2021 to close a gap many businesses know well: the distance between what a client needs and what their agency delivers, made worse by slow communication and by marketing that is not tied to a clear goal.',
+        'We work the other way round. Communication is fast and direct, and every plan is built around the numbers and goals that matter to the business, with strategy, creative, media and measurement planned together and judged by the same number.',
       ],
       valuesTitle: 'What we stand for',
       values: [
@@ -87,13 +87,13 @@ export const HOME = {
       founderTitle: 'Leadership',
       founderName: 'Mostafa Sofy',
       founderRole: 'Founder',
-      // Owner-supplied biography (2026-11-04), edited for the site. Deliberately omitted: the current
-      // role at another agency (OQ-38), the unverified "double-digit ROAS" claim, and named employers
-      // other than the early career (OQ-33). First person: the founder's own voice.
+      // Owner-supplied biography (2026-11-04), edited for the site, first person. Owner decision: no
+      // previous employers are named — markets only (Saudi Arabia, Egypt, the Gulf). Also omitted: the
+      // current role at another agency (OQ-38) and the unverified "double-digit ROAS" claim (OQ-51).
       bio: [
-        'I have spent more than 15 years building and leading digital marketing operations across Saudi Arabia, Egypt and the wider MENA region, starting at Yellow Pages during Egypt’s early digital transformation.',
-        'Since then I have held senior leadership roles at performance and digital agencies: leading country operations and client portfolios, and building teams from the ground up. Along the way I have worked with more than 200 brands across 20+ industries, from retail, FMCG and F&B to automotive, hospitality, real estate, fashion and e-commerce.',
-        'I started SayTamm on one belief: great marketing isn’t random campaigns. It is the right strategy, the right people and the right steps, measured by what they move.',
+        'I have spent more than 15 years building and leading digital marketing operations across Saudi Arabia, Egypt and the wider Gulf.',
+        'Over that time I have led country operations, client portfolios and teams built from the ground up, and worked with more than 200 brands across 20+ industries, from retail, FMCG and F&B to automotive, hospitality, real estate, fashion and e-commerce.',
+        'I founded SayTamm because I kept seeing the same gap: between what a client actually needs and what their agency delivers, and in how quickly the two talk to each other. SayTamm exists to close it, with fast, direct communication and work built around numbers and goals, not marketing for its own sake.',
       ],
       expertiseTitle: 'Expertise',
       expertise: ['Digital marketing strategy', 'Performance marketing', 'Media buying', 'Brand strategy', 'Agency leadership', 'Team building'],
@@ -176,8 +176,8 @@ export const HOME = {
       intro: 'وكالة تسويق رقمي وأداء تركّز على السوق السعودي، تجمع الاستراتيجية والإبداع والإعلانات والتقنية، وتقيس النتيجة.',
       storyTitle: 'لماذا قول تم',
       story: [
-        'لدى كثير من الشركات نشاط تسويقي كبير، ودليل قليل على ما يعود به. تأسست قول تم لسد هذه الفجوة.',
-        'تأسست قول تم عام 2021، وتجمع فريقاً من 30 عضواً وأكثر من 15 عاماً من قيادة التسويق الرقمي في السعودية ومصر والمنطقة. نخطط للاستراتيجية والإبداع والإعلانات والقياس معاً، ونحكم عليها بالرقم نفسه.',
+        'تأسست قول تم عام 2021 لسد فجوة تعرفها شركات كثيرة: المسافة بين ما يحتاجه العميل وما تقدمه له الوكالة، ويزيدها بطء التواصل وتسويق لا يرتبط بهدف واضح.',
+        'نعمل بطريقة معاكسة: تواصل سريع ومباشر، وكل خطة تُبنى حول الأرقام والأهداف التي تهم العمل، ونخطط للاستراتيجية والإبداع والإعلانات والقياس معاً، ونحكم عليها بالرقم نفسه.',
       ],
       valuesTitle: 'قيمنا',
       values: [
@@ -191,9 +191,9 @@ export const HOME = {
       founderName: 'مصطفى صوفي',
       founderRole: 'المؤسس',
       bio: [
-        'أمضيت أكثر من 15 عاماً في بناء عمليات التسويق الرقمي وقيادتها في السعودية ومصر ومنطقة الشرق الأوسط وشمال أفريقيا، بدأتها في Yellow Pages خلال مرحلة التحوّل الرقمي المبكرة في مصر.',
-        'ومنذ ذلك الحين شغلت مناصب قيادية في وكالات الأداء والتسويق الرقمي: قدت عمليات على مستوى الدول ومحافظ عملاء، وبنيت فرقاً من الصفر. وعملت خلال هذه المسيرة مع أكثر من 200 علامة تجارية في أكثر من 20 قطاعاً، من التجزئة والسلع الاستهلاكية والأغذية والمشروبات إلى السيارات والضيافة والعقارات والأزياء والتجارة الإلكترونية.',
-        'أسست قول تم على قناعة واحدة: التسويق الجيد ليس حملات عشوائية، بل الاستراتيجية الصحيحة، والفريق الصحيح، والخطوات الصحيحة، ويُقاس بما يحققه.',
+        'أمضيت أكثر من 15 عاماً في بناء عمليات التسويق الرقمي وقيادتها في السوق السعودي والسوق المصري ودول الخليج.',
+        'قدت خلالها عمليات على مستوى الدول ومحافظ عملاء، وبنيت فرقاً من الصفر، وعملت مع أكثر من 200 علامة تجارية في أكثر من 20 قطاعاً، من التجزئة والسلع الاستهلاكية والأغذية والمشروبات إلى السيارات والضيافة والعقارات والأزياء والتجارة الإلكترونية.',
+        'أسست قول تم لأنني كنت أرى الفجوة نفسها مراراً: بين ما يحتاجه العميل فعلاً وما تقدمه له الوكالة، وفي سرعة التواصل بينهما. وُجدت قول تم لسد هذه الفجوة: تواصل سريع ومباشر، وعمل يُبنى على الأرقام والأهداف، لا تسويق بلا هدف.',
       ],
       expertiseTitle: 'مجالات الخبرة',
       expertise: ['استراتيجية التسويق الرقمي', 'التسويق بالأداء', 'شراء الوسائط الإعلانية', 'استراتيجية العلامة', 'قيادة الوكالات', 'بناء الفرق'],
