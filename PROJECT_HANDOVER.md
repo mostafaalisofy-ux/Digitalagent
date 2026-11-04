@@ -161,6 +161,7 @@ Every page is generated for both locales via `getStaticPaths` (`staticLangPaths(
 | Brands wall | `src/data/clients.ts`. Add `logo: { src, w, h }` to a brand to show an official logo file instead of the name. `permission: 'pending'` hides a brand in production (Saudi GEA today) |
 | Logo used by the site | `src/assets/logo/symbol.svg` (read by `lib/logo.ts` → `components/Logo.astro`, `Pattern.astro`) and `public/brand/*` (favicons, JSON-LD logo) |
 | Portfolio images | `public/work/*.webp` (referenced from `cases.ts`) |
+| Founder photo | `public/team/mostafa-sofy.webp` (900 px, used on About); original in `brand/people/` |
 | OG images | `public/og/saytamm-og-{en,ar}.png` |
 | Fonts | `public/fonts/satoshi/` (Satoshi); `@fontsource/ibm-plex-sans-arabic` via npm (Arabic) |
 | Full logo set and brand originals | `/brand` (see `brand/SOURCES.md` and `brand/production/logo/README.md`) |
@@ -211,7 +212,7 @@ No API keys, tokens, passwords or `.env` files are included or required.
 2. **Brand logos** for the 12 brands are not supplied; the wall shows names as text (OQ-39). Saudi GEA (a government entity) needs display permission.
 3. **Arabic copy** needs native review (OQ-25, OQ-42, OQ-43).
 4. **Five services** have scope pending: SEO, Content Marketing, Media Production, Website & CRO, Analytics & Growth (OQ-34).
-5. **Founder** bio, photo and Arabic name spelling are placeholders on the About page (OQ-40).
+5. **Founder:** the photo is in place. The bio and Arabic name spelling are still missing; the About page shows name and role only, with no placeholders (OQ-40).
 6. Campaign visuals are missing for K.S Furniture, Muriya, Bio-Group, DAMAC and Electronics (OQ-41).
 7. There is no drawn "SayTamm" wordmark yet, so the header shows the symbol only (OQ-05). Phone, WhatsApp, legal entity, CR and address are unknown (OQ-08, OQ-09). Social handles are unconfirmed (OQ-24).
 

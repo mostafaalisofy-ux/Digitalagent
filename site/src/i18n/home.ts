@@ -87,6 +87,7 @@ export const HOME = {
       founderTitle: 'Leadership',
       founderName: 'Mostafa Sofy',
       founderRole: 'Founder',
+      photoAlt: 'Mostafa Sofy, founder of SayTamm',
     },
     casePage: {
       back: 'All work', facts: 'At a glance', story: 'The work', results: 'Outcomes', prev: 'Previous case', evidence: 'How these figures were measured',
@@ -179,6 +180,7 @@ export const HOME = {
       founderTitle: 'القيادة',
       founderName: 'Mostafa Sofy', // Arabic spelling to confirm (OQ-40)
       founderRole: 'المؤسس',
+      photoAlt: 'Mostafa Sofy، مؤسس قول تم',
     },
     casePage: {
       back: 'كل الأعمال', facts: 'نظرة سريعة', story: 'العمل', results: 'النتائج', prev: 'الحالة السابقة', evidence: 'كيف قيست هذه الأرقام',

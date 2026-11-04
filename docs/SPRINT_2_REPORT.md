@@ -15,7 +15,8 @@ Date: 2026-11-04 · Branch `claude/saytamm-brand-strategy-d2shzo` · Base: v0.4 
 | `site/src/pages/[lang]/services.astro` | Redesigned: discipline index bar, each discipline a distinct block (outlined numeral, name, value statement), two-column scope lists, staging-only "scope to be confirmed" tag |
 | `site/src/pages/[lang]/work/[slug].astro` | Redesigned case page: header (client, headline, context), facts bar (unknown facts omitted), visuals, objective as a lead statement, three numbered steps, outcomes with KPIs and "how these figures were measured", previous/next pager, richer Article JSON-LD |
 | `site/src/pages/[lang]/work/index.astro` | Unknown market/period omitted |
-| `site/src/pages/[lang]/about.astro` | Leadership shows name and role only; the photo and bio placeholders are removed |
+| `site/src/pages/[lang]/about.astro` | Placeholders removed. Leadership shows the **founder photo supplied by the owner** (unedited, square), name and role; AboutPage JSON-LD with the founder |
+| `site/public/team/mostafa-sofy.webp`, `brand/people/Mostafa_Sofy_Founder_original.webp` (new) | Founder portrait: a 900 px web version and the original 1254 px file |
 | `site/src/pages/404.astro` | Numeral contrast fixed |
 | `site/src/components/work/CaseMedia.astro` | Case-page gallery (portrait triptych + landscape pair). A new **editorial panel** (channels, sector, market, services: verified facts only) for projects without visuals once figures are withheld. RTL alignment fixed |
 | `site/src/components/home/SelectedWork.astro` | Story order Context → Challenge → Approach → Execution; unknown market omitted |
@@ -87,7 +88,7 @@ Date: 2026-11-04 · Branch `claude/saytamm-brand-strategy-d2shzo` · Base: v0.4 
 1. All 7 cases: figures, client naming, years and periods (OQ-44, OQ-32, OQ-33).
 2. Saudi GEA display permission, and official logos for the 12 brands (OQ-39).
 3. Native Arabic review of all copy (OQ-25, OQ-42, OQ-43).
-4. Founder bio, photo, Arabic name spelling, founding year, team (OQ-40).
+4. Founder bio, Arabic name spelling, founding year, team (OQ-40). The photo has been received and is in use.
 5. Scope for SEO, Content Marketing, Media Production, Website & CRO, Analytics & Growth (OQ-34).
 6. Operating commitments (timelines, reporting cadence, audit offer) before they are published (OQ-50, OQ-14).
 
@@ -95,7 +96,7 @@ Date: 2026-11-04 · Branch `claude/saytamm-brand-strategy-d2shzo` · Base: v0.4 
 
 - Campaign visuals: K.S Furniture, Muriya, Bio-Group, DAMAC, electronics Q4 (OQ-41). They use the editorial panel or the to-scale data composition.
 - Official logo files for the 12 brands (OQ-39).
-- Founder portrait; team and workspace photography (OQ-40, OQ-41).
+- Team and workspace photography (OQ-41). The founder portrait has been received.
 - Higher-resolution originals of the fashion photography (current files are about 550–640 px wide).
 - Drawn "SayTamm" wordmark (OQ-05).
 
