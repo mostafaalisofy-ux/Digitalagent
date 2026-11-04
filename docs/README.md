@@ -28,7 +28,7 @@ An unlabeled statement inherits the label of its section heading.
 | [BRAND_VOICE.md](BRAND_VOICE.md) | Tone, messaging framework, claims policy, EN/AR copy rules |
 | [VISUAL_IDENTITY.md](VISUAL_IDENTITY.md) | The reconciled visual spec: logo, colour, type, pattern, digital tokens |
 | [PORTFOLIO_AND_CASE_STUDIES.md](PORTFOLIO_AND_CASE_STUDIES.md) | Case inventory, verification, red flags, tiers, attribution rules |
-| [STEPS_TRANSITION.md](STEPS_TRANSITION.md) | SayTamm ↔ Steps KSA relationship scenarios and migration plan |
+| [STEPS_TRANSITION.md](STEPS_TRANSITION.md) | SayTamm ↔ Steps KSA: separate companies (D-005), reuse rules, competitive differentiation |
 | [AGENCY_GROWTH_PLAN.md](AGENCY_GROWTH_PLAN.md) | Track 1: ICP, acquisition, sales system, operations, first 90 days |
 | [WEBSITE_STRATEGY.md](WEBSITE_STRATEGY.md) | Objectives, user journeys, conversion and measurement plan |
 | [WEBSITE_SITEMAP.md](WEBSITE_SITEMAP.md) | Recommended architecture, page purposes, homepage narrative |

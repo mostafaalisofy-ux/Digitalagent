@@ -13,7 +13,11 @@ Proposed in the brief: Home · About · Services · Strategy & Performance · Se
 
 ## Recommended architecture
 
-Navigation (5 items + CTA): **Work · Services · Approach · About · Insights** · [**Start a project**] · EN/ع
+Navigation at launch (4 items + CTA): **Services · Approach · Track record · About** · [**Start a project**] · EN/ع
+- "Track record" = founder-led experience cases (Category C, clearly labelled; D-005/D-006). It is renamed **Work** once SayTamm has its own approved cases.
+- Insights is added to the navigation when it launches.
+
+Full target navigation: **Work · Services · Approach · About · Insights** · [Start a project] · EN/ع
 
 ```
 /{lang}/                              Home
@@ -28,8 +32,10 @@ Navigation (5 items + CTA): **Work · Services · Approach · About · Insights*
 /{lang}/services/website-development-cro/           Pillar 04 Data & Conversion
 /{lang}/services/analytics-growth/
 /{lang}/approach/                     How we work: Say → Tamm → Prove
-/{lang}/work/                         Work index      (launch when ≥ 2 approved studies)
-/{lang}/work/{slug}/                  Case study
+/{lang}/track-record/                 Founder-led experience (launch; Category C, labelled)
+/{lang}/track-record/{slug}/          Experience case (e.g. fashion-beauty-ecommerce-scale, electronics-q4, multi-market-lead-gen)
+/{lang}/work/                         SayTamm Work index (when ≥ 2 approved SayTamm studies exist)
+/{lang}/work/{slug}/                  SayTamm case study
 /{lang}/about/                        Who we are, leadership, experience (Category C lives here)
 /{lang}/insights/                     Journal         (launch when 3–5 articles exist)
 /{lang}/insights/{slug}/
@@ -66,8 +72,8 @@ The page follows the brand's own logic: **Say → Tamm → Prove → Start.**
 | 02 | **The belief** | "Marketing without direction is just activity." Short manifesto: 3–4 lines | Brand philosophy. Editorial type, lots of space |
 | 03 | **What we do** | Four pillars (Strategy & Brand · Media & Performance · Content & Social · Data & Conversion), each with its outcome line and its services listed as links | **Not nine generic cards.** A numbered editorial list with the diagonal as the divider/indicator |
 | 04 | **How we move** | Say → Tamm → Prove. Three steps, each with what happens and what the client gets | Scroll-linked diagonal progress indicator |
-| 05 | **Proof** | Approved case studies (large campaign imagery) **or**, before launch-ready work exists, leadership experience plus the audit offer | Never fabricated. Swaps to real work when approved |
-| 06 | **Numbers that matter** | Only verified KPIs, in large type with purple on the one number that matters | **Omitted entirely** until verified figures exist |
+| 05 | **Track record** | "Led by our founder": 2–3 experience cases with headline KPIs (e.g. *ROAS 13.84× · 27.7K orders · 12 weeks*), each labelled with company type, market and year | Category C, honestly labelled. Becomes SayTamm Work later |
+| 06 | **Numbers that matter** | Only figures verified from original exports (OQ-32), in large type with purple on the one number that matters | Omitted until the exports are confirmed |
 | 07 | **Why SayTamm** | Differentiation pillars (connected · ownership · speed · Saudi/global · evidence) | Short and confident. No superlatives |
 | 08 | **Start** | "Say it." → inquiry CTA, with a short form preview or a direct link | The final CTA reads like the brand's verbal signature |
 

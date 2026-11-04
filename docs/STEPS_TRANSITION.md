@@ -1,48 +1,34 @@
-# Steps KSA → SayTamm: Relationship & Transition
+# Steps KSA: Relationship & Competitive Position
 
-Status: **decision pending (OQ-30).** This is the most consequential open question in the project: it decides what SayTamm can say about its own track record.
+## Decision [APPROVED — D-005, 2026-11-04]
 
-## What Steps has today [CONFIRMED — steps-ksa.com, read 2026-11-04]
+**SayTamm and Steps KSA are separate companies.** SayTamm adopts the same nine-service catalogue (D-003). Steps' work, people, clients and assets are not SayTamm's.
 
-| Asset | Detail |
+## What this means in practice
+
+| Area | Rule |
 |---|---|
-| Positioning | "Growth-Focused Performance Marketing Agency in Saudi Arabia". Belief: "real marketing builds businesses, not just followers" |
-| Location | Jarir Building, Sari Street, **Jeddah** (only listed office) |
-| Contact | +966 56 835 5046 (phone and WhatsApp) · info@steps-ksa.com |
-| Markets claimed | KSA, UAE, Kuwait, Bahrain, Qatar, Oman |
-| Services | 9 (now SayTamm's, D-003) |
-| Case studies | K.S Furniture, Muriya, DAMAC Paramount, Bio-Group, plus strategy and social cases |
-| Testimonials | DC Block Factory, Altopiano, Musalli Jewelry, Bitumat, Alqimma, K.S Furniture |
-| Social | Facebook `stepssaudi`, Instagram `saudi.steps`, LinkedIn `steps-saudi`, TikTok `stepsagency.ksa`, Snapchat |
-| Site | English + Arabic (`/ar/`), WhatsApp-driven CTAs, free audit offer |
-| Not stated | Legal name, CR/VAT, founding year, team |
+| Case studies (K.S Furniture, Muriya, DAMAC Paramount, Bio-Group, strategy cases) | **Not SayTamm work.** Usable only as founder experience, **only where the founder personally led them** and Steps agrees (OQ-37). Until then: not used |
+| Testimonials (DC Block, Altopiano, Musalli, Bitumat, Alqimma, K.S Furniture) | Not used |
+| Client logos (STC, Zara, Saudi GEA, Air Arabia, etc.) | Not used |
+| Phone, WhatsApp, email, office (Jeddah) | Not used. SayTamm needs its own (OQ-07/08/09) |
+| Aggregate claims (7–10× ROAS, 40+ brands, 1M+ SAR tracked) | Not used |
+| Website copy | **Never copied.** Steps' text is Steps' copyright, and duplicate content hurts both sites in search. SayTamm copy is written from scratch in the SayTamm voice |
+| Service catalogue structure | Used (D-003). The *services* are the same; the *expression* is SayTamm's own |
+| Search | No migration. SayTamm builds its own domain authority |
 
-## Three scenarios
+## Steps as a competitor [RECOMMENDATION]
 
-| | **A. Rebrand: Steps becomes SayTamm** | **B. Sister brands** | **C. Separate company** |
-|---|---|---|---|
-| What it means | Same company and team, new name and identity | Same owner, two agencies with different positioning | SayTamm is new; Steps is a past employer or partner |
-| Track record | ✅ Steps work = SayTamm work, shown as "delivered as Steps" during the transition | ⚠️ Steps work is Steps'; SayTamm can cite it only as leadership experience | ❌ Steps work is Category C (leadership experience) at most |
-| Clients & testimonials | Carry over, with a client notice | Stay with Steps | Stay with Steps |
-| Contact details | Reuse the phone, WhatsApp and office | Separate | Separate |
-| SEO | **301-redirect steps-ksa.com → SayTamm** to keep its search equity | Two sites competing for the same keywords: **cannibalisation risk** | Independent |
-| Risk | Losing Steps brand recognition (mitigated by "Steps is now SayTamm") | Confusing the market: both claim "performance agency in KSA" | Slow credibility build; thin portfolio at launch |
+Steps targets the same buyer, with the same services and nearly the same claim ("Growth-Focused Performance Marketing Agency in Saudi Arabia"). SayTamm must be clearly different, not a second version of Steps.
 
-**[RECOMMENDATION]** If the facts allow it, **Scenario A** is commercially strongest. SayTamm would launch with a real Saudi track record, real testimonials, an active WhatsApp line, existing social audiences and search equity, rather than starting from zero.
-Scenario B only works if the two brands are clearly separated, for example by segment, service or market. As things stand they would compete head-on: both say "performance marketing agency in Saudi Arabia" and both now offer the same nine services.
+| | Steps (as published) | SayTamm (differentiation) |
+|---|---|---|
+| Core idea | "Take the first step" (start) | **"Say it. Tamm it."** (completion, ownership of the outcome) |
+| Brand world | Generic agency presentation | A distinctive, ownable identity: the T + completion mark, the diagonal system, editorial black/white/purple |
+| Proof style | Aggregate claims and logo walls | Fewer, deeper, verified cases: **headline KPI → insight → action** |
+| Selling | "360 marketing", free WhatsApp audit | Four pillars and one accountable system: Say → Tamm → Prove |
+| Arabic | Bilingual site | **Arabic-first craft** as a visible differentiator (native copy, true RTL design) |
+| Leadership | No team named | **Founder-led credibility**: named leadership with a documented track record |
 
-## If Scenario A: transition plan [RECOMMENDATION]
-
-1. **Announce:** "Steps is now SayTamm", with an email and WhatsApp message to clients and a LinkedIn post. Explain the new name through the brand idea (قول تم).
-2. **Website:** build the SayTamm site. Map every steps-ksa.com URL (EN and AR) to its SayTamm equivalent and **301-redirect** each one. Keep a "formerly Steps" line in the footer and About for 12 months.
-3. **Search:** run the Search Console *Change of Address* tool and update Google Business Profile, directories and structured data (`alternateName: "Steps"`).
-4. **Social:** rename the handles where platforms allow it (this keeps followers), and update bios and links.
-5. **Case studies:** Steps cases become Category A, labelled "delivered as Steps", re-written and re-designed in the SayTamm system and verified against the original data.
-6. **Legal:** registered trade name, CR activity and VAT records, contracts and invoices under the new name. **This needs the owner's legal advisor.**
-7. **Sequencing:** do not switch off Steps until the SayTamm site is live and redirects are tested.
-
-## If Scenario B or C
-
-- Do not reuse Steps' phone, email, testimonials, logos or claims on the SayTamm site.
-- Show Steps work only as founder experience (Category C), and only where the owner personally led it.
-- Differentiate the two brands explicitly: segment, price point, service depth or market.
+## Legal check (before launch)
+Confirm there is no non-compete, non-solicitation, confidentiality or IP restriction from Steps, Infinity Corp or nsm+ (OQ-38). This matters most for approaching Steps' current clients and naming previous clients.

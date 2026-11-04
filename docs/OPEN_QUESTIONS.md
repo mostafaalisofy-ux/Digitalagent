@@ -8,13 +8,15 @@ Status: `open` · `answered` (move the outcome to `DECISION_LOG.md`).
 | ID | Question | Why it matters | Our recommendation | Status |
 |---|---|---|---|---|
 | OQ-01 | Is this repository (`Digitalagent`) the home of the SayTamm website, or is it meant for something else (the README mentions "an agent for digital marketing work")? | Where the site gets built | Build the site in `/site` here, or create a dedicated `saytamm-website` repo | open |
-| OQ-02 | Approve the **two-tone Signature mark** (white/black T + purple blade) for hero use? | Shown in every concept board but prohibited by the 2026 Guidelines. It defines the hero look | Approve it as a special-use Signature version; mono stays the default | open |
-| OQ-03 | **Wordmark:** "SayTamm" (mixed case, optionally *Say* + *Tamm* in purple) or "SAYTAMM" (tracked caps)? Who supplies the final drawn wordmark? | No wordmark artwork exists; the decks disagree | Mixed-case "SayTamm" in Satoshi Bold as the base for a custom-drawn wordmark. Two-tone only on the Signature lockup | open |
+| OQ-02 | Two-tone Signature mark? | — | — | **answered: approved (D-007)** |
+| OQ-03 | Wordmark style? Who draws the final wordmark? | — | — | **Style answered: "SayTamm" (D-008).** Still open: who draws the final vector wordmark (see OQ-05) |
 | OQ-04 | Canonical Arabic spelling: **قول تم** or **قول تمّ**? | Used in the logo lockup, site and all comms | Choose one and lock it. "تمّ" is the fully vocalised form; "تم" matches the Bible and everyday usage | open |
 | OQ-05 | Can the original designer supply **vector masters** (SVG/AI/EPS) for the symbol, the wordmark and all lockups? | Required for web (SVG), print and OG images. Raster-only today | Request them from the designer. Otherwise approve a precision trace that we verify against the master | open |
 | OQ-10 | Portfolio materials | Work section, proof, case studies | **Partly answered 2026-11-04:** Infinity Corp deck, nsm+ deck and the steps-ksa.com cases received. Still needed: see OQ-32 and the intake list in `PORTFOLIO_AND_CASE_STUDIES.md` §7 | partly answered |
-| OQ-30 | **How are SayTamm and Steps KSA related?** (A) Steps rebrands to SayTamm (same company and team) · (B) sister brands under one owner · (C) SayTamm is a new, separate company. Also: is "nsm+ / New Step Media" part of the same history? | Decides whether Steps' case studies, testimonials, clients, phone, WhatsApp and search equity belong to SayTamm. See `STEPS_TRANSITION.md` | Scenario A, if the facts allow | open |
-| OQ-31 | Your **personal role** on each Infinity Corp and nsm+ project (led / managed / contributed)? | Required to write "our founder led…" truthfully | — | open |
+| OQ-30 | SayTamm ↔ Steps relationship? | — | — | **answered: separate companies (D-005)** |
+| OQ-31 | Owner's role on Infinity Corp and nsm+ projects? | — | — | **answered: led them (D-006)** |
+| OQ-37 | Did you **personally lead** any Steps KSA projects (K.S Furniture, Muriya, DAMAC Paramount, Bio-Group, strategy cases)? If yes, which ones, and does Steps agree to their use as founder experience? | Decides whether SayTamm can cite its strongest Saudi results at all | Only cite cases the founder led, with Steps' agreement | open |
+| OQ-38 | Any ongoing role, shareholding or agreement (non-compete / non-solicit / confidentiality) with Steps KSA, Infinity Corp or nsm+ that limits SayTamm offering the same services, approaching the same clients, or naming them? | Legal risk: SayTamm now competes directly with Steps in the same market and services | Confirm with a legal advisor before launch | open |
 | OQ-20 | Approve **Astro** as the stack? Are a client portal or app features planned in the next 12 months? | Framework choice | Astro, unless app features are planned (then Next.js) | open |
 
 ## P1 — needed before launch
@@ -22,15 +24,15 @@ Status: `open` · `answered` (move the outcome to `DECISION_LOG.md`).
 | ID | Question | Status |
 |---|---|---|
 | OQ-06 | Default language and URL strategy: both prefixed (`/en`, `/ar`), and which serves as `x-default`? Target KSA only (`ar-SA`/`en-SA`) or wider GCC? | open |
-| OQ-07 | Verified domain (is `saytamm.com` owned?) and public email address(es). Steps uses `info@steps-ksa.com`; reuse its setup only under Scenario A | open |
-| OQ-08 | Public phone and WhatsApp Business number: approved for the website? Steps uses +966 56 835 5046; reuse it under Scenario A? | open |
-| OQ-09 | Legal entity name, CR number, VAT number, office address(es)/city. Steps lists Jarir Building, Sari Street, Jeddah | open |
+| OQ-07 | Verified domain (is `saytamm.com` owned?) and public email address(es). Not Steps' (D-005) | open |
+| OQ-08 | SayTamm's own public phone and WhatsApp Business number. **Not Steps'** (D-005) | open |
+| OQ-09 | SayTamm's legal entity name, CR number, VAT number, office address(es)/city | open |
 | OQ-11 | Rights to show previous work | **Answered for Infinity Corp and nsm+ material (D-002).** Steps rights follow from OQ-30 | answered / partly |
 | OQ-32 | Original **Ads Manager / analytics exports** for K.S Furniture, Muriya, Bio-Group, DAMAC and the Infinity fashion and electronics campaigns (the Infinity screenshots have corrupted digits), plus campaign dates and years for the Steps cases | open |
-| OQ-33 | Should previous agencies (Infinity Corp, nsm+) be **named** publicly in the founder's experience, or described generically ("a Cairo performance agency")? | open |
+| OQ-33 | Should previous agencies (Infinity Corp, nsm+, Steps) be **named** publicly in the founder's experience, or described generically ("a Cairo performance agency")? | open |
 | OQ-34 | Real scope for SEO, Content Marketing, Media Production, Website & CRO and Analytics & Growth (Steps has no detail pages for these) | open |
 | OQ-35 | Results for Marseilia 2018 (leads by market) and 57357 Ramadan 2018 (donations), if available | open |
-| OQ-36 | Are Steps' public claims (7–10× average ROAS, 40+ brands, STC / GEA / Air Arabia as managed clients) backed by data and client relationships we can document? | open |
+| OQ-36 | ~~Steps' public claims~~: not applicable to SayTamm (D-005) | closed |
 | OQ-12 | Approve **Say → Tamm → Prove** as the operating narrative? (from concept board 1; not in the Bible) | open |
 | OQ-13 | Approve grouping the 9 services (D-003) into **4 pillars** (P-010)? | open |
 | OQ-14 | Engagement models, minimum engagement size, SAR budget bands for the form, response-time SLA. Is the Performance Audit offer real? | open |

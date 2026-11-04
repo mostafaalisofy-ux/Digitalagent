@@ -29,6 +29,8 @@ Saudi buyers typically choose between three imperfect options:
 | Media / ads vendors | Campaign setup, spend management | No strategy; optimise platform metrics, not business outcomes |
 | Content / social shops | Volume of posts and creative | No link between output and revenue |
 
+A fourth competitor type matters most: **growth / performance agencies already in KSA with the same claim.** Steps KSA is the closest example (same nine services, same "performance marketing agency in Saudi Arabia" claim, Jeddah-based). It is a separate company (D-005). SayTamm's differentiation against it is in `STEPS_TRANSITION.md`.
+
 **SayTamm's territory is the connection between them.** Strategy, media and performance run as one system with one owner, reported in business terms.
 Market-size and spend claims are intentionally omitted. Any statistic used publicly must be sourced and dated (see `BRAND_VOICE.md`, Claims policy).
 

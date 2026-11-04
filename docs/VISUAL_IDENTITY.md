@@ -20,10 +20,11 @@ This is the single working spec for designers and developers. It reconciles the 
 | Solid white | [APPROVED] **Default on dark** | Most placements; the website default |
 | Solid Electric Purple | [APPROVED] Special use | One hero moment per surface, never the default |
 | Outline black / white | [APPROVED] Special use | Light production footprint, glass, dense layouts |
-| **Signature two-tone** (white or black T + purple blade) | **[RECOMMENDATION] Pending, OQ-02** | Hero moments on Black: website hero, cover, app icon. Shown in every concept board. A recolour of two existing separate shapes, so geometry is untouched |
+| **Signature two-tone** (white or black T + Electric Purple blade) | **[APPROVED — D-007]** Special use | Hero moments: website hero, covers, app icon, key visuals. A recolour of two existing, separate shapes, so geometry is untouched. Solid mono stays the default everywhere else |
 
 ### Wordmark & lockups
-- **[MISSING] No wordmark artwork exists** (OQ-03, OQ-05). Until it does, **no lockup ships to production**. Per the brief, the logo must never be approximated with ordinary text.
+- **Direction [APPROVED — D-008]:** **"SayTamm"** in mixed case. Satoshi Bold is the base, to be custom-drawn and optically refined. "Tamm" may be set in Electric Purple on the Signature lockup only; the mono lockups are single colour.
+- **[MISSING] No wordmark artwork exists** (OQ-05). Until the drawn vector exists, **no lockup ships to production**. Per the brief, the logo must never be approximated with ordinary text. Design explorations may use Satoshi Bold as a clearly marked placeholder.
 - Lockup architecture [APPROVED]: horizontal (symbol + wordmark: proposals, site header, decks) · stacked (square/social) · English · Arabic · bilingual · symbol-only (app icon, avatar, favicon).
 - Horizontal lockup spacing [SOURCE: 2026 Guidelines]: minimum ½ icon height between symbol and wordmark. The wordmark baseline aligns to the icon's optical centre.
 

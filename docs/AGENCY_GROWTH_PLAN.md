@@ -14,11 +14,11 @@ Purpose: turn SayTamm from an identity into a business that wins clients. Everyt
 
 ## 2. Ideal client profile (first 12 months)
 
-Focus beats breadth. Based on where the proof is strongest (`PORTFOLIO_AND_CASE_STUDIES.md` §5):
+Focus beats breadth. Based on where the founder-led proof is strongest (`PORTFOLIO_AND_CASE_STUDIES.md` §5):
 
-1. **Saudi e-commerce & retail brands** (D2C, fashion, beauty, furniture). Proof: K.S Furniture, fashion and beauty scale-up, Bio-Group.
-2. **Real estate developers** (KSA and GCC). Proof: Muriya, DAMAC, Marseilia.
-3. **Growth-stage companies that need strategy plus execution** (apps, services, B2B). Proof: strategy cases (Clean Basket, DC Block).
+1. **Saudi e-commerce & retail brands** (D2C, fashion, beauty, electronics). Proof: fashion & beauty scale-up, electronics Q4.
+2. **Real estate developers** (KSA and GCC). Proof: Marseilia (KSA and Kuwait lead gen), once the numbers are in.
+3. **High-season campaigns** (Ramadan, National Day, White Friday) for consumer brands and non-profits. Proof: 57357, QNB Ramadan.
 
 Deprioritise one-off design jobs and low-budget "posting only" social work. They are not the positioning, and they consume capacity.
 
@@ -60,7 +60,7 @@ Deprioritise one-off design jobs and low-budget "posting only" social work. They
 
 ## 6. Market presence checklist
 
-- [ ] LinkedIn company page (rename or create per OQ-30), with founder profile aligned
+- [ ] LinkedIn company page (new, SayTamm), with founder profile aligned
 - [ ] Instagram, X, TikTok and Snapchat handles secured as **saytamm** (check availability: OQ-24)
 - [ ] Google Business Profile (once the address is verified)
 - [ ] Domain plus professional email on it (OQ-07)
@@ -68,13 +68,17 @@ Deprioritise one-off design jobs and low-budget "posting only" social work. They
 - [ ] Listings in relevant agency directories (to evaluate)
 - [ ] Consistent entity facts everywhere: name, Arabic name, city, services, one-line description
 
-## 7. First 90 days (assuming Scenario A; adjust for B/C)
+## 7. First 90 days (SayTamm as a new, separate company: D-005)
+
+SayTamm starts with no company track record, so **the founder's record and the quality of the brand do the selling** until the first SayTamm clients are won and documented.
 
 | Weeks | Agency track | Digital track |
 |---|---|---|
-| 1–2 | Resolve P0 decisions; legal path for the rename; collect case data | Creative direction routes; content model; site skeleton |
-| 3–4 | Credentials deck, audit template, proposal template | Homepage + services build (EN/AR) |
-| 5–6 | Rewrite 3 Tier-1 cases with real data; client notice drafted | Work + case study templates; forms and CRM; tracking |
-| 7–8 | Founder LinkedIn cadence starts; partner outreach | QA, redirects from steps-ksa.com tested, staging review |
-| 9–10 | Announce "Steps is now SayTamm"; audit offer campaign | **Launch** (with owner authorisation); Search Console change of address |
-| 11–13 | First paid campaign for the audit offer; first event | Measure, fix, publish first 2 insights articles |
+| 1–2 | Legal setup (entity, CR, VAT; OQ-09/38); domain, email, WhatsApp number; secure social handles | Creative direction routes; content model; site skeleton |
+| 3–4 | Credentials deck (founder track record + method); Growth Audit template; proposal template | Homepage + services build (EN/AR) |
+| 5–6 | Write 2–3 founder-led experience cases from the original data (OQ-32); founder LinkedIn cadence starts | Experience case pages; forms + CRM; tracking |
+| 7–8 | Outreach to warm network and partners; **first 3 audits delivered** | QA (EN/AR, a11y, performance), staging review |
+| 9–10 | Convert audits to the first retainers; agree baselines and publication rights **at signature** | **Launch** (owner authorisation required) |
+| 11–13 | First paid campaign for the audit offer; first SayTamm case in progress | Measure, fix, first 2 insights articles |
+
+**First-client strategy:** offer 2–3 *founding clients* a defined scope at standard quality, in exchange for publication rights and a testimonial. That builds Category A/B proof fast. Commercial terms are for the owner to decide.

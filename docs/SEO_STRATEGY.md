@@ -23,11 +23,12 @@
 
 Additional clusters from the 9-service catalogue (D-003): **SEO services** (شركة سيو في السعودية), **social media marketing** (إدارة حسابات التواصل الاجتماعي), **branding** (تصميم هوية تجارية), **content marketing** (تسويق المحتوى), **media production** (إنتاج إعلاني / تصوير منتجات), **website development** (تصميم مواقع), **Snapchat / TikTok ads Saudi** (إعلانات سناب شات / تيك توك). Each gets its own service page, and none of them is duplicated across pages.
 
-## Existing search equity: steps-ksa.com [RECOMMENDATION — depends on OQ-30]
+## Competing with steps-ksa.com [D-005: separate companies]
 
-steps-ksa.com already targets "Growth Marketing Agency Saudi Arabia" and "Performance Marketing Agency in Saudi Arabia", with EN + AR pages and service pages.
-- **Scenario A (rebrand):** crawl every URL, map 1:1 to SayTamm URLs, 301-redirect, use Search Console *Change of Address*, keep redirects permanently, and monitor 404s and rankings for 90 days.
-- **Scenario B (sister brands):** the two sites would compete for the same queries. Split keyword ownership explicitly, or reposition one brand.
+steps-ksa.com already targets "Growth Marketing Agency Saudi Arabia" and "Performance Marketing Agency in Saudi Arabia", with EN + AR service pages. SayTamm is a new domain competing for the same queries.
+- **No content reuse:** copying Steps' text would create duplicate content and infringe Steps' copyright.
+- **Win on depth and specificity:** each SayTamm service page answers more buyer questions, with method, proof and Arabic-native copy. Also win on page experience (Core Web Vitals) and entity clarity (schema, consistent profiles).
+- **Expect a ramp:** a new domain needs months to earn rankings. Founder-led LinkedIn, referrals and paid acquisition carry lead generation in the meantime (`AGENCY_GROWTH_PLAN.md`).
 
 ## On-page standards
 - Title: `[Primary intent] | SayTamm` (≤ 60 chars), localised; Arabic titles written natively.

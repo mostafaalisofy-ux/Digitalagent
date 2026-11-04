@@ -89,7 +89,7 @@ Each cites a third party. Reuse only after checking the original source and date
 - "~40% of Saudi Google searches in Arabic" (Google MENA Market Insights 2023)
 - "Saudi Arabia in global top five for TikTok usage per capita" (no source given; **do not reuse without one**)
 
-## Steps' own performance claims [SOURCE — attribution pending, OQ-30]
+## Steps' own claims: not SayTamm's [D-005]
 
-"7–10× average ROAS across KSA client campaigns (12-month trailing, Google + Meta)" · "40+ Saudi and GCC brands managed across 5 platforms" · "25+ brands grown across KSA" · "10M+ reach" · "1,500+ pieces of content" · "30+ strategies delivered" · "12 industries" · "1M+ SAR tracked revenue".
-Whether these can be stated as SayTamm's depends on how SayTamm and Steps are related (OQ-30). **Do not republish them until that is settled and the underlying data exists.**
+Steps publishes aggregate claims (7–10× average ROAS, 40+ brands, 1M+ SAR tracked revenue and others). **SayTamm and Steps are separate companies, so none of these are used.** SayTamm publishes only its own verified numbers, or founder-led results labelled as such.
+The process descriptions and operating commitments above (timelines, audit turnaround, account access) are Steps' published practice. SayTamm should adopt them **only as its own commitments, confirmed by the owner (OQ-14)**, and express them in its own words.
