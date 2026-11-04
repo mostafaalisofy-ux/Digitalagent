@@ -1,23 +1,33 @@
-// Brands the SayTamm team has worked with — ONLY names that appear in the case-study material
-// received (Steps KSA cases, nsm+ deck; legal rights D-002 / D-009). Logos: not supplied yet, so the
-// wall is typographic. Names from the brief without supporting material (Hyde Park, Orange,
-// EgyptAir) are excluded until confirmed (OQ-39).
+// "Brands we've worked with" — supplied by the owner (2026-11-04) as the team's PROFESSIONAL
+// EXPERIENCE, not as SayTamm's direct clients. Names exactly as supplied. Never imply a contract,
+// partnership or endorsement. Logos: only official files with permission to display (OQ-39);
+// until a file is supplied, the brand name is set as text — no logo is redrawn or approximated.
 import type { Lang } from '../config/site';
 type T = Record<Lang, string>;
-export interface Client { name: T; sector: T; market: T; caseSlug?: string }
+export interface Brand { name: string; sector: T; logo?: { src: string; w: number; h: number }; caseSlug?: string }
 
-export const CLIENTS: Client[] = [
-  { name: { en: 'K.S Furniture', ar: 'K.S للأثاث' }, sector: { en: 'E-commerce', ar: 'تجارة إلكترونية' }, market: { en: 'Saudi Arabia', ar: 'السعودية' }, caseSlug: 'ks-furniture' },
-  { name: { en: 'DAMAC Properties', ar: 'داماك العقارية' }, sector: { en: 'Real estate', ar: 'عقارات' }, market: { en: 'UAE', ar: 'الإمارات' }, caseSlug: 'damac-paramount' },
-  { name: { en: 'Muriya', ar: 'موريا' }, sector: { en: 'Real estate', ar: 'عقارات' }, market: { en: 'Oman', ar: 'عُمان' }, caseSlug: 'muriya' },
-  { name: { en: 'Marseilia Group', ar: 'مجموعة مارسيليا' }, sector: { en: 'Real estate', ar: 'عقارات' }, market: { en: 'KSA · Kuwait · Egypt', ar: 'السعودية · الكويت · مصر' } },
-  { name: { en: 'Banque Misr', ar: 'بنك مصر' }, sector: { en: 'Banking', ar: 'بنوك' }, market: { en: 'Egypt', ar: 'مصر' } },
-  { name: { en: 'QNB Al Ahli', ar: 'QNB الأهلي' }, sector: { en: 'Banking', ar: 'بنوك' }, market: { en: 'Egypt', ar: 'مصر' } },
-  { name: { en: '57357 Hospital', ar: 'مستشفى 57357' }, sector: { en: 'Non-profit', ar: 'قطاع غير ربحي' }, market: { en: 'Egypt & GCC', ar: 'مصر والخليج' } },
-  { name: { en: 'Bio-Group', ar: 'بايو جروب' }, sector: { en: 'Retail', ar: 'تجزئة' }, market: { en: 'E-commerce', ar: 'تجارة إلكترونية' }, caseSlug: 'bio-group' },
-  { name: { en: 'Electa', ar: 'إليكتا' }, sector: { en: 'Electronics retail', ar: 'تجزئة إلكترونيات' }, market: { en: 'Strategy', ar: 'استراتيجية' } },
-  { name: { en: 'Clean Basket', ar: 'كلين باسكت' }, sector: { en: 'Mobile app', ar: 'تطبيق' }, market: { en: 'Go-to-market', ar: 'دخول السوق' } },
-  { name: { en: 'DC Block Factory', ar: 'مصنع DC بلوك' }, sector: { en: 'Construction materials', ar: 'مواد بناء' }, market: { en: 'Market expansion', ar: 'توسع' } },
-  { name: { en: 'Jora', ar: 'جورا' }, sector: { en: 'Restaurants & cafés', ar: 'مطاعم ومقاهٍ' }, market: { en: 'Growth strategy', ar: 'نمو' } },
-  { name: { en: 'Altopiano', ar: 'ألتوبيانو' }, sector: { en: 'Restaurants', ar: 'مطاعم' }, market: { en: 'Riyadh', ar: 'الرياض' } },
+const S = {
+  fnb: { en: 'Food & beverage', ar: 'أغذية ومشروبات' },
+  auto: { en: 'Automotive', ar: 'سيارات' },
+  realEstate: { en: 'Real estate', ar: 'عقارات' },
+  telecom: { en: 'Telecommunications', ar: 'اتصالات' },
+  banking: { en: 'Banking', ar: 'بنوك' },
+  aviation: { en: 'Aviation', ar: 'طيران' },
+  hospitality: { en: 'Hospitality', ar: 'ضيافة' },
+  government: { en: 'Government · Entertainment', ar: 'جهة حكومية · ترفيه' },
+} satisfies Record<string, T>;
+
+export const BRANDS: Brand[] = [
+  { name: 'Buffalo Burger', sector: S.fnb },
+  { name: 'Juhayna', sector: S.fnb },
+  { name: 'Edita Foods', sector: S.fnb },
+  { name: 'Costa Coffee', sector: S.fnb },
+  { name: 'Toyota', sector: S.auto },
+  { name: 'BYD', sector: S.auto },
+  { name: 'DAMAC', sector: S.realEstate, caseSlug: 'damac-paramount' },
+  { name: 'STC', sector: S.telecom },
+  { name: 'QNB', sector: S.banking, caseSlug: 'qnb-ramadan' },
+  { name: 'Air Arabia', sector: S.aviation },
+  { name: 'Radisson Blu', sector: S.hospitality },
+  { name: 'Saudi GEA', sector: S.government },
 ];

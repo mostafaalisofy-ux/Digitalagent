@@ -8,3 +8,5 @@ export const href = (lang: Lang, page: PageKey = 'home', hash = '') => `/${lang}
 export const other = (lang: Lang): Lang => (lang === 'en' ? 'ar' : 'en');
 export const staticLangPaths = () => LOCALES.map((lang) => ({ params: { lang } }));
 export const isLang = (v: string | undefined): v is Lang => !!v && (LOCALES as readonly string[]).includes(v);
+/** Case-study detail page, e.g. caseHref('ar','muriya') → "/ar/work/muriya/". */
+export const caseHref = (lang: Lang, slug: string) => `/${lang}/work/${slug}/`;

@@ -1,0 +1,84 @@
+---
+// Work index: every case as an editorial row → its full case page.
+import Base from '../../../layouts/Base.astro';
+import PageHero from '../../../components/PageHero.astro';
+import FinalCta from '../../../components/home/FinalCta.astro';
+import { CASES, showFigures, isPending } from '../../../data/cases';
+import { staticLangPaths, caseHref } from '../../../i18n/paths';
+import { t } from '../../../i18n/ui';
+import { h } from '../../../i18n/home';
+import { SITE, type Lang } from '../../../config/site';
+export const getStaticPaths = staticLangPaths;
+const lang = Astro.params.lang as Lang;
+const d = t(lang);
+const s = h(lang).selected;
+const r = h(lang).results;
+---
+<Base lang={lang} page="work" title={d.meta.workTitle} description={d.meta.workDesc}>
+  <PageHero eyebrow={d.workPage.eyebrow} title={d.workPage.title} intro={d.workPage.intro} />
+  <section class="section idx" aria-label={d.workPage.eyebrow}>
+    <div class="container">
+      <p class="idx__label">{d.workPage.label}</p>
+      <ol role="list" class="idx__list">
+        {CASES.map((c, i) => {
+          const lead = c.kpis.find((k) => k.accent) ?? c.kpis[0];
+          const thumb = c.visual?.images[0];
+          return (
+            <li class="item" data-reveal>
+              <a class="item__link" href={caseHref(lang, c.slug)} data-track="case_study_view" data-cta-id={c.slug} data-cta-location="work_index">
+                <span class="num latin item__n">{String(i + 1).padStart(2, '0')}</span>
+                <span class="item__main">
+                  <span class="item__client">{c.client[lang]}</span>
+                  <span class="item__ctx">{c.sector[lang]} · {c.market[lang]}{c.period && ` · ${c.period[lang]}`}</span>
+                  <span class="item__headline">{c.headline[lang]}</span>
+                </span>
+                <span class="item__fig">
+                  {showFigures(c) ? <><bdi class="num latin item__v">{lead.value}</bdi><span class="item__k">{lead.label[lang]}</span></> : <span class="item__k">{r.withheld}</span>}
+                  {SITE.preview && isPending(c) && <span class="tag-pending">{r.pending}</span>}
+                </span>
+                <span class="item__thumb" aria-hidden="true">{thumb && <img src={thumb.src} width={thumb.w} height={thumb.h} alt="" loading="lazy" decoding="async" />}</span>
+                <span class="item__go">{s.read}<span class="arrow" aria-hidden="true"></span></span>
+              </a>
+            </li>
+          );
+        })}
+      </ol>
+      <p class="idx__note">{r.note}</p>
+    </div>
+  </section>
+  <FinalCta lang={lang} />
+</Base>
+<style>
+  .idx__label { font-size: var(--fs-small); color: var(--text-muted); max-width: 72ch; }
+  .idx__list { margin-top: var(--s-6); border-top: 1px solid var(--line-strong); }
+  .item__link { display: grid; grid-template-columns: auto 1fr; gap: var(--s-3) var(--s-4); padding-block: var(--s-6); border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; }
+  .item__n { color: var(--accent-text); font-weight: 700; font-size: var(--fs-small); padding-top: 0.4em; }
+  .item__main { display: grid; gap: var(--s-2); }
+  .item__client { font-size: var(--fs-h2); font-weight: 700; letter-spacing: var(--track-tight); line-height: 1.1; color: var(--text-strong); }
+  .item__ctx { font-size: var(--fs-small); color: var(--text-muted); }
+  .item__headline { color: var(--text); max-width: 46ch; }
+  .item__fig { grid-column: 2; display: grid; gap: var(--s-1); justify-items: start; align-content: start; }
+  .item__v { font-size: var(--fs-h1); font-weight: 700; line-height: 1; letter-spacing: -0.04em; color: var(--text-strong); }
+  .item__k { font-size: var(--fs-small); color: var(--text-muted); }
+  .item__thumb { display: none; }
+  .item__go { grid-column: 2; display: inline-flex; align-items: center; gap: var(--s-3); font-size: var(--fs-small); font-weight: 700; color: var(--text-strong); }
+  .item__go .arrow { display: inline-block; width: 18px; height: 2px; background: currentColor; position: relative; transition: transform var(--d-3) var(--ease-out); }
+  .item__go .arrow::after { content: ''; position: absolute; inset-inline-end: 0; top: -4px; width: 10px; height: 10px; border-top: 2px solid currentColor; border-inline-end: 2px solid currentColor; transform: rotate(45deg); }
+  :global([dir='rtl']) .item__go .arrow::after { transform: rotate(-45deg); }
+  .item__link:hover .item__client { color: var(--accent-text); }
+  .item__link:hover .item__go .arrow { transform: translateX(4px); }
+  :global([dir='rtl']) .item__link:hover .item__go .arrow { transform: translateX(-4px); }
+  .idx__note { margin-top: var(--s-6); font-size: var(--fs-small); color: var(--text-muted); max-width: 80ch; }
+  @media (min-width: 1024px) {
+    .item__link { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: center; padding-block: var(--s-7); }
+    .item__n { grid-column: 1; align-self: start; }
+    .item__main { grid-column: 2 / span 5; }
+    .item__fig { grid-column: 7 / span 3; }
+    .item__thumb { display: block; grid-column: 10 / span 2; aspect-ratio: 4 / 5; overflow: hidden; background: var(--surface); }
+    .item__thumb:empty { background: none; }
+    .item__thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--d-5) var(--ease-out); }
+    .item__link:hover .item__thumb img { transform: scale(1.04); }
+    .item__go { grid-column: 12; justify-self: end; }
+    .item__go { font-size: 0; gap: 0; }
+  }
+</style>

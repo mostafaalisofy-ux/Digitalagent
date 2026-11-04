@@ -1,0 +1,74 @@
+---
+// "What the work delivered": a documented ledger of OTHER engagements than Selected work, so no
+// figure repeats on the homepage. Every row states what was measured, the comparison, the period
+// and the source. Unconfirmed figures show in staging (tagged) and are withheld in production.
+import { homeResults, showFigures, isPending, type Case } from '../../data/cases';
+import { SITE, type Lang } from '../../config/site';
+import { caseHref } from '../../i18n/paths';
+import { h } from '../../i18n/home';
+interface Props { lang: Lang; cases?: Case[] }
+const { lang, cases = homeResults } = Astro.props;
+const d = h(lang).results;
+const cp = h(lang).casePage;
+---
+<section class="section section--surface res" id="results" aria-labelledby="res-title">
+  <div class="container">
+    <header class="res__head">
+      <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
+      <h2 class="res__title" id="res-title" data-reveal>{d.title}</h2>
+      <p class="res__intro" data-reveal>{d.intro}</p>
+    </header>
+    <ol role="list" class="ledger">
+      {cases.map((c) => {
+        const lead = c.kpis.find((k) => k.accent) ?? c.kpis[0];
+        const figures = showFigures(c);
+        return (
+          <li class="row" data-reveal>
+            <div class="row__who">
+              <h3 class="row__client"><a href={caseHref(lang, c.slug)} data-track="case_study_view" data-cta-id={c.slug} data-cta-location="home_results">{c.client[lang]}</a></h3>
+              <p class="row__ctx">{c.sector[lang]} · {c.market[lang]}</p>
+            </div>
+            <div class="row__fig">
+              {figures ? <>
+                <p class="row__v"><bdi class="num latin">{lead.value}</bdi></p>
+                <p class="row__k">{lead.label[lang]}</p>
+              </> : <p class="row__k">{d.withheld}</p>}
+            </div>
+            <dl class="row__ev">
+              <div><dt>{d.cols.outcome}</dt><dd>{figures ? c.outcome[lang] : '—'}</dd></div>
+              <div><dt>{d.cols.measured}</dt><dd>{c.evidence.measured[lang]}</dd></div>
+              <div><dt>{d.cols.period}</dt><dd>{c.period ? c.period[lang] : d.periodTbc}</dd></div>
+              <div><dt>{d.cols.source}</dt><dd>{c.evidence.source[lang]}{SITE.preview && isPending(c) && <> <span class="tag-pending">{d.pending}</span></>}</dd></div>
+            </dl>
+          </li>
+        );
+      })}
+    </ol>
+    <p class="res__note">{d.note}</p>
+  </div>
+</section>
+<style>
+  .res__head { display: grid; gap: var(--s-4); max-width: 900px; }
+  .res .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .res__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); }
+  .res__intro { color: var(--text); font-size: var(--fs-lead); max-width: 52ch; }
+  .ledger { margin-top: var(--s-9); border-top: 1px solid var(--line-strong); }
+  .row { display: grid; gap: var(--s-4); padding-block: var(--s-6); border-bottom: 1px solid var(--line); }
+  .row__client { font-size: var(--fs-h3); letter-spacing: var(--track-tight); }
+  .row__client a { color: var(--text-strong); text-decoration: none; }
+  .row__client a:hover { color: var(--accent-text); }
+  .row__ctx, .row__k { font-size: var(--fs-small); color: var(--text-muted); margin-top: var(--s-1); }
+  .row__v .num { font-size: var(--fs-h1); font-weight: 700; line-height: 1; letter-spacing: -0.04em; color: var(--text-strong); }
+  .row__ev { display: grid; gap: var(--s-3); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .row__ev div:first-child { grid-column: 1 / -1; }
+  .row__ev dt { font-size: var(--fs-eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--text-muted); font-weight: 500; }
+  :global([dir='rtl']) .row__ev dt { text-transform: none; letter-spacing: 0; font-size: var(--fs-caption); }
+  .row__ev dd { font-size: var(--fs-small); line-height: 1.5; margin-top: 2px; }
+  .res__note { margin-top: var(--s-6); font-size: var(--fs-small); color: var(--text-muted); max-width: 80ch; }
+  @media (min-width: 1024px) {
+    .row { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; padding-block: var(--s-7); }
+    .row__who { grid-column: 1 / span 3; }
+    .row__fig { grid-column: 4 / span 3; }
+    .row__ev { grid-column: 7 / -1; }
+  }
+</style>

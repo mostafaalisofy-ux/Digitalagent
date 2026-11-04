@@ -2,9 +2,8 @@
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
 import HomeAbout from '../../components/home/HomeAbout.astro';
-import Credibility from '../../components/home/Credibility.astro';
-import HomeClients from '../../components/home/HomeClients.astro';
-import Process from '../../components/home/Process.astro';
+import Brands from '../../components/home/Brands.astro';
+import Approach from '../../components/home/Approach.astro';
 import FinalCta from '../../components/home/FinalCta.astro';
 import Logo from '../../components/Logo.astro';
 import { staticLangPaths } from '../../i18n/paths';
@@ -24,44 +23,42 @@ const a = h(lang).aboutPage;
       <div class="story__body">{a.story.map((p, i) => <p data-reveal style={`--delay:${i * 80}ms`}>{p}</p>)}</div>
     </div>
   </section>
-  <HomeAbout lang={lang} showMore={false} showClients={false} />
-  <section class="section section--surface values" aria-labelledby="values-title">
+  <HomeAbout lang={lang} showMore={false} />
+  <Approach lang={lang} />
+  <Brands lang={lang} />
+  <section class="section section--surface lead-sec" aria-labelledby="lead-title">
+    <div class="container lead__grid">
+      <h2 id="lead-title" class="story__h" data-reveal>{a.founderTitle}</h2>
+      <div class="person" data-reveal>
+        <div class="person__photo" aria-hidden="true"><Logo variant="signature" height={64} decorative /><span class="placeholder-tag">{a.photoTbc}</span></div>
+        <div class="person__text"><p class="person__name latin">{a.founderName}</p><p class="person__role">{a.founderRole}</p><p class="placeholder-tag">{a.founderBio}</p></div>
+      </div>
+    </div>
+  </section>
+  <section class="section values" aria-labelledby="values-title">
     <div class="container">
-      <h2 id="values-title" class="values__h" data-reveal>{a.valuesTitle}</h2>
+      <h2 id="values-title" class="story__h" data-reveal>{a.valuesTitle}</h2>
       <ul role="list" class="values__list">
         {a.values.map((v, i) => <li data-reveal style={`--delay:${i * 60}ms`}><h3>{v.t}</h3><p>{v.d}</p></li>)}
       </ul>
     </div>
   </section>
-  <section class="section lead-sec" aria-labelledby="lead-title">
-    <div class="container lead__grid">
-      <h2 id="lead-title" class="values__h" data-reveal>{a.founderTitle}</h2>
-      <div class="person" data-reveal>
-        <div class="person__photo" aria-hidden="true"><Logo variant="signature" height={64} decorative /><span class="placeholder-tag">{lang === 'ar' ? 'الصورة بانتظار التزويد' : 'Photo to be supplied'}</span></div>
-        <div class="person__text"><p class="person__name latin">{a.founderName}</p><p class="person__role">{a.founderRole}</p><p class="placeholder-tag">{a.founderBio}</p></div>
-      </div>
-    </div>
-  </section>
-  <Credibility lang={lang} />
-  <HomeClients lang={lang} />
-  <Process lang={lang} />
   <FinalCta lang={lang} />
 </Base>
 <style>
-  .story__grid { display: grid; gap: var(--s-5); }
-  .story__h, .values__h { font-size: var(--fs-h2); letter-spacing: var(--track-tight); }
+  .story__grid, .lead__grid { display: grid; gap: var(--s-5); }
+  .story__h { font-size: var(--fs-h2); letter-spacing: var(--track-tight); }
   .story__body { display: grid; gap: var(--s-4); }
   .story__body p { font-size: var(--fs-lead); line-height: 1.6; max-width: 60ch; }
-  .values__list { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: var(--s-6); }
-  .values__list li { background: var(--surface); padding: var(--s-5); display: grid; gap: var(--s-2); }
+  .values__list { display: grid; border-top: 1px solid var(--line-strong); margin-top: var(--s-6); }
+  .values__list li { padding-block: var(--s-5); border-bottom: 1px solid var(--line); display: grid; gap: var(--s-2); }
   .values__list h3 { font-size: var(--fs-h3); }
   .values__list p { color: var(--text-muted); }
-  .lead__grid { display: grid; gap: var(--s-6); }
   .person { display: grid; gap: var(--s-5); align-items: center; }
-  .person__photo { aspect-ratio: 1; max-width: 260px; background: var(--surface); display: grid; place-items: center; align-content: center; gap: var(--s-4); }
+  .person__photo { aspect-ratio: 1; max-width: 260px; background: var(--bg); display: grid; place-items: center; align-content: center; gap: var(--s-4); }
   .person__text { display: grid; gap: var(--s-2); justify-items: start; }
   .person__name { font-size: var(--fs-h2); font-weight: 700; color: var(--text-strong); }
   .person__role { color: var(--accent-text); font-weight: 500; }
-  @media (min-width: 768px) { .values__list { grid-template-columns: repeat(5, minmax(0, 1fr)); } .person { grid-template-columns: 260px 1fr; } }
-  @media (min-width: 1024px) { .story__grid, .lead__grid { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); column-gap: var(--gutter); } }
+  @media (min-width: 768px) { .values__list { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: var(--gutter); } .person { grid-template-columns: 260px 1fr; } }
+  @media (min-width: 1024px) { .story__grid, .lead__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); } .story__h { grid-column: 1 / span 4; } .story__body, .person { grid-column: 5 / -1; } }
 </style>

@@ -26,8 +26,8 @@ if not os.path.isdir(SRC):
 shutil.rmtree(OUT, ignore_errors=True)
 os.makedirs(OUT)
 
-PAGES = ['en/index.html', 'ar/index.html', 'en/about/index.html', 'ar/about/index.html', 'en/services/index.html', 'ar/services/index.html',
-         'en/work/index.html', 'ar/work/index.html', 'en/contact/index.html', 'ar/contact/index.html']
+PAGES = sorted(os.path.relpath(os.path.join(r, 'index.html'), SRC).replace(os.sep, '/')
+               for lang in ('en', 'ar') for r, _, fs in os.walk(f'{SRC}/{lang}') if 'index.html' in fs)
 
 def rel(target: str, depth: int) -> str:
     """Root-absolute URL → relative to a page `depth` folders deep; folders → index.html."""

@@ -93,6 +93,11 @@ p { text-wrap: pretty; }
 .btn:hover .arrow { transform: translateX(4px); }
 [dir='rtl'] .btn:hover .arrow { transform: translateX(-4px); }
 
+/* ---------- Verification tag (staging only): figure not yet confirmed against original data ---------- */
+.tag-pending { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border: 1px dashed var(--line-strong); color: var(--text-muted);
+  font-size: var(--fs-eyebrow); font-weight: 500; letter-spacing: 0.02em; text-transform: none; max-width: 100%; }
+.tag-pending::before { content: ''; width: 6px; height: 6px; background: var(--c-purple-200); transform: rotate(45deg); }
+
 /* ---------- Placeholder (clearly identified, replaceable content) ---------- */
 .placeholder-tag {
   display: inline-flex; align-items: center; gap: var(--s-2); padding: 4px 10px; border: 1px dashed var(--c-purple-200);
@@ -121,3 +126,5 @@ p { text-wrap: pretty; }
   .js [data-reveal], .js [data-reveal='mask'], .js [data-reveal='wipe'], .js .line > span { opacity: 1 !important; transform: none !important; clip-path: none !important; }
   @view-transition { navigation: none; }
 }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

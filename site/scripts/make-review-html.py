@@ -12,13 +12,16 @@ public redistribution, so do not publish these files or put them in a public rep
 import base64, os, re, shutil, zipfile
 
 SRC, OUT = 'dist', 'review-html'
-PAGES = {  # dist path → output filename
-    'en/index.html': 'saytamm-en-home.html', 'ar/index.html': 'saytamm-ar-home.html',
-    'en/about/index.html': 'saytamm-en-about.html', 'ar/about/index.html': 'saytamm-ar-about.html',
-    'en/services/index.html': 'saytamm-en-services.html', 'ar/services/index.html': 'saytamm-ar-services.html',
-    'en/work/index.html': 'saytamm-en-work.html', 'ar/work/index.html': 'saytamm-ar-work.html',
-    'en/contact/index.html': 'saytamm-en-contact.html', 'ar/contact/index.html': 'saytamm-ar-contact.html',
-}
+def _pages():
+    out = {}
+    for lang in ('en', 'ar'):
+        for root, _, files in os.walk(f'{SRC}/{lang}'):
+            if 'index.html' in files:
+                rel = os.path.relpath(os.path.join(root, 'index.html'), SRC).replace(os.sep, '/')
+                parts = rel.split('/')[1:-1] or ['home']
+                out[rel] = f"saytamm-{lang}-{'-'.join(parts)}.html"
+    return dict(sorted(out.items()))
+PAGES = _pages()  # dist path → output filename (home, about, services, work, contact + every case page)
 ROUTE = {'/' + k.replace('index.html', ''): v for k, v in PAGES.items()}  # "/en/about/" → file
 
 def b64(path: str, mime: str) -> str:
@@ -63,8 +66,8 @@ for src, out in PAGES.items():
     leftovers = re.findall(r'(?:href|src)="/(?!/)[^"]*"', html)
     print(f'  {out:32s} {os.path.getsize(f"{OUT}/{out}")//1024:4d} KB' + (f'  ⚠ unresolved: {leftovers[:3]}' if leftovers else ''))
 
-zpath = f'{OUT}/SayTamm_Website_v0.3_review.zip'
+zpath = f'{OUT}/SayTamm_Website_v0.4_review.zip'
 with zipfile.ZipFile(zpath, 'w', zipfile.ZIP_DEFLATED) as z:
     for out in PAGES.values():
-        z.write(f'{OUT}/{out}', f'SayTamm_Website_v0.3/{out}')
+        z.write(f'{OUT}/{out}', f'SayTamm_Website_v0.4/{out}')
 print(f'[review-html] {len(PAGES)} pages + {zpath} ({os.path.getsize(zpath)//1024} KB)')

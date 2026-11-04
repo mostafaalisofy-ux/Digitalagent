@@ -2,7 +2,7 @@
 // Business inquiry form. Until the server endpoint + CRM exist (OQ-19), a valid submission
 // opens a pre-filled email to the verified contact address — honest, functional, no fake success.
 import { SITE, type Lang } from '../config/site';
-import { PILLARS } from '../data/services';
+import { DISCIPLINES } from '../data/services';
 import { t } from '../i18n/ui';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -12,7 +12,7 @@ const f = d.fields;
 const preview = import.meta.env.PUBLIC_DEPLOY_TARGET === 'artifact';
 const notice = preview ? (lang === 'ar' ? 'معاينة: النموذج غير متصل. راسلنا على info@saytamm.com' : 'Preview: this form is not connected. Write to info@saytamm.com') : d.notice;
 const done = preview ? (lang === 'ar' ? 'تم التحقق من البيانات. في هذه المعاينة لا يُرسل النموذج — راسلنا مباشرة على info@saytamm.com' : 'Details check out. This preview does not send the form — please write to info@saytamm.com.') : d.done;
-const opts = [...PILLARS.map((p) => ({ id: p.id, label: p.name[lang] })), { id: 'unsure', label: d.serviceOpts[4] }];
+const opts = [...DISCIPLINES.map((p) => ({ id: p.id, label: p.name[lang] })), { id: 'unsure', label: d.unsure }];
 ---
 <form class="cf" novalidate data-form data-email={SITE.email} data-lang={lang} data-mode={preview ? 'preview' : 'live'}
   data-msg-required={d.errors.required} data-msg-email={d.errors.email} data-msg-services={d.errors.services} data-msg-consent={d.errors.consent}>
@@ -98,7 +98,7 @@ const opts = [...PILLARS.map((p) => ({ id: p.id, label: p.name[lang] })), { id: 
     let started = false;
     form.addEventListener('focusin', () => { if (!started) { started = true; dl.push({ event: 'form_start', form_id: 'inquiry', language: msg.lang }); } });
 
-    // Preselect a pillar from ?service=<pillar-id>
+    // Preselect a discipline from ?service=<discipline-id>
     const pre = new URLSearchParams(location.search).get('service');
     if (pre) form.querySelectorAll<HTMLInputElement>('input[name="services"]').forEach((c) => { if (c.value === pre) c.checked = true; });
 

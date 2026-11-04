@@ -1,12 +1,13 @@
 ---
-// Homepage v0.3 — "Dark Editorial Performance" direction lock (D-013):
-// Hero → Selected work → Services → Our approach → Performance proof → About → Final CTA.
+// Homepage (final redesign brief): Hero → Selected work → Brands → Services → How we work →
+// Results → About → Final CTA. Each section answers one question in the buyer's decision.
 import Base from '../../layouts/Base.astro';
 import Hero from '../../components/home/Hero.astro';
 import SelectedWork from '../../components/home/SelectedWork.astro';
+import Brands from '../../components/home/Brands.astro';
 import HomeServices from '../../components/home/HomeServices.astro';
 import Approach from '../../components/home/Approach.astro';
-import Proof from '../../components/home/Proof.astro';
+import Results from '../../components/home/Results.astro';
 import HomeAbout from '../../components/home/HomeAbout.astro';
 import FinalCta from '../../components/home/FinalCta.astro';
 import { staticLangPaths } from '../../i18n/paths';
@@ -19,9 +20,10 @@ const d = t(lang);
 <Base lang={lang} page="home" title={d.meta.homeTitle} description={d.meta.homeDesc}>
   <Hero lang={lang} />
   <SelectedWork lang={lang} />
+  <Brands lang={lang} />
   <HomeServices lang={lang} />
   <Approach lang={lang} />
-  <Proof lang={lang} />
+  <Results lang={lang} />
   <HomeAbout lang={lang} />
   <FinalCta lang={lang} />
 </Base>

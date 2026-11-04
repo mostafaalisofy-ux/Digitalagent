@@ -1,89 +1,92 @@
-// 9 services (D-003) grouped in 4 pillars (P-010). Scope from docs/SERVICES_AND_CAPABILITIES.md.
-// Copy is original SayTamm writing — never copied from any other agency's site.
+// The 9 services SayTamm offers (D-003), organised in 4 disciplines (owner brief, final redesign).
+// Only these services are published. Capabilities listed under "includes" are limited to what the
+// adopted service scope or the team's case material supports. Scope for five services is still
+// being finalised (OQ-34) and is shown as such.
 import type { Lang } from '../config/site';
 type T = Record<Lang, string>;
 export interface Service { id: string; name: T; summary: T; includes: Record<Lang, string[]>; scopePending?: boolean }
-export interface Pillar { id: string; n: string; name: T; question: T; line: T; services: Service[] }
+export interface Discipline { id: string; n: string; name: T; value: T; services: Service[] }
 
-export const PILLARS: Pillar[] = [
+const pending = { en: [] as string[], ar: [] as string[] };
+
+export const DISCIPLINES: Discipline[] = [
   {
     id: 'strategy', n: '01',
-    name: { en: 'Strategy & Brand', ar: 'الاستراتيجية والعلامة' },
-    question: { en: 'What should happen — and why.', ar: 'ما الذي يجب أن يحدث، ولماذا.' },
-    line: { en: 'Say the objective. Tamm the plan.', ar: 'قل الهدف. ونحن نُتمّ الخطة.' },
+    name: { en: 'Strategy & Consulting', ar: 'الاستراتيجية والاستشارات' },
+    value: { en: 'Decide where growth will come from before budget is spent: the audience, the offer, the channels and the number each one must deliver.', ar: 'نحدد مصدر النمو قبل إنفاق الميزانية: الجمهور، والعرض، والقنوات، والرقم المطلوب من كل قناة.' },
     services: [
       { id: 'digital-marketing-strategy',
         name: { en: 'Digital Marketing Strategy', ar: 'استراتيجية التسويق الرقمي' },
-        summary: { en: 'A written plan that ties every channel to a business number.', ar: 'خطة مكتوبة تربط كل قناة برقم يهم عملك.' },
+        summary: { en: 'A written plan that ties every channel and every riyal to a business objective.', ar: 'خطة مكتوبة تربط كل قناة وكل ريال بهدف واضح لعملك.' },
         includes: {
-          en: ['Market & competitor research (KSA / GCC)', 'High-value customer profile', 'Positioning & value proposition', 'Channel priority & budget allocation model', '90-day roadmap'],
-          ar: ['دراسة السوق والمنافسين في السعودية والخليج', 'ملف العميل الأعلى قيمة', 'التموضع والقيمة المقدمة', 'أولويات القنوات ونموذج توزيع الميزانية', 'خارطة طريق لتسعين يوماً'],
+          en: ['Market and competitor research for Saudi Arabia and the Gulf', 'High-value customer profile', 'Positioning and value proposition', 'Channel priorities and budget allocation', 'Seasonal campaign planning, such as Ramadan and National Day', '90-day roadmap'],
+          ar: ['دراسة السوق والمنافسين في السعودية والخليج', 'ملف العميل الأعلى قيمة', 'التموضع والقيمة المقدّمة', 'أولويات القنوات وتوزيع الميزانية', 'تخطيط الحملات الموسمية مثل رمضان واليوم الوطني', 'خارطة طريق لتسعين يوماً'],
         } },
+    ],
+  },
+  {
+    id: 'creative', n: '02',
+    name: { en: 'Creative & Content', ar: 'الإبداع والمحتوى' },
+    value: { en: 'Brand, content and production made for the platforms your customers use — and built to be tested against results, not just approved.', ar: 'علامة ومحتوى وإنتاج مصمم للمنصات التي يستخدمها عملاؤك، ويُختبر مقابل النتائج لا يُعتمد فقط.' },
+    services: [
       { id: 'branding',
         name: { en: 'Branding & Identity', ar: 'الهوية والعلامة التجارية' },
-        summary: { en: 'Positioning first, design second — Arabic and English built together.', ar: 'التموضع أولاً ثم التصميم — بالعربية والإنجليزية معاً من اليوم الأول.' },
+        summary: { en: 'Positioning first, design second — Arabic and English developed together.', ar: 'التموضع أولاً ثم التصميم، بالعربية والإنجليزية معاً.' },
         includes: {
-          en: ['Brand strategy & positioning', 'Naming, messaging & tone of voice', 'Logo & visual identity system', 'Brand guidelines & asset library'],
+          en: ['Brand strategy and positioning', 'Naming, messaging and tone of voice', 'Logo and visual identity system', 'Brand guidelines and asset library'],
           ar: ['استراتيجية العلامة وتموضعها', 'التسمية والرسائل ونبرة الصوت', 'الشعار ونظام الهوية البصرية', 'دليل الهوية ومكتبة الأصول'],
         } },
-    ],
-  },
-  {
-    id: 'media', n: '02',
-    name: { en: 'Media & Performance', ar: 'الوسائط والأداء' },
-    question: { en: 'Where investment should work hardest.', ar: 'أين يجب أن تعمل الميزانية بأقصى قوة.' },
-    line: { en: 'Say the target. Tamm the result.', ar: 'قل المستهدف. ونحن نُتمّ النتيجة.' },
-    services: [
-      { id: 'performance-marketing',
-        name: { en: 'Performance Marketing', ar: 'التسويق بالأداء والإعلانات الممولة' },
-        summary: { en: 'Paid media planned, tested and scaled against revenue — not reach.', ar: 'إعلانات ممولة تُخطَّط وتُختبر وتتوسع وفق الإيراد، لا الوصول.' },
-        includes: {
-          en: ['Google Ads — Search, Shopping, YouTube', 'Meta — Facebook & Instagram', 'Snapchat & TikTok', 'LinkedIn for B2B lead generation', 'Retargeting & A/B testing'],
-          ar: ['إعلانات Google — البحث والتسوق ويوتيوب', 'Meta — فيسبوك وإنستغرام', 'سناب شات وتيك توك', 'لينكدإن لتوليد العملاء في قطاع الأعمال', 'إعادة الاستهداف واختبارات A/B'],
-        } },
-      { id: 'seo',
-        name: { en: 'SEO', ar: 'تحسين محركات البحث' },
-        summary: { en: 'Be found by buyers who are already searching — in Arabic and English.', ar: 'كن حاضراً أمام من يبحث عنك بالفعل — بالعربية والإنجليزية.' },
-        includes: { en: ['Scope being finalised'], ar: ['النطاق قيد الاعتماد'] }, scopePending: true },
-    ],
-  },
-  {
-    id: 'content', n: '03',
-    name: { en: 'Content & Social', ar: 'المحتوى والتواصل الاجتماعي' },
-    question: { en: 'What your audience sees — and does next.', ar: 'ما يراه جمهورك، وما يفعله بعد ذلك.' },
-    line: { en: 'Say the audience. Tamm the reach.', ar: 'قل الجمهور. ونحن نُتمّ الوصول.' },
-    services: [
       { id: 'social-media-marketing',
-        name: { en: 'Social Media Marketing', ar: 'التسويق عبر وسائل التواصل' },
-        summary: { en: 'Platform-native content and community, measured by what it moves.', ar: 'محتوى ومجتمع بلغة كل منصة، يُقاس بما يحرّكه.' },
+        name: { en: 'Social Media Marketing', ar: 'التسويق عبر منصات التواصل' },
+        summary: { en: 'Platform-native content and community management, measured by what it moves.', ar: 'محتوى بلغة كل منصة وإدارة للمجتمع، يُقاس بما يحققه.' },
         includes: {
-          en: ['Social strategy & content pillars', 'Bilingual design, copy & short-form video', 'Community management', 'Influencer & creator campaigns'],
+          en: ['Social strategy and content pillars', 'Bilingual design, copy and short-form video', 'Community management', 'Influencer and creator campaigns'],
           ar: ['استراتيجية المنصات وركائز المحتوى', 'تصميم وكتابة وفيديو قصير بلغتين', 'إدارة المجتمع والتفاعل', 'حملات المؤثرين وصنّاع المحتوى'],
         } },
       { id: 'content-marketing',
         name: { en: 'Content Marketing', ar: 'تسويق المحتوى' },
-        summary: { en: 'Content that earns attention and moves buyers toward a decision.', ar: 'محتوى يكسب الانتباه ويقرّب المشتري من القرار.' },
-        includes: { en: ['Scope being finalised'], ar: ['النطاق قيد الاعتماد'] }, scopePending: true },
+        summary: { en: 'Content that earns attention and moves buyers toward a decision.', ar: 'محتوى يكسب الانتباه ويقرّب المشتري من قراره.' },
+        includes: pending, scopePending: true },
       { id: 'media-production',
         name: { en: 'Media Production', ar: 'الإنتاج الإعلامي' },
-        summary: { en: 'Photography, video and motion made for the feed it will run in.', ar: 'تصوير وفيديو وموشن مصمم للمنصة التي سيُعرض عليها.' },
-        includes: { en: ['Scope being finalised'], ar: ['النطاق قيد الاعتماد'] }, scopePending: true },
+        summary: { en: 'Photography, video and motion produced for the feed it will run in.', ar: 'تصوير وفيديو وموشن يُنتج للمنصة التي سيُعرض عليها.' },
+        includes: pending, scopePending: true },
     ],
   },
   {
-    id: 'data', n: '04',
-    name: { en: 'Data & Conversion', ar: 'البيانات والتحويل' },
-    question: { en: 'What the numbers are saying — and what happens next.', ar: 'ماذا تقول الأرقام، وما الخطوة التالية.' },
-    line: { en: 'Say the question. Tamm the answer.', ar: 'قل السؤال. ونحن نُتمّ الإجابة.' },
+    id: 'media', n: '03',
+    name: { en: 'Media & Performance', ar: 'الإعلانات والأداء' },
+    value: { en: 'Paid media planned, bought and optimised against sales, leads and revenue — with budget moved toward what is working.', ar: 'إعلانات مدفوعة تُخطط وتُشترى وتُحسَّن وفق المبيعات والعملاء والإيرادات، مع تحريك الميزانية نحو ما ينجح.' },
     services: [
+      { id: 'performance-marketing',
+        name: { en: 'Performance Marketing', ar: 'التسويق بالأداء والإعلانات الممولة' },
+        summary: { en: 'Paid search and paid social, planned, tested and scaled against revenue — not reach.', ar: 'إعلانات البحث والتواصل، تُخطط وتُختبر وتتوسع وفق الإيراد لا الوصول.' },
+        includes: {
+          en: ['Google Ads: Search, Shopping and YouTube', 'Meta: Facebook and Instagram', 'Snapchat and TikTok', 'LinkedIn for B2B lead generation', 'Retargeting and A/B testing', 'Lead-generation campaigns for real estate'],
+          ar: ['إعلانات Google: البحث والتسوق ويوتيوب', 'Meta: فيسبوك وإنستغرام', 'سناب شات وتيك توك', 'لينكدإن لتوليد العملاء في قطاع الأعمال', 'إعادة الاستهداف واختبارات A/B', 'حملات توليد العملاء للعقارات'],
+        } },
+    ],
+  },
+  {
+    id: 'digital', n: '04',
+    name: { en: 'Digital & Technology', ar: 'التقنية والقنوات الرقمية' },
+    value: { en: 'The website, search presence and tracking that turn attention into enquiries — and show clearly what worked.', ar: 'الموقع والظهور في البحث والقياس الذي يحوّل الاهتمام إلى طلبات، ويبيّن بوضوح ما الذي نجح.' },
+    services: [
+      { id: 'seo',
+        name: { en: 'SEO', ar: 'تحسين محركات البحث' },
+        summary: { en: 'Be found by buyers who are already searching, in Arabic and English.', ar: 'كن حاضراً أمام من يبحث عنك بالفعل، بالعربية والإنجليزية.' },
+        includes: pending, scopePending: true },
       { id: 'website-development-cro',
         name: { en: 'Website Development & CRO', ar: 'تطوير المواقع وتحسين التحويل' },
-        summary: { en: 'Fast, bilingual sites built to turn visits into enquiries and sales.', ar: 'مواقع سريعة بلغتين، مبنية لتحويل الزيارة إلى طلب وبيع.' },
-        includes: { en: ['Scope being finalised'], ar: ['النطاق قيد الاعتماد'] }, scopePending: true },
+        summary: { en: 'Fast, bilingual websites built to turn visits into enquiries and sales.', ar: 'مواقع سريعة بلغتين، تُبنى لتحويل الزيارة إلى طلب وبيع.' },
+        includes: pending, scopePending: true },
       { id: 'analytics-growth',
         name: { en: 'Analytics & Growth', ar: 'التحليلات والنمو' },
-        summary: { en: 'Tracking you can trust, reports that end with the next move.', ar: 'قياس يمكن الوثوق به، وتقارير تنتهي بالخطوة التالية.' },
-        includes: { en: ['Scope being finalised'], ar: ['النطاق قيد الاعتماد'] }, scopePending: true },
+        summary: { en: 'Tracking you can trust, and reports that end with the next decision.', ar: 'قياس يمكن الوثوق به، وتقارير تنتهي بالقرار التالي.' },
+        includes: pending, scopePending: true },
     ],
   },
 ];
+
+export const SERVICES = DISCIPLINES.flatMap((d) => d.services.map((s) => ({ ...s, discipline: d })));
+export const serviceName = (id: string, lang: Lang) => SERVICES.find((s) => s.id === id)?.name[lang] ?? id;

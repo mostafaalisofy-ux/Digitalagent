@@ -1,73 +1,68 @@
 ---
-// All nine services visible on the homepage, grouped by pillar, each with its one-line outcome.
-import { PILLARS } from '../../data/services';
+// Services as four disciplines, each with its business value and the services inside it —
+// an editorial index, not a card grid. Every service links to its section on the Services page.
+import { DISCIPLINES } from '../../data/services';
 import { type Lang } from '../../config/site';
 import { href } from '../../i18n/paths';
 import { h } from '../../i18n/home';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = h(lang).services;
-let n = 0;
 ---
 <section class="section section--surface svcs" id="services" aria-labelledby="svcs-title">
   <div class="container">
-    <div class="svcs__head">
-      <div>
+    <header class="svcs__head">
+      <div class="svcs__headl">
         <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
         <h2 class="svcs__title" id="svcs-title" data-reveal>{d.title}</h2>
       </div>
       <p class="svcs__intro" data-reveal>{d.intro}</p>
-    </div>
-    <div class="svcs__groups">
-      {PILLARS.map((p) => (
-        <div class="grp" data-reveal>
-          <h3 class="grp__name">{p.name[lang]}</h3>
-          <ul role="list" class="grp__list">
-            {p.services.map((s) => { n += 1; return (
-              <li>
-                <a class="tile" href={href(lang, 'services', s.id)}>
-                  <span class="num latin tile__n">{String(n).padStart(2, '0')}</span>
-                  <span class="tile__name">{s.name[lang]}</span>
-                  <span class="tile__sum">{s.summary[lang]}</span>
-                  <span class="tile__arrow" aria-hidden="true"></span>
-                </a>
-              </li>
-            ); })}
+    </header>
+    <ol role="list" class="disc">
+      {DISCIPLINES.map((g) => (
+        <li class="disc__row" data-reveal>
+          <span class="num latin disc__n">{g.n}</span>
+          <h3 class="disc__name"><a href={href(lang, 'services', g.id)}>{g.name[lang]}</a></h3>
+          <p class="disc__value">{g.value[lang]}</p>
+          <ul role="list" class="disc__svcs">
+            {g.services.map((s) => <li><a href={href(lang, 'services', s.id)}>{s.name[lang]}</a></li>)}
           </ul>
-        </div>
+        </li>
       ))}
+    </ol>
+    <div class="svcs__foot" data-reveal>
+      <a class="btn" href={href(lang, 'services')} data-track="cta_click" data-cta-id="all_services" data-cta-location="home_services">{d.cta}<span class="arrow" aria-hidden="true"></span></a>
     </div>
-    <div class="svcs__foot"><a class="btn" href={href(lang, 'services')}>{d.cta}<span class="arrow" aria-hidden="true"></span></a></div>
   </div>
 </section>
 <style>
-  .svcs__head { display: grid; gap: var(--s-4); margin-bottom: var(--s-8); }
+  .svcs__head { display: grid; gap: var(--s-5); }
+  .svcs__headl { display: grid; gap: var(--s-4); }
   .svcs .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
-  .svcs__title { font-size: var(--fs-h1); letter-spacing: var(--track-tight); max-width: 20ch; margin-top: var(--s-4); }
-  .svcs__intro { color: var(--text-muted); font-size: var(--fs-lead); max-width: 40ch; }
-  .svcs__groups { display: grid; gap: var(--s-7); }
-  .grp { display: grid; gap: var(--s-3); align-content: start; }
-  .grp__name { font-size: var(--fs-small); font-weight: 700; color: var(--accent-text); letter-spacing: var(--track-eyebrow); text-transform: uppercase; }
-  :global([dir='rtl']) .grp__name { text-transform: none; font-size: var(--fs-body); }
-  .grp__list { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
-  .tile { position: relative; display: grid; gap: var(--s-2); align-content: start; height: 100%; padding: var(--s-5); padding-inline-end: var(--s-8); background: var(--surface); transition: background var(--d-2) var(--ease-out); }
-  .tile:hover, .tile:focus-visible { background: color-mix(in srgb, var(--c-graphite), var(--c-white) 5%); }
-  .tile__n { font-size: var(--fs-caption); color: var(--text-muted); }
-  .tile__name { font-size: var(--fs-h3); font-weight: 700; color: var(--text-strong); line-height: 1.2; }
-  .tile__sum { color: var(--text-muted); font-size: var(--fs-small); line-height: 1.5; }
-  .tile__arrow { position: absolute; inset-inline-end: var(--s-5); top: var(--s-5); width: 12px; height: 12px; border-top: 2px solid var(--accent-text); border-inline-end: 2px solid var(--accent-text); transform: rotate(45deg); transition: transform var(--d-3) var(--ease-out); }
-  :global([dir='rtl']) .tile__arrow { border-inline-end: 0; border-left: 2px solid var(--accent-text); transform: rotate(-45deg); }
-  .tile:hover .tile__arrow { transform: translateX(4px) rotate(45deg); }
-  :global([dir='rtl']) .tile:hover .tile__arrow { transform: translateX(-4px) rotate(-45deg); }
+  .svcs__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); }
+  .svcs__intro { color: var(--text); font-size: var(--fs-lead); max-width: 40ch; align-self: end; }
+  .disc { margin-top: var(--s-9); border-top: 1px solid var(--line-strong); }
+  .disc__row { display: grid; grid-template-columns: auto 1fr; gap: var(--s-3) var(--s-4); padding-block: var(--s-6); border-bottom: 1px solid var(--line); }
+  .disc__n { color: var(--accent-text); font-size: var(--fs-small); font-weight: 700; padding-top: 0.5em; }
+  .disc__name { font-size: var(--fs-h2); letter-spacing: var(--track-tight); line-height: 1.1; }
+  .disc__name a { color: var(--text-strong); text-decoration: none; background: linear-gradient(var(--accent), var(--accent)) no-repeat 0 100% / 0 2px; transition: background-size var(--d-3) var(--ease-out); }
+  :global([dir='rtl']) .disc__name a { background-position: 100% 100%; }
+  .disc__name a:hover, .disc__name a:focus-visible { background-size: 100% 2px; }
+  .disc__value, .disc__svcs { grid-column: 2; }
+  .disc__value { color: var(--text); line-height: 1.55; max-width: 46ch; }
+  .disc__svcs { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); }
+  .disc__svcs a { font-size: var(--fs-small); color: var(--text-muted); text-decoration: none; display: inline-flex; align-items: center; gap: var(--s-2); }
+  .disc__svcs a::before { content: ''; width: 8px; height: 2px; background: var(--accent); transform: skewX(-45deg); }
+  .disc__svcs a:hover { color: var(--text-strong); }
   .svcs__foot { margin-top: var(--s-8); }
-  @media (min-width: 768px) {
-    .grp__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .grp__list li:only-child, .grp__list li:last-child:nth-child(odd) { grid-column: 1 / -1; }
-  }
   @media (min-width: 1024px) {
-    .svcs__head { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: end; column-gap: var(--gutter); }
-    .svcs__groups { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-7) var(--gutter); align-items: start; }
-    .grp__list { grid-template-columns: 1fr; }
-    .grp__list li:last-child:nth-child(odd) { grid-column: auto; }
+    .svcs__head { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
+    .svcs__headl { grid-column: 1 / span 7; }
+    .svcs__intro { grid-column: 9 / -1; }
+    .disc__row { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; padding-block: var(--s-7); }
+    .disc__n { grid-column: 1; }
+    .disc__name { grid-column: 2 / span 4; }
+    .disc__value { grid-column: 6 / span 4; }
+    .disc__svcs { grid-column: 10 / -1; flex-direction: column; gap: var(--s-2); }
   }
 </style>

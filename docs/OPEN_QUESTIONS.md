@@ -17,9 +17,11 @@ Status: `open` · `answered` (move the outcome to `DECISION_LOG.md`).
 | OQ-31 | Owner's role on Infinity Corp and nsm+ projects? | — | — | **answered: led them (D-006)** |
 | OQ-37 | Steps cases | — | **Rights answered (D-009).** One wording point remains: may the case pages say where each was delivered (e.g. "delivered by our team at Steps KSA")? This ties to OQ-33 | partly answered |
 | OQ-38 | Any ongoing role, shareholding or agreement (non-compete / non-solicit / confidentiality) with Steps KSA, Infinity Corp or nsm+ that limits SayTamm offering the same services, approaching the same clients, or naming them? | Legal risk: SayTamm now competes directly with Steps in the same market and services | Confirm with a legal advisor before launch | open |
-| OQ-39 | Client wall: confirm the list (13 names drawn from received case material) and send **logo files** with permission to show them. Should Hyde Park, Orange and EgyptAir (named in the brief, no material received) be added? | open |
+| OQ-39 | **Brands wall (12 brands, owner list 2026-11-04):** send the **official logo files** (SVG preferred) and confirm we may display each one. Confirm the wording "professional experience, not SayTamm clients". Saudi GEA is a government entity — confirm display is permitted. Note: STC's current wordmark is lower-case "stc"; the name is shown as supplied | open |
 | OQ-40 | About page: founder photo, short bio, Arabic spelling of the founder's name, founding year of SayTamm, team size | open |
 | OQ-41 | Campaign visuals for K.S Furniture, Muriya, DAMAC and Bio-Group, plus agency photography (team, workspace) for About | open |
+| OQ-43 | Arabic headings: the brief wrote «أربع تخصصات»; the site uses the grammatical «أربعة تخصصات» (تخصص is masculine). Confirm in native review | open |
+| OQ-44 | **Approve each case for publication** (all 7 are `pending`; production shows none of their figures until approved): K.S Furniture (year, revenue attribution), fashion & beauty A/B (original Meta exports), QNB (bank name with figures), Muriya (period, sales matching), electronics Q4 (export), Bio-Group (market, year), DAMAC (period, volume, naming permission) | open |
 | OQ-42 | Confirm the Arabic hero line "تسويق رقمي يقوده الأداء، لعلامات تتحرك بسرعة وتقيس كل شيء" and the Arabic approach terms (الاستراتيجية · الإبداع · الإعلانات · الأداء) after native review | open |
 | OQ-20 | Stack | Framework choice | **Built on Astro 7 (W-008).** Still worth confirming: are a client portal or app features planned in the next 12 months? If yes, revisit | partly answered |
 | OQ-01 | Repo | Where the site lives | **Site built in `/site` of this repo (W-008)**; move it to a dedicated repo later if preferred | partly answered |
@@ -39,7 +41,7 @@ Status: `open` · `answered` (move the outcome to `DECISION_LOG.md`).
 | OQ-35 | Results for Marseilia 2018 (leads by market) and 57357 Ramadan 2018 (donations), if available | open |
 | OQ-36 | ~~Steps' public claims~~: not applicable to SayTamm (D-005) | closed |
 | OQ-12 | Approve **Say → Tamm → Prove** as the operating narrative? (from concept board 1; not in the Bible) | open |
-| OQ-13 | Approve grouping the 9 services (D-003) into **4 pillars** (P-010)? | open |
+| OQ-13 | Service grouping | **answered: four disciplines (D-014)** |
 | OQ-14 | Engagement models, minimum engagement size, SAR budget bands for the form, response-time SLA. Is the Performance Audit offer real? | open |
 | OQ-15 | Which ad platforms does SayTamm actively run (Meta, Google, Snap, TikTok, X, LinkedIn, YouTube)? Any official partner status or certifications? | open |
 | OQ-16 | Arabic tagline and sub-taglines: written natively and approved | open |

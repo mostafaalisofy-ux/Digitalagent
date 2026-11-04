@@ -2,9 +2,8 @@
 import { type Lang } from '../../config/site';
 import { href } from '../../i18n/paths';
 import { h } from '../../i18n/home';
-import { CLIENTS } from '../../data/clients';
-interface Props { lang: Lang; showMore?: boolean; showClients?: boolean }
-const { lang, showMore = true, showClients = true } = Astro.props;
+interface Props { lang: Lang; showMore?: boolean }
+const { lang, showMore = true } = Astro.props;
 const d = h(lang).about;
 ---
 <section class="section about" id="about" aria-labelledby="about-title">
@@ -17,18 +16,12 @@ const d = h(lang).about;
         <h3>{d.nameTitle}</h3>
         <p set:html={d.name.replace(/(“?قول تم”?|«قول تم»)/, '<bdi lang="ar">$1</bdi>')} />
       </div>
-      {showClients && (
-        <div class="about__clients" data-reveal>
-          <p class="eyebrow">{h(lang).clients.title}</p>
-          <ul role="list">{CLIENTS.map((c) => <li>{c.name[lang]}</li>)}</ul>
-        </div>
-      )}
       {showMore && <a class="link-diag about__more" href={href(lang, 'about')}>{d.more}</a>}
     </div>
     <dl class="about__facts">
       {d.facts.map((f, i) => (
         <div class="fact" data-reveal style={`--delay:${i * 80}ms`}>
-          <dt class="num latin">{f.v}</dt>
+          <dt class:list={['num latin', { 'is-text': f.v.length > 4 }]}>{f.v}</dt>
           <dd>{f.k}</dd>
         </div>
       ))}
@@ -37,25 +30,21 @@ const d = h(lang).about;
 </section>
 <style>
   .about { border-top: 1px solid var(--line); }
-  .about__name { background: var(--surface); }
-  .about__grid { display: grid; gap: var(--s-8); }
+  .about__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-8); }
   .about__text { display: grid; gap: var(--s-4); align-content: start; }
   .about .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
-  .about__title { font-size: var(--fs-h1); letter-spacing: var(--track-tight); max-width: 18ch; margin-bottom: var(--s-2); }
+  .about__title { overflow-wrap: break-word; font-size: var(--fs-h1); letter-spacing: var(--track-tight); max-width: 18ch; margin-bottom: var(--s-2); }
   .about__body { font-size: var(--fs-lead); line-height: 1.55; color: var(--text); max-width: 54ch; }
   .about__name { margin-top: var(--s-4); padding: var(--s-5); background: var(--surface); border-inline-start: 4px solid var(--accent); display: grid; gap: var(--s-2); max-width: 58ch; }
   .about__name h3 { font-size: var(--fs-h3); }
   .about__name p { color: var(--text-muted); }
-  .about__clients { margin-top: var(--s-5); display: grid; gap: var(--s-3); max-width: 64ch; }
-  .about__clients ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-2) var(--s-5); padding-top: var(--s-3); border-top: 1px solid var(--line); }
-  @media (min-width: 768px) { .about__clients ul { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  .about__clients li { font-size: var(--fs-small); font-weight: 500; color: var(--text); }
   .about__more { justify-self: start; margin-top: var(--s-2); color: var(--text-strong); }
-  .about__facts { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); align-self: start; }
+  .about__facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); align-self: start; }
   .fact { background: var(--bg); padding: var(--s-5); display: grid; gap: var(--s-2); align-content: start; }
   .fact dt { font-size: var(--fs-display); font-weight: 700; line-height: 0.95; letter-spacing: -0.04em; color: var(--text-strong); }
-  .fact:first-child dt { color: var(--accent-text); }
+  .fact dt.is-text { font-size: var(--fs-h2); line-height: 1.1; white-space: nowrap; padding-top: 0.35em; }
   .fact dd { color: var(--text-muted); font-size: var(--fs-small); }
+  @media (max-width: 480px) { .fact { padding: var(--s-4); } .fact dt.is-text { font-size: var(--fs-h3); } }
   @media (min-width: 1024px) {
     .about__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: var(--s-9); }
   }

@@ -9,10 +9,12 @@ import { SITE, DIR, type Lang } from '../config/site';
 import { href, other, type PageKey } from '../i18n/paths';
 import { t } from '../i18n/ui';
 
-interface Props { lang: Lang; page: PageKey; title: string; description: string }
-const { lang, page, title, description } = Astro.props;
+interface Props { lang: Lang; page: PageKey; title: string; description: string; paths?: Record<Lang, string>; schema?: object[] }
+const { lang, page, title, description, paths, schema = [] } = Astro.props;
 const d = t(lang);
-const url = (l: Lang) => new URL(href(l, page), SITE.url).href;
+// `paths` = this page's URL in each language (pages outside the fixed PageKey set, e.g. case studies)
+const path = (l: Lang) => paths?.[l] ?? href(l, page);
+const url = (l: Lang) => new URL(path(l), SITE.url).href;
 const jsonLd = [{
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -30,7 +32,7 @@ const jsonLd = [{
   slogan: 'Say it. Tamm it.',
   areaServed: 'SA',
   knowsLanguage: ['en', 'ar'],
-}];
+}, ...schema];
 ---
 <!doctype html>
 <html lang={lang} dir={DIR[lang]}>
@@ -67,9 +69,9 @@ const jsonLd = [{
 <body data-page={page}>
   <a class="skip-link" href="#main">{lang === 'ar' ? 'تخطَّ إلى المحتوى' : 'Skip to content'}</a>
   {SITE.preview && <div class="preview-bar" role="note"><span class="preview-bar__dot" aria-hidden="true"></span>{d.preview}</div>}
-  <Header lang={lang} page={page} />
+  <Header lang={lang} page={page} altHref={path(other(lang))} />
   <main id="main"><slot /></main>
-  <Footer lang={lang} page={page} />
+  <Footer lang={lang} page={page} altHref={path(other(lang))} />
 
   <script>
     // Reveal-on-scroll. A rAF-throttled position check (not IntersectionObserver): IO treats a

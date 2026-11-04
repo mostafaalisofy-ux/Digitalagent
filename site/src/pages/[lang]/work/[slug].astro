@@ -1,0 +1,139 @@
+---
+// Case study page (template: docs/PORTFOLIO_AND_CASE_STUDIES.md §6).
+import Base from '../../../layouts/Base.astro';
+import CaseMedia from '../../../components/work/CaseMedia.astro';
+import FinalCta from '../../../components/home/FinalCta.astro';
+import { CASES, showFigures, isPending, type Case } from '../../../data/cases';
+import { serviceName } from '../../../data/services';
+import { LOCALES, SITE, type Lang } from '../../../config/site';
+import { href, caseHref } from '../../../i18n/paths';
+import { t } from '../../../i18n/ui';
+import { h } from '../../../i18n/home';
+export const getStaticPaths = () => LOCALES.flatMap((lang) => CASES.map((c) => ({ params: { lang, slug: c.slug }, props: { c } })));
+const lang = Astro.params.lang as Lang;
+const { c } = Astro.props as { c: Case };
+const d = t(lang);
+const s = h(lang).selected;
+const p = h(lang).casePage;
+const i = CASES.indexOf(c);
+const next = CASES[(i + 1) % CASES.length];
+const figures = showFigures(c);
+const story = ['objective', 'challenge', 'strategy', 'execution'] as const;
+const paths = { en: caseHref('en', c.slug), ar: caseHref('ar', c.slug) };
+const schema = [{
+  '@context': 'https://schema.org', '@type': 'Article', headline: `${c.client[lang]} — ${c.headline[lang]}`,
+  inLanguage: lang, about: c.sector[lang], publisher: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+  mainEntityOfPage: new URL(paths[lang], SITE.url).href,
+}, {
+  '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: d.nav.work, item: new URL(href(lang, 'work'), SITE.url).href },
+    { '@type': 'ListItem', position: 2, name: c.client[lang], item: new URL(paths[lang], SITE.url).href },
+  ],
+}];
+---
+<Base lang={lang} page="work" paths={paths} schema={schema} title={`${c.client[lang]} — ${d.meta.caseSuffix}`} description={`${c.headline[lang]} ${c.sector[lang]}, ${c.market[lang]}.`}>
+  <article class="case">
+    <header class="container case__head">
+      <nav class="crumbs" aria-label={lang === 'ar' ? 'مسار التنقل' : 'Breadcrumb'}><a href={href(lang, 'work')}>{p.back}</a><span aria-hidden="true">/</span><span aria-current="page">{c.client[lang]}</span></nav>
+      <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{c.sector[lang]}</p>
+      <h1 class="case__title" data-reveal-group><span class="line"><span>{c.client[lang]}</span></span></h1>
+      <p class="case__headline" data-reveal>{c.headline[lang]}</p>
+      <dl class="case__facts" data-reveal>
+        <div><dt>{s.f.industry}</dt><dd>{c.sector[lang]}</dd></div>
+        <div><dt>{s.f.market}</dt><dd>{c.market[lang]}</dd></div>
+        <div><dt>{s.f.period}</dt><dd>{c.period ? c.period[lang] : h(lang).results.periodTbc}</dd></div>
+        <div><dt>{p.channels}</dt><dd class="latin">{c.channels.join(' · ')}</dd></div>
+        <div><dt>{p.services}</dt><dd>{c.services.map((id) => serviceName(id, lang)).join(lang === 'ar' ? '، ' : ', ')}</dd></div>
+      </dl>
+    </header>
+
+    <div class="container case__media"><CaseMedia c={c} lang={lang} size="page" /></div>
+
+    <section class="container case__story" aria-labelledby="story-h">
+      <h2 class="case__h2" id="story-h">{p.story}</h2>
+      <ol role="list" class="steps">
+        {story.map((k, n) => <li data-reveal><span class="num latin steps__n">{String(n + 1).padStart(2, '0')}</span><h3>{s.f[k]}</h3><p>{c[k][lang]}</p></li>)}
+      </ol>
+    </section>
+
+    <section class="section section--surface case__results" aria-labelledby="res-h">
+      <div class="container case__rgrid">
+        <div class="case__rhead">
+          <h2 class="case__h2" id="res-h">{p.results}</h2>
+          {figures && <p class="case__outcome">{c.outcome[lang]}</p>}
+        </div>
+        {figures ? (
+          <dl class="kpis">{c.kpis.map((k) => <div class:list={{ 'is-accent': k.accent }}><dt>{k.label[lang]}</dt><dd><bdi class="num latin">{k.value}</bdi></dd></div>)}</dl>
+        ) : <p class="case__withheld">{p.withheld}</p>}
+        <div class="ev">
+          <h3 class="ev__h">{p.evidence}</h3>
+          <dl class="ev__list">
+            <div><dt>{p.measured}</dt><dd>{c.evidence.measured[lang]}{c.note && ` ${c.note[lang]}`}</dd></div>
+            <div><dt>{p.source}</dt><dd>{c.evidence.source[lang]}</dd></div>
+            <div><dt>{p.status}</dt><dd>{isPending(c) ? <span class="tag-pending">{p.statusPending}</span> : p.statusApproved}</dd></div>
+            {SITE.preview && isPending(c) && <div><dt>{p.open}</dt><dd>{c.evidence.open[lang]}</dd></div>}
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <div class="container case__foot">
+      <p class="case__attr">{p.attribution}</p>
+      <a class="next" href={caseHref(lang, next.slug)} data-track="case_study_view" data-cta-id={next.slug} data-cta-location="case_next">
+        <span class="next__k">{p.next}</span><span class="next__v">{next.client[lang]}</span>
+      </a>
+    </div>
+  </article>
+  <FinalCta lang={lang} />
+</Base>
+<style>
+  .case__head { display: grid; gap: var(--s-4); padding-block: var(--s-8) var(--s-7); }
+  .crumbs { display: flex; flex-wrap: wrap; gap: var(--s-2); font-size: var(--fs-small); color: var(--text-muted); margin-bottom: var(--s-4); }
+  .crumbs a { color: var(--text); }
+  .case .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .case__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); }
+  .case__headline { font-size: var(--fs-h3); line-height: 1.35; color: var(--text-strong); max-width: 36ch; }
+  .case__facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); margin-top: var(--s-5); padding-top: var(--s-5); border-top: 1px solid var(--line); }
+  .case__facts dt, .ev__list dt { font-size: var(--fs-eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--text-muted); font-weight: 500; }
+  :global([dir='rtl']) .case__facts dt, :global([dir='rtl']) .ev__list dt { text-transform: none; letter-spacing: 0; font-size: var(--fs-caption); }
+  .case__facts dd { margin-top: 4px; font-size: var(--fs-small); color: var(--text-strong); }
+  .case__media { padding-bottom: var(--s-9); }
+  .case__h2 { font-size: var(--fs-h2); letter-spacing: var(--track-tight); }
+  .case__story { display: grid; gap: var(--s-6); padding-bottom: var(--s-10); }
+  .steps { display: grid; gap: var(--s-6); }
+  .steps li { display: grid; gap: var(--s-2); padding-top: var(--s-4); border-top: 1px solid var(--line-strong); }
+  .steps__n { color: var(--accent-text); font-weight: 700; font-size: var(--fs-small); }
+  .steps h3 { font-size: var(--fs-h3); }
+  .steps p { color: var(--text); line-height: 1.6; max-width: 46ch; }
+  .case__rgrid { display: grid; gap: var(--s-7); }
+  .case__rhead { display: grid; gap: var(--s-4); }
+  .case__outcome { font-size: var(--fs-lead); max-width: 40ch; }
+  .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .kpis div { background: var(--surface); padding: var(--s-5); display: flex; flex-direction: column-reverse; gap: var(--s-2); }
+  .kpis dd .num { font-size: var(--fs-h1); font-weight: 700; line-height: 1; letter-spacing: -0.04em; color: var(--text-strong); }
+  .kpis .is-accent dd .num { color: var(--accent-text); }
+  .kpis dt { font-size: var(--fs-small); color: var(--text-muted); }
+  .case__withheld { color: var(--text-muted); }
+  .ev { display: grid; gap: var(--s-4); padding: var(--s-5); border: 1px solid var(--line); }
+  .ev__h { font-size: var(--fs-body); }
+  .ev__list { display: grid; gap: var(--s-4); }
+  .ev__list dd { margin-top: 4px; font-size: var(--fs-small); line-height: 1.55; }
+  .case__foot { display: grid; gap: var(--s-7); padding-block: var(--s-9); }
+  .case__attr { font-size: var(--fs-small); color: var(--text-muted); max-width: 70ch; }
+  .next { display: grid; gap: var(--s-2); padding-top: var(--s-5); border-top: 1px solid var(--line-strong); text-decoration: none; color: inherit; justify-self: stretch; }
+  .next__k { font-size: var(--fs-small); color: var(--text-muted); }
+  .next__v { font-size: var(--fs-h1); font-weight: 700; letter-spacing: var(--track-tight); color: var(--text-strong); transition: color var(--d-2); }
+  .next:hover .next__v { color: var(--accent-text); }
+  @media (min-width: 768px) { .case__facts { grid-template-columns: repeat(5, minmax(0, 1fr)); } .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--gutter); } }
+  @media (min-width: 1024px) {
+    .case__head { padding-block: var(--s-9) var(--s-8); }
+    .case__story { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
+    .case__story .case__h2 { grid-column: 1 / span 3; }
+    .steps { grid-column: 4 / -1; row-gap: var(--s-8); }
+    .case__rgrid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
+    .case__rhead { grid-column: 1 / span 4; }
+    .kpis, .case__withheld { grid-column: 5 / span 5; }
+    .ev { grid-column: 10 / -1; }
+    .kpis:has(> :nth-child(3):last-child) div:first-child { grid-column: 1 / -1; }
+  }
+</style>
