@@ -1,0 +1,68 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import FinalCta from '../../components/home/FinalCta.astro';
+import { PILLARS } from '../../data/services';
+import { staticLangPaths, href } from '../../i18n/paths';
+import { t } from '../../i18n/ui';
+import type { Lang } from '../../config/site';
+export const getStaticPaths = staticLangPaths;
+const lang = Astro.params.lang as Lang;
+const d = t(lang);
+---
+<Base lang={lang} page="services" title={d.meta.servicesTitle} description={d.meta.servicesDesc}>
+  <PageHero eyebrow={d.services.eyebrow} title={d.services.title} intro={d.services.intro} />
+  {PILLARS.map((p, pi) => (
+    <section class:list={['section', 'pillar', { 'section--surface': pi % 2 === 1 }]} id={p.id} aria-labelledby={`p-${p.id}`}>
+      <div class="container pillar__grid">
+        <header class="pillar__head" data-reveal>
+          <p class="num pillar__n">{p.n}</p>
+          <h2 id={`p-${p.id}`} class="pillar__name">{p.name[lang]}</h2>
+          <p class="pillar__q">{p.question[lang]}</p>
+          <p class="pillar__line">{p.line[lang]}</p>
+        </header>
+        <ol role="list" class="svc-list">
+          {p.services.map((s, si) => (
+            <li class="svc" id={s.id} data-reveal style={`--delay:${si * 90}ms`}>
+              <h3 class="svc__name">{s.name[lang]}</h3>
+              <p class="svc__sum">{s.summary[lang]}</p>
+              {s.scopePending ? (
+                <p class="placeholder-tag">{d.services.pending}</p>
+              ) : (
+                <>
+                  <p class="eyebrow svc__inc">{d.services.includes}</p>
+                  <ul role="list" class="svc__items">{s.includes[lang].map((x) => <li>{x}</li>)}</ul>
+                </>
+              )}
+              <a class="link-diag svc__cta" href={`${href(lang, 'contact')}?service=${p.id}`} data-track="cta_click" data-cta-id={`service_${s.id}`} data-cta-location="services">{d.nav.cta}</a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  ))}
+  <FinalCta lang={lang} />
+</Base>
+<style>
+  .pillar__grid { display: grid; gap: var(--s-7); }
+  .pillar__head { display: grid; gap: var(--s-3); align-content: start; }
+  .pillar__n { font-size: var(--fs-caption); color: var(--accent-text); }
+  .pillar__name { font-size: var(--fs-h1); letter-spacing: var(--track-tight); }
+  .pillar__q { color: var(--text-muted); font-size: var(--fs-lead); max-width: 26ch; }
+  .pillar__line { font-weight: 700; color: var(--text-strong); margin-top: var(--s-3); padding-inline-start: var(--s-3); border-inline-start: 3px solid var(--accent); }
+  .svc-list { display: grid; border-top: 1px solid var(--line-strong); }
+  .svc { display: grid; gap: var(--s-3); padding-block: var(--s-6); border-bottom: 1px solid var(--line); }
+  .svc__name { font-size: var(--fs-h2); letter-spacing: var(--track-tight); }
+  .svc__sum { color: var(--text); font-size: var(--fs-lead); max-width: 42ch; line-height: 1.45; }
+  .svc__inc { margin-top: var(--s-2); }
+  .svc__items { display: grid; gap: var(--s-2); }
+  .svc__items li { position: relative; padding-inline-start: var(--s-5); color: var(--text-muted); }
+  .svc__items li::before { content: ''; position: absolute; inset-inline-start: 2px; top: 0.7em; width: 10px; height: 3px; background: var(--accent); transform: skewX(-45deg); }
+  .svc .placeholder-tag { justify-self: start; }
+  .svc__cta { justify-self: start; margin-top: var(--s-2); color: var(--text-strong); }
+  @media (min-width: 1024px) {
+    .pillar__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
+    .pillar__head { grid-column: 1 / span 4; position: sticky; top: 120px; align-self: start; }
+    .svc-list { grid-column: 6 / -1; }
+  }
+</style>

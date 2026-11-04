@@ -9,7 +9,7 @@ No website code yet; the repo holds the knowledge base and brand production file
 
 | Layer | Choice | Why |
 |---|---|---|
-| Framework | **Astro 5** (TypeScript, static-first, server endpoints where needed) | Content-led marketing site: ships near-zero JS by default (best Core Web Vitals), built-in i18n routing, typed content collections for services, case studies and articles, and the View Transitions API for meaningful page motion. Islands allow interactive pieces without a heavy SPA |
+| Framework | **Astro 7** (TypeScript, static-first, server endpoints where needed). **Implemented in `/site` (W-008)** | Content-led marketing site: ships near-zero JS by default (best Core Web Vitals), built-in i18n routing, typed content collections for services, case studies and articles, and the View Transitions API for meaningful page motion. Islands allow interactive pieces without a heavy SPA |
 | Styling | **Plain CSS with design tokens** (custom properties) + **CSS logical properties** | RTL works naturally (`margin-inline-start`, not `margin-left`). No styling framework dependency. Tokens map 1:1 to `VISUAL_IDENTITY.md` |
 | Content | **MDX/Markdown in Git** (content collections, Zod-validated schemas) at launch | No CMS cost or lock-in while content volume is small. Schema validation enforces EN/AR parity and case study approval fields |
 | CMS (later) | Headless CMS (e.g. Sanity, Payload or Decap) **when non-developers need to publish** | Deferred decision; the content model is designed to migrate cleanly |

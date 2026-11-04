@@ -1,0 +1,7 @@
+# Preview build: keep out of search until the authorised launch (site.ts → preview: false).
+User-agent: *
+Disallow: /
+# At launch replace with:
+# User-agent: *
+# Allow: /
+# Sitemap: https://www.saytamm.com/sitemap.xml

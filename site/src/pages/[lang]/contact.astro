@@ -1,0 +1,44 @@
+---
+import Base from '../../layouts/Base.astro';
+import ContactForm from '../../components/ContactForm.astro';
+import Logo from '../../components/Logo.astro';
+import { SITE, type Lang } from '../../config/site';
+import { staticLangPaths } from '../../i18n/paths';
+import { t } from '../../i18n/ui';
+export const getStaticPaths = staticLangPaths;
+const lang = Astro.params.lang as Lang;
+const d = t(lang);
+const c = d.contact;
+---
+<Base lang={lang} page="contact" title={d.meta.contactTitle} description={d.meta.contactDesc}>
+  <section class="section contact">
+    <div class="container contact__grid">
+      <div class="contact__intro">
+        <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{c.eyebrow}</p>
+        <h1 class="contact__title" data-reveal-group>{c.title.map((l, i) => <span class="line" style={`--delay:${i * 100}ms`}><span>{l}</span></span>)}</h1>
+        <p class="lead" data-reveal style="--delay:200ms">{c.intro}</p>
+        <div class="contact__direct" data-reveal style="--delay:300ms">
+          <p class="eyebrow">{c.direct}</p>
+          <a class="link-diag latin contact__mail" href={`mailto:${SITE.email}`} data-track="email_click" data-cta-location="contact">{SITE.email}</a>
+        </div>
+        <div class="contact__mark" aria-hidden="true"><Logo variant="signature" height="100%" decorative /></div>
+      </div>
+      <div class="contact__form" data-reveal style="--delay:150ms"><ContactForm lang={lang} /></div>
+    </div>
+  </section>
+</Base>
+<style>
+  .contact__grid { display: grid; gap: var(--s-9); }
+  .contact__intro { display: grid; gap: var(--s-5); align-content: start; position: relative; }
+  .contact .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .contact__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); }
+  .contact__direct { display: grid; gap: var(--s-2); margin-top: var(--s-4); }
+  .contact__mail { font-size: var(--fs-h3); color: var(--text-strong); justify-self: start; }
+  .contact__mark { display: none; }
+  @media (min-width: 1024px) {
+    .contact__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
+    .contact__intro { grid-column: 1 / span 5; position: sticky; top: 120px; align-self: start; }
+    .contact__form { grid-column: 7 / -1; }
+    .contact__mark { display: block; height: 180px; margin-top: var(--s-8); }
+  }
+</style>

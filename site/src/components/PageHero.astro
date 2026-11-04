@@ -1,0 +1,25 @@
+---
+// Inner-page hero: oversized title on the left, the brand's diagonal element cropped in from the
+// inline-end edge (a cropped logo-derived shape — the element alone, never the full mark).
+import { SYMBOL } from '../lib/logo';
+interface Props { eyebrow: string; title: readonly string[]; intro: string }
+const { eyebrow, title, intro } = Astro.props;
+const { x, y, w, h } = SYMBOL.bladeBox;
+---
+<section class="ph">
+  <svg class="ph__blade" viewBox={`${x} ${y} ${w} ${h}`} aria-hidden="true" focusable="false" data-reveal="wipe"><path d={SYMBOL.blade} /></svg>
+  <div class="container ph__in">
+    <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{eyebrow}</p>
+    <h1 class="ph__title" data-reveal-group>{title.map((l, i) => <span class="line" style={`--delay:${i * 100}ms`}><span>{l}</span></span>)}</h1>
+    <p class="lead ph__intro" data-reveal style="--delay:220ms">{intro}</p>
+  </div>
+</section>
+<style>
+  .ph { position: relative; overflow: hidden; padding-block: var(--s-10) var(--s-9); border-bottom: 1px solid var(--line); isolation: isolate; }
+  .ph__blade { position: absolute; z-index: -1; inset-inline-end: -6%; top: -30%; height: 150%; width: auto; fill: var(--c-graphite); }
+  .ph__in { display: grid; gap: var(--s-5); }
+  .ph .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .ph__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); }
+  .ph__intro { max-width: 46ch; }
+  @media (min-width: 1024px) { .ph { padding-block: var(--s-11) var(--s-10); } }
+</style>

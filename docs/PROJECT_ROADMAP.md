@@ -18,9 +18,9 @@ Status as of 2026-11-04.
 |---|---|---|---|
 | 01 Discovery | Repo, assets, brand, technical audit | ✅ | — |
 | 02–03 Strategy | Sitemap (9 service pages), journeys, conversion, SEO, EN/AR | 🟡 Drafted | OQ-06 |
-| 04 Creative direction | 2 homepage routes (EN + AR, desktop + mobile), type specimens, motion, components | ⏳ **Next: unblocked** (D-007, D-008); Arabic spelling OQ-04 provisional "قول تم" | — |
-| 05 Development | Astro build, tokens, components, forms, analytics, SEO plumbing | ⏳ | OQ-01, OQ-20, OQ-05 (vector logo) |
-| 06 QA | Devices, EN/AR, a11y, performance, forms, metadata, redirects | ⏳ | 05 |
+| 04 Creative direction | Theme "The Completion Experience" (owner brief), applied directly in the build | ✅ v0.1 in `/site` (design system in `site/src/styles/tokens.css`) | Owner review |
+| 05 Development | Astro build, tokens, components, EN/AR pages, form, analytics hooks, SEO plumbing | 🟡 **v0.1 preview built** (Home, Services, Work, Contact, 404 × EN/AR). Pending: wordmark, form endpoint, real visuals, GTM/consent | OQ-05, OQ-19, OQ-32 |
+| 06 QA | Devices, EN/AR, a11y, performance, forms, metadata | 🟡 v0.1 pass (see `site/README.md`); repeat before launch | 05 |
 | 07 Launch | Domain/DNS, hosting, Search Console (new domain), tracking | ⏳ **Owner authorisation required** | OQ-07, OQ-09, OQ-21, legal |
 
 ## Decisions that unlock the most work (in order)

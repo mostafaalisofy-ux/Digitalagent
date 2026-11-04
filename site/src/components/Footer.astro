@@ -1,0 +1,58 @@
+---
+import Logo from './Logo.astro';
+import { SITE, type Lang } from '../config/site';
+import { href, other, type PageKey } from '../i18n/paths';
+import { t } from '../i18n/ui';
+interface Props { lang: Lang; page: PageKey }
+const { lang, page } = Astro.props;
+const d = t(lang);
+const alt = other(lang);
+const year = new Date().getFullYear();
+---
+<footer class="ftr">
+  <div class="container">
+    <div class="ftr__top grid">
+      <div class="ftr__brand">
+        <Logo variant="white" height={56} decorative />
+        <p class="ftr__line" lang={lang === 'ar' ? 'ar' : 'en'}>{d.footer.line}</p>
+      </div>
+      <div class="ftr__col">
+        <h2 class="eyebrow">{d.footer.email}</h2>
+        <a class="link-diag latin ftr__mail" href={`mailto:${SITE.email}`} data-track="email_click" data-cta-location="footer">{SITE.email}</a>
+      </div>
+      <nav class="ftr__col" aria-label={d.footer.nav}>
+        <h2 class="eyebrow">{d.footer.nav}</h2>
+        <ul role="list">
+          <li><a href={href(lang, 'work')}>{d.nav.work}</a></li>
+          <li><a href={href(lang, 'services')}>{d.nav.services}</a></li>
+          <li><a href={href(lang, 'home', 'method')}>{d.nav.method}</a></li>
+          <li><a href={href(lang, 'contact')}>{d.nav.contact}</a></li>
+        </ul>
+      </nav>
+      <div class="ftr__col">
+        <h2 class="eyebrow">{d.footer.lang}</h2>
+        <a href={href(alt, page)} hreflang={alt} lang={alt}>{d.nav.switch}</a>
+      </div>
+    </div>
+    <div class="ftr__bottom">
+      <p>© {year} SayTamm · قول تم. {d.footer.rights}</p>
+      <p class="latin">saytamm.com</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ftr { border-top: 1px solid var(--line); padding-block: var(--s-10) var(--s-6); position: relative; overflow: hidden; }
+  .ftr__top { row-gap: var(--s-7); }
+  .ftr__brand { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-4); }
+  .ftr__line { font-size: var(--fs-h3); font-weight: 700; color: var(--text-strong); letter-spacing: var(--track-head); }
+  .ftr__col { grid-column: span 2; display: flex; flex-direction: column; gap: var(--s-3); }
+  .ftr__col ul { display: grid; gap: var(--s-2); }
+  .ftr__col a:not(.link-diag) { color: var(--text-muted); transition: color var(--d-2); }
+  .ftr__col a:hover { color: var(--text-strong); }
+  .ftr__mail { font-size: var(--fs-lead); color: var(--text-strong); align-self: flex-start; }
+  .ftr__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-3); margin-top: var(--s-10); padding-top: var(--s-5); border-top: 1px solid var(--line); font-size: var(--fs-caption); color: var(--text-muted); }
+  .ftr__col:nth-of-type(2) { grid-column: 1 / -1; }
+  @media (min-width: 768px) { .ftr__brand { grid-column: span 3; } .ftr__col, .ftr__col:nth-of-type(2) { grid-column: span 2; } .ftr__col:nth-of-type(2) { grid-column: span 3; } }
+  @media (min-width: 1024px) { .ftr__brand { grid-column: span 5; } .ftr__col:nth-of-type(2) { grid-column: 6 / span 3; } .ftr__col { grid-column: span 2; } }
+</style>

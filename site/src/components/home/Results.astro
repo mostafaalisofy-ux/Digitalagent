@@ -1,0 +1,74 @@
+---
+// Performance: budget vs outcome, drawn to scale from verified case figures.
+// Purple only for the variable that matters (Bible slide 28). Light section for rhythm.
+import SectionHead from '../SectionHead.astro';
+import { CASES } from '../../data/cases';
+import { type Lang } from '../../config/site';
+import { t } from '../../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t(lang).results;
+const fmt = (n: number, unit: string) => {
+  const s = n >= 1e6 ? `${(n / 1e6).toFixed(2).replace(/\.?0+$/, '')}M` : n >= 1e3 ? `${Math.round(n / 1e3)}K` : String(n);
+  return unit === 'USD' ? `$${s}` : `${s} ${unit === 'SAR' ? (lang === 'ar' ? 'ريال' : 'SAR') : unit === 'EGP' ? (lang === 'ar' ? 'جنيه' : 'EGP') : unit}`;
+};
+const rows = CASES.filter((c) => c.bar).map((c) => {
+  const b = c.bar!;
+  return { c, b, mult: c.kpis.find((k) => k.accent)?.value ?? '', pct: Math.max((b.spend / b.result) * 100, 0.8) };
+});
+---
+<section class="section section--light res" aria-labelledby="res-title">
+  <div class="container">
+    <div class="res__head grid">
+      <div class="res__h"><SectionHead n="05" eyebrow={d.eyebrow} title={d.title} id="res-title" size="display" /></div>
+      <p class="res__body" data-reveal>{d.body}</p>
+    </div>
+    <ol role="list" class="res__rows">
+      {rows.map(({ c, b, mult, pct }, i) => (
+        <li class="rr" data-reveal-group style={`--pct:${pct}%;--delay:${i * 120}ms`}>
+          <div class="rr__label">
+            <span class="rr__name">{c.client[lang]}</span>
+            <span class="rr__meta">{c.market[lang]}{c.period ? ` · ${c.period[lang]}` : ''}</span>
+          </div>
+          <div class="rr__bars" role="img" aria-label={`${b.spendLabel[lang]} ${fmt(b.spend, b.unit)} → ${b.resultLabel[lang]} ${fmt(b.result, b.unit)}`}>
+            <div class="bar bar--spend"><span class="bar__fill"></span><span class="bar__txt">{b.spendLabel[lang]} <b class="num latin">{fmt(b.spend, b.unit)}</b></span></div>
+            <div class="bar bar--result"><span class="bar__fill"></span><span class="bar__txt">{b.resultLabel[lang]} <b class="num latin">{fmt(b.result, b.unit)}</b></span></div>
+          </div>
+          <p class="rr__mult num latin">{mult}</p>
+        </li>
+      ))}
+    </ol>
+    <p class="res__note">{d.note} {t(lang).work.verified}</p>
+  </div>
+</section>
+<style>
+  .res__head { row-gap: var(--s-5); margin-bottom: var(--s-8); align-items: end; }
+  .res__h { grid-column: 1 / -1; }
+  .res__body { grid-column: 1 / -1; color: var(--text-muted); font-size: var(--fs-lead); max-width: 34ch; }
+  .res__rows { border-top: 1px solid var(--line-strong); }
+  .rr { display: grid; grid-template-columns: 1fr auto; gap: var(--s-3) var(--s-4); padding-block: var(--s-6); border-bottom: 1px solid var(--line); align-items: center; }
+  .rr__label { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-2) var(--s-3); }
+  .rr__name { font-size: var(--fs-h3); font-weight: 700; }
+  .rr__meta { font-size: var(--fs-caption); color: var(--text-muted); }
+  .rr__bars { display: grid; gap: 10px; }
+  .bar { position: relative; height: 40px; display: flex; align-items: center; }
+  .bar__fill { position: absolute; inset-block: 0; inset-inline-start: 0; width: 100%; transform-origin: left; transform: scaleX(0); transition: transform var(--d-5) var(--ease-out); transition-delay: var(--delay); }
+  [dir='rtl'] .bar__fill { transform-origin: right; }
+  .bar--spend .bar__fill { width: var(--pct); background: var(--c-obsidian); }
+  .bar--result .bar__fill { background: var(--c-purple); transition-delay: calc(var(--delay) + 260ms); }
+  .bar__txt { position: relative; font-size: var(--fs-caption); font-weight: 500; padding-inline: 12px; white-space: nowrap; }
+  .bar--spend .bar__txt { color: var(--c-obsidian); padding-inline-start: calc(var(--pct) + 12px); }
+  .bar--result .bar__txt { color: var(--c-white); }
+  .bar__txt b { font-weight: 700; margin-inline-start: 6px; }
+  .rr.is-in .bar__fill, :global(html:not(.js)) .bar__fill { transform: none; }
+  .rr__mult { font-size: var(--fs-h1); font-weight: 700; line-height: 1; color: var(--c-purple); letter-spacing: -0.03em; }
+  .res__note { margin-top: var(--s-5); font-size: var(--fs-caption); color: var(--text-muted); max-width: 70ch; }
+  @media (min-width: 1024px) {
+    .res__h { grid-column: 1 / span 7; }
+    .res__body { grid-column: 9 / -1; }
+    .rr { grid-template-columns: minmax(0, 3fr) minmax(0, 7fr) auto; column-gap: var(--s-7); }
+    .rr__label { grid-column: auto; flex-direction: column; gap: var(--s-1); }
+    .rr__mult { text-align: end; font-size: clamp(3rem, 1.6rem + 3.4vw, 5.5rem); min-width: 4.2ch; }
+  }
+  @media (prefers-reduced-motion: reduce) { .bar__fill { transform: none !important; } }
+</style>

@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import { href } from '../i18n/paths';
+import { t } from '../i18n/ui';
+const en = t('en').notFound;
+const ar = t('ar').notFound;
+---
+<Base lang="en" page="home" title="404 — SayTamm" description={en.body}>
+  <section class="section nf">
+    <div class="container nf__in">
+      <p class="nf__code num" aria-hidden="true">404</p>
+      <div class="nf__pair">
+        <div><h1>{en.title}</h1><p class="lead">{en.body}</p><a class="btn btn--primary" href={href('en')}>{en.home}<span class="arrow" aria-hidden="true"></span></a></div>
+        <div lang="ar" dir="rtl" class="nf__ar"><h2>{ar.title}</h2><p class="lead">{ar.body}</p><a class="btn" href={href('ar')}>{ar.home}</a></div>
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .nf__in { display: grid; gap: var(--s-8); }
+  .nf__code { font-size: var(--fs-mega); font-weight: 700; line-height: 0.85; letter-spacing: -0.05em; color: var(--c-graphite); }
+  .nf__pair { display: grid; gap: var(--s-8); }
+  .nf__pair > div { display: grid; gap: var(--s-4); justify-items: start; }
+  .nf h1, .nf h2 { font-size: var(--fs-h1); }
+  .nf__ar { font-family: var(--font-ar); }
+  .nf__ar h2 { letter-spacing: 0; line-height: 1.3; }
+  @media (min-width: 1024px) { .nf__pair { grid-template-columns: 1fr 1fr; } }
+</style>

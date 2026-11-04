@@ -1,0 +1,91 @@
+---
+import '@fontsource/ibm-plex-sans-arabic/400.css';
+import '@fontsource/ibm-plex-sans-arabic/500.css';
+import '@fontsource/ibm-plex-sans-arabic/700.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE, DIR, type Lang } from '../config/site';
+import { href, other, type PageKey } from '../i18n/paths';
+import { t } from '../i18n/ui';
+
+interface Props { lang: Lang; page: PageKey; title: string; description: string }
+const { lang, page, title, description } = Astro.props;
+const d = t(lang);
+const url = (l: Lang) => new URL(href(l, page), SITE.url).href;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: SITE.name,
+  alternateName: SITE.nameAr,
+  url: SITE.url,
+  email: SITE.email,
+  logo: new URL('/brand/SayTamm_Symbol_Black.png', SITE.url).href,
+  slogan: 'Say it. Tamm it.',
+  areaServed: 'SA',
+};
+---
+<!doctype html>
+<html lang={lang} dir={DIR[lang]}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  {SITE.preview && <meta name="robots" content="noindex, nofollow" />}
+  <link rel="canonical" href={url(lang)} />
+  <link rel="alternate" hreflang="en" href={url('en')} />
+  <link rel="alternate" hreflang="ar" href={url('ar')} />
+  <link rel="alternate" hreflang="x-default" href={url('en')} />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="SayTamm" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={url(lang)} />
+  <meta property="og:locale" content={lang === 'ar' ? 'ar_SA' : 'en_US'} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#0A0A0D" />
+  <link rel="icon" href="/brand/SayTamm_Symbol_Signature_Black-Purple.svg" type="image/svg+xml" media="(prefers-color-scheme: light)" />
+  <link rel="icon" href="/brand/SayTamm_Symbol_Signature_White-Purple.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)" />
+  {lang === 'en' && <link rel="preload" href="/fonts/satoshi/Satoshi-700.woff2" as="font" type="font/woff2" crossorigin />}
+  <script is:inline>document.documentElement.classList.add('js');window.dataLayer=window.dataLayer||[];</script>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+</head>
+<body data-page={page}>
+  <a class="skip-link" href="#main">{lang === 'ar' ? 'تخطَّ إلى المحتوى' : 'Skip to content'}</a>
+  {SITE.preview && <div class="preview-bar" role="note"><span class="preview-bar__dot" aria-hidden="true"></span>{d.preview}</div>}
+  <Header lang={lang} page={page} />
+  <main id="main"><slot /></main>
+  <Footer lang={lang} page={page} />
+
+  <script>
+    // Reveal-on-scroll. A rAF-throttled position check (not IntersectionObserver): IO treats a
+    // target's own clip-path as its visible area, so clip-path wipes would never trigger, and
+    // fast flicks can skip elements. Anything whose top has entered the viewport is revealed.
+    let pending = [...document.querySelectorAll<Element>('[data-reveal], [data-reveal-group]')];
+    let ticking = false;
+    const check = () => {
+      ticking = false;
+      const limit = innerHeight * 0.9;
+      pending = pending.filter((el) => { if (el.getBoundingClientRect().top < limit) { el.classList.add('is-in'); return false; } return true; });
+      if (!pending.length) { removeEventListener('scroll', onScroll); removeEventListener('resize', onScroll); }
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(check); } };
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
+    check();
+
+    // Analytics readiness: data-track="event_name" + data-* params → dataLayer (no tags fire here)
+    document.addEventListener('click', (ev) => {
+      const el = (ev.target as HTMLElement).closest<HTMLElement>('[data-track]');
+      if (!el) return;
+      (window as any).dataLayer.push({ event: el.dataset.track, cta_id: el.dataset.ctaId, cta_location: el.dataset.ctaLocation, language: document.documentElement.lang, page_type: document.body.dataset.page });
+    });
+  </script>
+</body>
+</html>
+
+<style>
+  .preview-bar { display: flex; align-items: center; justify-content: center; gap: var(--s-2); padding: 8px var(--margin); background: var(--c-purple-900); color: var(--c-soft-white); font-size: var(--fs-caption); font-weight: 500; text-align: center; }
+  .preview-bar__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-purple-200); }
+</style>

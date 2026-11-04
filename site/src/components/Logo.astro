@@ -1,0 +1,25 @@
+---
+// Approved SayTamm symbol. Variants map 1:1 to brand/production/logo.
+import { SYMBOL } from '../lib/logo';
+type Variant = 'signature' | 'signature-light' | 'white' | 'black' | 'purple';
+interface Props { variant?: Variant; height?: number | string; title?: string; class?: string; decorative?: boolean }
+const { variant = 'signature', height = 32, title = 'SayTamm', class: cls, decorative = false } = Astro.props;
+const FILL: Record<Variant, [string, string]> = {
+  signature: ['#FFFFFF', '#6C35FF'],        // D-007 on dark
+  'signature-light': ['#0A0A0D', '#6C35FF'], // D-007 on light
+  white: ['#FFFFFF', '#FFFFFF'],
+  black: ['#0A0A0D', '#0A0A0D'],
+  purple: ['#6C35FF', '#6C35FF'],
+};
+const [t, b] = FILL[variant];
+const h = typeof height === 'number' ? `${height}px` : height;
+---
+<svg class:list={['logo', cls]} viewBox={SYMBOL.viewBox} style={`height:${h};width:auto;aspect-ratio:${SYMBOL.ratio}`}
+  role={decorative ? undefined : 'img'} aria-hidden={decorative ? 'true' : undefined} aria-label={decorative ? undefined : title}
+  xmlns="http://www.w3.org/2000/svg" focusable="false">
+  <path class="logo__t" fill={t} fill-rule="evenodd" d={SYMBOL.t} />
+  <path class="logo__blade" fill={b} fill-rule="evenodd" d={SYMBOL.blade} />
+</svg>
+<style>
+  .logo { flex: none; overflow: visible; }
+</style>

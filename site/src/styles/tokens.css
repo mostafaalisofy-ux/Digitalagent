@@ -1,0 +1,94 @@
+/* ==========================================================================
+   SayTamm design tokens — single source for the website theme.
+   Colour values = approved brand palette (docs/VISUAL_IDENTITY.md §2),
+   mapped onto the theme names from the website brief.
+   ========================================================================== */
+@font-face { font-family: 'Satoshi'; src: url('/fonts/satoshi/Satoshi-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('/fonts/satoshi/Satoshi-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('/fonts/satoshi/Satoshi-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+
+:root {
+  /* — Colour: approved palette — */
+  --c-obsidian: #0A0A0D;      /* Brand Black — primary background */
+  --c-graphite: #17171C;      /* Neutral 900 — secondary surfaces */
+  --c-white: #FFFFFF;         /* Brand White — display type, logo */
+  --c-soft-white: #F5F5F7;    /* Neutral 100 — primary text on dark */
+  --c-muted: #A4A4AE;         /* Neutral 500 — secondary text (8.0:1 on obsidian) */
+  --c-purple: #6C35FF;        /* Electric Purple — action, signature (fills, large type only on dark) */
+  --c-purple-100: #8B5CF6;
+  --c-purple-200: #A78BFA;    /* purple TEXT < 24px on dark (7.27:1) */
+  --c-purple-900: #24105C;
+
+  /* — Semantic — */
+  --bg: var(--c-obsidian);
+  --surface: var(--c-graphite);
+  --text: var(--c-soft-white);
+  --text-strong: var(--c-white);
+  --text-muted: var(--c-muted);
+  --accent: var(--c-purple);
+  --accent-text: var(--c-purple-200);
+  --line: rgb(245 245 247 / 0.10);
+  --line-strong: rgb(245 245 247 / 0.22);
+  --focus: var(--c-purple-200);
+
+  /* — Type — */
+  --font-en: 'Satoshi', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-ar: 'IBM Plex Sans Arabic', 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+  --font: var(--font-en);
+
+  --fs-mega: clamp(4.6rem, 0.9rem + 15vw, 13rem);   /* hero only */
+  --fs-display: clamp(3rem, 1.9rem + 4.8vw, 6.5rem);
+  --fs-h1: clamp(2.25rem, 1.7rem + 2.4vw, 4rem);
+  --fs-h2: clamp(1.75rem, 1.45rem + 1.3vw, 2.75rem);
+  --fs-h3: clamp(1.25rem, 1.14rem + 0.5vw, 1.625rem);
+  --fs-lead: clamp(1.125rem, 1.05rem + 0.35vw, 1.375rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9375rem;
+  --fs-caption: 0.8125rem;
+  --fs-eyebrow: 0.75rem;
+  --fs-kpi: clamp(3.25rem, 1.8rem + 6.4vw, 8rem);
+
+  --lh-tight: 0.92;
+  --lh-head: 1.04;
+  --lh-body: 1.55;
+  --track-tight: -0.035em;
+  --track-head: -0.02em;
+  --track-eyebrow: 0.14em;
+
+  /* — Space (8px base) — */
+  --s-1: 4px; --s-2: 8px; --s-3: 16px; --s-4: 24px; --s-5: 32px; --s-6: 40px;
+  --s-7: 48px; --s-8: 64px; --s-9: 80px; --s-10: 96px; --s-11: 128px; --s-12: 160px;
+  --section: clamp(var(--s-9), 6vw + 3rem, var(--s-12));
+
+  /* — Grid — */
+  --container: 1440px;
+  --gutter: 16px;
+  --margin: 20px;
+  --cols: 4;
+
+  /* — Shape: brand geometry is rounded-terminal but architectural; cards stay crisp — */
+  --r-0: 0; --r-1: 2px; --r-2: 6px; --r-pill: 999px;
+  --cut: 14px;            /* the "completion cut": 45° corner, from the T-stem's angled end */
+
+  /* — Motion — */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);      /* expo-out: decisive arrival */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --d-1: 160ms; --d-2: 320ms; --d-3: 640ms; --d-4: 900ms; --d-5: 1200ms;
+  --diag: 45deg;          /* measured blade angle ≈ 45° (docs/VISUAL_IDENTITY.md) */
+
+  /* — Layers — */
+  --z-header: 50; --z-overlay: 80;
+}
+
+@media (min-width: 768px) { :root { --gutter: 24px; --margin: 40px; --cols: 8; } }
+@media (min-width: 1024px) { :root { --margin: 64px; --cols: 12; } }
+
+[dir='rtl'] {
+  --font: var(--font-ar);
+  --lh-tight: 1.12;
+  --lh-head: 1.22;
+  --lh-body: 1.8;
+  --track-tight: 0;      /* never letter-space Arabic */
+  --track-head: 0;
+  --track-eyebrow: 0;
+}

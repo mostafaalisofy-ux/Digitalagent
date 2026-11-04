@@ -1,0 +1,24 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import CaseStudy from '../../components/CaseStudy.astro';
+import FinalCta from '../../components/home/FinalCta.astro';
+import { CASES } from '../../data/cases';
+import { staticLangPaths } from '../../i18n/paths';
+import { t } from '../../i18n/ui';
+import type { Lang } from '../../config/site';
+export const getStaticPaths = staticLangPaths;
+const lang = Astro.params.lang as Lang;
+const d = t(lang);
+---
+<Base lang={lang} page="work" title={d.meta.workTitle} description={d.meta.workDesc}>
+  <PageHero eyebrow={d.work.eyebrow} title={d.workPage.title} intro={d.workPage.intro} />
+  <section class="container work-list" aria-label={d.work.eyebrow}>
+    <p class="work-list__label"><span class="placeholder-tag">{lang === 'ar' ? 'سجل الفريق' : 'Track record'}</span>{d.work.label} {d.work.verified}</p>
+    {CASES.map((c, i) => <CaseStudy c={c} lang={lang} index={i} />)}
+  </section>
+  <FinalCta lang={lang} />
+</Base>
+<style>
+  .work-list__label { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); padding-top: var(--s-6); font-size: var(--fs-small); color: var(--text-muted); max-width: 90ch; }
+</style>

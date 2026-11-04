@@ -1,0 +1,141 @@
+---
+// Business inquiry form. Until the server endpoint + CRM exist (OQ-19), a valid submission
+// opens a pre-filled email to the verified contact address — honest, functional, no fake success.
+import { SITE, type Lang } from '../config/site';
+import { PILLARS } from '../data/services';
+import { t } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t(lang).contact;
+const f = d.fields;
+const opts = [...PILLARS.map((p) => ({ id: p.id, label: p.name[lang] })), { id: 'unsure', label: d.serviceOpts[4] }];
+---
+<form class="cf" novalidate data-form data-email={SITE.email} data-lang={lang}
+  data-msg-required={d.errors.required} data-msg-email={d.errors.email} data-msg-services={d.errors.services} data-msg-consent={d.errors.consent}>
+  <p class="placeholder-tag cf__notice">{d.notice}</p>
+  <div class="cf__summary" role="alert" aria-live="assertive" data-summary hidden>{d.errors.summary}</div>
+
+  <div class="cf__row">
+    <div class="field"><label for="f-name">{f.name}</label><input id="f-name" name="name" autocomplete="name" required aria-describedby="e-name" /><p class="field__err" id="e-name"></p></div>
+    <div class="field"><label for="f-email">{f.email}</label><input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" dir="ltr" required aria-describedby="e-email" /><p class="field__err" id="e-email"></p></div>
+  </div>
+  <div class="cf__row">
+    <div class="field"><label for="f-company">{f.company}</label><input id="f-company" name="company" autocomplete="organization" required aria-describedby="e-company" /><p class="field__err" id="e-company"></p></div>
+    <div class="field"><label for="f-role">{f.role}</label><input id="f-role" name="role" autocomplete="organization-title" required aria-describedby="e-role" /><p class="field__err" id="e-role"></p></div>
+  </div>
+
+  <fieldset class="field field--choices" aria-describedby="e-services">
+    <legend>{f.services}</legend>
+    <div class="chips">
+      {opts.map((o) => (
+        <label class="chip"><input type="checkbox" name="services" value={o.id} data-label={o.label} /><span>{o.label}</span></label>
+      ))}
+    </div>
+    <p class="field__err" id="e-services"></p>
+  </fieldset>
+
+  <div class="cf__row">
+    <div class="field"><label for="f-phone">{f.phone}</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" dir="ltr" placeholder="+966" /></div>
+    <div class="field"><label for="f-website">{f.website}</label><input id="f-website" name="website" type="url" inputmode="url" dir="ltr" placeholder="https://" /></div>
+  </div>
+  <div class="field"><label for="f-budget">{f.budget}</label><input id="f-budget" name="budget" inputmode="text" /></div>
+  <div class="field"><label for="f-message">{f.message}</label><textarea id="f-message" name="message" rows="5" required aria-describedby="e-message"></textarea><p class="field__err" id="e-message"></p></div>
+
+  <div class="field field--consent">
+    <label class="consent"><input type="checkbox" name="consent" required aria-describedby="e-consent" /><span>{f.consent}</span></label>
+    <p class="field__err" id="e-consent"></p>
+  </div>
+  <!-- honeypot -->
+  <div class="hp" aria-hidden="true"><label>Leave empty<input name="company_url" tabindex="-1" autocomplete="off" /></label></div>
+
+  <div class="cf__actions">
+    <button class="btn btn--primary" type="submit" data-submit><span data-label>{d.submit}</span><span class="arrow" aria-hidden="true"></span></button>
+  </div>
+  <p class="cf__done" role="status" aria-live="polite" data-done hidden>{d.done}</p>
+</form>
+
+<style>
+  .cf { display: grid; gap: var(--s-5); }
+  .cf__notice { justify-self: start; }
+  .cf__summary { padding: var(--s-3) var(--s-4); border-inline-start: 3px solid #ff6b6b; background: rgb(255 107 107 / 0.08); color: var(--text-strong); font-weight: 500; }
+  .cf__row { display: grid; gap: var(--s-5); }
+  .field { display: grid; gap: var(--s-2); border: 0; padding: 0; min-width: 0; }
+  .field label, .field legend { font-size: var(--fs-small); font-weight: 500; color: var(--text); padding: 0; }
+  .field input:not([type='checkbox']), .field textarea {
+    width: 100%; min-height: 54px; padding: 14px 0; background: transparent; border: 0; border-bottom: 1px solid var(--line-strong);
+    color: var(--text-strong); font-size: var(--fs-lead); border-radius: 0; transition: border-color var(--d-2) var(--ease-out);
+  }
+  .field textarea { resize: vertical; min-height: 140px; line-height: 1.5; }
+  .field input::placeholder { color: rgb(164 164 174 / 0.6); }
+  .field input:focus, .field textarea:focus { outline: none; border-bottom-color: var(--accent); box-shadow: 0 1px 0 0 var(--accent); }
+  .field [aria-invalid='true'] { border-bottom-color: #ff6b6b !important; }
+  .field__err { min-height: 1.2em; font-size: var(--fs-caption); color: #ff8f8f; }
+  .field__err:empty { min-height: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-2); }
+  .chip { position: relative; cursor: pointer; }
+  .chip input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .chip span { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s-4); border: 1px solid var(--line-strong); border-radius: var(--r-pill); font-size: var(--fs-small); font-weight: 500; color: var(--text); transition: all var(--d-2) var(--ease-out); }
+  .chip input:checked + span { background: var(--c-purple); border-color: var(--c-purple); color: var(--c-white); }
+  .chip input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 3px; }
+  .consent { display: flex; gap: var(--s-3); align-items: flex-start; font-size: var(--fs-small); color: var(--text-muted); cursor: pointer; }
+  .consent input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--c-purple); flex: none; }
+  .hp { position: absolute; inset-inline-start: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .cf__actions { padding-top: var(--s-2); }
+  .cf__done { padding: var(--s-4); border-inline-start: 3px solid var(--accent); background: rgb(108 53 255 / 0.12); color: var(--text-strong); }
+  @media (min-width: 768px) { .cf__row { grid-template-columns: 1fr 1fr; gap: var(--s-6); } }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-form]');
+  if (form) {
+    const msg = form.dataset;
+    const dl = ((window as any).dataLayer ||= []);
+    let started = false;
+    form.addEventListener('focusin', () => { if (!started) { started = true; dl.push({ event: 'form_start', form_id: 'inquiry', language: msg.lang }); } });
+
+    // Preselect a pillar from ?service=<pillar-id>
+    const pre = new URLSearchParams(location.search).get('service');
+    if (pre) form.querySelectorAll<HTMLInputElement>('input[name="services"]').forEach((c) => { if (c.value === pre) c.checked = true; });
+
+    const setErr = (el: HTMLElement, id: string, text: string) => {
+      const out = form.querySelector<HTMLElement>(`#${id}`); if (out) out.textContent = text;
+      if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) el.setAttribute('aria-invalid', text ? 'true' : 'false');
+    };
+    const validate = (el: HTMLInputElement | HTMLTextAreaElement): boolean => {
+      const id = `e-${el.name}`;
+      if (el.name === 'consent') { const ok = (el as HTMLInputElement).checked; setErr(el, id, ok ? '' : msg.msgConsent!); return ok; }
+      if (el.required && !el.value.trim()) { setErr(el, id, msg.msgRequired!); return false; }
+      if (el.type === 'email' && el.value && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(el.value.trim())) { setErr(el, id, msg.msgEmail!); return false; }
+      setErr(el, id, ''); return true;
+    };
+    form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[required]').forEach((el) => el.addEventListener('blur', () => validate(el)));
+
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const fd = new FormData(form);
+      if (fd.get('company_url')) return; // honeypot
+      let ok = true;
+      form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[required]').forEach((el) => { if (!validate(el)) ok = false; });
+      const services = [...form.querySelectorAll<HTMLInputElement>('input[name="services"]:checked')];
+      const sErr = form.querySelector<HTMLElement>('#e-services')!;
+      sErr.textContent = services.length ? '' : msg.msgServices!;
+      if (!services.length) ok = false;
+      const summary = form.querySelector<HTMLElement>('[data-summary]')!;
+      summary.hidden = ok;
+      if (!ok) {
+        dl.push({ event: 'form_error', form_id: 'inquiry', error_type: 'validation', language: msg.lang });
+        (form.querySelector<HTMLElement>('[aria-invalid="true"]') ?? summary).focus();
+        return;
+      }
+      const lines = [
+        `Name: ${fd.get('name')}`, `Email: ${fd.get('email')}`, `Company: ${fd.get('company')}`, `Role: ${fd.get('role')}`,
+        `Phone: ${fd.get('phone') || '-'}`, `Website: ${fd.get('website') || '-'}`,
+        `Needs: ${services.map((s) => s.dataset.label).join(', ')}`, `Monthly media budget: ${fd.get('budget') || '-'}`, '', `${fd.get('message')}`,
+      ];
+      const subject = `New project enquiry — ${fd.get('company')}`;
+      dl.push({ event: 'form_submit', form_id: 'inquiry', services: services.map((s) => s.value).join(','), language: msg.lang });
+      form.querySelector<HTMLElement>('[data-done]')!.hidden = false;
+      location.href = `mailto:${msg.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+    });
+  }
+</script>

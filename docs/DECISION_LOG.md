@@ -31,6 +31,11 @@ Format: ID · date · decision · decided by · rationale · source.
 | W-005 | 2026-11-04 | Brand source files committed to `/brand` unmodified, with renamed copies only | Uploads do not persist between sessions; the project needs a durable source of truth |
 | W-006 | 2026-11-04 | **Rejected** the third asset zip (`SayTamm_Brand_Assets.zip`, 135 KB, 24 Aug 13:47) | It contains a **different, unapproved mark**: a pointed T-stem plus a literal checkmark, navy/orange "source" files, W:H 1.17 (IoU 0.40 vs the approved logo). It contradicts D-011 and the Bible |
 | W-007 | 2026-11-04 | Production logo files v1 built by recolour and verified trace of the approved logo | Website and digital use need SVG; the fidelity checks are in `brand/production/logo/README.md` |
+| W-008 | 2026-11-04 | Website v0.1 built in `/site` on **Astro 7** (static), plain CSS tokens, Git content | Owner asked for the website and supplied the theme brief; this was the recommended stack (OQ-20). Reversible: content and tokens are framework-neutral |
+| W-009 | 2026-11-04 | Theme colour names from the website brief (Obsidian, Graphite, Soft White, Muted Grey) **mapped to approved palette values** (`#0A0A0D`, `#17171C`, `#F5F5F7`, `#A4A4AE`), not the brief's proposed hexes | The brief asked to check brand files before treating its colours as final; the approved values are within a shade and keep the palette authoritative |
+| W-010 | 2026-11-04 | Hero "sculpture" = exact logo silhouette extruded in CSS 3D (face flat, side walls are palette tints) | Brief asks for a logo-derived architectural sculpture; treated as an environmental application (like the dimensional signage in the guidelines), so the flat logo rules are untouched |
+| W-011 | 2026-11-04 | Header and footer use the **symbol only** until the drawn wordmark exists | Brief: never approximate the logo with ordinary text |
+| W-012 | 2026-11-04 | Contact form opens a pre-filled email to info@saytamm.com until a server endpoint and CRM exist, and says so on the form | Functional and honest; no fake "sent" state |
 
 ## Proposed — awaiting owner
 

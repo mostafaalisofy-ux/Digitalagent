@@ -1,0 +1,26 @@
+---
+// Reusable section heading: index + eyebrow on a T-bar rule, headline revealed line by line.
+interface Props { n?: string; eyebrow: string; title: string | readonly string[]; as?: 'h1' | 'h2'; size?: 'display' | 'h1' | 'h2'; class?: string; id?: string }
+const { n, eyebrow, title, as: Tag = 'h2', size = 'h1', class: cls, id } = Astro.props;
+const lines = Array.isArray(title) ? title : [title];
+---
+<div class:list={['sh', cls]} data-reveal-group>
+  <p class="eyebrow sh__eyebrow">
+    <span class="t-rule" aria-hidden="true"></span>
+    {n && <span class="num sh__n">{n}</span>}
+    <span>{eyebrow}</span>
+  </p>
+  <Tag class:list={['sh__title', `sh__title--${size}`]} id={id}>
+    {lines.map((l, i) => <span class="line" style={`--delay:${i * 90}ms`}><span>{l}</span></span>)}
+  </Tag>
+</div>
+<style>
+  .sh { display: grid; gap: var(--s-5); }
+  .sh__eyebrow { color: var(--text-muted); }
+  .sh__eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .sh__n { color: var(--text-strong); }
+  .sh__title { letter-spacing: var(--track-tight); line-height: var(--lh-head); }
+  .sh__title--display { font-size: var(--fs-display); line-height: var(--lh-tight); }
+  .sh__title--h1 { font-size: var(--fs-h1); }
+  .sh__title--h2 { font-size: var(--fs-h2); }
+</style>
