@@ -52,6 +52,7 @@ const [l2, d2] = split(d.l2);
   .hero__l2 { padding-inline-start: 0.22em; }  /* asymmetric offset: the diagonal step */
   @media (min-width: 768px) { .hero__l2 { padding-inline-start: 0.62em; } }
   .dot--accent { color: var(--accent); }
+  .hero__title .line > span { white-space: nowrap; }  /* the two lines never re-break, whatever the font metrics */
   .hero__alt { font-family: var(--font-ar); font-weight: 700; font-size: var(--fs-h2); color: var(--text-strong); line-height: 1.2; justify-self: start; }
   .hero__alt.latin { font-family: var(--font-en); letter-spacing: -0.02em; }
   .hero__sub { font-size: var(--fs-lead); color: var(--text-muted); max-width: 30ch; line-height: 1.45; }

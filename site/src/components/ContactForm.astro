@@ -8,11 +8,15 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = t(lang).contact;
 const f = d.fields;
+// Hosted inside a claude.ai preview link, mailto: is unreliable, so the form shows the address instead.
+const preview = import.meta.env.PUBLIC_DEPLOY_TARGET === 'artifact';
+const notice = preview ? (lang === 'ar' ? 'معاينة: النموذج غير متصل. راسلنا على info@saytamm.com' : 'Preview: this form is not connected. Write to info@saytamm.com') : d.notice;
+const done = preview ? (lang === 'ar' ? 'تم التحقق من البيانات. في هذه المعاينة لا يُرسل النموذج — راسلنا مباشرة على info@saytamm.com' : 'Details check out. This preview does not send the form — please write to info@saytamm.com.') : d.done;
 const opts = [...PILLARS.map((p) => ({ id: p.id, label: p.name[lang] })), { id: 'unsure', label: d.serviceOpts[4] }];
 ---
-<form class="cf" novalidate data-form data-email={SITE.email} data-lang={lang}
+<form class="cf" novalidate data-form data-email={SITE.email} data-lang={lang} data-mode={preview ? 'preview' : 'live'}
   data-msg-required={d.errors.required} data-msg-email={d.errors.email} data-msg-services={d.errors.services} data-msg-consent={d.errors.consent}>
-  <p class="placeholder-tag cf__notice">{d.notice}</p>
+  <p class="placeholder-tag cf__notice">{notice}</p>
   <div class="cf__summary" role="alert" aria-live="assertive" data-summary hidden>{d.errors.summary}</div>
 
   <div class="cf__row">
@@ -51,7 +55,7 @@ const opts = [...PILLARS.map((p) => ({ id: p.id, label: p.name[lang] })), { id: 
   <div class="cf__actions">
     <button class="btn btn--primary" type="submit" data-submit><span data-label>{d.submit}</span><span class="arrow" aria-hidden="true"></span></button>
   </div>
-  <p class="cf__done" role="status" aria-live="polite" data-done hidden>{d.done}</p>
+  <p class="cf__done" role="status" aria-live="polite" data-done hidden>{done}</p>
 </form>
 
 <style>
@@ -135,6 +139,7 @@ const opts = [...PILLARS.map((p) => ({ id: p.id, label: p.name[lang] })), { id: 
       const subject = `New project enquiry — ${fd.get('company')}`;
       dl.push({ event: 'form_submit', form_id: 'inquiry', services: services.map((s) => s.value).join(','), language: msg.lang });
       form.querySelector<HTMLElement>('[data-done]')!.hidden = false;
+      if (msg.mode === 'preview') return;
       location.href = `mailto:${msg.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
     });
   }

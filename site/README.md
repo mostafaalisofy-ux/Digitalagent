@@ -18,7 +18,9 @@ npm install
 npm run dev
 ```
 
-`npm run build` writes the static site to `dist/`, and `npm run preview` serves it. Both `dev` and `build` first run `scripts/fetch-satoshi.mjs` (see Fonts).
+`npm run build` writes the static site to `dist/`, and `npm run preview` serves it.
+
+**Preview link:** `npm run build:preview-link` produces `preview-link/`, a bundle for the private claude.ai preview (https://claude.ai/artifact/1T1HBDghRXiKtQND2Fk72Q). It uses relative paths, an `assets/` folder, Google-hosted IBM Plex Sans Arabic, and **Figtree as a labelled stand-in for Satoshi**, which may not be uploaded to third-party platforms. The contact form there shows the email address instead of opening mail. Both `dev` and `build` first run `scripts/fetch-satoshi.mjs` (see Fonts).
 
 ## Routes
 
