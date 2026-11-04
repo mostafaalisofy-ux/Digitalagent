@@ -32,7 +32,7 @@ Date: 2026-11-04 · Branch `claude/saytamm-brand-strategy-d2shzo` · Base: v0.4 
 | `site/scripts/make-og-images.cjs` | Hard-coded absolute path replaced with a path relative to the script |
 | `site/package.json`, `package-lock.json`, `tsconfig.json` (new) | Type checking: `@astrojs/check` + `typescript` (dev only), `npm run check`, strict Astro TS config for `src/` |
 | `tools/qa/*` (new in repo) | QA scripts: `qa.js`, `func.js`, `a11y.js` (new), `figs.js` (new), `wide.js`, README |
-| `docs/OPEN_QUESTIONS.md`, `docs/WEBSITE_V04_REPORT.md`, `PROJECT_HANDOVER.md`, `site/README.md`, `docs/SPRINT_2_REPORT.md` | Documentation |
+| `docs/OPEN_QUESTIONS.md`, `docs/WEBSITE_V04_REPORT.md`, `docs/DECISION_LOG.md`, `PROJECT_HANDOVER.md`, `site/README.md`, `docs/SPRINT_2_REPORT.md`, `docs/AI_VISUAL_PROMPTS.md` (new) | Documentation. `AI_VISUAL_PROMPTS.md` holds prompts for illustrative imagery only, plus the list of visuals that must never be generated |
 
 ## 2. Content improvements
 
@@ -68,21 +68,24 @@ Date: 2026-11-04 · Branch `claude/saytamm-brand-strategy-d2shzo` · Base: v0.4 
 - No machine-specific paths remain in the project.
 - Client JavaScript is 2.5 KB external plus small inline scripts.
 
-## 5. Tests performed (all executed in this sprint)
+## 5. Tests performed (all executed; final run on the final code, 2026-11-04 13:14–13:30)
 
 | Command / test | Result |
 |---|---|
-| `npm ci` (in the handover package) | see §8 |
+| `npm ci` + `npm run build` + `npm run build:production` from a fresh extract of `SAYTAMM_SPRINT_2_HANDOVER.zip` | see the handover verification in the delivery message |
 | `npm run check` | 0 errors · 0 warnings · 0 hints |
-| `npm run build` (staging) | Complete, no warnings. 26 HTML pages carry noindex; robots `Disallow: /` |
+| `npm run build` (staging) | Complete, no warnings. All 26 HTML pages noindex; robots `Disallow: /` |
 | `npm run build:production` | Complete. Only the root redirect stub is noindex; robots `Allow: /` + sitemap; Results section absent; Saudi GEA absent |
-| `figs.js` (production) | 25 pages: **0** visible unapproved figures (first run found "100K" in the K.S execution text; fixed and re-run) |
-| `a11y.js --production` | 127/127: axe WCAG 2.1 AA, headings, keyboard focus, reduced motion, no internal wording visible |
-| `qa.js sweep` (production) | 168 checks (24 pages × 7 viewports), 0 problems |
-| `qa.js sweep` (staging) | 168 checks, 0 problems |
-| `func.js` (staging) | 114/114 |
-| `a11y.js` (staging) | 102/102 |
-| Visual review | Services, case (AR), About, Contact and homepage at 1440 px; homepage at 390 px |
+| `qa.js sweep` (staging) | 168 checks (24 pages × 7 viewports: 360, 390, 768, 1024, 1440, 1920, 2560), **0 problems**. Covers overflow, console errors, failed requests, broken images, and the hero CTA in view and revealed on first paint |
+| `qa.js sweep` (production) | 168 checks, **0 problems** |
+| `func.js` (staging) | **114/114**: links, anchors, language switch, SEO tags, nav state, JSON-LD, form (preselect, validation, phone/website, notice, hidden-until-submit, copy fallback, event), mobile menu, brand permission gate |
+| `a11y.js` (staging) | **102/102**: axe-core WCAG 2.1 A/AA, one h1, no skipped heading levels, visible keyboard focus, reduced motion (25 pages incl. 404) |
+| `a11y.js --production` | **127/127**: the same, plus no internal or review wording visible to visitors |
+| `figs.js` (production) | 25 pages: **0** unapproved figures in visible text, aria-labels or alt text |
+| SEO audit (script) | 24 pages: no duplicate titles or descriptions; self-canonical; reciprocal hreflang; valid JSON-LD; descriptions 70–165 characters |
+| Visual review | Homepage EN/AR at 1440 and 390 px; Services, About EN/AR, Contact, a case page (AR) at 1440 px; mobile 360, 390 and 768 px |
+
+Bugs found by testing and fixed in this sprint: the form confirmation was visible before submit; the mobile hero CTA was hidden until scroll; an axe label-in-name failure; 404 contrast; 1–15 px overflows at 360 px; RTL alignment of Latin blocks; "100K" visible in production.
 
 ## 6. Remaining content approvals
 
