@@ -15,6 +15,7 @@ const d = h(lang).approach;
       <h2 class="ap__title" id="ap-title" data-reveal-group><span class="line"><span>{d.title}</span></span></h2>
       <p class="ap__intro" data-reveal>{d.intro}</p>
     </div>
+    <figure class="ap__band" aria-hidden="true"><img src="/visuals/approach-band.webp" srcset="/visuals/approach-band-1200.webp 1200w, /visuals/approach-band.webp 2352w" sizes="(min-width: 1440px) 1300px, 100vw" width="2352" height="852" alt="" loading="lazy" decoding="async" data-reveal="wipe" /></figure>
     <ol role="list" class="ap__loop" data-reveal-group>
       {d.steps.map((s, i) => (
         <li class="ap__step" style={`--delay:${i * 120}ms`}>
@@ -32,7 +33,10 @@ const d = h(lang).approach;
   .ap .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
   .ap__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); }
   .ap__intro { color: var(--text-muted); font-size: var(--fs-lead); max-width: 46ch; }
-  .ap__loop { position: relative; display: grid; gap: var(--s-7); margin-top: var(--s-9); }
+  .ap__band { margin: var(--s-8) 0 0; }
+  .ap__band img { display: block; width: 100%; height: auto; aspect-ratio: 2352 / 852; object-fit: cover; background: var(--surface); }
+  @media (max-width: 767px) { .ap__band img { aspect-ratio: 16 / 9; object-position: 50% 60%; } }
+  .ap__loop { position: relative; display: grid; gap: var(--s-7); margin-top: var(--s-8); }
   .ap__step { position: relative; display: grid; gap: var(--s-3); padding-inline-start: var(--s-6); }
   .ap__dot { position: absolute; inset-inline-start: 0; top: 0.55em; width: 12px; height: 12px; border: 2px solid var(--accent); transform: rotate(45deg); background: var(--bg); }
   .ap__step:last-child .ap__dot { background: var(--accent); }

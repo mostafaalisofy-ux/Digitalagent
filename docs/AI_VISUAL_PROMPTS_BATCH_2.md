@@ -1,5 +1,7 @@
 # AI visual prompts, batch 2 (SayTamm website)
 
+> **Status (2026-11-04): 3 images received and placed** (W-020): `work-hero` (Work page hero; dimmed in Arabic where the headline overlaps the subject), `cta-background` (closing call-to-action on every page), `approach-band` (homepage "How we work"). Trimmed 24 px per edge. The optional hero video was not supplied, so the hero stays static.
+
 Date: 2026-11-04. Same rules as batch 1 (`docs/AI_VISUAL_PROMPTS.md`): **illustrative and decorative only**. Never use these images for case studies, clients, the team or the office.
 
 ## How to use

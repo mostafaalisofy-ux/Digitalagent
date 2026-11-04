@@ -1,15 +1,13 @@
 ---
-import { SYMBOL } from '../../lib/logo';
 import { SITE, type Lang } from '../../config/site';
 import { href } from '../../i18n/paths';
 import { h } from '../../i18n/home';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = h(lang).contact;
-const { x, y, w, h: bh } = SYMBOL.bladeBox;
 ---
 <section class="final" aria-labelledby="final-title">
-  <svg class="final__blade" viewBox={`${x} ${y} ${w} ${bh}`} aria-hidden="true" focusable="false" data-reveal="wipe"><path d={SYMBOL.blade} /></svg>
+  <div class="final__img" aria-hidden="true"><img src="/visuals/cta-background.webp" srcset="/visuals/cta-background-1200.webp 1200w, /visuals/cta-background.webp 2352w" sizes="100vw" width="2352" height="952" alt="" loading="lazy" decoding="async" /></div>
   <div class="container final__in">
     <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span><span>{d.eyebrow}</span></p>
     <h2 class="final__title" id="final-title" data-reveal-group>{d.title.map((l, i) => <span class="line" style={`--delay:${i * 100}ms`}><span>{l}</span></span>)}</h2>
@@ -22,7 +20,10 @@ const { x, y, w, h: bh } = SYMBOL.bladeBox;
 </section>
 <style>
   .final { position: relative; overflow: hidden; padding-block: var(--s-11); isolation: isolate; border-top: 1px solid var(--line); }
-  .final__blade { position: absolute; z-index: -1; inset-inline-end: -6%; bottom: -22%; height: 125%; width: auto; fill: var(--c-graphite); }
+  /* illustrative background (decorative, AI-generated); its subject sits bottom-right, never mirrored */
+  .final__img { position: absolute; z-index: -1; inset: 0; }
+  .final__img img { width: 100%; height: 100%; object-fit: cover; object-position: 80% 100%; opacity: 0.7; }
+  :global([dir='rtl']) .final__img img { opacity: 0.4; }
   .final__in { display: grid; gap: var(--s-5); }
   .final .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
   .final__title { font-size: var(--fs-h1); line-height: 1.05; letter-spacing: var(--track-tight); }
@@ -33,5 +34,5 @@ const { x, y, w, h: bh } = SYMBOL.bladeBox;
   .final__or { color: var(--text-muted); font-size: var(--fs-small); }
   .final__or a { color: var(--text-strong); }
   @media (min-width: 1024px) { .final__title { font-size: clamp(3rem, 1.6rem + 3vw, 5rem); } }
-  @media (max-width: 767px) { .final__blade { height: 70%; bottom: -10%; inset-inline-end: -30%; } }
+  @media (max-width: 767px) { .final__img img { opacity: 0.4; object-position: 90% 100%; } }
 </style>
