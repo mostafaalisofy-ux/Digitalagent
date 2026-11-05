@@ -1,7 +1,7 @@
 // usage: node qa.js sweep | node qa.js shot <path> <w> <h> <out> [full]
 const { chromium } = require('playwright');
 const BASE = process.env.BASE || 'http://localhost:4321';
-const VP = { m360: [360, 640], m390: [390, 844], t768: [768, 1024], l1024: [1024, 768], d1440: [1440, 900], d1920: [1920, 1080], x2560: [2560, 1440] };
+const VP = { m360: [360, 640], m390: [390, 844], m430: [430, 932], t768: [768, 1024], l1024: [1024, 768], l1280: [1280, 800], d1440: [1440, 900], d1920: [1920, 1080], x2560: [2560, 1440] };
 async function settle(page) {
   await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 500) { window.scrollTo({ top: y, behavior: 'instant' }); await new Promise((r) => setTimeout(r, 25)); } window.scrollTo({ top: 0, behavior: 'instant' }); });
   await page.waitForTimeout(1300);

@@ -23,7 +23,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
     await page.waitForTimeout(1200);
     // axe
     await page.addScriptTag({ content: axeSrc });
-    const res = await page.evaluate(async () => (await (window).axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] } })).violations.map((v) => `${v.id} (${v.impact}): ${v.nodes.length}× e.g. ${v.nodes[0].target.join(' ')}`));
+    const res = await page.evaluate(async () => (await (window).axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } })).violations.map((v) => `${v.id} (${v.impact}): ${v.nodes.length}× e.g. ${v.nodes[0].target.join(' ')}`));
     ok(res.length === 0, `${p} axe: ${res.join(' | ')}`);
     // headings
     const hs = await page.evaluate(() => [...document.querySelectorAll('h1,h2,h3,h4,h5,h6')].filter((h) => h.getClientRects().length).map((h) => +h.tagName[1]));

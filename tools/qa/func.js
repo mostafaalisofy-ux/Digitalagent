@@ -5,7 +5,8 @@ let pass = 0, fail = 0;
 const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
 (async () => {
   const br = await chromium.launch();
-  const p = await br.newPage({ viewport: { width: 1280, height: 800 } });
+  const ctx = await br.newContext({ viewport: { width: 1280, height: 800 }, permissions: ['clipboard-read', 'clipboard-write'] });
+  const p = await ctx.newPage();
   const checked = new Set();
   for (const lang of ['en', 'ar']) {
     for (const start of [`/${lang}/`, `/${lang}/work/`, `/${lang}/about/`, `/${lang}/services/`, `/${lang}/work/qnb-ramadan/`]) {
@@ -70,12 +71,18 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
     ok((await p.locator('#e-phone').innerText()).length > 0, `${lang} invalid phone flagged`);
     ok((await p.locator('#e-website').innerText()).length > 0, `${lang} invalid website flagged`);
     await p.fill('[name=phone]', '+966 50 000 0000'); await p.fill('[name=website]', 'https://example.com');
-    for (const [k, v] of [['name', 'T'], ['email', 't@example.com'], ['company', 'Co'], ['role', 'CMO'], ['message', 'Grow sales']]) await p.fill(`[name=${k}]`, v);
+    // Sprint 3: role is optional; industry, market and timeline are carried into the message
+    for (const [k, v] of [['name', 'T'], ['email', 't@example.com'], ['company', 'Co'], ['industry', 'Retail'], ['message', 'Grow sales']]) await p.fill(`[name=${k}]`, v);
+    await p.selectOption('[name=market]', { index: 1 }); await p.selectOption('[name=timeline]', { index: 2 });
     await p.check('input[value=media]'); await p.check('[name=consent]');
+    ok(await p.locator('.consent a[href$="/privacy/"]').count() === 1, `${lang} consent links to the privacy notice`);
     await p.evaluate(() => { const L = Object.getOwnPropertyDescriptor(window.Location.prototype, 'href'); });
     await p.click('[data-submit]'); await p.waitForTimeout(400);
     ok(await p.isVisible('[data-done]'), `${lang} confirmation shown after submit`);
     ok(await p.isVisible('[data-copy]'), `${lang} copy-message fallback shown`);
+    await p.click('[data-copy]'); await p.waitForTimeout(200);
+    const msgText = await p.evaluate(() => navigator.clipboard.readText().catch(() => ''));
+    ok(/Industry: Retail/.test(msgText) && /Market: (?!-)\S/.test(msgText) && /Timeline: (?!-)\S/.test(msgText) && /Role: -/.test(msgText), `${lang} composed email carries industry, market, timeline; role optional`);
     ok((await p.locator('#e-phone').innerText()) === '' && (await p.locator('#e-website').innerText()) === '', `${lang} valid phone/website accepted`);
   }
   await p.goto(`${B}/en/`);
