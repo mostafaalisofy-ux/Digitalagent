@@ -10,7 +10,9 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = h(lang).selected;
 const r = h(lang).results;
-const story = ['context', 'challenge', 'strategy', 'execution'] as const;
+// Homepage shows the challenge and the approach only; context and execution live on the case page
+// (UX review 2026-11-05: the full story made each case ~1,600 px tall on desktop).
+const story = ['challenge', 'strategy'] as const;
 ---
 <section class="section sw" id="work" aria-labelledby="sw-title">
   <div class="container">
@@ -96,10 +98,10 @@ const story = ['context', 'challenge', 'strategy', 'execution'] as const;
   .ch__olabel { display: flex; align-items: center; gap: var(--s-3); }
   .ch__figs { display: grid; gap: var(--s-5); }
   .ch__lead { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--s-3); color: var(--text-muted); }
-  .ch__lead .num { font-size: var(--fs-kpi); font-weight: 700; line-height: 0.9; letter-spacing: -0.045em; color: var(--text-strong); }
+  .ch__lead .num { white-space: nowrap; font-size: var(--fs-kpi); font-weight: 700; line-height: 0.9; letter-spacing: -0.045em; color: var(--text-strong); }
   .ch__kpis { display: flex; flex-wrap: wrap; gap: var(--s-4) var(--s-7); }
   .ch__kpis div { display: flex; flex-direction: column-reverse; gap: 2px; }
-  .ch__kpis dd { font-size: var(--fs-h2); font-weight: 700; line-height: 1; color: var(--text-strong); }
+  .ch__kpis dd { white-space: nowrap; font-size: var(--fs-h2); font-weight: 700; line-height: 1; color: var(--text-strong); }
   .ch__kpis dt { font-size: var(--fs-caption); color: var(--text-muted); }
   .ch__osum { color: var(--text); max-width: 64ch; }
   .ch__note, .ch__withheld { color: var(--text-muted); font-size: var(--fs-small); }
