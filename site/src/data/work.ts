@@ -161,6 +161,23 @@ export const SAYTAMM_WORK: StWork[] = [
     ] },
   },
   {
+    slug: 'niimee-posts',
+    client: 'niimee',
+    sector: { en: 'Fashion', ar: 'أزياء' },
+    title: { en: 'Fashion for every size', ar: 'أزياء لكل المقاسات' },
+    summary: {
+      en: 'Social posts for niimee’s online fashion store, set in Saudi courtyards and seafronts: the app and its product cards, the full range of sizes, and modest everyday looks.',
+      ar: 'بوستات سوشيال لمتجر niimee للأزياء، في أفنية وواجهات بحرية سعودية: التطبيق وبطاقات منتجاته، ومجموعة المقاسات الكاملة، وإطلالات محتشمة للاستخدام اليومي.',
+    },
+    format: { en: 'Social media posts · 4:5', ar: 'بوستات لمنصات التواصل · 4:5' },
+    media: { kind: 'images', images: [
+      { src: '/work/niimee-post-1.webp', w: 800, h: 1000, alt: { en: 'niimee post: a woman in a teal pleated dress beside a large phone showing the niimee app, surrounded by floating product cards', ar: 'بوست niimee: سيدة بفستان أخضر مزرق بجانب هاتف كبير عليه تطبيق niimee، وحولها بطاقات منتجات' } },
+      { src: '/work/niimee-post-2.webp', w: 800, h: 1000, alt: { en: 'niimee post: a woman in a heritage courtyard with a ring of size cards from M to 8XL around her', ar: 'بوست niimee: سيدة في فناء تراثي وحولها حلقة من بطاقات المقاسات من M إلى 8XL' } },
+      { src: '/work/niimee-post-3.webp', w: 800, h: 1000, alt: { en: 'niimee post: a woman in a denim jacket and wide jeans beside three dress looks', ar: 'بوست niimee: سيدة بجاكيت وبنطلون جينز واسع بجانب ثلاث إطلالات بفساتين' } },
+      { src: '/work/niimee-post-4.webp', w: 800, h: 1000, alt: { en: 'niimee post: three women in everyday outfits walking along a seafront promenade', ar: 'بوست niimee: ثلاث سيدات بإطلالات يومية على كورنيش بحري' } },
+    ] },
+  },
+  {
     slug: 'niimee-the-dot',
     client: 'niimee',
     sector: { en: 'Fashion', ar: 'أزياء' },
