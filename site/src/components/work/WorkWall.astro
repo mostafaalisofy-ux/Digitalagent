@@ -38,7 +38,7 @@ const count = (t: string) => t === 'all' ? SAYTAMM_WORK.length : SAYTAMM_WORK.fi
         const n = w.media.kind === 'images' ? w.media.images.length : 1;
         return (
           <li class="ww__card" data-tags={(WORK_TAGS[w.slug] ?? []).join(' ')} style={`--i:${i % 6}`}>
-            <a href={`#w-${w.slug}`} class="ww__open" data-open={w.slug} aria-label={`${d.open}: ${name(w)} — ${w.title[lang]}`}>
+            <a href={`#w-${w.slug}`} class="ww__open" data-open={w.slug}>
               <span class="ww__frame">
                 <img src={c.src} width={c.w} height={c.h} alt="" loading="lazy" decoding="async" />
                 {w.media.kind === 'video' && <span class="ww__play" aria-hidden="true"></span>}
@@ -174,7 +174,7 @@ const count = (t: string) => t === 'all' ? SAYTAMM_WORK.length : SAYTAMM_WORK.fi
   :global([dir='rtl']) .ww__chip { clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px); }
   .ww__chip:hover { border-color: var(--accent); }
   .ww__chip[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .ww__n { font-size: var(--fs-caption); opacity: 0.75; }
+  .ww__n { font-size: var(--fs-caption); }
 
   /* wall: row-ordered grid of equal 4:5 covers (full pieces open in the viewer) */
   .ww__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5) var(--s-3); margin-top: var(--s-6); }
