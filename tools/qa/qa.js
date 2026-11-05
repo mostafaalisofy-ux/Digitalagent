@@ -29,10 +29,12 @@ async function settle(page) {
       const first = await page.evaluate(() => { const c = document.querySelector('.hero .btn--primary'); if (!c) return null; const b = c.getBoundingClientRect(); return { bottom: b.bottom, hidden: getComputedStyle(c.closest('[data-reveal]') || c).opacity !== '1' }; });
       await settle(page);
       // lazy images below the fold may still be downloading after the scroll: give them up to 5 s
+      // The home work wall (.wm__track) is a horizontally clipped marquee: its lazy tiles load as they slide in,
+      // so it is checked separately for real 404s below rather than scrolled into view.
       // A deferred lazy image reports complete=true with naturalWidth 0 until the browser requests it, so
       // bring each visible, unloaded image into view and wait for it (as a visitor scrolling would).
       await page.evaluate(async () => {
-        for (const i of [...document.images].filter((x) => x.offsetParent && !(x.complete && x.naturalWidth))) {
+        for (const i of [...document.images].filter((x) => x.offsetParent && !x.closest('.wm__track') && !(x.complete && x.naturalWidth))) {
           i.scrollIntoView({ block: 'center' });
           await new Promise((res) => { if (i.complete && i.naturalWidth) return res(); i.addEventListener('load', res, { once: true }); i.addEventListener('error', res, { once: true }); setTimeout(res, 8000); });
         }
@@ -40,7 +42,7 @@ async function settle(page) {
       });
       const r = await page.evaluate(() => {
         const over = document.documentElement.scrollWidth - innerWidth;
-        const imgs = [...document.images].filter((i) => i.offsetParent && (!i.complete || !i.naturalWidth)).map((i) => i.src);
+        const imgs = [...document.images].filter((i) => i.offsetParent && !i.closest('.wm__track') && (!i.complete || !i.naturalWidth)).map((i) => i.src);
         const cta = document.querySelector('.hero .btn--primary');
         const ctaBottom = cta ? cta.getBoundingClientRect().bottom : null;
         const ctaHidden = cta ? getComputedStyle(cta.closest('[data-reveal]') || cta).opacity !== '1' : false;
