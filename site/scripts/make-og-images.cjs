@@ -18,7 +18,7 @@ const { chromium } = require('playwright'); const fs = require('fs');
     h1 b{color:#6C35FF} p{margin:28px 0 0;font-size:28px;color:#96939F}
     .rule{position:absolute;left:90px;top:95px;width:56px;height:6px;border-radius:6px;background:#6C35FF}
   </style></head><body><span class="rule"></span><div class="m">${svg}</div><div class="t">
-    ${lang === 'ar' ? '<h1>قول<br>تم<b>.</b></h1><p>وكالة تسويق رقمي وأداء · السعودية</p>' : '<h1>Say it.<br>Tamm it<b>.</b></h1><p>Digital marketing &amp; performance agency · Saudi Arabia</p>'}
+    ${lang === 'ar' ? '<h1>قول<br>تم<b>.</b></h1><p>وكالة تسويق رقمي وأداء</p>' : '<h1>Say it.<br>Tamm it<b>.</b></h1><p>Digital marketing &amp; performance agency</p>'}
   </div></body></html>`;
   const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
   for (const lang of ['en', 'ar']) { await p.setContent(page(lang)); await p.evaluate(() => document.fonts.ready); await p.screenshot({ path: `${site}/public/og/saytamm-og-${lang}.png` }); }

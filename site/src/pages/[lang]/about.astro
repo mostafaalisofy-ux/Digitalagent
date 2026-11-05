@@ -1,13 +1,17 @@
 ---
+// About (Sprint 3 positioning, D-020): a digital marketing & performance agency — Saudi Arabia is part
+// of the team's experience, not the boundary of the brand. Order: hero → experience (with verified
+// facts) → markets → operating model → philosophy → leadership → direct clients → team experience → close.
+// Establishment (2021), team experience and the founder's experience are stated separately; no office,
+// entity or permanent team is implied in any market.
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
-import HomeAbout from '../../components/home/HomeAbout.astro';
+import Facts from '../../components/Facts.astro';
 import Clients from '../../components/home/Clients.astro';
 import Brands from '../../components/home/Brands.astro';
-import Approach from '../../components/home/Approach.astro';
-import FinalCta from '../../components/home/FinalCta.astro';
 import Logo from '../../components/Logo.astro';
-import { staticLangPaths } from '../../i18n/paths';
+import { DISCIPLINES } from '../../data/services';
+import { staticLangPaths, href } from '../../i18n/paths';
 import { t } from '../../i18n/ui';
 import { h } from '../../i18n/home';
 import { SITE, type Lang } from '../../config/site';
@@ -17,29 +21,92 @@ const d = t(lang);
 const a = h(lang).aboutPage;
 const schema = [{
   '@context': 'https://schema.org', '@type': 'AboutPage', inLanguage: lang,
-  mainEntity: { '@type': 'Organization', name: SITE.name, url: SITE.url,
+  mainEntity: { '@type': 'Organization', name: SITE.name, url: SITE.url, foundingDate: '2021',
+    description: 'A digital marketing and performance agency that brings strategy, creative, media and technology together under one connected approach to growth.',
     founder: { '@type': 'Person', name: a.founderName, jobTitle: 'Founder', image: new URL('/team/mostafa-sofy.webp', SITE.url).href } },
 }];
 ---
 <Base lang={lang} page="about" title={d.meta.aboutTitle} description={d.meta.aboutDesc} schema={schema}>
-  <PageHero eyebrow={d.nav.about} title={a.title} intro={a.intro} />
-  <section class="section story" aria-labelledby="story-title">
-    <div class="container story__grid">
-      <h2 id="story-title" class="story__h" data-reveal>{a.storyTitle}</h2>
-      <div class="story__body">{a.story.map((p, i) => <p data-reveal style={`--delay:${i * 80}ms`}>{p}</p>)}</div>
-    </div>
-  </section>
+  <PageHero eyebrow={a.eyebrow} title={a.title} intro={a.intro} />
+
   <figure class="atmo" aria-hidden="true">
     <img src="/visuals/about-atmosphere.webp" srcset="/visuals/about-atmosphere-1200.webp 1200w, /visuals/about-atmosphere.webp 2560w" sizes="100vw" width="2560" height="1100" alt="" loading="lazy" decoding="async" data-reveal="wipe" />
   </figure>
-  <HomeAbout lang={lang} showMore={false} />
-  <Approach lang={lang} />
-  <Clients lang={lang} />
-  <Brands lang={lang} />
-  <section class="section section--surface lead-sec" aria-labelledby="lead-title">
-    <div class="container lead__grid">
-      <h2 id="lead-title" class="story__h" data-reveal>{a.founderTitle}</h2>
-      <!-- Photo and biography supplied by the owner (2026-11-04); bio edited for the site (see i18n/home.ts). -->
+
+  <!-- 02 Experience: what the brand stands on, and the verified facts, kept distinct -->
+  <section class="section ab" aria-labelledby="ab-exp">
+    <div class="container ab__grid">
+      <header class="ab__head">
+        <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{a.experience.eyebrow}</p>
+        <h2 class="ab__h" id="ab-exp" data-reveal>{a.experience.title.map((l) => <span class="ab__line">{l}</span>)}</h2>
+      </header>
+      <div class="ab__body">
+        {a.experience.body.map((p, i) => <p class:list={['ab__p', { 'ab__p--lead': i === 0 }]} data-reveal>{p}</p>)}
+        <p class="ab__origin" data-reveal>{a.experience.origin}</p>
+      </div>
+    </div>
+    <div class="container ab__facts"><Facts lang={lang} cols={4} label={a.experience.factsLabel} /></div>
+  </section>
+
+  <!-- 03 Markets: team experience, not offices -->
+  <section class="section section--surface ab" aria-labelledby="ab-mkt">
+    <div class="container ab__grid">
+      <header class="ab__head">
+        <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{a.regional.eyebrow}</p>
+        <h2 class="ab__h" id="ab-mkt" data-reveal>{a.regional.title.map((l) => <span class="ab__line">{l}</span>)}</h2>
+      </header>
+      <div class="ab__body">
+        {a.regional.body.map((p, i) => <p class:list={['ab__p', { 'ab__p--lead': i === 0 }]} data-reveal>{p}</p>)}
+        <div class="mk" data-reveal>
+          <ul role="list" class="mk__list">{a.regional.markets.map((m) => <li>{m}</li>)}</ul>
+          <p class="mk__note">{a.regional.marketsNote}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 Operating model: the four disciplines, named exactly as on the services page -->
+  <section class="section ab" aria-labelledby="ab-model">
+    <div class="container ab__grid">
+      <header class="ab__head">
+        <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{a.model.eyebrow}</p>
+        <h2 class="ab__h" id="ab-model" data-reveal>{a.model.title.map((l) => <span class="ab__line">{l}</span>)}</h2>
+      </header>
+      <div class="ab__body">
+        {a.model.intro.map((p, i) => <p class:list={['ab__p', { 'ab__p--lead': i === 0 }]} data-reveal>{p}</p>)}
+      </div>
+    </div>
+    <div class="container">
+      <ol role="list" class="dx">
+        {DISCIPLINES.map((x, i) => (
+          <li class="dx__item" data-reveal style={`--delay:${i * 70}ms`}>
+            <span class="dx__n num latin" aria-hidden="true">{x.n}</span>
+            <h3 class="dx__t"><a href={`${href(lang, 'services')}#${x.id}`}>{x.name[lang]}</a></h3>
+            <p class="dx__d">{a.model.items[i]}</p>
+          </li>
+        ))}
+      </ol>
+      <a class="link-diag ab__more" href={href(lang, 'services')}>{a.model.servicesLink}</a>
+    </div>
+  </section>
+
+  <!-- 05 Philosophy: one statement, set large -->
+  <section class="section section--surface ab ph5" aria-labelledby="ab-phil">
+    <div class="container ab__grid">
+      <header class="ab__head">
+        <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{a.philosophy.eyebrow}</p>
+      </header>
+      <div class="ab__body">
+        <h2 class="ph5__h" id="ab-phil" data-reveal>{a.philosophy.title.map((l) => <span class="ab__line">{l}</span>)}</h2>
+        {a.philosophy.body.map((p, i) => <p class:list={['ab__p', { 'ab__p--lead': i === 0 }]} data-reveal>{p}</p>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Leadership: the experience behind the agency (owner-supplied facts, D-015) -->
+  <section class="section lead-sec" aria-labelledby="lead-title">
+    <div class="container ab__grid">
+      <header class="ab__head"><h2 id="lead-title" class="ab__h" data-reveal>{a.founderTitle}</h2></header>
       <div class="person">
         <figure class="person__fig" data-reveal>
           <div class="person__photo"><img src="/team/mostafa-sofy.webp" width="900" height="900" alt={a.photoAlt} loading="lazy" decoding="async" /></div>
@@ -57,31 +124,61 @@ const schema = [{
       </div>
     </div>
   </section>
-  <section class="section values" aria-labelledby="values-title">
-    <div class="container">
-      <h2 id="values-title" class="story__h" data-reveal>{a.valuesTitle}</h2>
-      <ul role="list" class="values__list">
-        {a.values.map((v, i) => <li data-reveal style={`--delay:${i * 60}ms`}><h3>{v.t}</h3><p>{v.d}</p></li>)}
-      </ul>
+
+  <Clients lang={lang} />
+  <Brands lang={lang} />
+
+  <!-- 06 Closing -->
+  <section class="section close" aria-labelledby="ab-close">
+    <div class="container close__in">
+      <h2 class="close__h" id="ab-close" data-reveal>{a.closing.title.map((l, i) => <span class="ab__line">{i === 1 ? <>{l.replace(/\.$/, '')}<span class="close__dot">.</span></> : l}</span>)}</h2>
+      <div class="close__body">
+        {a.closing.body.map((p) => <p data-reveal>{p}</p>)}
+        <a class="btn btn--primary" href={href(lang, 'contact')} data-track="cta_click" data-cta-id="start_project" data-cta-location="about_close">{a.closing.cta}<span class="arrow" aria-hidden="true"></span></a>
+      </div>
     </div>
   </section>
-  <FinalCta lang={lang} />
 </Base>
 <style>
   .atmo { margin: 0; }
   .atmo img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; background: var(--surface); }
   @media (min-width: 768px) { .atmo img { aspect-ratio: 2560 / 1100; } }
-  .story__grid, .lead__grid { display: grid; gap: var(--s-5); }
-  .story__h { font-size: var(--fs-h2); letter-spacing: var(--track-tight); }
-  .story__body { display: grid; gap: var(--s-4); }
-  .story__body p { font-size: var(--fs-lead); line-height: 1.6; max-width: 60ch; }
-  .values__list { display: grid; border-top: 1px solid var(--line-strong); margin-top: var(--s-6); }
-  .values__list li { padding-block: var(--s-5); border-bottom: 1px solid var(--line); display: grid; gap: var(--s-2); }
-  .values__list h3 { font-size: var(--fs-h3); }
-  .values__list p { color: var(--text-muted); }
+
+  /* shared editorial two-column: heading 4 cols, text 7 cols from column 6 */
+  .ab { border-top: 1px solid var(--line); }
+  .ab__grid { display: grid; gap: var(--s-5); }
+  .ab__head { display: grid; gap: var(--s-4); align-content: start; }
+  .ab .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .ab__h { font-size: var(--fs-h1); letter-spacing: var(--track-tight); line-height: var(--lh-head); }
+  .ab__line { display: block; }
+  .ab__body { display: grid; gap: var(--s-4); align-content: start; min-width: 0; }
+  .ab__p { font-size: var(--fs-lead); line-height: 1.65; color: var(--text); max-width: 58ch; }
+  .ab__p--lead { color: var(--text-strong); font-weight: 500; }
+  .ab__origin { margin-top: var(--s-3); padding-top: var(--s-4); border-top: 1px solid var(--line); color: var(--text-muted); font-size: var(--fs-small); line-height: 1.65; max-width: 62ch; }
+  .ab__facts { margin-top: var(--s-9); }
+  .ab__more { display: inline-block; margin-top: var(--s-6); color: var(--text-strong); }
+
+  .mk { margin-top: var(--s-4); display: grid; gap: var(--s-3); }
+  .mk__list { display: flex; flex-wrap: wrap; gap: 0; border-top: 1px solid var(--line-strong); }
+  .mk__list li { padding: var(--s-4) var(--s-5) var(--s-4) 0; font-size: var(--fs-h3); font-weight: 700; color: var(--text-strong); }
+  :global([dir='rtl']) .mk__list li { padding: var(--s-4) 0 var(--s-4) var(--s-5); }
+  .mk__list li + li { padding-inline-start: var(--s-5); border-inline-start: 1px solid var(--line); }
+  .mk__note { color: var(--text-muted); font-size: var(--fs-caption); }
+
+  .dx { display: grid; margin-top: var(--s-8); border-top: 1px solid var(--line-strong); }
+  .dx__item { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s-5); row-gap: var(--s-2); padding-block: var(--s-6); border-bottom: 1px solid var(--line); }
+  .dx__n { grid-row: span 2; font-size: var(--fs-h3); font-weight: 700; color: var(--accent-text); font-variant-numeric: tabular-nums; }
+  .dx__t { font-size: var(--fs-h2); letter-spacing: var(--track-tight); }
+  .dx__t a { color: inherit; text-decoration: none; }
+  .dx__t a:hover, .dx__t a:focus-visible { color: var(--accent-text); }
+  .dx__d { color: var(--text); font-size: var(--fs-lead); line-height: 1.6; max-width: 60ch; }
+
+  .ph5__h { font-size: var(--fs-display); line-height: 1; letter-spacing: var(--track-tight); margin-bottom: var(--s-4); overflow-wrap: break-word; }
+
   .person { display: grid; gap: var(--s-7); }
   .person__fig { margin: 0; display: grid; gap: var(--s-5); align-content: start; }
   .person__photo { width: 100%; max-width: 380px; aspect-ratio: 1; overflow: hidden; background: var(--bg); }
+  .person__photo img { width: 100%; height: 100%; object-fit: cover; }
   .person__bio { display: grid; gap: var(--s-4); align-content: start; }
   .person__bio p { font-size: var(--fs-lead); line-height: 1.6; color: var(--text); max-width: 58ch; }
   .person__bio p:first-child { color: var(--text-strong); }
@@ -90,11 +187,27 @@ const schema = [{
   .person__tags { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); }
   .person__tags li { position: relative; padding-inline-start: var(--s-4); color: var(--text); font-size: var(--fs-small); }
   .person__tags li::before { content: ''; position: absolute; inset-inline-start: 0; top: 0.65em; width: 8px; height: 2px; background: var(--accent); transform: skewX(-45deg); }
-  .person__photo img { width: 100%; height: 100%; object-fit: cover; }
   .person__text { display: grid; gap: var(--s-2); justify-items: start; padding-top: var(--s-4); border-top: 3px solid var(--accent); max-width: 380px; }
   .person__text :global(.logo) { margin-bottom: var(--s-2); }
   .person__name { font-size: var(--fs-h2); font-weight: 700; color: var(--text-strong); }
   .person__role { color: var(--accent-text); font-weight: 500; }
-  @media (min-width: 768px) { .values__list { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: var(--gutter); } .person { grid-template-columns: minmax(0, 340px) minmax(0, 1fr); column-gap: var(--s-8); } }
-  @media (min-width: 1024px) { .story__grid, .lead__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); } .story__h { grid-column: 1 / span 4; } .story__body, .person { grid-column: 5 / -1; } }
+
+  .close { border-top: 1px solid var(--line); }
+  .close__in { display: grid; gap: var(--s-7); }
+  .close__h { font-size: var(--fs-display); line-height: 0.95; letter-spacing: var(--track-tight); }
+  .close__dot { color: var(--accent); }
+  .close__body { display: grid; gap: var(--s-3); align-content: end; justify-items: start; }
+  .close__body p { font-size: var(--fs-lead); line-height: 1.6; color: var(--text); max-width: 52ch; }
+  .close__body .btn { margin-top: var(--s-4); }
+
+  @media (min-width: 768px) { .person { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); column-gap: var(--s-8); } }
+  @media (min-width: 1024px) {
+    .ab__grid, .close__in { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
+    .ab__head { grid-column: 1 / span 4; }
+    .ab__body, .person { grid-column: 6 / -1; }
+    .dx__item { grid-template-columns: 5rem minmax(0, 5fr) minmax(0, 7fr); align-items: baseline; }
+    .dx__n { grid-row: auto; }
+    .close__h { grid-column: 1 / span 6; }
+    .close__body { grid-column: 8 / -1; }
+  }
 </style>

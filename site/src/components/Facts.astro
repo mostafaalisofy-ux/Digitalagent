@@ -1,0 +1,40 @@
+---
+// Company facts grid (Home "About" and the About page). Figures are verified facts only (D-015):
+// founding year, team size, founder's years of experience, markets in the team's track record.
+// Layout fix (2026-11-05): numbers were set at --fs-display inside a narrow cell and ran under the
+// next cell's divider. The grid is now a size container and every number scales with it (cqi), so
+// all four share one size and none can outgrow its own column, in LTR or RTL, at any viewport.
+import { type Lang } from '../config/site';
+import { h } from '../i18n/home';
+interface Props { lang: Lang; cols?: 2 | 4; label?: string }
+const { lang, cols = 2, label } = Astro.props;
+const facts = h(lang).about.facts;
+---
+<dl class:list={['facts', `facts--${cols}`]} aria-label={label}>
+  {facts.map((f, i) => (
+    <div class="facts__cell" data-reveal style={`--delay:${i * 80}ms`}>
+      <dt class="facts__v num latin">{f.v}</dt>
+      <dd class="facts__k">{f.k}</dd>
+    </div>
+  ))}
+</dl>
+<style>
+  .facts { container-type: inline-size; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line-strong); }
+  .facts__cell { min-width: 0; display: grid; gap: var(--s-3); align-content: start;
+    padding: var(--s-5) var(--s-4) var(--s-6); border-bottom: 1px solid var(--line); }
+  /* subtle dividers between cells only, on the logical inline start, so LTR and RTL mirror correctly */
+  .facts__cell:nth-child(2n) { border-inline-start: 1px solid var(--line); }
+  .facts__v { min-width: 0; font-size: clamp(2.25rem, 13cqi, 5.5rem); font-weight: 700; line-height: 0.95; letter-spacing: -0.035em;
+    font-variant-numeric: tabular-nums lining-nums; color: var(--text-strong); white-space: nowrap; }
+  .facts__k { color: var(--text-muted); font-size: var(--fs-small); line-height: 1.45; max-width: 30ch; }
+  @media (min-width: 900px) {
+    .facts--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .facts--4 .facts__cell { padding: var(--s-6) var(--s-5) var(--s-7); }
+    .facts--4 .facts__v { font-size: clamp(2.5rem, 6.5cqi, 5.5rem); }
+    .facts--4 .facts__cell:nth-child(2n) { border-inline-start: 0; }
+    .facts--4 .facts__cell + .facts__cell { border-inline-start: 1px solid var(--line); }
+    .facts--4 .facts__cell:first-child { padding-inline-start: 0; }
+  }
+  .facts--2 .facts__cell:nth-child(odd) { padding-inline-start: 0; }
+  @supports not (container-type: inline-size) { .facts__v { font-size: clamp(2.25rem, 1.5rem + 3vw, 4.5rem); } }
+</style>

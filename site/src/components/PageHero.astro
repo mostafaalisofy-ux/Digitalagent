@@ -3,7 +3,7 @@
 // inline-end edge (a cropped logo-derived shape — the element alone, never the full mark).
 import { SYMBOL } from '../lib/logo';
 // Optional illustrative background image (decorative, AI-generated — docs/AI_VISUAL_PROMPTS_BATCH_2.md)
-interface Props { eyebrow: string; title: readonly string[]; intro: string; image?: { name: string; w: number; h: number } }
+interface Props { eyebrow: string; title: readonly string[]; intro: string | readonly string[]; image?: { name: string; w: number; h: number } }
 const { eyebrow, title, intro, image } = Astro.props;
 const { x, y, w, h } = SYMBOL.bladeBox;
 ---
@@ -14,7 +14,9 @@ const { x, y, w, h } = SYMBOL.bladeBox;
   <div class="container ph__in">
     <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{eyebrow}</p>
     <h1 class="ph__title" data-reveal-group>{title.map((l, i) => <span class="line" style={`--delay:${i * 100}ms`}><span>{l}</span></span>)}</h1>
-    <p class="lead ph__intro" data-reveal style="--delay:220ms">{intro}</p>
+    {typeof intro === 'string'
+      ? <p class="lead ph__intro" data-reveal style="--delay:220ms">{intro}</p>
+      : <div class="ph__intros">{intro.map((p, i) => <p class:list={['ph__intro', i === 0 ? 'lead' : 'ph__intro--more']} data-reveal style={`--delay:${220 + i * 60}ms`}>{p}</p>)}</div>}
   </div>
 </section>
 <style>
@@ -32,4 +34,6 @@ const { x, y, w, h } = SYMBOL.bladeBox;
   .ph__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); }
   .ph__intro { max-width: 46ch; }
   @media (min-width: 1024px) { .ph { padding-block: var(--s-11) var(--s-10); } }
+  .ph__intros { display: grid; gap: var(--s-3); }
+  .ph__intro--more { color: var(--text-muted); font-size: var(--fs-body, 1rem); line-height: 1.65; max-width: 60ch; }
 </style>

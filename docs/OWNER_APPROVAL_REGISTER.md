@@ -11,8 +11,8 @@ Statuses: **Approved** · **Pending** (an owner input of fact, not a decision) �
 | Brand and creative direction | Dark Editorial Performance; approved palette and type (D-013) | Approved — 2026-11-05 |
 | Arabic brand spelling (OQ-04) | **قول تم** | Approved — 2026-11-05 |
 | Numerals (OQ-17) | Western digits 0–9 in both languages | Approved — 2026-11-05 |
-| URL and language strategy (OQ-06) | `/en/` and `/ar/` prefixes; x-default = English; root redirects to `/en/`; target Saudi Arabia | Approved — 2026-11-05 |
-| Homepage messaging and order | Hero line «قول. تم.» / "Say it. Tamm it."; Saudi-focused supporting line; order: work → services → approach → clients → team experience → results → about → contact | Approved — 2026-11-05 |
+| URL and language strategy (OQ-06) | `/en/` and `/ar/` prefixes; x-default = English; root redirects to `/en/`; no single-country target (D-020) | Approved — 2026-11-05 |
+| Homepage messaging and order | Hero line «قول. تم.» / "Say it. Tamm it."; supporting line per the approved positioning (D-020: digital marketing & performance agency, not Saudi-only); order: work → services → approach → clients → team experience → results → about → contact | Approved — 2026-11-05 |
 | Arabic hero and approach terms (OQ-42) | As published | Approved — 2026-11-05 |
 | «أربعة تخصصات» (OQ-43) | Grammatical form kept | Approved — 2026-11-05 |
 | Operating narrative (OQ-12) | Strategy → Creative → Media → Performance (as implemented) | Approved — 2026-11-05 |
@@ -25,6 +25,8 @@ Statuses: **Approved** · **Pending** (an owner input of fact, not a decision) �
 | SEO implementation | As in `SEO_FINAL_AUDIT.md` | Approved — 2026-11-05 |
 | Approved visual assets | AI illustrations decorative only (W-020); client work authentic | Approved — 2026-11-05 |
 | Operating commitments (OQ-50) | Not published as numbers (2–4 weeks, 3 days…) because they are promises to clients; the site describes the method without deadlines | Approved — 2026-11-05 |
+
+| Brand positioning (D-020) | "A digital marketing & performance agency"; Saudi Arabia is part of the team's experience, not the limit of the identity; About page rewritten | Approved — 2026-11-05 |
 
 ## Items that remain open
 

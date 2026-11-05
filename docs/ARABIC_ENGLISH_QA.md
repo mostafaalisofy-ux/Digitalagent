@@ -22,7 +22,8 @@ Date: 2026-11-05. Scope: every public page in both languages (13 page types), th
 | «بوستات» / «بوستات سوشيال» / «بوست» (91 occurrences) | «منشورات» / «منشورات لمنصات التواصل» / «منشور» | Transliterated English reads informal on a business site |
 | «لـ BITUMAT», «لـ DC BLOCK» | «لعلامة BITUMAT», «لشركة DC BLOCK» | Project rule: no tatweel next to a Latin word (RTL rendering) |
 | «والبوستان منشوران» | «والمنشوران نُشرا فعلاً» | Clearer, avoids a repeated root |
-| Hero supporting line | «وكالة تسويق رقمي وأداء للسوق السعودي…» | Specific proposition instead of general claims |
+| Hero supporting line | «في قول تم، نجمع الاستراتيجية والإبداع والإعلانات والتقنية في منظومة واحدة…» | Approved positioning (D-020); no single-country restriction |
+| About page | Rewritten in Arabic with its own hierarchy (hero, experience, markets, operating model, philosophy, close) | D-020; corporate MSA, no dialect |
 | Final CTA | «حدّد الرقم الذي تريد تحريكه.» | Commercially specific |
 
 ## Automated Arabic checks (all built Arabic pages)
@@ -44,7 +45,7 @@ Latin comma or question mark between Arabic words, Latin semicolon, straight quo
 
 ## Unresolved — needs a native reviewer
 
-A native Arabic reviewer for the Saudi market must approve the final public Arabic copy before launch (OQ-25). Points to look at:
+A native Arabic reviewer (professional MENA business Arabic) must approve the final public Arabic copy before launch (OQ-25). Points to look at:
 1. Tone: Modern Standard Arabic with Saudi business vocabulary; the Tech Hive titles quote Saudi dialect on purpose («القيمنق»).
 2. «بانرات» kept as the common industry term for web banners.
 3. Service names and the four discipline names.

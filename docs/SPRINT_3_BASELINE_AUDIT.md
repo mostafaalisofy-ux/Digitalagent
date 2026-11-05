@@ -64,7 +64,7 @@ Severity: **Critical** blocks a safe public launch · **High** should be fixed t
 
 ### 10. SEO metadata
 - **Medium:** checks were manual. → add `tools/qa/seo.js` (titles, descriptions, canonical, hreflang reciprocity, OG, JSON-LD parse, sitemap coverage, robots by stage).
-- **Low:** `x-default` points to English. Decision (owner-approved): keep `/en/` as x-default and the root redirect; Arabic remains first-class via hreflang `ar`.
+- **Low:** `x-default` points to English. Decision (owner-approved): keep `/en/` as x-default and the root redirect; Arabic remains first-class via hreflang `ar`. Structured data no longer restricts `areaServed` to SA (D-020).
 
 ### 11. Structured data
 - **OK:** only truthful fields (no address, rating, opening hours or social profiles, because none is verified).
@@ -103,7 +103,7 @@ Severity: **Critical** blocks a safe public launch · **High** should be fixed t
 ## Implementation plan (this sprint)
 1. Complete the five service scopes from documented capability evidence.
 2. Privacy notice (draft, labelled), footer link, consent link; qualifying form fields.
-3. Hero supporting copy: specific, Saudi-focused proposition.
+3. Hero supporting copy: specific proposition (later revised by the positioning brief, D-020: no single-country positioning).
 4. SEO validation script and fixes; WCAG 2.2 tags; 8-width responsive sweep.
 5. Registers and reports listed in the Sprint 3 brief; reconcile existing docs.
 6. Full re-test, screenshots, handover folder and ZIP.

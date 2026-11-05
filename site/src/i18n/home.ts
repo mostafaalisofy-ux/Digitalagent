@@ -60,17 +60,17 @@ export const HOME = {
       note: 'Figures are as reported in the source documents and have been checked for internal consistency. Each is being confirmed against original platform exports before launch; unconfirmed figures are not published on the live site.',
     },
     about: {
-      eyebrow: 'About SayTamm', title: 'A Saudi digital marketing & performance agency.',
+      eyebrow: 'About SayTamm', title: 'A digital marketing & performance agency.',
       body: [
-        'SayTamm plans, runs and measures digital marketing for brands in Saudi Arabia and the Gulf. Strategy, creative, media and analytics sit in one team, so the plan, the work and the reporting all answer to the same business number.',
+        'SayTamm plans, runs and measures digital marketing as one connected system. Strategy, creative, media and analytics sit in one team, so the plan, the work and the reporting all answer to the same business number.',
         'The team’s experience covers e-commerce, real estate, banking, retail and non-profit brands — from seasonal retail campaigns to lead generation across several markets at once.',
       ],
       nameTitle: 'Why “SayTamm”?',
-      name: 'In Saudi dialect, “قول تم” is what you hear when a request is as good as done. You tell us the goal; we take responsibility for getting there.',
+      name: 'In everyday Gulf Arabic, “قول تم” is what you hear when a request is as good as done. You tell us the goal; we take responsibility for getting there.',
       facts: [
-        { v: '2021', k: 'Founded' },
-        { v: '30', k: 'People on the team' },
-        { v: '15+', k: 'Years of digital marketing leadership behind the agency' },
+        { v: '2021', k: 'SayTamm founded' },
+        { v: '30', k: 'People on the SayTamm team' },
+        { v: '15+', k: 'Years of digital marketing leadership, led by our founder' },
         { v: '5', k: 'Markets in the team’s track record: Saudi Arabia, UAE, Kuwait, Oman, Egypt' },
       ],
       more: 'More about us',
@@ -81,21 +81,63 @@ export const HOME = {
       email: 'Or email', cta: 'Start a project',
     },
     aboutPage: {
-      title: ['About', 'SayTamm.'],
-      intro: 'A Saudi-focused digital marketing and performance agency that combines strategy, creativity, media and technology — and measures the result.',
-      storyTitle: 'Why SayTamm exists',
-      story: [
-        'SayTamm was founded in 2021 to close a gap many businesses know well: the distance between what a client needs and what their agency delivers, made worse by slow communication and by marketing that is not tied to a clear goal.',
-        'We work the other way round. Communication is fast and direct, and every plan is built around the numbers and goals that matter to the business, with strategy, creative, media and measurement planned together and judged by the same number.',
+      // Sprint 3 positioning (D-020): a digital marketing & performance agency, not a Saudi-only agency.
+      // Establishment (2021), the team's experience and the founder's experience are stated separately.
+      eyebrow: 'About SayTamm',
+      title: ['A digital marketing', '& performance agency', 'built to move brands forward.'],
+      intro: [
+        'SayTamm brings strategy, creative, media and technology together under one connected approach to growth.',
+        'We work with brands to understand the business behind the brief, identify what will make a difference, and turn that thinking into marketing that moves with purpose.',
+        'From the first strategic decision to the final performance report, every part of the work is connected to the same objective: meaningful business impact.',
       ],
-      valuesTitle: 'What we stand for',
-      values: [
-        { t: 'Clarity', d: 'Make the next move obvious.' },
-        { t: 'Ownership', d: 'Take responsibility for the outcome.' },
-        { t: 'Speed', d: 'Remove unnecessary friction.' },
-        { t: 'Precision', d: 'Decide with evidence.' },
-        { t: 'Impact', d: 'Prioritise what moves the business.' },
-      ],
+      experience: {
+        eyebrow: 'Our experience', title: ['Built on experience.', 'Driven by what’s next.'],
+        body: [
+          'Our foundation is shaped by years of working across the MENA region: understanding its markets, building brands, managing campaigns and dealing with the realities of growth.',
+          'That experience informs how we work today: commercially minded, creatively ambitious and accountable to outcomes.',
+          'We don’t believe in marketing for the sake of activity. We believe in clear thinking, purposeful execution and continuous improvement.',
+        ],
+        origin: 'SayTamm was founded in 2021 to close a gap many businesses know well: the distance between what a client needs and what their agency delivers, made worse by slow communication and by marketing that is not tied to a clear goal. The experience behind it is older: our founder has led digital marketing work for more than 15 years.',
+        factsLabel: 'SayTamm in numbers',
+      },
+      regional: {
+        eyebrow: 'Markets', title: ['Experience across markets.', 'Thinking beyond borders.'],
+        body: [
+          'Markets are different. Audiences are different. Business challenges are different.',
+          'Our team’s experience across Saudi Arabia, the UAE, Kuwait, Oman and Egypt gives us a broader understanding of how brands communicate, compete and grow across the region.',
+          'We adapt our thinking to the market, the audience and the commercial objective, rather than applying the same formula everywhere.',
+        ],
+        markets: ['Saudi Arabia', 'UAE', 'Kuwait', 'Oman', 'Egypt'],
+        marketsNote: 'Markets in the team’s track record',
+      },
+      model: {
+        eyebrow: 'How we work', title: ['One team.', 'Four connected disciplines.'],
+        intro: [
+          'Effective marketing doesn’t happen in disconnected departments.',
+          'Strategy should inform creativity. Creativity should strengthen media. Media should generate useful data. And data should make the next decision smarter.',
+          'At SayTamm, our disciplines work together as one connected system.',
+        ],
+        items: [
+          'We start with the business challenge, not the channel. We define the opportunity, audience, positioning and direction that give every marketing decision a reason.',
+          'We turn strategy into ideas, stories and experiences that make brands distinctive and relevant to the people they want to reach.',
+          'We plan, activate and optimise campaigns around the right audiences, platforms and commercial objectives, so every investment works harder.',
+          'We connect the platforms, digital experiences, tracking and analytics that help marketing perform as one measurable system.',
+        ],
+        servicesLink: 'See the nine services',
+      },
+      philosophy: {
+        eyebrow: 'Our philosophy', title: ['Marketing should move', 'business forward.'],
+        body: [
+          'More campaigns do not automatically mean more growth.',
+          'We believe the difference comes from asking better questions, making smarter decisions and connecting every activity to a clear objective.',
+          'That means understanding the business first, creating with intent, investing with discipline and measuring what matters.',
+        ],
+      },
+      closing: {
+        title: ['Say it.', 'Tamm it.'],
+        body: ['Good marketing starts with the right thinking.', 'Great marketing happens when that thinking is carried through: consistently, creatively and with purpose.', 'That’s how we work. That’s SayTamm.'],
+        cta: 'Let’s make it happen',
+      },
       founderTitle: 'Leadership',
       founderName: 'Mostafa Sofy',
       founderRole: 'Founder',
@@ -175,17 +217,17 @@ export const HOME = {
       note: 'الأرقام كما وردت في المصادر، وجرى التحقق من اتساقها الداخلي. ويجري تأكيد كل رقم من ملفات المنصات الأصلية قبل الإطلاق، ولا يُنشر على الموقع الرسمي أي رقم غير مؤكد.',
     },
     about: {
-      eyebrow: 'من نحن', title: 'وكالة تسويق رقمي وأداء في السعودية.',
+      eyebrow: 'من نحن', title: 'وكالة تسويق رقمي وأداء.',
       body: [
-        'نخطط التسويق الرقمي وننفذه ونقيسه للعلامات التجارية في السعودية والخليج. الاستراتيجية والإبداع والإعلانات والتحليلات في فريق واحد، فتخضع الخطة والتنفيذ والتقارير للرقم نفسه.',
+        'نخطط التسويق الرقمي وننفذه ونقيسه كمنظومة واحدة مترابطة. الاستراتيجية والإبداع والإعلانات والتحليلات في فريق واحد، فتخضع الخطة والتنفيذ والتقارير للرقم نفسه.',
         'تشمل خبرة الفريق التجارة الإلكترونية والعقارات والبنوك والتجزئة والقطاع غير الربحي؛ من حملات المواسم إلى توليد العملاء في أكثر من سوق في الوقت نفسه.',
       ],
       nameTitle: 'لماذا «قول تم»؟',
       name: '«قول تم» عبارة نقولها حين يكون الطلب في حكم المُنجَز. أنت تحدد الهدف، ونحن نتحمل مسؤولية الوصول إليه.',
       facts: [
-        { v: '2021', k: 'سنة التأسيس' },
-        { v: '30', k: 'عضواً في الفريق' },
-        { v: '+15', k: 'عاماً من قيادة التسويق الرقمي خلف الوكالة' },
+        { v: '2021', k: 'سنة تأسيس قول تم' },
+        { v: '30', k: 'عضواً في فريق قول تم' },
+        { v: '+15', k: 'عاماً من قيادة التسويق الرقمي لدى مؤسس الوكالة' },
         { v: '5', k: 'أسواق في سجل الفريق: السعودية، الإمارات، الكويت، عُمان، مصر' },
       ],
       more: 'المزيد عنّا',
@@ -196,21 +238,61 @@ export const HOME = {
       email: 'أو راسلنا على', cta: 'ابدأ مشروعك',
     },
     aboutPage: {
-      title: ['من نحن.'],
-      intro: 'وكالة تسويق رقمي وأداء تركّز على السوق السعودي، تجمع الاستراتيجية والإبداع والإعلانات والتقنية، وتقيس النتيجة.',
-      storyTitle: 'لماذا قول تم',
-      story: [
-        'تأسست قول تم عام 2021 لسد فجوة تعرفها شركات كثيرة: المسافة بين ما يحتاجه العميل وما تقدمه له الوكالة، ويزيدها بطء التواصل وتسويق لا يرتبط بهدف واضح.',
-        'نعمل بطريقة معاكسة: تواصل سريع ومباشر، وكل خطة تُبنى حول الأرقام والأهداف التي تهم العمل، ونخطط للاستراتيجية والإبداع والإعلانات والقياس معاً، ونحكم عليها بالرقم نفسه.',
+      eyebrow: 'عن قول تم',
+      title: ['وكالة تسويق رقمي وأداء،', 'تحوّل الأفكار إلى تأثير.'],
+      intro: [
+        'في قول تم، نجمع الاستراتيجية والإبداع والإعلانات والتقنية في منظومة واحدة. نفهم أهداف الأعمال، ونبني خطط التسويق، ونحوّلها إلى تنفيذ واضح ونتائج قابلة للقياس.',
+        'نبدأ بفهم العمل الذي يقف خلف الطلب، ونحدد ما الذي سيصنع الفرق فعلاً، ثم نحوّل هذا التفكير إلى تسويق يتحرك بهدف.',
+        'من أول قرار استراتيجي إلى آخر تقرير أداء، يرتبط كل جزء من العمل بالهدف نفسه: أثر حقيقي في الأعمال.',
       ],
-      valuesTitle: 'قيمنا',
-      values: [
-        { t: 'الوضوح', d: 'نجعل الخطوة التالية واضحة.' },
-        { t: 'المسؤولية', d: 'نتحمّل مسؤولية النتيجة.' },
-        { t: 'السرعة', d: 'نزيل التعقيد غير الضروري.' },
-        { t: 'الدقة', d: 'نقرر بالأدلة.' },
-        { t: 'الأثر', d: 'نقدّم ما يحرّك العمل.' },
-      ],
+      experience: {
+        eyebrow: 'خبرتنا', title: ['خبرة نبني عليها،', 'وطموح لما هو قادم.'],
+        body: [
+          'تشكّلت قاعدتنا عبر سنوات من العمل في أسواق المنطقة: فهمُ هذه الأسواق، وبناء العلامات التجارية، وإدارة الحملات، والتعامل مع واقع النمو كما هو.',
+          'وهذه الخبرة هي ما يوجّه طريقة عملنا اليوم: تفكير تجاري، وطموح إبداعي، ومسؤولية عن النتائج.',
+          'لا نؤمن بالتسويق لمجرد النشاط، بل بالتفكير الواضح والتنفيذ الهادف والتحسين المستمر.',
+        ],
+        origin: 'تأسست قول تم عام 2021 لسد فجوة تعرفها شركات كثيرة: المسافة بين ما يحتاجه العميل وما تقدمه له الوكالة، ويزيدها بطء التواصل وتسويق لا يرتبط بهدف واضح. أما الخبرة التي تقف خلفها فأقدم من ذلك: يقود مؤسسها أعمال التسويق الرقمي منذ أكثر من 15 عاماً.',
+        factsLabel: 'قول تم بالأرقام',
+      },
+      regional: {
+        eyebrow: 'الأسواق', title: ['خبرة في أسواق متعددة،', 'وتفكير لا تحدّه الحدود.'],
+        body: [
+          'الأسواق تختلف، والجماهير تختلف، وتحديات الأعمال تختلف.',
+          'خبرة فريقنا في السعودية والإمارات والكويت وعُمان ومصر تمنحنا فهماً أوسع لطريقة تواصل العلامات التجارية وتنافسها ونموها في المنطقة.',
+          'نكيّف تفكيرنا مع السوق والجمهور والهدف التجاري، بدلاً من تطبيق الوصفة نفسها في كل مكان.',
+        ],
+        markets: ['السعودية', 'الإمارات', 'الكويت', 'عُمان', 'مصر'],
+        marketsNote: 'أسواق في سجل الفريق',
+      },
+      model: {
+        eyebrow: 'كيف نعمل', title: ['فريق واحد.', 'أربعة تخصصات مترابطة.'],
+        intro: [
+          'التسويق الفعّال لا يحدث في أقسام منفصلة.',
+          'الاستراتيجية توجّه الإبداع، والإبداع يقوّي الإعلانات، والإعلانات تنتج بيانات مفيدة، والبيانات تجعل القرار التالي أذكى.',
+          'في قول تم، تعمل تخصصاتنا معاً كمنظومة واحدة مترابطة.',
+        ],
+        items: [
+          'نبدأ من تحدي العمل لا من القناة. نحدد الفرصة والجمهور والتموضع والاتجاه الذي يمنح كل قرار تسويقي سبباً واضحاً.',
+          'نحوّل الاستراتيجية إلى أفكار وقصص وتجارب تجعل العلامة مميزة وقريبة من الناس الذين تريد الوصول إليهم.',
+          'نخطط الحملات ونطلقها ونحسّنها حول الجمهور والمنصات والأهداف التجارية المناسبة، لتعمل كل ميزانية بكفاءة أعلى.',
+          'نربط المنصات والتجارب الرقمية والقياس والتحليلات، ليعمل التسويق كمنظومة واحدة يمكن قياسها.',
+        ],
+        servicesLink: 'تعرّف على الخدمات التسع',
+      },
+      philosophy: {
+        eyebrow: 'فلسفتنا', title: ['التسويق يجب أن يدفع', 'العمل إلى الأمام.'],
+        body: [
+          'كثرة الحملات لا تعني بالضرورة نمواً أكبر.',
+          'نؤمن بأن الفرق يأتي من طرح أسئلة أفضل، واتخاذ قرارات أذكى، وربط كل نشاط بهدف واضح.',
+          'وهذا يعني أن نفهم العمل أولاً، ونبدع بقصد، ونستثمر بانضباط، ونقيس ما يهم فعلاً.',
+        ],
+      },
+      closing: {
+        title: ['قول.', 'تم.'],
+        body: ['التسويق الجيد يبدأ بالتفكير الصحيح.', 'والتسويق المميز يحدث حين يُستكمل هذا التفكير حتى النهاية: باتساق وإبداع وهدف.', 'هكذا نعمل. وهذه قول تم.'],
+        cta: 'لنحوّل الفكرة إلى واقع',
+      },
       founderTitle: 'القيادة',
       founderName: 'مصطفى صوفي',
       founderRole: 'المؤسس',

@@ -1,5 +1,7 @@
 # Business Positioning
 
+> **Superseded on positioning (2026-11-05, D-020):** SayTamm is positioned as a digital marketing & performance agency, not a Saudi agency. Saudi Arabia remains a primary market and part of the team's experience. Where this document frames SayTamm as KSA-focused, D-020 wins; the market analysis itself stays valid.
+
 ## What is approved [APPROVED — Bible slides 3, 45]
 
 - **Category:** Digital Marketing & Performance Agency.
