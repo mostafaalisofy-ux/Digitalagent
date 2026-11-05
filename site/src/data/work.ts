@@ -318,6 +318,23 @@ export const SAYTAMM_WORK: StWork[] = [
     media: { kind: 'video', src: '/work/niimee-the-dot.mp4', poster: '/work/niimee-the-dot-poster.webp', w: 720, h: 900 },
   },
   {
+    slug: 'tech-hive-gaming',
+    client: 'Tech Hive', clientAr: 'خلية التكنولوجيا',
+    sector: { en: 'Electronics retail', ar: 'تجزئة إلكترونيات' },
+    title: { en: 'Gaming posts in Saudi dialect', ar: 'بوستات القيمنق باللهجة السعودية' },
+    summary: {
+      en: 'Social posts for Tech Hive’s gaming range, written in everyday Saudi dialect: ready-built gaming PCs with their key specs in plain view, instalment payments with Tabby and Tamara, and delivery — under lines such as “Gaming, no complications” and “You choose, we deliver”.',
+      ar: 'بوستات سوشيال لقسم القيمنق في خلية التكنولوجيا باللهجة السعودية اليومية: تجميعات كمبيوتر جاهزة بأهم مواصفاتها أمام العميل، والتقسيط عبر تابي وتمارا، والتوصيل، تحت عبارات مثل «القيمنق بدون تعقيد» و«إنت تختار وإحنا نوصّل».',
+    },
+    format: { en: 'Social media posts · 4:5', ar: 'بوستات لمنصات التواصل · 4:5' },
+    media: { kind: 'images', images: [
+      { src: '/work/techhive-post-3.webp', w: 800, h: 1000, alt: { en: 'Tech Hive post: a white gaming PC with a specs panel, headline “Gaming, no complications — Casual Core”', ar: 'بوست خلية التكنولوجيا: كمبيوتر ألعاب أبيض مع لوحة المواصفات، وعنوان «القيمنق بدون تعقيد — Casual Core»' } },
+      { src: '/work/techhive-post-2.webp', w: 800, h: 1000, alt: { en: 'Tech Hive post: an excited young Saudi man holding a phone with Tabby and Tamara in a neon gaming room, headline “Split your payments and start playing”', ar: 'بوست خلية التكنولوجيا: شاب سعودي متحمس يحمل هاتفاً عليه تابي وتمارا في غرفة ألعاب بإضاءة نيون، وعنوان «ما يبغالها فلوس، قسّم دفعاتك وابدأ اللعب»' } },
+      { src: '/work/techhive-post-4.webp', w: 800, h: 1000, alt: { en: 'Tech Hive post: a black gaming PC with RGB fans and a specs panel, headline “A build that works, no headache”', ar: 'بوست خلية التكنولوجيا: كمبيوتر ألعاب أسود بمراوح ملوّنة ولوحة مواصفات، وعنوان «تجميعة تمشّيك صح بدون وجع راس»' } },
+      { src: '/work/techhive-post-1.webp', w: 800, h: 1000, alt: { en: 'Tech Hive post: a gamer in a VR headset with a controller, headline “You choose, we deliver”', ar: 'بوست خلية التكنولوجيا: لاعب بنظارة واقع افتراضي ويد تحكم، وعنوان «إنت تختار وإحنا نوصّل»' } },
+    ] },
+  },
+  {
     slug: 'tech-hive-banner',
     client: 'Tech Hive', clientAr: 'خلية التكنولوجيا',
     sector: { en: 'Electronics retail', ar: 'تجزئة إلكترونيات' },
@@ -343,7 +360,7 @@ export const WORK_TAGS: Record<string, WorkTag[]> = {
   'cleanbasket-identity': ['identity'], 'arhab-app': ['social', 'banner'], 'altopiano-posts': ['social'],
   'mix-events': ['social'], 'alqimma-founding-day': ['social'], 'fatora-plus-posts': ['social'],
   'ks-furniture-offer': ['social'], 'siyaq-post': ['social'], 'exodus-travel-post': ['social'],
-  'niimee-posts': ['social'], 'niimee-your-size': ['social'], 'bitumat-posts': ['social'], 'dc-block-posts': ['social'], 'niimee-the-dot': ['video'], 'tech-hive-banner': ['banner'],
+  'niimee-posts': ['social'], 'niimee-your-size': ['social'], 'bitumat-posts': ['social'], 'dc-block-posts': ['social'], 'niimee-the-dot': ['video'], 'tech-hive-banner': ['banner'], 'tech-hive-gaming': ['social'],
 };
 /** Cover image of a project: first image, or the video poster */
 export const coverOf = (w: StWork) => w.media.kind === 'video' ? { src: w.media.poster, w: w.media.w, h: w.media.h } : w.media.images[0];
