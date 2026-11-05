@@ -18,7 +18,7 @@ const d = h(lang).clients;
     </header>
     <ul role="list" class="cl__list" data-reveal-group>
       {CLIENTS.map((c, i) => (
-        <li class="cl__item" style={`--delay:${i * 80}ms`}>
+        <li class="cl__item" style={`--delay:${Math.min(i, 8) * 60}ms`}>
           <div class="cl__tile">
             {(lang === 'ar' && c.logoAr) || c.logo
               ? (() => { const l = (lang === 'ar' && c.logoAr) || c.logo!; return <img src={l.src} width={l.w} height={l.h} alt={c.name[lang]} loading="lazy" decoding="async" />; })()

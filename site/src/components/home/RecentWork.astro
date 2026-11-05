@@ -71,6 +71,7 @@ const iso = (text: string) => lang === 'ar' ? text.split(/([A-Za-z][A-Za-z0-9 .,
   .rw__list { display: grid; gap: var(--s-9); margin-top: var(--s-8); }
   .rw__item { display: grid; gap: var(--s-6); align-items: center; }
   .rw__media { justify-self: center; width: min(100%, 420px); }
+  .rw__video:focus-visible { outline: 2px solid var(--focus); outline-offset: -4px; }
   .rw__video { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; background: var(--surface); }
   .rw__fig { margin: 0; }
   .rw__cap { margin-top: var(--s-3); font-size: var(--fs-caption); color: var(--text-muted); }

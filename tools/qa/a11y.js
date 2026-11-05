@@ -36,6 +36,8 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
       await page.keyboard.press('Tab');
       const r = await page.evaluate(() => {
         const el = document.activeElement; if (!el || el === document.body) return null;
+        // Native media controls draw their own focus ring inside the browser's shadow DOM
+        if ((el.tagName === 'VIDEO' || el.tagName === 'AUDIO') && el.controls && !el.matches(':focus-visible')) return null;
         const cs = getComputedStyle(el);
         const visible = (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) > 0) || cs.boxShadow !== 'none';
         return visible ? null : `${el.tagName}.${[...el.classList].join('.')}`;
