@@ -153,6 +153,35 @@ export const SAYTAMM_WORK: StWork[] = [
     ] },
   },
   {
+    slug: 'mix-events',
+    client: 'MIX', clientAr: 'مكس',
+    sector: { en: 'Events', ar: 'تنظيم فعاليات' },
+    title: { en: 'Posts for an events company', ar: 'بوستات لشركة فعاليات' },
+    summary: {
+      en: 'Social posts for MIX presenting events the company has delivered, among them the U20 Riyadh 2020 summit with the Royal Commission for Riyadh City and Saudi participation at The London Book Fair, each led by one short Arabic line.',
+      ar: 'بوستات سوشيال لشركة مكس تعرض فعاليات نفّذتها الشركة، منها قمة U20 الرياض 2020 مع الهيئة الملكية لمدينة الرياض، والمشاركة السعودية في معرض لندن للكتاب، وكل بوست مبني على جملة عربية قصيرة.',
+    },
+    format: { en: 'Social media posts · carousel · 4:5', ar: 'بوستات لمنصات التواصل · كاروسيل · 4:5' },
+    media: { kind: 'images', images: [
+      { src: '/work/mix-1.webp', w: 800, h: 1000, alt: { en: 'MIX post: the U20 Riyadh 2020 conference hall with delegates at branded desks, headline “A complete plan for an innovative international event”', ar: 'بوست مكس: قاعة مؤتمر U20 الرياض 2020 والمشاركون على مكاتب تحمل الشعار، وعنوان «خطة شاملة لفعالية دولية مبتكرة»' } },
+      { src: '/work/mix-2.webp', w: 800, h: 1000, alt: { en: 'MIX post: a London Book Fair banner beside Big Ben at dusk, headline “From the heart of the Kingdom to London”', ar: 'بوست مكس: لافتة معرض لندن للكتاب بجانب ساعة بيغ بن وقت الغروب، وعنوان «من قلب المملكة إلى لندن»' } },
+    ] },
+  },
+  {
+    slug: 'alqimma-founding-day',
+    client: 'Alqimma Equipment', clientAr: 'معدات القمة',
+    sector: { en: 'Equipment', ar: 'معدات' },
+    title: { en: 'Saudi Founding Day post', ar: 'بوست يوم التأسيس' },
+    summary: {
+      en: 'A Saudi Founding Day post for Alqimma Equipment Company: Najdi mud architecture and camels on a sand-paper texture, under the line “A story of glory we are proud of, and values that lead us to tomorrow”.',
+      ar: 'بوست يوم التأسيس لشركة معدات القمة: عمارة نجدية طينية وإبل على خلفية بملمس الرمل، تحت عبارة «قصة مجد نعتز بها، وقيم تقودنا نحو الغد».',
+    },
+    format: { en: 'Social media post · 4:5', ar: 'بوست لمنصات التواصل · 4:5' },
+    media: { kind: 'images', images: [
+      { src: '/work/alqimma-1.webp', w: 800, h: 1000, alt: { en: 'Alqimma Equipment Founding Day post: camels beside Najdi mud buildings, headline “Remembering the founding”', ar: 'بوست يوم التأسيس من معدات القمة: إبل بجانب مبانٍ نجدية طينية، وعنوان «ذكرى التأسيس»' } },
+    ] },
+  },
+  {
     slug: 'fatora-plus-posts',
     client: 'Fatora Plus', clientAr: 'فاتورة بلس',
     sector: { en: 'Invoicing software', ar: 'برامج الفوترة' },

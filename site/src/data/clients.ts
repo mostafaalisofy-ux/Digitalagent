@@ -62,6 +62,8 @@ export const CLIENTS: Client[] = [
   { name: { en: 'Clean Basket', ar: 'كلين باسكت' }, sector: { en: 'Cleaning services', ar: 'خدمات تنظيف' },
     logo: { src: '/clients/cleanbasket-en.webp', w: 900, h: 387 }, logoAr: { src: '/clients/cleanbasket-ar.webp', w: 900, h: 454 } },
   { name: { en: 'Zahid Electra', ar: 'الزاهد إلكترا' }, sector: { en: 'Home appliances', ar: 'أجهزة منزلية' }, logo: { src: '/clients/zahid-electra.webp', w: 900, h: 277 } },
+  { name: { en: 'MIX', ar: 'مكس' }, sector: { en: 'Events', ar: 'تنظيم فعاليات' } }, // logo file pending
+  { name: { en: 'Alqimma Equipment', ar: 'معدات القمة' }, sector: { en: 'Equipment', ar: 'معدات' } }, // logo file pending
   { name: { en: 'BITUMAT', ar: 'BITUMAT' }, sector: { en: 'Building materials', ar: 'مواد البناء' }, logo: { src: '/clients/bitumat.webp', w: 900, h: 349 } },
   { name: { en: 'ALTOPIANO', ar: 'التبيانو' }, sector: { en: 'Restaurants · Italian', ar: 'مطاعم · إيطالي' } }, // logo file pending
   { name: { en: 'Arhab', ar: 'أرحب' }, sector: { en: 'Ride booking app', ar: 'تطبيق حجز رحلات' }, logo: { src: '/clients/arhab.svg', w: 858, h: 629 } },
