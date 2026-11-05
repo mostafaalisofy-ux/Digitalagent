@@ -40,6 +40,22 @@ export const SAYTAMM_WORK: StWork[] = [
     ] },
   },
   {
+    slug: 'beauty-lab-packaging',
+    client: 'Beauty Lab', clientAr: 'بيوتي لاب',
+    sector: { en: 'Natural cosmetics', ar: 'مستحضرات تجميل طبيعية' },
+    title: { en: 'Labels, product photography and visuals', ar: 'تصميم الليبلات وتصوير المنتجات' },
+    summary: {
+      en: 'Label design for Beauty Lab’s natural range, including Moroccan black soap and cold-pressed argan oil: deep blue and black labels with gold line illustrations, followed by product photography and presentation visuals.',
+      ar: 'تصميم ليبلات مجموعة بيوتي لاب الطبيعية، ومنها الصابون المغربي الأسود وزيت الأرغان المعصور على البارد: ليبلات بالأزرق الداكن والأسود مع رسومات خطية ذهبية، ثم تصوير المنتجات وتصاميم عرض لها.',
+    },
+    format: { en: 'Label design · product photography · presentation visual', ar: 'تصميم ليبلات · تصوير منتجات · تصميم عرض' },
+    media: { kind: 'images', caption: { en: 'The bathroom scene is a presentation mockup; the two product photos were shot by SayTamm.', ar: 'مشهد الحمّام نموذج عرض (موك أب)، وصورتا المنتج من تصوير قول تم.' }, images: [
+      { src: '/work/beautylab-1.webp', w: 1600, h: 914, alt: { en: 'Beauty Lab Moroccan black soap jar on a bath ledge beside towels and a reed diffuser (mockup)', ar: 'علبة الصابون المغربي الأسود من بيوتي لاب على حافة حوض بجانب مناشف ومعطّر (موك أب)' } },
+      { src: '/work/beautylab-2.webp', w: 800, h: 1200, alt: { en: 'Product photo: Beauty Lab soap jar with a blue and gold label', ar: 'صورة منتج: علبة صابون بيوتي لاب بليبل أزرق وذهبي' } },
+      { src: '/work/beautylab-3.webp', w: 800, h: 1200, alt: { en: 'Product photo: Beauty Lab argan oil dropper bottle with a black and gold label', ar: 'صورة منتج: زجاجة زيت الأرغان من بيوتي لاب بليبل أسود وذهبي' } },
+    ] },
+  },
+  {
     slug: 'metro-food',
     client: 'METRO', clientAr: 'مترو',
     sector: { en: 'Food products', ar: 'منتجات غذائية' },
