@@ -9,8 +9,9 @@ import { SITE, DIR, type Lang } from '../config/site';
 import { href, other, type PageKey } from '../i18n/paths';
 import { t } from '../i18n/ui';
 
-interface Props { lang: Lang; page: PageKey; title: string; description: string; paths?: Record<Lang, string>; schema?: object[] }
-const { lang, page, title, description, paths, schema = [] } = Astro.props;
+/** noindex: pages that must never be indexed in any stage (404). They get no canonical or hreflang. */
+interface Props { lang: Lang; page: PageKey; title: string; description: string; paths?: Record<Lang, string>; schema?: object[]; noindex?: boolean }
+const { lang, page, title, description, paths, schema = [], noindex = false } = Astro.props;
 const d = t(lang);
 // `paths` = this page's URL in each language (pages outside the fixed PageKey set, e.g. case studies)
 const path = (l: Lang) => paths?.[l] ?? href(l, page);
@@ -41,11 +42,13 @@ const jsonLd = [{
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title}</title>
   <meta name="description" content={description} />
-  {SITE.preview && <meta name="robots" content="noindex, nofollow" />}
-  <link rel="canonical" href={url(lang)} />
-  <link rel="alternate" hreflang="en" href={url('en')} />
-  <link rel="alternate" hreflang="ar" href={url('ar')} />
-  <link rel="alternate" hreflang="x-default" href={url('en')} />
+  {(SITE.preview || noindex) && <meta name="robots" content="noindex, nofollow" />}
+  {!noindex && <>
+    <link rel="canonical" href={url(lang)} />
+    <link rel="alternate" hreflang="en" href={url('en')} />
+    <link rel="alternate" hreflang="ar" href={url('ar')} />
+    <link rel="alternate" hreflang="x-default" href={url('en')} />
+  </>}
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="SayTamm" />
   <meta property="og:title" content={title} />

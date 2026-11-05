@@ -13,7 +13,7 @@ export const UI = {
       workDesc: 'Case studies from the SayTamm team: e-commerce, real estate and banking campaigns in Saudi Arabia, the Gulf and Egypt, with how each result was measured.',
       contactTitle: 'Start a Project | SayTamm',
       contactDesc: 'Tell us your objective, market and timeline. We reply with how we would approach it.',
-      aboutTitle: 'About SayTamm — Digital Marketing & Performance Agency, Saudi Arabia',
+      aboutTitle: 'About SayTamm — Saudi Digital Marketing & Performance Agency',
       aboutDesc: 'Who we are, how we work and what we stand for: a Saudi-focused agency that plans, runs and measures digital marketing in one team.',
       caseSuffix: 'Case study | SayTamm',
     },
