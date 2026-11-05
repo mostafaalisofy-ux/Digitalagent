@@ -104,6 +104,22 @@ export const SAYTAMM_WORK: StWork[] = [
     ] },
   },
   {
+    slug: 'altopiano-posts',
+    client: 'ALTOPIANO', clientAr: 'التبيانو',
+    sector: { en: 'Restaurants · Italian', ar: 'مطاعم · إيطالي' },
+    title: { en: 'Food and venue posts', ar: 'بوستات الأطباق والمكان' },
+    summary: {
+      en: 'Social posts for ALTOPIANO, an Italian restaurant: a new menu item, fresh pasta served at the table, and the restaurant’s façade at night, in a warm, low-light style with gold type.',
+      ar: 'بوستات سوشيال لمطعم التبيانو الإيطالي: طبق جديد في القائمة، وباستا طازجة تُقدَّم على الطاولة، وواجهة المطعم ليلاً، بأسلوب دافئ وإضاءة خافتة وخطوط ذهبية.',
+    },
+    format: { en: 'Social media posts · 4:5', ar: 'بوستات لمنصات التواصل · 4:5' },
+    media: { kind: 'images', images: [
+      { src: '/work/altopiano-3.webp', w: 800, h: 1000, alt: { en: 'ALTOPIANO post: the restaurant’s lit façade and terrace at night, line “Whispers of timeless moments”', ar: 'بوست التبيانو: واجهة المطعم وجلساته الخارجية ليلاً، وعبارة «Whispers Of Timeless Moments»' } },
+      { src: '/work/altopiano-1.webp', w: 800, h: 1000, alt: { en: 'ALTOPIANO post: salmon tartare on avocado on a wooden table, line “Menu new item alert”', ar: 'بوست التبيانو: تارتار سلمون على أفوكادو فوق طاولة خشبية، وعبارة «Menu new item alert»' } },
+      { src: '/work/altopiano-2.webp', w: 800, h: 1000, alt: { en: 'ALTOPIANO post: a chef lifting tagliatelle from a bowl, headline “Unique moments with Italian magic”', ar: 'بوست التبيانو: شيف يرفع التالياتيلي من الطبق، وعنوان «لحظات فريدة بسحر إيطالي»' } },
+    ] },
+  },
+  {
     slug: 'fatora-plus-posts',
     client: 'Fatora Plus', clientAr: 'فاتورة بلس',
     sector: { en: 'Invoicing software', ar: 'برامج الفوترة' },
