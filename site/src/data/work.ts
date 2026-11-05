@@ -136,6 +136,75 @@ export const SAYTAMM_WORK: StWork[] = [
     ] },
   },
   {
+    slug: 'zahid-electra-features',
+    client: 'Zahid Electra', clientAr: 'الزاهد إلكترا',
+    sector: { en: 'Home appliances', ar: 'أجهزة منزلية' },
+    title: { en: 'Product feature posts', ar: 'منشورات مزايا المنتجات' },
+    summary: {
+      en: 'Product posts for Zahid Electra’s refrigerators, freezers and washing machines, each built on one feature, with a series that places the appliances in Najdi doors and the desert under the line “From the spirit of the Kingdom”.',
+      ar: 'منشورات منتجات لثلاجات وفريزرات وغسالات الزاهد إلكترا، كل منها مبني على ميزة واحدة، مع سلسلة تضع الأجهزة في أبواب نجدية والصحراء تحت عبارة «من روح السلكة».',
+    },
+    format: { en: 'Social media posts · 1:1', ar: 'منشورات لمنصات التواصل · 1:1' },
+    media: { kind: 'images', images: [
+      { src: '/work/sw-electra-a-1.webp', w: 384, h: 384, alt: { en: 'Zahid Electra post: a glowing refrigerator in a dark space, line “Superior storage capacity”', ar: 'منشور الزاهد إلكترا: ثلاجة مضيئة في مساحة داكنة، وعبارة «سعة تخزين فائقة»' } },
+      { src: '/work/sw-electra-a-2.webp', w: 384, h: 384, alt: { en: 'Zahid Electra post: a washing-machine drum lit in pink, line “UV garment sterilisation”', ar: 'منشور الزاهد إلكترا: حوض غسالة مضاء بالوردي، وعبارة «خاصية تعقيم الملابس»' } },
+      { src: '/work/sw-electra-a-3.webp', w: 384, h: 384, alt: { en: 'Zahid Electra post: a silver freezer in frosty light, line “The latest cooling technology”', ar: 'منشور الزاهد إلكترا: فريزر فضي في ضوء صقيعي، وعبارة «أعلى تقنيات التبريد»' } },
+      { src: '/work/sw-electra-b-1.webp', w: 303, h: 303, alt: { en: 'Zahid Electra post: a washing machine in a wooden cabinet', ar: 'منشور الزاهد إلكترا: غسالة داخل خزانة خشبية' } },
+      { src: '/work/sw-electra-b-2.webp', w: 303, h: 303, alt: { en: 'Zahid Electra post: a washing machine in a laundry room, line “The washing machine, innovation for you”', ar: 'منشور الزاهد إلكترا: غسالة في غرفة غسيل، وعبارة «الغسالة: بابتكار نقدمها لكم»' } },
+      { src: '/work/sw-electra-b-3.webp', w: 303, h: 303, alt: { en: 'Zahid Electra post: a refrigerator display set into a Najdi door, line “From the spirit of the Kingdom”', ar: 'منشور الزاهد إلكترا: شاشة ثلاجة في باب نجدي، وعبارة «من روح السلكة»' } },
+      { src: '/work/sw-electra-b-4.webp', w: 303, h: 303, alt: { en: 'Zahid Electra post: a deep freezer in a kitchen, line “Deep freeze, innovation in your hands”', ar: 'منشور الزاهد إلكترا: فريزر في مطبخ، وعبارة «الديب فريز بإبداع بين أيديكم»' } },
+      { src: '/work/sw-electra-b-5.webp', w: 303, h: 303, alt: { en: 'Zahid Electra post: a side-by-side refrigerator on a desert plinth, line “From the spirit of the Kingdom”', ar: 'منشور الزاهد إلكترا: ثلاجة بابين على منصة في الصحراء، وعبارة «من روح السلكة»' } },
+      { src: '/work/sw-electra-b-6.webp', w: 303, h: 303, alt: { en: 'Zahid Electra post: a freezer-shaped monolith in the desert, line “Inside, it feels like the North Pole”', ar: 'منشور الزاهد إلكترا: كتلة بشكل فريزر في الصحراء، وعبارة «داخلها إحساس بالقطب الشمالي»' } },
+    ] },
+  },
+  {
+    slug: 'gig-posts',
+    client: 'GIG', clientAr: 'جي آي جي',
+    sector: { en: 'Insurance', ar: 'تأمين' },
+    title: { en: '“GIG has you covered”', ar: '«جي آي جي بتجيك»' },
+    summary: {
+      en: 'Social posts for GIG built on one line in Gulf dialect, “GIG has you covered”, set in Saudi scenes: travel, a desert night and a family at home.',
+      ar: 'منشورات سوشيال لجي آي جي مبنية على جملة واحدة باللهجة الخليجية، «جي آي جي بتجيك»، في مشاهد سعودية: السفر، وليلة في الصحراء، وعائلة في البيت.',
+    },
+    format: { en: 'Social media posts · 1:1', ar: 'منشورات لمنصات التواصل · 1:1' },
+    media: { kind: 'images', images: [
+      { src: '/work/sw-gig-1.webp', w: 411, h: 412, alt: { en: 'GIG post: a man flying over desert dunes beside a plane, line “Wherever you are, GIG has you covered”', ar: 'منشور جي آي جي: رجل يطير فوق كثبان الصحراء بجانب طائرة، وعبارة «وين ما تكون، جي آي جي بتجيك»' } },
+      { src: '/work/sw-gig-2.webp', w: 411, h: 412, alt: { en: 'GIG post: two men by a desert campfire, line “However it was, GIG has you covered”', ar: 'منشور جي آي جي: رجلان حول نار في الصحراء، وعبارة «كيف ما كان، جي آي جي بتجيك»' } },
+      { src: '/work/sw-gig-3.webp', w: 411, h: 412, alt: { en: 'GIG post: a family on a sofa at home, line “A secure home, a peace of mind”', ar: 'منشور جي آي جي: عائلة على أريكة في المنزل، وعبارة «بيت متأمّن، بال مرتاح»' } },
+    ] },
+  },
+  {
+    slug: 'xiaomi-wearables',
+    client: 'Xiaomi', clientAr: 'شاومي',
+    sector: { en: 'Consumer electronics', ar: 'إلكترونيات استهلاكية' },
+    title: { en: 'Wearables and audio posts', ar: 'منشورات الأجهزة القابلة للارتداء والصوت' },
+    summary: {
+      en: 'Product posts for Xiaomi’s Redmi Buds 5, Redmi Watch 5 Active and Smart Band 8 Pro, each showing the product in use with one Arabic line, including a Ramadan post.',
+      ar: 'منشورات منتجات لـ Redmi Buds 5 وRedmi Watch 5 Active وSmart Band 8 Pro من شاومي، يظهر فيها كل منتج أثناء الاستخدام مع جملة عربية واحدة، ومنها منشور لرمضان.',
+    },
+    format: { en: 'Social media posts · 1:1', ar: 'منشورات لمنصات التواصل · 1:1' },
+    media: { kind: 'images', images: [
+      { src: '/work/sw-xiaomi-1.webp', w: 400, h: 400, alt: { en: 'Xiaomi post: a man driving with earbuds, “Redmi Buds 5: enjoy the road”', ar: 'منشور شاومي: رجل يقود بسماعات أذن، «Redmi Buds 5 مستأنس بالطريق»' } },
+      { src: '/work/sw-xiaomi-2.webp', w: 400, h: 400, alt: { en: 'Xiaomi post: a runner’s wrist with a watch, “Redmi Watch 5 Active: keep fit safely”', ar: 'منشور شاومي: معصم عدّاء بساعة، «Redmi Watch 5 Active لياقتك بأمان»' } },
+      { src: '/work/sw-xiaomi-3.webp', w: 400, h: 400, alt: { en: 'Xiaomi post: a wrist with a fitness band, “Xiaomi Smart Band 8 Pro: live your Ramadan smartly”', ar: 'منشور شاومي: معصم بسوار ذكي، «Xiaomi Smart Band 8 Pro عيش رمضانك بذكاء»' } },
+    ] },
+  },
+  {
+    slug: 'marriott-posts',
+    client: 'Marriott', clientAr: 'ماريوت',
+    sector: { en: 'Hospitality', ar: 'ضيافة' },
+    title: { en: 'Hospitality and National Day posts', ar: 'منشورات الضيافة واليوم الوطني' },
+    summary: {
+      en: 'Social posts for Marriott: dining posts under the line “Our hospitality guarantees your happiness” and an illustrated Saudi National Day post.',
+      ar: 'منشورات سوشيال لماريوت: منشورات المطاعم تحت عبارة «ضيافتنا تتكفل بإسعادك!» ومنشور مرسوم لليوم الوطني السعودي.',
+    },
+    format: { en: 'Social media posts · 1:1', ar: 'منشورات لمنصات التواصل · 1:1' },
+    media: { kind: 'images', images: [
+      { src: '/work/sw-marriott-1.webp', w: 403, h: 404, alt: { en: 'Marriott post: a lit dining table, headline “Our hospitality guarantees your happiness”', ar: 'منشور ماريوت: طاولة طعام مضاءة، وعنوان «ضيافتنا تتكفل بإسعادك!»' } },
+      { src: '/work/sw-marriott-2.webp', w: 403, h: 404, alt: { en: 'Marriott Saudi National Day post: a couple in front of the hotel, illustrated', ar: 'منشور ماريوت لليوم الوطني السعودي: رسم لزوجين أمام الفندق' } },
+    ] },
+  },
+  {
     slug: 'bitumat-posts',
     client: 'BITUMAT',
     sector: { en: 'Building materials', ar: 'مواد البناء' },
@@ -198,6 +267,10 @@ export const SAYTAMM_WORK: StWork[] = [
       { src: '/work/altopiano-1.webp', w: 800, h: 1000, alt: { en: 'ALTOPIANO post: salmon tartare on avocado on a wooden table, line “Menu new item alert”', ar: 'منشور التبيانو: تارتار سلمون على أفوكادو فوق طاولة خشبية، وعبارة «Menu new item alert»' } },
       { src: '/work/altopiano-4.webp', w: 800, h: 1000, alt: { en: 'ALTOPIANO post: a glowing pyramid lamp with Arabic calligraphy beside a terrace table at night, headline “An atmosphere worth telling”', ar: 'منشور التبيانو: مصباح هرمي مضيء بخط عربي بجانب طاولة في الجلسة الخارجية ليلاً، وعنوان «أجواء تُروى»' } },
       { src: '/work/altopiano-2.webp', w: 800, h: 1000, alt: { en: 'ALTOPIANO post: a chef lifting tagliatelle from a bowl, headline “Unique moments with Italian magic”', ar: 'منشور التبيانو: شيف يرفع التالياتيلي من الطبق، وعنوان «لحظات فريدة بسحر إيطالي»' } },
+      { src: '/work/sw-altopiano-1.webp', w: 264, h: 331, alt: { en: 'ALTOPIANO post: a gold teapot on a set table, line “Before Iftar”', ar: 'منشور التبيانو: إبريق ذهبي على طاولة معدّة، وعبارة «Before Iftar»' } },
+      { src: '/work/sw-altopiano-2.webp', w: 264, h: 331, alt: { en: 'ALTOPIANO post: the restaurant terrace in Diriyah, line “Ramadan in Diriyah”', ar: 'منشور التبيانو: الجلسة الخارجية للمطعم في الدرعية، وعبارة «Ramadan in Diriyah»' } },
+      { src: '/work/sw-altopiano-3.webp', w: 264, h: 331, alt: { en: 'ALTOPIANO post: dishes on a table, line “One table, many stories”', ar: 'منشور التبيانو: أطباق على طاولة، وعبارة «One table, many stories»' } },
+      { src: '/work/sw-altopiano-5.webp', w: 264, h: 331, alt: { en: 'ALTOPIANO post: a couple dining, line “Atmosphere matters”', ar: 'منشور التبيانو: زوجان يتناولان العشاء، وعبارة «Atmosphere matters»' } },
     ] },
   },
   {
@@ -214,6 +287,8 @@ export const SAYTAMM_WORK: StWork[] = [
       { src: '/work/metro-post-1.webp', w: 1000, h: 1000, alt: { en: 'METRO post: toasted sandwiches and sliced turkey beside a pack of Normal Toast Bread, line “Enjoy freshness every day”', ar: 'منشور مترو: ساندويتشات توست وشرائح لحم بجانب كيس خبز التوست العادي، وعبارة «Enjoy Freshness Every Day»' } },
       { src: '/work/metro-post-2.webp', w: 1000, h: 1000, alt: { en: 'METRO post: a pack of chicken nuggets in front of a large red M, line “Good food shouldn’t wait”', ar: 'منشور مترو: كيس ناجتس دجاج أمام حرف M أحمر كبير، وعبارة «Good food Shouldn’t wait»' } },
       { src: '/work/metro-packaging.webp', w: 1000, h: 1000, alt: { en: 'METRO Normal Toast Bread bag in blue and red (mockup)', ar: 'كيس خبز التوست العادي من مترو بالأزرق والأحمر (موك أب)' } },
+      { src: '/work/sw-metro-1.webp', w: 417, h: 417, alt: { en: 'METRO post: a mother and daughter with a shopping cart, line “We bring the world to your cart”', ar: 'منشور مترو: أم وابنتها مع عربة تسوق، وعبارة «We bring the world to your cart»' } },
+      { src: '/work/sw-metro-2.webp', w: 417, h: 417, alt: { en: 'METRO post: a boy eating chicken nuggets, line “Happy kid, happy life”', ar: 'منشور مترو: طفل يأكل ناجتس دجاج، وعبارة «Happy kid, Happy life»' } },
     ] },
   },
   {
@@ -264,6 +339,41 @@ export const SAYTAMM_WORK: StWork[] = [
     ] },
   },
   {
+    slug: 'tecspro-posts',
+    client: 'TECSPRO', clientAr: 'التقنيات الاحترافية',
+    sector: { en: 'Business technology', ar: 'حلول تقنية للأعمال' },
+    title: { en: 'B2B technology posts', ar: 'منشورات تقنية للأعمال' },
+    summary: {
+      en: 'Social posts for TECSPRO, a business technology provider, explaining its integration services and ERP in plain lines such as “Transform chaos into clarity”.',
+      ar: 'منشورات سوشيال لشركة التقنيات الاحترافية، مزوّد حلول تقنية للأعمال، تشرح خدمات التكامل وأنظمة ERP بعبارات واضحة مثل «Transform chaos into clarity».',
+    },
+    format: { en: 'Social media posts · 1:1', ar: 'منشورات لمنصات التواصل · 1:1' },
+    media: { kind: 'images', images: [
+      { src: '/work/sw-tecspro-1.webp', w: 302, h: 302, alt: { en: 'Tecspro integration solutions post: a smiling man in a shemagh', ar: 'منشور التقنيات الاحترافية لحلول التكامل: رجل مبتسم بالشماغ' } },
+      { src: '/work/sw-tecspro-2.webp', w: 302, h: 302, alt: { en: 'Tecspro post: “Connect, automate, achieve harmony” over a large SERVICE headline', ar: 'منشور التقنيات الاحترافية: «Connect, Automate, Achieve Harmony» فوق عنوان SERVICE كبير' } },
+      { src: '/work/sw-tecspro-3.webp', w: 302, h: 302, alt: { en: 'Tecspro post: a man with a laptop, line “Transform chaos into clarity”', ar: 'منشور التقنيات الاحترافية: رجل يحمل حاسوباً، وعبارة «Transform chaos into clarity»' } },
+      { src: '/work/sw-tecspro-4.webp', w: 302, h: 302, alt: { en: 'Tecspro post: a hand on a digital interface, headline “ERP, a business savior”', ar: 'منشور التقنيات الاحترافية: يد على واجهة رقمية، وعنوان «ERP a business savior»' } },
+      { src: '/work/sw-tecspro-5.webp', w: 302, h: 302, alt: { en: 'Tecspro post: hands on a laptop, headline “Our technology solutions, guaranteed results”', ar: 'منشور التقنيات الاحترافية: يدان على حاسوب، وعنوان «حلولنا التكنولوجية مضمونة النتائج»' } },
+      { src: '/work/sw-tecspro-6.webp', w: 302, h: 302, alt: { en: 'Tecspro post: three businessmen facing a city skyline, headline “Why choose Tecspro?”', ar: 'منشور التقنيات الاحترافية: ثلاثة رجال أعمال أمام أفق مدينة، وعنوان «Why choose TECSPRO?»' } },
+    ] },
+  },
+  {
+    slug: 'siefco-posts',
+    client: 'SIEFCO', clientAr: 'سفكو',
+    sector: { en: 'Concrete products', ar: 'منتجات خرسانية' },
+    title: { en: 'Industrial product posts', ar: 'منشورات منتجات صناعية' },
+    summary: {
+      en: 'Social posts for SIEFCO, a concrete products manufacturer: its products, its values and its paving, in a bold blue and red layout.',
+      ar: 'منشورات سوشيال لسفكو، مصنع منتجات خرسانية: منتجاتها وقيمها وأرصفتها، بتصميم جريء بالأزرق والأحمر.',
+    },
+    format: { en: 'Social media posts · 4:5', ar: 'منشورات لمنصات التواصل · 4:5' },
+    media: { kind: 'images', images: [
+      { src: '/work/sw-siefco-1.webp', w: 382, h: 477, alt: { en: 'SIEFCO post: concrete pavers on a production line, headline “SIEFCO products”', ar: 'منشور سفكو: بلاط خرساني على خط إنتاج، وعنوان «منتجات سفكو»' } },
+      { src: '/work/sw-siefco-2.webp', w: 382, h: 477, alt: { en: 'SIEFCO post: the Riyadh skyline, headline “SIEFCO’s core values: leadership, commitment, innovation”', ar: 'منشور سفكو: أفق الرياض، وعنوان «أهم قيم سفكو: الريادة والالتزام والابتكار»' } },
+      { src: '/work/sw-siefco-3.webp', w: 382, h: 477, alt: { en: 'SIEFCO post: workers beside stacks of paving slabs, headline “Concrete products and paving”', ar: 'منشور سفكو: عمال بجانب رصّات بلاط، وعنوان «منتجات وأرصفة خرسانية»' } },
+    ] },
+  },
+  {
     slug: 'dc-block-posts',
     client: 'DC BLOCK', clientAr: 'دي سي بلوك',
     sector: { en: 'Building materials', ar: 'مواد البناء' },
@@ -276,6 +386,11 @@ export const SAYTAMM_WORK: StWork[] = [
     media: { kind: 'images', images: [
       { src: '/work/dcblock-2.webp', w: 800, h: 1000, alt: { en: 'DC BLOCK post: a concrete block half in frost and half in desert heat in front of a building site, headline “Strength and insulation together”', ar: 'منشور DC BLOCK: بلوكة خرسانية نصفها في الصقيع ونصفها في حرارة الصحراء أمام موقع بناء، وعنوان «القوة والعزل معاً»' } },
       { src: '/work/dcblock-1.webp', w: 800, h: 1000, alt: { en: 'DC BLOCK post: an insulated block in front of a construction site at dusk, headline “A strong foundation starts with the right choice”', ar: 'منشور DC BLOCK: بلوكة معزولة أمام موقع إنشاء وقت الغروب، وعنوان «الأساس القوي يبدأ من الاختيار الصحيح»' } },
+      { src: '/work/sw-dcblock-2.webp', w: 266, h: 333, alt: { en: 'DC BLOCK post: a dark insulated block in front of a construction site, headline “High-quality insulating block”', ar: 'منشور DC BLOCK: بلوكة عازلة داكنة أمام موقع بناء، وعنوان «بلوك عازل عالي الجودة»' } },
+      { src: '/work/sw-dcblock-3.webp', w: 266, h: 333, alt: { en: 'DC BLOCK post: a shield beside a block wall, headline “Quality is a promise, not a slogan”', ar: 'منشور DC BLOCK: درع بجانب جدار بلوك، وعنوان «الجودة ليست شعاراً بل وعد»' } },
+      { src: '/work/sw-dcblock-4.webp', w: 266, h: 333, alt: { en: 'DC BLOCK post: a block beside pipes, headline “Block that protects building pipes”', ar: 'منشور DC BLOCK: بلوكة بجانب أنابيب، وعنوان «بلوك مباني حماية مواسير»' } },
+      { src: '/work/sw-dcblock-5.webp', w: 266, h: 333, alt: { en: 'DC BLOCK post: a yellow hard hat in front of towers under construction', ar: 'منشور DC BLOCK: خوذة صفراء أمام أبراج قيد الإنشاء' } },
+      { src: '/work/sw-dcblock-6.webp', w: 266, h: 333, alt: { en: 'DC BLOCK post: a man relaxing at home, headline “A quiet home starts from the foundation”', ar: 'منشور DC BLOCK: رجل يسترخي في منزله، وعنوان «بيئة هادئة من الأساس»' } },
     ] },
   },
   {
@@ -291,6 +406,12 @@ export const SAYTAMM_WORK: StWork[] = [
     media: { kind: 'images', images: [
       { src: '/work/alqimma-2.webp', w: 800, h: 1000, alt: { en: 'Alqimma Equipment post: a white planetary concrete mixer on a building site, headline “The high-quality mixer”, with specifications and phone numbers', ar: 'منشور معدات القمة: خلاطة خرسانة بيضاء في موقع بناء، وعنوان «الخلطة عالية الجودة»، مع المواصفات وأرقام التواصل' } },
       { src: '/work/alqimma-1.webp', w: 800, h: 1000, alt: { en: 'Alqimma Equipment Founding Day post: camels beside Najdi mud buildings, headline “Remembering the founding”', ar: 'منشور يوم التأسيس من معدات القمة: إبل بجانب مبانٍ نجدية طينية، وعنوان «ذكرى التأسيس»' } },
+      { src: '/work/sw-alqimma-1.webp', w: 254, h: 318, alt: { en: 'Alqimma post: a worker’s blue hard hat, headline “Quality made in Saudi Arabia, working with confidence in the field”', ar: 'منشور معدات القمة: خوذة عامل زرقاء، وعنوان «جودة تُصنع في السعودية وتعمل بثقة في الميدان»' } },
+      { src: '/work/sw-alqimma-2.webp', w: 254, h: 318, alt: { en: 'Alqimma post: engineers at a site at sunset, headline “Integrated engineering solutions, from planning to operation”', ar: 'منشور معدات القمة: مهندسون في موقع وقت الغروب، وعنوان «حلول هندسية متكاملة من التخطيط إلى التشغيل»' } },
+      { src: '/work/sw-alqimma-3.webp', w: 254, h: 318, alt: { en: 'Alqimma post: an engineer with plans, headline “Saudi industrial expertise”', ar: 'منشور معدات القمة: مهندس يحمل مخططات، وعنوان «شركة معدات القمة: خبرة صناعية سعودية»' } },
+      { src: '/work/sw-alqimma-4.webp', w: 254, h: 318, alt: { en: 'Alqimma post: the QMAX18 block machine, headline “Productivity beyond expectations”', ar: 'منشور معدات القمة: ماكينة QMAX18، وعنوان «إنتاجية تفوق التوقعات»' } },
+      { src: '/work/sw-alqimma-5.webp', w: 254, h: 318, alt: { en: 'Alqimma post: precision block moulds, headline about consistent output in every batch', ar: 'منشور معدات القمة: قوالب بلوك دقيقة، وعنوان «قوالب دقيقة: نتائج ثابتة في كل دفعة إنتاج»' } },
+      { src: '/work/sw-alqimma-6.webp', w: 254, h: 318, alt: { en: 'Alqimma post: a twin-shaft concrete mixer, headline about operation at production sites', ar: 'منشور معدات القمة: خلاطة خرسانة ذات محورين، وعنوان عن التشغيل في مواقع الإنتاج' } },
     ] },
   },
   {
@@ -306,6 +427,12 @@ export const SAYTAMM_WORK: StWork[] = [
     media: { kind: 'images', images: [
       { src: '/work/fatora-1.webp', w: 1000, h: 1000, alt: { en: 'Fatora Plus Saudi National Day post over the Riyadh skyline at night, headline “Take part and win”', ar: 'منشور فاتورة بلس لليوم الوطني السعودي على أفق الرياض ليلاً، وعنوان «شارك واربح»' } },
       { src: '/work/fatora-2.webp', w: 1000, h: 1000, alt: { en: 'Fatora Plus post: a laptop with financial charts, headline “Take control of your company’s finances”', ar: 'منشور فاتورة بلس: حاسوب محمول عليه رسوم مالية، وعنوان «تحكم في حركة شركتك المالية»' } },
+      { src: '/work/sw-fatora-1.webp', w: 300, h: 300, alt: { en: 'Fatora Plus post: an invoice and laptop, headline about complete invoice management', ar: 'منشور فاتورة بلس: فاتورة وحاسوب، وعنوان «الراحة الكاملة لإدارة الفواتير»' } },
+      { src: '/work/sw-fatora-2.webp', w: 300, h: 300, alt: { en: 'Fatora Plus post: a laptop on a desk, headline “Go green, cut your costs”', ar: 'منشور فاتورة بلس: حاسوب على مكتب، وعنوان «امتثل بيئياً، رشّد نفقاتك»' } },
+      { src: '/work/sw-fatora-3.webp', w: 300, h: 300, alt: { en: 'Fatora Plus post: hands typing, headline “Your legal compliance supports your business”', ar: 'منشور فاتورة بلس: يدان تكتبان، وعنوان «التزامك القانوني يدعم تجارتك»' } },
+      { src: '/work/sw-fatora-4.webp', w: 300, h: 300, alt: { en: 'Fatora Plus post: a man in a thobe with a laptop, headline “Easier, smarter invoicing”', ar: 'منشور فاتورة بلس: رجل بالثوب يحمل حاسوباً، وعنوان «فوترة أسهل أذكى»' } },
+      { src: '/work/sw-fatora-5.webp', w: 300, h: 300, alt: { en: 'Fatora Plus post: an invoicing dashboard on a laptop, headline “Save time with automated invoices”', ar: 'منشور فاتورة بلس: لوحة فوترة على حاسوب، وعنوان «خلص من آلية إدارة فواتيرك»' } },
+      { src: '/work/sw-fatora-6.webp', w: 300, h: 300, alt: { en: 'Fatora Plus post: a man holding a phone with an invoice, headline “Your smart partner for e-invoicing”', ar: 'منشور فاتورة بلس: رجل يحمل هاتفاً عليه فاتورة، وعنوان «شريكك الذكي للفوترة الإلكترونية»' } },
     ] },
   },
   {
@@ -334,6 +461,11 @@ export const SAYTAMM_WORK: StWork[] = [
     format: { en: 'Social media post · 1:1', ar: 'منشور لمنصات التواصل · 1:1' },
     media: { kind: 'images', images: [
       { src: '/work/siyaq-1.webp', w: 1000, h: 1000, alt: { en: 'Siyaq post: the Siyaq website on a laptop with open books, a lantern and a fountain pen, headline “Share your way of getting information”', ar: 'منشور سياق: موقع سياق على حاسوب محمول مع كتب مفتوحة وفانوس وقلم حبر، وعنوان «شاركنا طريقتك في الحصول على المعلومة»' } },
+      { src: '/work/sw-siyaq-1.webp', w: 314, h: 314, alt: { en: 'Siyaq post: a man with a laptop among app screens, headline “The fastest route into your field”', ar: 'منشور سياق: رجل يحمل حاسوباً بين شاشات التطبيق، وعنوان «الطريق الأسرع إلى مجالك»' } },
+      { src: '/work/sw-siyaq-3.webp', w: 314, h: 314, alt: { en: 'Siyaq post: a phone on a road between bookshelves, headline “A new door to knowledge”', ar: 'منشور سياق: هاتف على طريق بين رفوف كتب، وعنوان «باب جديد للمعرفة»' } },
+      { src: '/work/sw-siyaq-4.webp', w: 314, h: 314, alt: { en: 'Siyaq post: two people at a desk, headline “Coming soon: Siyaq in Egypt”', ar: 'منشور سياق: شخصان على مكتب، وعنوان «قريباً سياق في مصر»' } },
+      { src: '/work/sw-siyaq-5.webp', w: 314, h: 314, alt: { en: 'Siyaq post for World Chess Day: chess pieces with a graduation cap, “Working smart wins”', ar: 'منشور سياق ليوم الشطرنج العالمي: قطع شطرنج وقبعة تخرج، وعبارة «Working smart wins»' } },
+      { src: '/work/sw-siyaq-6.webp', w: 314, h: 314, alt: { en: 'Siyaq post: two smiling experts and a phone, headline “The link between you and the experts”', ar: 'منشور سياق: خبيران مبتسمان وهاتف، وعنوان «حلقة الوصل بينك وبين الخبراء»' } },
     ] },
   },
   {
@@ -360,7 +492,7 @@ export const WORK_TAGS: Record<string, WorkTag[]> = {
   'cleanbasket-identity': ['identity'], 'arhab-app': ['social', 'banner'], 'altopiano-posts': ['social'],
   'mix-events': ['social'], 'alqimma-founding-day': ['social'], 'fatora-plus-posts': ['social'],
   'ks-furniture-offer': ['social'], 'siyaq-post': ['social'], 'exodus-travel-post': ['social'],
-  'niimee-posts': ['social'], 'niimee-your-size': ['social'], 'bitumat-posts': ['social'], 'dc-block-posts': ['social'], 'niimee-the-dot': ['video'], 'tech-hive-banner': ['banner'], 'tech-hive-gaming': ['social'],
+  'niimee-posts': ['social'], 'niimee-your-size': ['social'], 'bitumat-posts': ['social'], 'dc-block-posts': ['social'], 'niimee-the-dot': ['video'], 'tech-hive-banner': ['banner'], 'tech-hive-gaming': ['social'], 'gig-posts': ['social'], 'xiaomi-wearables': ['social'], 'marriott-posts': ['social'], 'tecspro-posts': ['social'], 'siefco-posts': ['social'], 'zahid-electra-features': ['social'],
 };
 /** Cover image of a project: first image, or the video poster */
 export const coverOf = (w: StWork) => w.media.kind === 'video' ? { src: w.media.poster, w: w.media.w, h: w.media.h } : w.media.images[w.cover ?? 0];

@@ -49,14 +49,25 @@ Removed at the owner's request: THICHEDI · شيدي الحجر. Excluded materi
 **Note 1 — MIX.** The posts name a government body (the Royal Commission for Riyadh City) and show a public figure on screens. The owner approved showing them. Whether RCRC permits its name in a supplier's portfolio is an external permission and is **not verified**.
 **Note 2 — Beauty Lab.** The label claims skin whitening; the SFDA regulates such claims. The site does not repeat the claim. The client should confirm the label is approved.
 
-## B — Team experience (12 brands, names as text)
+## A2 — Client logo wall (65, from the Steps Selected Work deck)
+
+Owner, 2026-11-05: "add them all as SayTamm clients" (D-021). Logos are the reverse versions from the deck, shown on graphite. Relationship and display permission: **owner-asserted**; written permission not on file.
+
+Commercial (54, shown): Shawarmer, Jahez, Sharar, Aljazirah Vehicles, Ford, National Geographic, Quick Lane, VOV, Azimut, Eucerin, Indian Motorcycle, Naqel Express, Polaris, 57357 Hospital, Fiat, Lacalut, Shell, Fawry Financing, Filorga, Dar Al Arkan, Lincoln, Five Little Monkeys, LEAP, Point6, Sahara, Amreyah Cement, LuLu, Mamnon, IPS, Huawei, The Kuwait Motor Show, Smart Touch Solutions, AmiViz, SAPTCO, Darb Al Omda, Limak, Chicken Spot, Talent Care Pharma, Al Majed Oud, AMEX Automotive, Bin Al Basha, Java Joy, HARKA, Cleopatra, Brands Home, Abo El Kheir, Nintendo, Alia, Saffron Threads, Sama Cuisine, KSA Care, OSUS, stc, Cisco.
+
+**Government bodies (11) — staging only, hidden in production until display permission is documented:** Saudi Falcons Club, Kuwait Police, Ministry of Public Works, KNPC, Kuwait Oil Company, Ministry of Health, Kuwait Municipality, OHI (Osim Higher Institute), Ministry of Education, Riyadh Season, General Entertainment Authority.
+
+Note: several of these marks (Ford, Shell, Nintendo, Cisco, Huawei, National Geographic) are global brands whose regional work is often bought through distributors or agencies. If a relationship was with a local distributor or franchise, the owner should confirm the name shown is the right one.
+
+Also added to the main tiles with their own logos: GIG, Marriott, TECSPRO, SIEFCO. STC moved from team brands (B) to clients.
+
+## B — Team experience (11 brands, names as text)
 
 | Brand | Sector | Evidence | Linked case | Display permission | Status |
 |---|---|---|---|---|---|
 | Buffalo Burger, Juhayna, Edita Foods, Costa Coffee | Food & beverage | Owner list, 2026-11-04 (D-014) | — | Owner-asserted; no logos shown | Shown as text |
 | Toyota, BYD | Automotive | Owner list (D-014) | — | Owner-asserted | Shown as text |
 | DAMAC | Real estate | Owner list (D-014); case deck (D-009) | damac-paramount | Owner-asserted rights to the case (D-009); DAMAC's own permission to be named: **not verified** | Shown as text |
-| STC | Telecom | Owner list (D-014) | — | Owner-asserted | Shown as text |
 | QNB | Banking | Owner list; founder-led case (D-006) | qnb-ramadan | Owner-asserted (D-002); bank's own confirmation: **not verified** | Shown as text |
 | Air Arabia | Aviation | Owner list (D-014) | — | Owner-asserted | Shown as text |
 | Radisson Blu | Hospitality | Owner list (D-014) | — | Owner-asserted | Shown as text |
