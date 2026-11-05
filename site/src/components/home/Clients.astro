@@ -1,0 +1,61 @@
+---
+// SayTamm's direct clients (owner-confirmed). Official logos in their own colours on light tiles;
+// a client without a supplied logo file is set as its name. Separate from Brands (team experience).
+import { CLIENTS } from '../../data/clients';
+import { type Lang } from '../../config/site';
+import { caseHref } from '../../i18n/paths';
+import { h } from '../../i18n/home';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = h(lang).clients;
+---
+<section class="section cl" id="clients" aria-labelledby="cl-title">
+  <div class="container cl__grid">
+    <header class="cl__head">
+      <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
+      <h2 class="cl__title" id="cl-title" data-reveal>{d.title}</h2>
+      <p class="cl__intro" data-reveal>{d.intro}</p>
+    </header>
+    <ul role="list" class="cl__list" data-reveal-group>
+      {CLIENTS.map((c, i) => (
+        <li class="cl__item" style={`--delay:${i * 80}ms`}>
+          <div class="cl__tile">
+            {(lang === 'ar' && c.logoAr) || c.logo
+              ? (() => { const l = (lang === 'ar' && c.logoAr) || c.logo!; return <img src={l.src} width={l.w} height={l.h} alt={c.name[lang]} loading="lazy" decoding="async" />; })()
+              : <span class="cl__word">{c.name[lang]}</span>}
+          </div>
+          <p class="cl__name">{c.name[lang]}{c.sector && <span class="cl__sector"> · {c.sector[lang]}</span>}</p>
+          {c.caseSlug && <a class="link-diag cl__case" href={caseHref(lang, c.caseSlug)}>{h(lang).brands.caseLink}</a>}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+<style>
+  .cl { border-top: 1px solid var(--line); }
+  .cl__grid { display: grid; gap: var(--s-7); }
+  .cl__head { display: grid; gap: var(--s-4); align-content: start; }
+  .cl .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .cl__title { font-size: var(--fs-h1); letter-spacing: var(--track-tight); line-height: var(--lh-head); }
+  .cl__intro { color: var(--text); font-size: var(--fs-lead); max-width: 36ch; }
+  .cl__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: var(--s-4); min-width: 0; }
+  .cl__item { min-width: 0; }
+  .cl__item { display: grid; gap: var(--s-3); align-content: start; }
+  :global(.js) .cl__item { opacity: 0; transform: translate3d(0, 16px, 0); transition: opacity var(--d-3) var(--ease-out), transform var(--d-3) var(--ease-out); transition-delay: var(--delay); }
+  :global(.js) .cl__list:global(.is-in) .cl__item { opacity: 1; transform: none; }
+  /* light tile so official logo colours read as intended (never recoloured for the dark theme) */
+  .cl__tile { position: relative; display: grid; place-items: center; aspect-ratio: 3 / 2; width: 100%; background: var(--c-white); overflow: hidden; }
+  .cl__tile img { position: absolute; inset: 16% 18%; width: 64%; height: 68%; object-fit: contain; }
+  .cl__word { font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.25rem); font-weight: 700; color: var(--c-obsidian); letter-spacing: -0.02em; }
+  :global([dir='rtl']) .cl__word { letter-spacing: 0; }
+  .cl__name { font-size: var(--fs-small); font-weight: 500; color: var(--text-strong); }
+  .cl__sector { color: var(--text-muted); font-weight: 400; }
+  .cl__case { justify-self: start; font-size: var(--fs-caption); color: var(--accent-text); }
+  @media (min-width: 1024px) {
+    .cl__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
+    .cl__head { grid-column: 1 / span 4; }
+    .cl__list { grid-column: 5 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (min-width: 1440px) { .cl__list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  }
+  @media (prefers-reduced-motion: reduce) { :global(.js) .cl__item { opacity: 1; transform: none; } }
+</style>

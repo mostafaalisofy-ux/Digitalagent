@@ -14,6 +14,15 @@ export const HOME = {
       f: { client: 'Client', industry: 'Industry', market: 'Market', period: 'Period', context: 'Context', objective: 'Objective', challenge: 'Challenge', strategy: 'Approach', execution: 'Execution', outcome: 'Outcome', channels: 'Channels', services: 'Services' },
       dataCaption: 'Media budget against reported sales revenue, drawn to scale.',
     },
+    recent: {
+      eyebrow: 'SayTamm work', title: 'Latest work for our clients.',
+      intro: 'Recent work SayTamm has delivered for its clients, shown as it was published.',
+      client: 'Client', format: 'Format', play: 'Play video', pause: 'Pause video',
+    },
+    clients: {
+      eyebrow: 'Our clients', title: 'Brands that work with SayTamm.',
+      intro: 'Brands SayTamm works with directly.',
+    },
     brands: {
       eyebrow: 'Experience', title: 'Brands we’ve worked with.',
       intro: 'Our team’s professional experience spans brands across multiple industries and markets.',
@@ -116,6 +125,15 @@ export const HOME = {
       all: 'استكشف كل الأعمال', read: 'اقرأ دراسة الحالة كاملة',
       f: { client: 'العميل', industry: 'القطاع', market: 'السوق', period: 'الفترة', context: 'السياق', objective: 'الهدف', challenge: 'التحدي', strategy: 'المنهج', execution: 'التنفيذ', outcome: 'النتيجة', channels: 'القنوات', services: 'الخدمات' },
       dataCaption: 'الميزانية الإعلانية مقابل الإيرادات المُبلّغ عنها، بمقياسها الحقيقي.',
+    },
+    recent: {
+      eyebrow: 'أعمال قول تم', title: 'أحدث أعمالنا لعملائنا.',
+      intro: 'أعمال نفّذتها قول تم مؤخراً لعملائها، تُعرض كما نُشرت.',
+      client: 'العميل', format: 'الصيغة', play: 'تشغيل الفيديو', pause: 'إيقاف الفيديو',
+    },
+    clients: {
+      eyebrow: 'عملاؤنا', title: 'علامات تعمل مع قول تم.',
+      intro: 'علامات تتعامل مع قول تم مباشرة.',
     },
     brands: {
       eyebrow: 'الخبرة', title: 'علامات تجارية عمل فريقنا معها.',

@@ -1,9 +1,11 @@
 ---
-// Homepage (final redesign brief): Hero → Selected work → Brands → Services → How we work →
+// Homepage (final redesign brief): Hero → Selected work → Clients (direct) → Brands (team experience) → Services → How we work →
 // Results → About → Final CTA. Each section answers one question in the buyer's decision.
 import Base from '../../layouts/Base.astro';
 import Hero from '../../components/home/Hero.astro';
 import SelectedWork from '../../components/home/SelectedWork.astro';
+import Clients from '../../components/home/Clients.astro';
+import RecentWork from '../../components/home/RecentWork.astro';
 import Brands from '../../components/home/Brands.astro';
 import HomeServices from '../../components/home/HomeServices.astro';
 import Approach from '../../components/home/Approach.astro';
@@ -20,6 +22,8 @@ const d = t(lang);
 <Base lang={lang} page="home" title={d.meta.homeTitle} description={d.meta.homeDesc}>
   <Hero lang={lang} />
   <SelectedWork lang={lang} />
+  <Clients lang={lang} />
+  <RecentWork lang={lang} />
   <Brands lang={lang} />
   <HomeServices lang={lang} />
   <Approach lang={lang} />

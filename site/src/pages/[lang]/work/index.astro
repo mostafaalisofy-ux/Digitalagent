@@ -3,6 +3,7 @@
 import Base from '../../../layouts/Base.astro';
 import PageHero from '../../../components/PageHero.astro';
 import FinalCta from '../../../components/home/FinalCta.astro';
+import RecentWork from '../../../components/home/RecentWork.astro';
 import { CASES, showFigures, isPending } from '../../../data/cases';
 import { staticLangPaths, caseHref } from '../../../i18n/paths';
 import { t } from '../../../i18n/ui';
@@ -16,6 +17,7 @@ const r = h(lang).results;
 ---
 <Base lang={lang} page="work" title={d.meta.workTitle} description={d.meta.workDesc}>
   <PageHero eyebrow={d.workPage.eyebrow} title={d.workPage.title} intro={d.workPage.intro} image={{ name: 'work-hero', w: 2352, h: 952 }} />
+  <RecentWork lang={lang} />
   <section class="section idx" aria-label={d.workPage.eyebrow}>
     <div class="container">
       <p class="idx__label">{d.workPage.label}</p>

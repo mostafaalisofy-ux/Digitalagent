@@ -38,3 +38,19 @@ export const BRANDS: Brand[] = [
 
 /** Brands that may be displayed in this build. */
 export const visibleBrands = () => BRANDS.filter((b) => SITE.preview || b.permission !== 'pending');
+
+// ---------------------------------------------------------------------------------------------
+// SayTamm's DIRECT clients (owner confirmation 2026-11-05). Kept separate from BRANDS above, which
+// is team experience. Logos are the official files supplied by the owner, shown in their own colours
+// on a light tile — never recoloured or redrawn. Sector only where it is known (not guessed).
+type Logo = { src: string; w: number; h: number };
+/** `logoAr` = the client's official Arabic lockup, used on Arabic pages when supplied. */
+export interface Client { name: T; sector?: T; logo?: Logo; logoAr?: Logo; caseSlug?: string }
+export const CLIENTS: Client[] = [
+  { name: { en: 'Al Bustan', ar: 'البستان' }, sector: { en: 'Food · Nuts', ar: 'أغذية · مكسرات' } }, // logo file pending
+  { name: { en: 'niimee', ar: 'niimee' }, sector: { en: 'Fashion', ar: 'أزياء' } }, // logo file pending
+  { name: { en: 'Arhab', ar: 'أرحب' }, logo: { src: '/clients/arhab.svg', w: 858, h: 629 } },
+  { name: { en: 'Tech Hive', ar: 'خلية التكنولوجيا' }, sector: { en: 'Electronics retail', ar: 'تجزئة إلكترونيات' },
+    logo: { src: '/clients/techhive-en.webp', w: 478, h: 294 }, logoAr: { src: '/clients/techhive-ar.webp', w: 478, h: 280 } },
+  { name: { en: 'Tech Craft', ar: 'التقانة العربية للمقاولات' }, sector: { en: 'Contracting', ar: 'مقاولات' }, logo: { src: '/clients/techcraft.svg', w: 552, h: 418 } },
+];

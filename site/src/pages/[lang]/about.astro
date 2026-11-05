@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
 import HomeAbout from '../../components/home/HomeAbout.astro';
+import Clients from '../../components/home/Clients.astro';
 import Brands from '../../components/home/Brands.astro';
 import Approach from '../../components/home/Approach.astro';
 import FinalCta from '../../components/home/FinalCta.astro';
@@ -33,6 +34,7 @@ const schema = [{
   </figure>
   <HomeAbout lang={lang} showMore={false} />
   <Approach lang={lang} />
+  <Clients lang={lang} />
   <Brands lang={lang} />
   <section class="section section--surface lead-sec" aria-labelledby="lead-title">
     <div class="container lead__grid">

@@ -1,0 +1,86 @@
+---
+// "Latest work for our clients": pieces delivered BY SayTamm (data/work.ts), shown as published.
+// Videos: muted, play only while in view, never autoplay under prefers-reduced-motion; controls on.
+import { SAYTAMM_WORK } from '../../data/work';
+import { type Lang } from '../../config/site';
+import { h } from '../../i18n/home';
+interface Props { lang: Lang; headingLevel?: 'h2' | 'h3' }
+const { lang } = Astro.props;
+const d = h(lang).recent;
+// In Arabic text, isolate Latin runs (brand lines, product names) so bidi never reorders their punctuation
+const iso = (text: string) => lang === 'ar' ? text.split(/([A-Za-z][A-Za-z0-9 .,'’&-]*[A-Za-z0-9.])/) : [text];
+---
+{SAYTAMM_WORK.length > 0 && (
+<section class="section rw" id="saytamm-work" aria-labelledby="rw-title">
+  <div class="container">
+    <header class="rw__head">
+      <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
+      <h2 class="rw__title" id="rw-title" data-reveal>{d.title}</h2>
+      <p class="rw__intro" data-reveal>{d.intro}</p>
+    </header>
+    <ul role="list" class="rw__list">
+      {SAYTAMM_WORK.map((w) => (
+        <li class:list={['rw__item', { 'rw__item--wide': w.media.kind === 'images' }]} data-reveal>
+          <div class="rw__media">
+            {w.media.kind === 'video' && (
+              <video class="rw__video" src={w.media.src} poster={w.media.poster} width={w.media.w} height={w.media.h}
+                muted loop playsinline controls preload="none" data-autoplay-in-view aria-label={`${w.client} — ${w.title[lang]}`}></video>
+            )}
+            {w.media.kind === 'images' && (
+              <div class="rw__imgs">{w.media.images.map((im) => <img src={im.src} width={im.w} height={im.h} alt={im.alt[lang]} loading="lazy" decoding="async" />)}</div>
+            )}
+          </div>
+          <div class="rw__text">
+            <p class:list={['rw__client', { latin: !(lang === 'ar' && w.clientAr) }]}>{lang === 'ar' && w.clientAr ? w.clientAr : w.client}</p>
+            <h3 class="rw__name">{w.title[lang]}</h3>
+            <p class="rw__summary">{iso(w.summary[lang]).map((part, i) => (i % 2 ? <bdi class="latin" lang="en">{part}</bdi> : part))}</p>
+            <dl class="rw__facts">
+              <div><dt>{d.client}</dt><dd>{lang === 'ar' && w.clientAr ? w.clientAr : w.client} · {w.sector[lang]}</dd></div>
+              <div><dt>{d.format}</dt><dd>{w.format[lang]}</dd></div>
+            </dl>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+)}
+<script>
+  // Play muted videos only while at least half visible; respect reduced motion.
+  const vids = document.querySelectorAll<HTMLVideoElement>('video[data-autoplay-in-view]');
+  if (vids.length && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      const v = e.target as HTMLVideoElement;
+      if (e.isIntersecting) { v.preload = 'auto'; v.play().catch(() => {}); } else v.pause();
+    }), { threshold: 0.5 });
+    vids.forEach((v) => io.observe(v));
+  }
+</script>
+<style>
+  .rw { border-top: 1px solid var(--line); }
+  .rw__head { display: grid; gap: var(--s-4); max-width: 900px; }
+  .rw .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .rw__title { font-size: var(--fs-h1); letter-spacing: var(--track-tight); line-height: var(--lh-head); }
+  .rw__intro { color: var(--text); font-size: var(--fs-lead); max-width: 48ch; }
+  .rw__list { display: grid; gap: var(--s-9); margin-top: var(--s-8); }
+  .rw__item { display: grid; gap: var(--s-6); align-items: center; }
+  .rw__media { justify-self: center; width: min(100%, 420px); }
+  .rw__video { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; background: var(--surface); }
+  .rw__imgs img { display: block; width: 100%; height: auto; background: var(--surface); }
+  .rw__item--wide .rw__media { width: 100%; }
+  .rw__text { display: grid; gap: var(--s-3); align-content: start; }
+  .rw__client { font-size: var(--fs-small); font-weight: 700; color: var(--accent-text); }
+  .rw__name { font-size: var(--fs-h2); letter-spacing: var(--track-tight); }
+  .rw__summary { font-size: var(--fs-lead); line-height: 1.55; color: var(--text); max-width: 44ch; }
+  .rw__facts { display: grid; gap: var(--s-3); margin-top: var(--s-3); padding-top: var(--s-4); border-top: 1px solid var(--line); }
+  .rw__facts dt { font-size: var(--fs-eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--text-muted); font-weight: 500; }
+  :global([dir='rtl']) .rw__facts dt { text-transform: none; letter-spacing: 0; font-size: var(--fs-caption); }
+  .rw__facts dd { font-size: var(--fs-small); margin-top: 2px; }
+  @media (min-width: 1024px) {
+    .rw__item { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
+    .rw__media { grid-column: 1 / span 5; justify-self: stretch; width: 100%; max-width: 460px; }
+    .rw__text { grid-column: 7 / -1; }
+    .rw__item--wide .rw__media { grid-column: 1 / span 7; max-width: none; }
+    .rw__item--wide .rw__text { grid-column: 9 / -1; }
+  }
+</style>
