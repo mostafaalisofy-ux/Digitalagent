@@ -47,10 +47,16 @@ type Logo = { src: string; w: number; h: number };
 /** `logoAr` = the client's official Arabic lockup, used on Arabic pages when supplied. */
 export interface Client { name: T; sector?: T; logo?: Logo; logoAr?: Logo; caseSlug?: string }
 export const CLIENTS: Client[] = [
+  { name: { en: 'Xiaomi', ar: 'شاومي' }, sector: { en: 'Consumer electronics', ar: 'إلكترونيات استهلاكية' } }, // logo file pending
+  { name: { en: 'GIG', ar: 'جي آي جي' }, sector: { en: 'Insurance', ar: 'تأمين' } }, // logo file pending
   { name: { en: 'Chery Saudi', ar: 'شيري السعودية' }, sector: { en: 'Automotive', ar: 'سيارات' } }, // logo file pending
   { name: { en: 'JORA', ar: 'JORA' }, sector: { en: 'Restaurants · Street food', ar: 'مطاعم · أكل شارع' } }, // logo file pending
   { name: { en: 'Al Bustan', ar: 'البستان' }, sector: { en: 'Food · Nuts', ar: 'أغذية · مكسرات' } }, // logo file pending
   { name: { en: 'niimee', ar: 'niimee' }, sector: { en: 'Fashion', ar: 'أزياء' } }, // logo file pending
+  { name: { en: 'METRO', ar: 'مترو' }, sector: { en: 'Food products', ar: 'منتجات غذائية' } }, // logo file pending
+  { name: { en: 'Clean Basket', ar: 'كلين باسكت' }, sector: { en: 'Cleaning services', ar: 'خدمات تنظيف' },
+    logo: { src: '/clients/cleanbasket-en.webp', w: 900, h: 387 }, logoAr: { src: '/clients/cleanbasket-ar.webp', w: 900, h: 454 } },
+  { name: { en: 'Zahid Electra', ar: 'زاهد إلكترا' }, logo: { src: '/clients/zahid-electra.webp', w: 900, h: 277 } },
   { name: { en: 'Arhab', ar: 'أرحب' }, logo: { src: '/clients/arhab.svg', w: 858, h: 629 } },
   { name: { en: 'Tech Hive', ar: 'خلية التكنولوجيا' }, sector: { en: 'Electronics retail', ar: 'تجزئة إلكترونيات' },
     logo: { src: '/clients/techhive-en.webp', w: 478, h: 294 }, logoAr: { src: '/clients/techhive-ar.webp', w: 478, h: 280 } },

@@ -70,6 +70,7 @@ const iso = (text: string) => lang === 'ar' ? text.split(/([A-Za-z][A-Za-z0-9 .,
   .rw__cap { margin-top: var(--s-3); font-size: var(--fs-caption); color: var(--text-muted); }
   .rw__imgs { display: grid; gap: var(--s-3); }
   .rw__imgs:has(> img:nth-child(2)) { grid-template-columns: 1fr 1fr; }
+  .rw__imgs:has(> img:nth-child(3)) > img:first-child { grid-column: 1 / -1; }
   .rw__imgs img { display: block; width: 100%; height: auto; background: var(--surface); }
   .rw__item--wide .rw__media { width: 100%; }
   .rw__text { display: grid; gap: var(--s-3); align-content: start; }
