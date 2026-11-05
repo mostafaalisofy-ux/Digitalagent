@@ -25,6 +25,23 @@ export const SAYTAMM_WORK: StWork[] = [
     ] },
   },
   {
+    slug: 'chery-saudi-models',
+    client: 'Chery Saudi', clientAr: 'شيري السعودية',
+    sector: { en: 'Automotive', ar: 'سيارات' },
+    title: { en: 'Model posts and launch teasers', ar: 'بوستات الطرازات وتشويق الإطلاق' },
+    summary: {
+      en: 'Posts for Chery Saudi’s Tiggo 9, Tiggo 8 and Arrizo 6, each built on one short Arabic line, plus a “Coming soon” teaser set against the Riyadh skyline.',
+      ar: 'بوستات لطرازات Tiggo 9 وTiggo 8 وArrizo 6 من شيري السعودية، كل منها مبني على جملة عربية قصيرة، مع بوست تشويقي «Coming Soon» أمام أفق الرياض.',
+    },
+    format: { en: 'Social media posts · 3:4', ar: 'بوستات لمنصات التواصل · 3:4' },
+    media: { kind: 'images', images: [
+      { src: '/work/chery-launch-1.webp', w: 750, h: 1000, alt: { en: 'Chery Saudi post: a Saudi family around a green Tiggo 9 seen from above, headline “A beginning we grow into with you”', ar: 'بوست شيري السعودية: عائلة سعودية حول Tiggo 9 خضراء من الأعلى، وعنوان «بداية نكبر فيها معكم»' } },
+      { src: '/work/chery-launch-2.webp', w: 750, h: 1000, alt: { en: 'Chery Saudi post: a green SUV on an elevated road at sunrise, headline “Limitless progress”', ar: 'بوست شيري السعودية: سيارة SUV خضراء على طريق مرتفع وقت الشروق، وعنوان «تطور بلا حدود»' } },
+      { src: '/work/chery-launch-3.webp', w: 750, h: 1000, alt: { en: 'Chery Saudi post: a black Arrizo 6 in a concrete courtyard with a diagonal shaft of light, headline “A presence completed by you”', ar: 'بوست شيري السعودية: Arrizo 6 سوداء في فناء خرساني مع شعاع ضوء مائل، وعنوان «حضور يكتمل بوجودكم»' } },
+      { src: '/work/chery-launch-4.webp', w: 750, h: 1000, alt: { en: 'Chery Saudi teaser: a Tiggo 8 on a rooftop facing the Riyadh skyline at dusk, line “Coming soon”', ar: 'بوست تشويقي من شيري السعودية: Tiggo 8 على سطح مقابل أفق الرياض وقت الغروب، وعبارة «Coming Soon»' } },
+    ] },
+  },
+  {
     slug: 'chery-saudi-trust',
     client: 'Chery Saudi', clientAr: 'شيري السعودية',
     sector: { en: 'Automotive', ar: 'سيارات' },
