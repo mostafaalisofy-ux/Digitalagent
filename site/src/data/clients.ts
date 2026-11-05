@@ -45,27 +45,29 @@ export const visibleBrands = () => BRANDS.filter((b) => SITE.preview || b.permis
 // on a light tile — never recoloured or redrawn. Sector only where it is known (not guessed).
 type Logo = { src: string; w: number; h: number };
 /** `logoAr` = the client's official Arabic lockup, used on Arabic pages when supplied. */
-export interface Client { name: T; sector?: T; logo?: Logo; logoAr?: Logo; caseSlug?: string }
+// tile: background behind a logo that was supplied on its own brand colour (never recoloured); fill: logo artwork covers the whole tile
+export interface Client { name: T; sector?: T; logo?: Logo; logoAr?: Logo; tile?: string; fill?: boolean; caseSlug?: string }
 export const CLIENTS: Client[] = [
-  { name: { en: 'Xiaomi', ar: 'شاومي' }, sector: { en: 'Consumer electronics', ar: 'إلكترونيات استهلاكية' } }, // logo file pending
+  { name: { en: 'Xiaomi', ar: 'شاومي' }, sector: { en: 'Consumer electronics', ar: 'إلكترونيات استهلاكية' }, logo: { src: '/clients/xiaomi.svg', w: 512, h: 512 } },
   { name: { en: 'GIG', ar: 'جي آي جي' }, sector: { en: 'Insurance', ar: 'تأمين' } }, // logo file pending
-  { name: { en: 'Chery Saudi', ar: 'شيري السعودية' }, sector: { en: 'Automotive', ar: 'سيارات' } }, // logo file pending
+  { name: { en: 'Chery Saudi', ar: 'شيري السعودية' }, sector: { en: 'Automotive', ar: 'سيارات' }, logo: { src: '/clients/chery.svg', w: 500, h: 192 } },
   { name: { en: 'JORA', ar: 'JORA' }, sector: { en: 'Restaurants · Street food', ar: 'مطاعم · أكل شارع' } }, // logo file pending
   { name: { en: 'Al Bustan', ar: 'البستان' }, sector: { en: 'Food · Nuts', ar: 'أغذية · مكسرات' } }, // logo file pending
-  { name: { en: 'niimee', ar: 'niimee' }, sector: { en: 'Fashion', ar: 'أزياء' } }, // logo file pending
-  { name: { en: 'K.S Furniture', ar: 'K.S للأثاث' }, sector: { en: 'Furniture · E-commerce', ar: 'أثاث · تجارة إلكترونية' } }, // logo file pending
-  { name: { en: 'Fatora Plus', ar: 'فاتورة بلس' }, sector: { en: 'Invoicing software', ar: 'برامج الفوترة' } }, // logo file pending
-  { name: { en: 'Siyaq', ar: 'سياق' }, sector: { en: 'Content platform', ar: 'منصة محتوى' } }, // logo file pending
+  { name: { en: 'niimee', ar: 'niimee' }, sector: { en: 'Fashion', ar: 'أزياء' }, logo: { src: '/clients/niimee.webp', w: 581, h: 149 } },
+  { name: { en: 'K.S Furniture', ar: 'K.S للأثاث' }, sector: { en: 'Furniture · E-commerce', ar: 'أثاث · تجارة إلكترونية' }, logo: { src: '/clients/ks.webp', w: 525, h: 513 } },
+  { name: { en: 'Fatora Plus', ar: 'فاتورة بلس' }, sector: { en: 'Invoicing software', ar: 'برامج الفوترة' }, logo: { src: '/clients/fatora.webp', w: 900, h: 264 }, tile: '#052249' },
+  { name: { en: 'Siyaq', ar: 'سياق' }, sector: { en: 'Content platform', ar: 'منصة محتوى' }, logo: { src: '/clients/siyaq.webp', w: 900, h: 397 } },
   { name: { en: 'Exodus Travel', ar: 'Exodus Travel' }, sector: { en: 'Travel', ar: 'سفر وسياحة' } }, // logo file pending
   { name: { en: 'Beauty Lab', ar: 'بيوتي لاب' }, sector: { en: 'Natural cosmetics', ar: 'مستحضرات تجميل طبيعية' } }, // logo file pending
-  { name: { en: 'METRO', ar: 'مترو' }, sector: { en: 'Food products', ar: 'منتجات غذائية' } }, // logo file pending
+  { name: { en: 'Kheir Zaman', ar: 'خير زمان' }, sector: { en: 'Supermarkets', ar: 'سوبر ماركت' }, logo: { src: '/clients/kheir-zaman.webp', w: 192, h: 192 } },
+  { name: { en: 'METRO', ar: 'مترو' }, sector: { en: 'Food products', ar: 'منتجات غذائية' }, logo: { src: '/clients/metro.webp', w: 512, h: 108 }, tile: '#021126' },
   { name: { en: 'Clean Basket', ar: 'كلين باسكت' }, sector: { en: 'Cleaning services', ar: 'خدمات تنظيف' },
     logo: { src: '/clients/cleanbasket-en.webp', w: 900, h: 387 }, logoAr: { src: '/clients/cleanbasket-ar.webp', w: 900, h: 454 } },
   { name: { en: 'Zahid Electra', ar: 'الزاهد إلكترا' }, sector: { en: 'Home appliances', ar: 'أجهزة منزلية' }, logo: { src: '/clients/zahid-electra.webp', w: 900, h: 277 } },
-  { name: { en: 'MIX', ar: 'مكس' }, sector: { en: 'Events', ar: 'تنظيم فعاليات' } }, // logo file pending
-  { name: { en: 'Alqimma Equipment', ar: 'معدات القمة' }, sector: { en: 'Equipment', ar: 'معدات' } }, // logo file pending
+  { name: { en: 'MIX', ar: 'مكس' }, sector: { en: 'Events', ar: 'تنظيم فعاليات' }, logo: { src: '/clients/mix.webp', w: 320, h: 320 }, fill: true },
+  { name: { en: 'Alqimma Equipment', ar: 'معدات القمة' }, sector: { en: 'Equipment', ar: 'معدات' }, logo: { src: '/clients/alqimma.webp', w: 619, h: 166 } },
   { name: { en: 'BITUMAT', ar: 'BITUMAT' }, sector: { en: 'Building materials', ar: 'مواد البناء' }, logo: { src: '/clients/bitumat.webp', w: 900, h: 349 } },
-  { name: { en: 'ALTOPIANO', ar: 'التبيانو' }, sector: { en: 'Restaurants · Italian', ar: 'مطاعم · إيطالي' } }, // logo file pending
+  { name: { en: 'ALTOPIANO', ar: 'التبيانو' }, sector: { en: 'Restaurants · Italian', ar: 'مطاعم · إيطالي' }, logo: { src: '/clients/altopiano.webp', w: 502, h: 60 }, tile: '#050504' },
   { name: { en: 'Arhab', ar: 'أرحب' }, sector: { en: 'Ride booking app', ar: 'تطبيق حجز رحلات' }, logo: { src: '/clients/arhab.svg', w: 858, h: 629 } },
   { name: { en: 'Tech Hive', ar: 'خلية التكنولوجيا' }, sector: { en: 'Electronics retail', ar: 'تجزئة إلكترونيات' },
     logo: { src: '/clients/techhive-en.webp', w: 478, h: 294 }, logoAr: { src: '/clients/techhive-ar.webp', w: 478, h: 280 } },

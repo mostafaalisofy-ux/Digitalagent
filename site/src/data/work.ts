@@ -25,6 +25,39 @@ export const SAYTAMM_WORK: StWork[] = [
     ] },
   },
   {
+    slug: 'niimee-your-size',
+    client: 'niimee',
+    sector: { en: 'Fashion', ar: 'أزياء' },
+    title: { en: 'Your size. Your style.', ar: 'Your size. Your style.' },
+    summary: {
+      en: 'A campaign look for niimee built on one promise — Your size. Your style. — with quiet, editorial layouts in warm neutrals, the brand line “Simple. Real. Yours.” and four product cues: made for every body, premium fabrics, timeless designs, made for you.',
+      ar: 'إطلالة حملة لعلامة niimee مبنية على وعد واحد — Your size. Your style. — بتصاميم هادئة بأسلوب المجلات وألوان دافئة محايدة، مع شعار العلامة «Simple. Real. Yours.» وأربع رسائل للمنتج: لكل الأجسام، وخامات مميزة، وتصاميم لا تبلى، ومصمم لك.',
+    },
+    format: { en: 'Campaign visuals · 1:1 and 2:3', ar: 'تصاميم حملة · 1:1 و2:3' },
+    media: { kind: 'images', images: [
+      { src: '/work/niimee-visual-1.webp', w: 666, h: 1000, alt: { en: 'niimee visual: a woman in a blue printed dress in a Diriyah courtyard, headline “Your size. Your style.”', ar: 'تصميم niimee: سيدة بفستان أزرق منقوش في فناء بالدرعية، وعنوان «Your size. Your style.»' } },
+      { src: '/work/niimee-visual-2.webp', w: 1000, h: 1000, alt: { en: 'niimee visual: a woman in a cream tee and wide trousers on a curved sofa, with four product icons', ar: 'تصميم niimee: سيدة بتيشيرت كريمي وبنطلون واسع على أريكة منحنية، مع أربع أيقونات للمنتج' } },
+      { src: '/work/niimee-visual-3.webp', w: 1000, h: 1000, alt: { en: 'niimee visual: a man in a cream tee leaning on a sunlit wall, line “Made for every day. Made for you.”', ar: 'تصميم niimee: رجل بتيشيرت كريمي يستند إلى جدار مشمس، وعبارة «Made for every day. Made for you.»' } },
+    ] },
+  },
+  {
+    slug: 'bitumat-posts',
+    client: 'BITUMAT',
+    sector: { en: 'Building materials', ar: 'مواد البناء' },
+    title: { en: 'Posts for a building-materials brand', ar: 'بوستات لعلامة مواد بناء' },
+    summary: {
+      en: 'Social posts for BITUMAT in its blue and yellow: waterproofing crews at work under “Engineered for efficiency, built to last”, the brand’s Saudi roots and Italian know-how, its quality certification, and a breast-cancer awareness post for October.',
+      ar: 'بوستات سوشيال لـ BITUMAT بلونيها الأزرق والأصفر: فرق عزل أثناء العمل تحت عبارة «Engineered for Efficiency, Built to Last»، وجذور العلامة السعودية مع الخبرة الإيطالية، وشهادة الجودة، وبوست توعية بسرطان الثدي في أكتوبر.',
+    },
+    format: { en: 'Social media posts · 4:5', ar: 'بوستات لمنصات التواصل · 4:5' },
+    media: { kind: 'images', images: [
+      { src: '/work/bitumat-1.webp', w: 800, h: 1000, alt: { en: 'BITUMAT post: three workers laying a waterproofing membrane on a city rooftop, headline “Engineered for efficiency, built to last”', ar: 'بوست BITUMAT: ثلاثة عمال يفرشون طبقة عزل على سطح مبنى في مدينة، وعنوان «Engineered for Efficiency, Built to Last»' } },
+      { src: '/work/bitumat-2.webp', w: 800, h: 1000, alt: { en: 'BITUMAT post: Riyadh and Makkah landmarks drawn beside the Colosseum and the Tower of Pisa, headline “Rooted in KSA, globally innovated by Italy”', ar: 'بوست BITUMAT: معالم الرياض ومكة مرسومة بجانب الكولوسيوم وبرج بيزا، وعنوان «Rooted in KSA, Globally Innovated by Italy»' } },
+      { src: '/work/bitumat-3.webp', w: 800, h: 1000, alt: { en: 'BITUMAT post: three engineers with a clipboard in a factory, headline about ISO 9001:2015 certification', ar: 'بوست BITUMAT: ثلاثة مهندسين يراجعون لوحاً في مصنع، وعنوان عن شهادة ISO 9001:2015' } },
+      { src: '/work/bitumat-4.webp', w: 800, h: 1000, alt: { en: 'BITUMAT post: three women with pink ribbons, headline “We care & think pink this October”', ar: 'بوست BITUMAT: ثلاث سيدات بشرائط وردية، وعنوان «We care & think pink This October»' } },
+    ] },
+  },
+  {
     slug: 'chery-saudi-models',
     client: 'Chery Saudi', clientAr: 'شيري السعودية',
     sector: { en: 'Automotive', ar: 'سيارات' },
@@ -284,3 +317,16 @@ export const SAYTAMM_WORK: StWork[] = [
     ] },
   },
 ];
+
+// Deliverable types, used by the filterable wall on /work/
+export type WorkTag = 'social' | 'banner' | 'identity' | 'packaging' | 'video';
+export const WORK_TAGS: Record<string, WorkTag[]> = {
+  'jora-identity': ['identity'], 'chery-saudi-models': ['social'], 'chery-saudi-trust': ['social'],
+  'zahid-electra-appliances': ['social'], 'beauty-lab-packaging': ['packaging'], 'metro-food': ['social', 'packaging'],
+  'cleanbasket-identity': ['identity'], 'arhab-app': ['social', 'banner'], 'altopiano-posts': ['social'],
+  'mix-events': ['social'], 'alqimma-founding-day': ['social'], 'fatora-plus-posts': ['social'],
+  'ks-furniture-offer': ['social'], 'siyaq-post': ['social'], 'exodus-travel-post': ['social'],
+  'niimee-posts': ['social'], 'niimee-your-size': ['social'], 'bitumat-posts': ['social'], 'niimee-the-dot': ['video'], 'tech-hive-banner': ['banner'],
+};
+/** Cover image of a project: first image, or the video poster */
+export const coverOf = (w: StWork) => w.media.kind === 'video' ? { src: w.media.poster, w: w.media.w, h: w.media.h } : w.media.images[0];

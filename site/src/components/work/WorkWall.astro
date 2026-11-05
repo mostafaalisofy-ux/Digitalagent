@@ -1,0 +1,235 @@
+---
+// /work/: every piece SayTamm delivered for its clients, as a filterable wall.
+// Each card opens a native <dialog> viewer with the full project (all images or the video,
+// summary, format). Deep links (#w-slug) open the viewer directly, e.g. from the home wall.
+// Without JS: cards are anchors to in-page sections, and every project is readable.
+import { SAYTAMM_WORK, WORK_TAGS, coverOf, type WorkTag } from '../../data/work';
+import { type Lang } from '../../config/site';
+import { h } from '../../i18n/home';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = h(lang).recent;
+const name = (w: (typeof SAYTAMM_WORK)[number]) => (lang === 'ar' && w.clientAr ? w.clientAr : w.client);
+const iso = (text: string) => lang === 'ar' ? text.split(/([A-Za-z][A-Za-z0-9 .,'’&:-]*[A-Za-z0-9.])/) : [text];
+const tags: ('all' | WorkTag)[] = ['all', 'social', 'banner', 'identity', 'packaging', 'video'];
+const used = new Set(Object.values(WORK_TAGS).flat());
+const filters = tags.filter((t) => t === 'all' || used.has(t));
+const count = (t: string) => t === 'all' ? SAYTAMM_WORK.length : SAYTAMM_WORK.filter((w) => (WORK_TAGS[w.slug] ?? []).includes(t as WorkTag)).length;
+---
+<section class="section ww" id="saytamm-work" aria-labelledby="ww-title">
+  <div class="container">
+    <header class="ww__head">
+      <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
+      <h2 class="ww__title" id="ww-title" data-reveal>{d.wallTitle}</h2>
+      <p class="ww__intro" data-reveal>{d.wallIntro}</p>
+    </header>
+
+    <div class="ww__filters" role="group" aria-label={d.filterLabel} hidden data-ww-filters>
+      {filters.map((t, i) => (
+        <button type="button" class="ww__chip" aria-pressed={i === 0 ? 'true' : 'false'} data-filter={t}>
+          {d.filters[t]}<bdi class="num latin ww__n">{count(t)}</bdi>
+        </button>
+      ))}
+    </div>
+
+    <ul role="list" class="ww__grid" data-ww-grid>
+      {SAYTAMM_WORK.map((w, i) => {
+        const c = coverOf(w);
+        const n = w.media.kind === 'images' ? w.media.images.length : 1;
+        return (
+          <li class="ww__card" data-tags={(WORK_TAGS[w.slug] ?? []).join(' ')} style={`--i:${i % 6}`}>
+            <a href={`#w-${w.slug}`} class="ww__open" data-open={w.slug} aria-label={`${d.open}: ${name(w)} — ${w.title[lang]}`}>
+              <span class="ww__frame">
+                <img src={c.src} width={c.w} height={c.h} alt="" loading="lazy" decoding="async" />
+                {w.media.kind === 'video' && <span class="ww__play" aria-hidden="true"></span>}
+                {n > 1 && <span class="ww__stack num latin" aria-hidden="true">+{n - 1}</span>}
+              </span>
+              <span class="ww__meta">
+                <span class:list={['ww__client', { latin: !(lang === 'ar' && w.clientAr) }]}>{name(w)}</span>
+                <span class="ww__name">{w.title[lang]}</span>
+              </span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+
+    {/* Full projects: readable sections without JS; inside <dialog>s with JS */}
+    <div class="ww__projects">
+      {SAYTAMM_WORK.map((w, i) => {
+        const prev = SAYTAMM_WORK[(i - 1 + SAYTAMM_WORK.length) % SAYTAMM_WORK.length];
+        const next = SAYTAMM_WORK[(i + 1) % SAYTAMM_WORK.length];
+        return (
+          <dialog class="ww__dlg" id={`w-${w.slug}`} aria-labelledby={`wt-${w.slug}`} data-slug={w.slug}>
+            <div class="ww__dlg-in">
+              <div class="ww__bar">
+                <span class="ww__pos num latin" aria-hidden="true">{String(i + 1).padStart(2, '0')} / {String(SAYTAMM_WORK.length).padStart(2, '0')}</span>
+                <span class="ww__nav">
+                  <button type="button" class="ww__btn ww__btn--prev" data-go={prev.slug} aria-label={`${d.prev}: ${name(prev)}`}><span aria-hidden="true">←</span></button>
+                  <button type="button" class="ww__btn ww__btn--next" data-go={next.slug} aria-label={`${d.next}: ${name(next)}`}><span aria-hidden="true">→</span></button>
+                  <button type="button" class="ww__btn ww__close" data-close aria-label={d.close}><span aria-hidden="true">×</span></button>
+                </span>
+              </div>
+              <div class="ww__body">
+                <div class:list={['ww__media', { 'ww__media--many': w.media.kind === 'images' && w.media.images.length > 1 }]}>
+                  {w.media.kind === 'video' ? (
+                    <video src={w.media.src} poster={w.media.poster} width={w.media.w} height={w.media.h} muted loop playsinline controls preload="none" aria-label={`${name(w)} — ${w.title[lang]}`}></video>
+                  ) : w.media.images.map((im) => (
+                    <img src={im.src} width={im.w} height={im.h} alt={im.alt[lang]} loading="lazy" decoding="async" />
+                  ))}
+                </div>
+                <div class="ww__text">
+                  <p class:list={['ww__client', { latin: !(lang === 'ar' && w.clientAr) }]}>{name(w)}</p>
+                  <h3 class="ww__h" id={`wt-${w.slug}`}>{w.title[lang]}</h3>
+                  <p class="ww__summary">{iso(w.summary[lang]).map((part, k) => (k % 2 ? <bdi class="latin" lang="en">{part}</bdi> : part))}</p>
+                  <dl class="ww__facts">
+                    <div><dt>{d.client}</dt><dd>{name(w)} · {w.sector[lang]}</dd></div>
+                    <div><dt>{d.format}</dt><dd>{w.format[lang]}</dd></div>
+                    {w.media.kind === 'images' && w.media.caption && <div><dt>{d.note}</dt><dd>{w.media.caption[lang]}</dd></div>}
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </dialog>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.ww');
+  if (root && 'HTMLDialogElement' in window) {
+    root.classList.add('ww--js');
+    const dlgs = root.querySelectorAll<HTMLDialogElement>('dialog.ww__dlg');
+    let opener: HTMLElement | null = null;
+    const stopVideos = () => root.querySelectorAll('dialog video').forEach((v) => (v as HTMLVideoElement).pause());
+    const open = (slug: string, push = true) => {
+      const dlg = root.querySelector<HTMLDialogElement>(`#w-${CSS.escape(slug)}`);
+      if (!dlg) return;
+      dlgs.forEach((x) => x.open && x !== dlg && x.close());
+      stopVideos();
+      if (!dlg.open) dlg.showModal();
+      dlg.querySelector<HTMLElement>('.ww__body')?.scrollTo({ top: 0 });
+      const v = dlg.querySelector('video');
+      if (v && !matchMedia('(prefers-reduced-motion: reduce)').matches) { v.preload = 'auto'; v.play().catch(() => {}); }
+      if (push) history.replaceState(null, '', `#w-${slug}`);
+    };
+    root.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement;
+      const a = t.closest<HTMLElement>('[data-open]');
+      if (a) { e.preventDefault(); opener = a; open(a.dataset.open!); return; }
+      const go = t.closest<HTMLElement>('[data-go]');
+      if (go) { open(go.dataset.go!); return; }
+      if (t.closest('[data-close]')) { (t.closest('dialog') as HTMLDialogElement).close(); return; }
+      // click on the backdrop (outside the panel) closes
+      if (t instanceof HTMLDialogElement) t.close();
+    });
+    dlgs.forEach((dlg) => {
+      dlg.addEventListener('close', () => {
+        stopVideos();
+        if (![...dlgs].some((x) => x.open)) {
+          history.replaceState(null, '', location.pathname + location.search);
+          const card = root.querySelector<HTMLElement>(`[data-open="${dlg.dataset.slug}"]`);
+          (card ?? opener)?.focus({ preventScroll: false });
+        }
+      });
+      dlg.addEventListener('keydown', (e) => {
+        const rtl = document.dir === 'rtl';
+        const back = rtl ? 'ArrowRight' : 'ArrowLeft', fwd = rtl ? 'ArrowLeft' : 'ArrowRight';
+        if (e.key === back) dlg.querySelector<HTMLElement>('.ww__btn--prev')?.click();
+        if (e.key === fwd) dlg.querySelector<HTMLElement>('.ww__btn--next')?.click();
+      });
+    });
+    // filters
+    const bar = root.querySelector<HTMLElement>('[data-ww-filters]');
+    if (bar) {
+      bar.hidden = false;
+      bar.addEventListener('click', (e) => {
+        const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-filter]');
+        if (!b) return;
+        const f = b.dataset.filter!;
+        bar.querySelectorAll('[data-filter]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        root.querySelectorAll<HTMLElement>('.ww__card').forEach((c) => {
+          c.hidden = f !== 'all' && !(c.dataset.tags ?? '').split(' ').includes(f);
+        });
+      });
+    }
+    // deep link
+    const m = location.hash.match(/^#w-(.+)$/);
+    if (m) requestAnimationFrame(() => open(decodeURIComponent(m[1]), false));
+  }
+</script>
+
+<style>
+  .ww { border-top: 1px solid var(--line); }
+  .ww__head { display: grid; gap: var(--s-4); max-width: 900px; }
+  .ww .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .ww__title { font-size: var(--fs-h1); letter-spacing: var(--track-tight); line-height: var(--lh-head); }
+  .ww__intro { color: var(--text); font-size: var(--fs-lead); max-width: 52ch; }
+
+  .ww__filters { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-7); }
+  .ww__filters[hidden] { display: none; }
+  .ww__chip { display: inline-flex; align-items: center; gap: var(--s-2); min-height: 44px; padding: 0 var(--s-4); border: 1px solid var(--line-strong); background: transparent; color: var(--text-strong); font: inherit; font-size: var(--fs-small); font-weight: 500; cursor: pointer; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%); transition: background var(--d-1), border-color var(--d-1); }
+  :global([dir='rtl']) .ww__chip { clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px); }
+  .ww__chip:hover { border-color: var(--accent); }
+  .ww__chip[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .ww__n { font-size: var(--fs-caption); opacity: 0.75; }
+
+  /* masonry wall */
+  .ww__grid { columns: 2 160px; column-gap: var(--s-3); margin-top: var(--s-6); }
+  .ww__card { break-inside: avoid; margin-bottom: var(--s-3); }
+  .ww__card[hidden] { display: none; }
+  .ww__open { display: block; color: inherit; text-decoration: none; }
+  .ww__frame { position: relative; display: block; overflow: hidden; background: var(--surface); }
+  .ww__frame img { display: block; width: 100%; height: auto; transition: transform var(--d-4) var(--ease-out); }
+  .ww__frame::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 55%, rgb(108 53 255 / 0.55)); opacity: 0; transition: opacity var(--d-2) var(--ease-out); }
+  :global([dir='rtl']) .ww__frame::after { background: linear-gradient(225deg, transparent 55%, rgb(108 53 255 / 0.55)); }
+  .ww__open:hover .ww__frame img, .ww__open:focus-visible .ww__frame img { transform: scale(1.035); }
+  .ww__open:hover .ww__frame::after, .ww__open:focus-visible .ww__frame::after { opacity: 1; }
+  .ww__open:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+  .ww__stack { position: absolute; inset-block-start: var(--s-2); inset-inline-end: var(--s-2); padding: 2px var(--s-2); background: rgb(9 9 13 / 0.78); color: #fff; font-size: var(--fs-caption); font-weight: 600; z-index: 1; }
+  .ww__play { position: absolute; inset: 0; margin: auto; width: 56px; height: 56px; border-radius: 50%; background: rgb(9 9 13 / 0.72); z-index: 1; }
+  .ww__play::before { content: ''; position: absolute; inset: 0; margin: auto; width: 0; height: 0; border-block: 9px solid transparent; border-inline-start: 15px solid #fff; transform: translateX(2px); }
+  .ww__meta { display: grid; gap: 2px; padding-block: var(--s-2) var(--s-1); }
+  .ww__client { font-size: var(--fs-caption); font-weight: 700; color: var(--accent-text); }
+  .ww__name { font-size: var(--fs-small); color: var(--text-strong); font-weight: 500; line-height: 1.35; }
+  @media (min-width: 720px) { .ww__grid { columns: 3; } }
+  @media (min-width: 1200px) { .ww__grid { columns: 4; column-gap: var(--s-4); } .ww__card { margin-bottom: var(--s-4); } }
+
+  /* projects: in-flow sections without JS */
+  .ww__projects { margin-top: var(--s-9); display: grid; gap: var(--s-9); }
+  .ww__dlg { display: block; position: static; border: 0; padding: 0; margin: 0; background: transparent; color: inherit; max-width: none; width: auto; }
+  .ww--js .ww__projects { margin: 0; display: contents; }
+  .ww--js .ww__dlg { display: none; }
+  .ww--js .ww__dlg[open] { display: block; position: fixed; inset: 0; width: 100%; height: 100%; max-height: none; background: transparent; }
+  .ww__dlg::backdrop { background: rgb(9 9 13 / 0.86); backdrop-filter: blur(6px); }
+  .ww--js .ww__dlg-in { position: absolute; inset: var(--s-3); max-width: 1320px; margin: auto; display: grid; grid-template-rows: auto 1fr; background: var(--bg); border: 1px solid var(--line-strong); overflow: hidden; }
+  .ww__bar { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: var(--s-2) var(--s-3); border-bottom: 1px solid var(--line); }
+  .ww:not(.ww--js) .ww__bar { display: none; }
+  .ww__pos { font-size: var(--fs-caption); color: var(--text-muted); letter-spacing: 0.08em; }
+  .ww__nav { display: flex; gap: var(--s-1); }
+  .ww__btn { inline-size: 44px; block-size: 44px; display: grid; place-items: center; border: 1px solid var(--line-strong); background: transparent; color: var(--text-strong); font-size: 1.25rem; cursor: pointer; }
+  .ww__btn:hover { border-color: var(--accent); background: var(--accent); color: #fff; }
+  :global([dir='rtl']) .ww__btn--prev span, :global([dir='rtl']) .ww__btn--next span { display: inline-block; transform: scaleX(-1); }
+  .ww__body { overflow-y: auto; display: grid; gap: var(--s-6); padding: var(--s-4); align-content: start; }
+  .ww__media { display: grid; gap: var(--s-3); }
+  .ww__media--many { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+  .ww__media img, .ww__media video { display: block; width: 100%; height: auto; background: var(--surface); }
+  .ww__media video { max-width: 460px; margin-inline: auto; }
+  .ww__text { display: grid; gap: var(--s-3); align-content: start; }
+  .ww__h { font-size: var(--fs-h2); letter-spacing: var(--track-tight); }
+  .ww__summary { font-size: var(--fs-lead); line-height: 1.55; color: var(--text); max-width: 46ch; }
+  .ww__facts { display: grid; gap: var(--s-3); margin-top: var(--s-3); padding-top: var(--s-4); border-top: 1px solid var(--line); }
+  .ww__facts dt { font-size: var(--fs-eyebrow); text-transform: uppercase; letter-spacing: var(--track-eyebrow); color: var(--text-muted); font-weight: 500; }
+  :global([dir='rtl']) .ww__facts dt { text-transform: none; letter-spacing: 0; font-size: var(--fs-caption); }
+  .ww__facts dd { font-size: var(--fs-small); margin-top: 2px; }
+  @media (min-width: 1024px) {
+    .ww__body { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); padding: var(--s-6); gap: var(--s-7); }
+    .ww__text { position: sticky; top: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ww__frame img, .ww__frame::after { transition: none; }
+    .ww__open:hover .ww__frame img { transform: none; }
+  }
+</style>

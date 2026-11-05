@@ -1,0 +1,79 @@
+---
+// Home: two rows of client work drifting in opposite directions along the brand's motion line.
+// Each tile links to that project on /work/ (opens in the viewer). Pauses on hover/focus;
+// under reduced motion the rows become a static, swipeable strip.
+import { SAYTAMM_WORK, coverOf } from '../../data/work';
+import { type Lang } from '../../config/site';
+import { h } from '../../i18n/home';
+import { href } from '../../i18n/paths';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = h(lang).recent;
+// every image of every project, interleaved so neighbouring tiles are different clients
+const tiles = SAYTAMM_WORK.flatMap((w) => {
+  const imgs = w.media.kind === 'images' ? w.media.images : [coverOf(w)];
+  return imgs.slice(0, 2).map((im) => ({ slug: w.slug, client: lang === 'ar' && w.clientAr ? w.clientAr : w.client, src: im.src, w: im.w, h: im.h }));
+});
+const rowA = tiles.filter((_, i) => i % 2 === 0);
+const rowB = tiles.filter((_, i) => i % 2 === 1);
+const workHref = href(lang, 'work');
+---
+<section class="section wm" id="saytamm-work" aria-labelledby="wm-title">
+  <div class="container wm__head">
+    <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
+    <h2 class="wm__title" id="wm-title" data-reveal>{d.wallTitle}</h2>
+    <p class="wm__intro" data-reveal>{d.intro} <span class="wm__count"><bdi class="num latin">{SAYTAMM_WORK.length}</bdi> {lang === 'ar' ? 'مشروعاً' : 'projects'} · <bdi class="num latin">{new Set(SAYTAMM_WORK.map((w) => w.client)).size}</bdi> {lang === 'ar' ? 'عميلاً' : 'clients'}</span></p>
+  </div>
+  <div class="wm__stage">
+    {[rowA, rowB].map((row, r) => (
+      <div class:list={['wm__row', r ? 'wm__row--b' : 'wm__row--a']}>
+        <ul role="list" class="wm__track">
+          {[0, 1].map((copy) => row.map((t) => (
+            <li class="wm__tile" aria-hidden={copy ? 'true' : undefined}>
+              <a href={`${workHref}#w-${t.slug}`} tabindex={copy ? -1 : undefined} data-track="cta_click" data-cta-id={`wall_${t.slug}`} data-cta-location="home_wall">
+                <img src={t.src} width={t.w} height={t.h} alt={copy ? '' : `${t.client} — ${d.open}`} loading="lazy" decoding="async" />
+                <span class="wm__label">{t.client}</span>
+              </a>
+            </li>
+          )))}
+        </ul>
+      </div>
+    ))}
+  </div>
+  <div class="container wm__foot">
+    <a class="btn" href={`${workHref}#saytamm-work`} data-track="cta_click" data-cta-id="all_client_work" data-cta-location="home_wall">{d.all}<span class="arrow" aria-hidden="true"></span></a>
+  </div>
+</section>
+<style>
+  .wm { border-top: 1px solid var(--line); overflow: hidden; }
+  .wm__head { display: grid; gap: var(--s-4); max-width: 900px; }
+  .wm .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .wm__title { font-size: var(--fs-h1); letter-spacing: var(--track-tight); line-height: var(--lh-head); }
+  .wm__intro { color: var(--text); font-size: var(--fs-lead); max-width: 52ch; }
+  .wm__count { display: block; margin-top: var(--s-2); font-size: var(--fs-small); color: var(--accent-text); font-weight: 500; }
+  /* the stage is tilted on the brand diagonal, then each row slides along it */
+  .wm__stage { display: grid; gap: var(--s-3); margin-top: var(--s-8); transform: rotate(-4deg); margin-inline: -6vw; padding-block: var(--s-6); }
+  :global([dir='rtl']) .wm__stage { transform: rotate(4deg); }
+  .wm__row { overflow: hidden; }
+  .wm__track { display: flex; gap: var(--s-3); width: max-content; animation: wm-slide 90s linear infinite; }
+  .wm__row--b .wm__track { animation-direction: reverse; animation-duration: 110s; }
+  :global([dir='rtl']) .wm__track { animation-name: wm-slide-rtl; }
+  .wm__stage:hover .wm__track, .wm__stage:focus-within .wm__track { animation-play-state: paused; }
+  @keyframes wm-slide { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+  @keyframes wm-slide-rtl { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(50%, 0, 0); } }
+  .wm__tile a { position: relative; display: block; height: clamp(180px, 22vw, 300px); overflow: hidden; background: var(--surface); }
+  .wm__tile img { display: block; height: 100%; width: auto; transition: transform var(--d-3) var(--ease-out), filter var(--d-3) var(--ease-out); filter: saturate(0.85); }
+  .wm__tile a:hover img, .wm__tile a:focus-visible img { transform: scale(1.04); filter: none; }
+  .wm__tile a:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+  .wm__label { position: absolute; inset-inline-start: 0; inset-block-end: 0; padding: var(--s-1) var(--s-3); background: var(--accent); color: #fff; font-size: var(--fs-caption); font-weight: 600; transform: translate3d(0, 100%, 0); transition: transform var(--d-2) var(--ease-out); }
+  .wm__tile a:hover .wm__label, .wm__tile a:focus-visible .wm__label { transform: none; }
+  .wm__foot { margin-top: var(--s-7); }
+  @media (prefers-reduced-motion: reduce) {
+    .wm__stage, :global([dir='rtl']) .wm__stage { transform: none; margin-inline: 0; }
+    .wm__row { overflow-x: auto; scroll-snap-type: x mandatory; }
+    .wm__track { animation: none; }
+    .wm__tile { scroll-snap-align: start; }
+    .wm__tile[aria-hidden='true'] { display: none; }
+    .wm__label { transform: none; }
+  }
+</style>

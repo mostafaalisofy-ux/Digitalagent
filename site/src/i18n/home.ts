@@ -18,6 +18,9 @@ export const HOME = {
       eyebrow: 'SayTamm work', title: 'Latest work for our clients.',
       intro: 'Recent work SayTamm has delivered for its clients.',
       client: 'Client', format: 'Format', play: 'Play video', pause: 'Pause video', all: 'See all client work',
+      wallTitle: 'Made by SayTamm, for brands that move.', wallIntro: 'Posts, banners, identities and packaging SayTamm has delivered for its clients. Hover to pause; select any piece to see it in full.',
+      filterLabel: 'Filter work by type', filters: { all: 'All', social: 'Social posts', banner: 'Banners', identity: 'Identity', packaging: 'Packaging', video: 'Video' },
+      open: 'View project', close: 'Close', prev: 'Previous project', next: 'Next project', count: 'pieces', note: 'Note',
     },
     clients: {
       eyebrow: 'Our clients', title: 'Brands that work with SayTamm.',
@@ -130,6 +133,9 @@ export const HOME = {
       eyebrow: 'أعمال قول تم', title: 'أحدث أعمالنا لعملائنا.',
       intro: 'أعمال نفّذتها قول تم مؤخراً لعملائها.',
       client: 'العميل', format: 'الصيغة', play: 'تشغيل الفيديو', pause: 'إيقاف الفيديو', all: 'كل أعمالنا لعملائنا',
+      wallTitle: 'من تنفيذ قول تم، لعلامات تتحرك.', wallIntro: 'بوستات وبانرات وهويات وتغليف نفّذتها قول تم لعملائها. مرّر المؤشر للإيقاف، واختر أي عمل لتشاهده كاملاً.',
+      filterLabel: 'تصفية الأعمال حسب النوع', filters: { all: 'الكل', social: 'بوستات', banner: 'بانرات', identity: 'هوية بصرية', packaging: 'تغليف', video: 'فيديو' },
+      open: 'عرض المشروع', close: 'إغلاق', prev: 'المشروع السابق', next: 'المشروع التالي', count: 'عمل', note: 'ملاحظة',
     },
     clients: {
       eyebrow: 'عملاؤنا', title: 'علامات تعمل مع قول تم.',

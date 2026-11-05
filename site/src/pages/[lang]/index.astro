@@ -5,7 +5,7 @@ import Base from '../../layouts/Base.astro';
 import Hero from '../../components/home/Hero.astro';
 import SelectedWork from '../../components/home/SelectedWork.astro';
 import Clients from '../../components/home/Clients.astro';
-import RecentWork from '../../components/home/RecentWork.astro';
+import WorkMarquee from '../../components/home/WorkMarquee.astro';
 import Brands from '../../components/home/Brands.astro';
 import HomeServices from '../../components/home/HomeServices.astro';
 import Approach from '../../components/home/Approach.astro';
@@ -23,7 +23,7 @@ const d = t(lang);
   <Hero lang={lang} />
   <SelectedWork lang={lang} />
   <Clients lang={lang} />
-  <RecentWork lang={lang} limit={4} />
+  <WorkMarquee lang={lang} />
   <Brands lang={lang} />
   <HomeServices lang={lang} />
   <Approach lang={lang} />

@@ -19,7 +19,7 @@ const d = h(lang).clients;
     <ul role="list" class="cl__list" data-reveal-group>
       {CLIENTS.map((c, i) => (
         <li class="cl__item" style={`--delay:${Math.min(i, 8) * 60}ms`}>
-          <div class="cl__tile">
+          <div class:list={['cl__tile', { 'cl__tile--fill': c.fill }]} style={c.tile ? `background:${c.tile}` : undefined}>
             {(lang === 'ar' && c.logoAr) || c.logo
               ? (() => { const l = (lang === 'ar' && c.logoAr) || c.logo!; return <img src={l.src} width={l.w} height={l.h} alt={c.name[lang]} loading="lazy" decoding="async" />; })()
               : <span class="cl__word">{c.name[lang]}</span>}
@@ -46,6 +46,7 @@ const d = h(lang).clients;
   /* light tile so official logo colours read as intended (never recoloured for the dark theme) */
   .cl__tile { position: relative; display: grid; place-items: center; aspect-ratio: 3 / 2; width: 100%; background: var(--c-white); overflow: hidden; }
   .cl__tile img { position: absolute; inset: 16% 18%; width: 64%; height: 68%; object-fit: contain; }
+  .cl__tile--fill img { inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .cl__word { font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.25rem); font-weight: 700; color: var(--c-obsidian); letter-spacing: -0.02em; }
   :global([dir='rtl']) .cl__word { letter-spacing: 0; }
   .cl__name { font-size: var(--fs-small); font-weight: 500; color: var(--text-strong); }
