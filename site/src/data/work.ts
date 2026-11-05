@@ -121,6 +121,22 @@ export const SAYTAMM_WORK: StWork[] = [
     ] },
   },
   {
+    slug: 'arhab-app',
+    client: 'Arhab', clientAr: 'أرحب',
+    sector: { en: 'Ride booking app', ar: 'تطبيق حجز رحلات' },
+    title: { en: 'App posts and banners', ar: 'بوستات وبانرات التطبيق' },
+    summary: {
+      en: 'Posts and banners for the Arhab ride app, each built on one service: travel between Saudi cities, daily or monthly subscriptions, and booking ahead, with the app screen and store links in every piece.',
+      ar: 'بوستات وبانرات لتطبيق أرحب للرحلات، كل منها مبني على خدمة واحدة: التنقل بين مدن المملكة، والاشتراك باليوم أو بالشهر، والحجز المسبق، مع شاشة التطبيق وروابط المتاجر في كل تصميم.',
+    },
+    format: { en: 'Web banner · social media posts · 4:5', ar: 'بانر للموقع · بوستات لمنصات التواصل · 4:5' },
+    media: { kind: 'images', images: [
+      { src: '/work/arhab-1.webp', w: 1200, h: 675, alt: { en: 'Arhab banner: a driver on a Riyadh highway under signs to Riyadh, Dammam and Makkah, headline “We connect the Kingdom’s cities in one tap”', ar: 'بانر أرحب: سائق على طريق في الرياض تحت لوحات الرياض والدمام ومكة المكرمة، وعنوان «نربط مدن المملكة بضغطة واحدة»' } },
+      { src: '/work/arhab-2.webp', w: 800, h: 1000, alt: { en: 'Arhab post: a woman holding the app in front of the Riyadh skyline, headline “By the day or by the month? Arhab sorts it for you”', ar: 'بوست أرحب: سيدة تحمل التطبيق أمام أفق الرياض، وعنوان «باليوم أو بالشهر؟ أرحب يضبطها لك»' } },
+      { src: '/work/arhab-3.webp', w: 800, h: 1000, alt: { en: 'Arhab post: a family with suitcases beside a car and the app screen, headline “Book ahead, arrive on time”', ar: 'بوست أرحب: عائلة بحقائب سفر بجانب سيارة وشاشة التطبيق، وعنوان «مع الحجز المسبق نوصلك في الوقت المحدد»' } },
+    ] },
+  },
+  {
     slug: 'altopiano-posts',
     client: 'ALTOPIANO', clientAr: 'التبيانو',
     sector: { en: 'Restaurants · Italian', ar: 'مطاعم · إيطالي' },
