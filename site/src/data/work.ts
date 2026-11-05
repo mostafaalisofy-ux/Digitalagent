@@ -175,13 +175,14 @@ export const SAYTAMM_WORK: StWork[] = [
     sector: { en: 'Restaurants · Italian', ar: 'مطاعم · إيطالي' },
     title: { en: 'Food and venue posts', ar: 'بوستات الأطباق والمكان' },
     summary: {
-      en: 'Social posts for ALTOPIANO, an Italian restaurant: a new menu item, fresh pasta served at the table, and the restaurant’s façade at night, in a warm, low-light style with gold type.',
-      ar: 'بوستات سوشيال لمطعم التبيانو الإيطالي: طبق جديد في القائمة، وباستا طازجة تُقدَّم على الطاولة، وواجهة المطعم ليلاً، بأسلوب دافئ وإضاءة خافتة وخطوط ذهبية.',
+      en: 'Social posts for ALTOPIANO, an Italian restaurant: a new menu item, fresh pasta served at the table, the terrace at night and the restaurant’s façade, in a warm, low-light style with gold type.',
+      ar: 'بوستات سوشيال لمطعم التبيانو الإيطالي: طبق جديد في القائمة، وباستا طازجة تُقدَّم على الطاولة، والجلسة الخارجية ليلاً، وواجهة المطعم، بأسلوب دافئ وإضاءة خافتة وخطوط ذهبية.',
     },
     format: { en: 'Social media posts · 4:5', ar: 'بوستات لمنصات التواصل · 4:5' },
     media: { kind: 'images', images: [
       { src: '/work/altopiano-3.webp', w: 800, h: 1000, alt: { en: 'ALTOPIANO post: the restaurant’s lit façade and terrace at night, line “Whispers of timeless moments”', ar: 'بوست التبيانو: واجهة المطعم وجلساته الخارجية ليلاً، وعبارة «Whispers Of Timeless Moments»' } },
       { src: '/work/altopiano-1.webp', w: 800, h: 1000, alt: { en: 'ALTOPIANO post: salmon tartare on avocado on a wooden table, line “Menu new item alert”', ar: 'بوست التبيانو: تارتار سلمون على أفوكادو فوق طاولة خشبية، وعبارة «Menu new item alert»' } },
+      { src: '/work/altopiano-4.webp', w: 800, h: 1000, alt: { en: 'ALTOPIANO post: a glowing pyramid lamp with Arabic calligraphy beside a terrace table at night, headline “An atmosphere worth telling”', ar: 'بوست التبيانو: مصباح هرمي مضيء بخط عربي بجانب طاولة في الجلسة الخارجية ليلاً، وعنوان «أجواء تُروى»' } },
       { src: '/work/altopiano-2.webp', w: 800, h: 1000, alt: { en: 'ALTOPIANO post: a chef lifting tagliatelle from a bowl, headline “Unique moments with Italian magic”', ar: 'بوست التبيانو: شيف يرفع التالياتيلي من الطبق، وعنوان «لحظات فريدة بسحر إيطالي»' } },
     ] },
   },
@@ -212,6 +213,21 @@ export const SAYTAMM_WORK: StWork[] = [
     format: { en: 'Social media post · 4:5', ar: 'بوست لمنصات التواصل · 4:5' },
     media: { kind: 'images', images: [
       { src: '/work/alqimma-1.webp', w: 800, h: 1000, alt: { en: 'Alqimma Equipment Founding Day post: camels beside Najdi mud buildings, headline “Remembering the founding”', ar: 'بوست يوم التأسيس من معدات القمة: إبل بجانب مبانٍ نجدية طينية، وعنوان «ذكرى التأسيس»' } },
+    ] },
+  },
+  {
+    slug: 'dc-block-posts',
+    client: 'DC BLOCK', clientAr: 'دي سي بلوك',
+    sector: { en: 'Building materials', ar: 'مواد البناء' },
+    title: { en: 'Product posts for a block manufacturer', ar: 'بوستات منتج لمصنع بلوك' },
+    summary: {
+      en: 'Social posts for DC BLOCK that put the block itself in the foreground of a building site: “A strong foundation starts with the right choice”, and a split frost-and-desert scene for “Strength and insulation together”.',
+      ar: 'بوستات سوشيال لـ DC BLOCK تضع البلوكة نفسها في مقدمة موقع البناء: «الأساس القوي يبدأ من الاختيار الصحيح»، ومشهد منقسم بين الصقيع والصحراء لعبارة «القوة والعزل معاً».',
+    },
+    format: { en: 'Social media posts · 4:5', ar: 'بوستات لمنصات التواصل · 4:5' },
+    media: { kind: 'images', images: [
+      { src: '/work/dcblock-2.webp', w: 800, h: 1000, alt: { en: 'DC BLOCK post: a concrete block half in frost and half in desert heat in front of a building site, headline “Strength and insulation together”', ar: 'بوست DC BLOCK: بلوكة خرسانية نصفها في الصقيع ونصفها في حرارة الصحراء أمام موقع بناء، وعنوان «القوة والعزل معاً»' } },
+      { src: '/work/dcblock-1.webp', w: 800, h: 1000, alt: { en: 'DC BLOCK post: an insulated block in front of a construction site at dusk, headline “A strong foundation starts with the right choice”', ar: 'بوست DC BLOCK: بلوكة معزولة أمام موقع إنشاء وقت الغروب، وعنوان «الأساس القوي يبدأ من الاختيار الصحيح»' } },
     ] },
   },
   {
@@ -326,7 +342,7 @@ export const WORK_TAGS: Record<string, WorkTag[]> = {
   'cleanbasket-identity': ['identity'], 'arhab-app': ['social', 'banner'], 'altopiano-posts': ['social'],
   'mix-events': ['social'], 'alqimma-founding-day': ['social'], 'fatora-plus-posts': ['social'],
   'ks-furniture-offer': ['social'], 'siyaq-post': ['social'], 'exodus-travel-post': ['social'],
-  'niimee-posts': ['social'], 'niimee-your-size': ['social'], 'bitumat-posts': ['social'], 'niimee-the-dot': ['video'], 'tech-hive-banner': ['banner'],
+  'niimee-posts': ['social'], 'niimee-your-size': ['social'], 'bitumat-posts': ['social'], 'dc-block-posts': ['social'], 'niimee-the-dot': ['video'], 'tech-hive-banner': ['banner'],
 };
 /** Cover image of a project: first image, or the video poster */
 export const coverOf = (w: StWork) => w.media.kind === 'video' ? { src: w.media.poster, w: w.media.w, h: w.media.h } : w.media.images[0];
