@@ -1,5 +1,7 @@
 # Sprint 2 report: completing and refining v0.4
 
+> **Superseded in part by `SPRINT_3_REPORT.md` (2026-11-05).** Owner-level items listed here as open were approved by the project owner on 2026-11-05 (D-019); external and evidence items remain open in `OWNER_APPROVAL_REGISTER.md`. This report is kept as the Sprint 2 record.
+
 Date: 2026-11-04 · Branch `claude/saytamm-brand-strategy-d2shzo` · Base: v0.4 (`082a5f2`, tagged locally `v0.4-backup`; a Git bundle backup is kept outside the repo).
 **Not deployed.** Staging builds stay noindex. No case evidence status was changed, and every case is still `pending`.
 

@@ -1,5 +1,7 @@
 # Phase 01 — Project Audit
 
+> **Sprint 3 status (2026-11-05): historical document.** This audit describes the repository on 2026-11-04, before the website existed. The site has since been built in `/site` (Astro 7, W-008). Current state: `SPRINT_3_BASELINE_AUDIT.md` and `SPRINT_3_REPORT.md`.
+
 Date: 2026-11-04 · Status: **Discovery complete.** Owner review pending.
 
 ## 1. Repository audit [CONFIRMED]

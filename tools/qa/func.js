@@ -24,8 +24,12 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
         ok(html.includes(`id="${id}"`), `anchor ${a} on ${start}`);
       }
     }
-    await p.goto(`${B}/${lang}/work/muriya/`);
     const alt = lang === 'en' ? 'ar' : 'en';
+    await p.goto(`${B}/${lang}/privacy/`);
+    ok(await p.getAttribute('.hdr__lang', 'href') === `/${alt}/privacy/`, `${lang} language switch → equivalent privacy page`);
+    ok(await p.locator('.pv__draft').count() === 1, `${lang} privacy notice carries the draft label`);
+    ok(await p.locator(`footer a[href="/${lang}/privacy/"]`).count() === 1, `${lang} footer links to the privacy notice`);
+    await p.goto(`${B}/${lang}/work/muriya/`);
     ok(await p.getAttribute('.hdr__lang', 'href') === `/${alt}/work/muriya/`, 'language switch → equivalent case page');
     ok(await p.getAttribute('link[rel=canonical]', 'href') === `https://www.saytamm.com/${lang}/work/muriya/`, 'canonical');
     ok((await p.locator('link[hreflang]').count()) === 3, 'hreflang en/ar/x-default');

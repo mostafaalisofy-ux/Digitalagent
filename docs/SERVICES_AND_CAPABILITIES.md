@@ -41,7 +41,7 @@ The three signature lines come from the Bible. The Bible ties "Tamm the reach" t
 
 ### 04 — SEO
 - **Source copy is thin:** "Rank higher on Google and bring in customers who are already searching." There is no dedicated Steps page.
-- **[MISSING]** Actual scope: technical SEO, Arabic SEO, content, local SEO, link acquisition. Define it before writing the page (OQ-34).
+- ~~[MISSING]~~ **Resolved in Sprint 3** — see §Evidence below. Link acquisition and local SEO are *not* published (no evidence).
 
 ### 05 — Social Media Marketing
 - **Includes:** social strategy (channel audits, competitor analysis, audience, 3–6-month plans); content creation (design, bilingual copy, short-form video); community management (bilingual comments, DMs and mentions; responses within 24 hours); influencer marketing (creator identification, campaign execution, ROI reporting); TikTok and short-form video; social media optimisation.
@@ -50,16 +50,16 @@ The three signature lines come from the Bible. The Bible ties "Tamm the reach" t
 - **Industries listed:** real estate, restaurants & cafés, e-commerce & retail, healthcare, hospitality & tourism, automotive, education, B2B.
 
 ### 06 — Content Marketing
-- Source: "content that educates, engages, and converts". There is no dedicated page. **[MISSING]** Define scope (articles, video series, newsletters, lead magnets).
+- Source: "content that educates, engages, and converts". There is no dedicated page. ~~[MISSING]~~ **Resolved in Sprint 3** — see §Evidence. Articles, newsletters and lead magnets are *not* published (no evidence).
 
 ### 07 — Media Production
-- Source: "high-quality visuals, videos, and audio". There is no dedicated page. **[MISSING]** Capabilities: in-house crew, studio, photography, motion, audio.
+- Source: "high-quality visuals, videos, and audio". There is no dedicated page. ~~[MISSING]~~ **Resolved in Sprint 3** — see §Evidence. A studio, an in-house crew and audio production are *not* claimed (no evidence).
 
 ### 08 — Website Development & CRO
-- Source: "fast websites built to convert". There is no dedicated page. **[MISSING]** Stack, typical deliverables, CRO method. *The SayTamm website itself becomes the flagship proof of this service, so it must be excellent.*
+- Source: "fast websites built to convert". There is no dedicated page. ~~[MISSING]~~ **Resolved in Sprint 3** — see §Evidence. *The SayTamm website itself becomes the flagship proof of this service, so it must be excellent.*
 
 ### 09 — Analytics & Growth
-- Source: "clear data, actionable insights, and systems that drive continuous growth". There is no dedicated page. **[MISSING]** Scope: tracking setup (GA4, GTM, CAPI), dashboards, attribution, reporting cadence.
+- Source: "clear data, actionable insights, and systems that drive continuous growth". There is no dedicated page. ~~[MISSING]~~ **Resolved in Sprint 3** — see §Evidence. Specific tools (GA4, GTM, CAPI) and dashboards are *not* named (no evidence of delivery).
 
 ## How the nine stay one system [RECOMMENDATION]
 
@@ -93,3 +93,16 @@ Each cites a third party. Reuse only after checking the original source and date
 
 Steps publishes aggregate claims (7–10× average ROAS, 40+ brands, 1M+ SAR tracked revenue and others). **SayTamm and Steps are separate companies, so none of these are used.** SayTamm publishes only its own verified numbers, or founder-led results labelled as such.
 The process descriptions and operating commitments above (timelines, audit turnaround, account access) are Steps' published practice. SayTamm should adopt them **only as its own commitments, confirmed by the owner (OQ-14)**, and express them in its own words.
+
+
+## Evidence for the five service scopes completed in Sprint 3
+
+Approved by the project owner, 2026-11-05. Each published line is limited to what the record supports; anything without evidence is left out rather than promised.
+
+| Service | Published lines | Evidence |
+|---|---|---|
+| Content Marketing | Content plan around buyer questions; bilingual campaign and product content, including Saudi dialect; one message per piece; seasonal content (Ramadan, National Day, Founding Day); review feeding the next plan | Source description (D-003); delivered work: niimee campaign, Tech Hive dialect posts, Arhab service posts, Founding Day and National Day posts (Alqimma, Fatora Plus, K.S, Tech Hive) |
+| Media Production | Product photography; short-form video; motion formats; campaign key visuals and packaging presentation visuals; production per aspect ratio | Beauty Lab product photos (shot by SayTamm, D-017); niimee "The Dot" 18 s video; campaign visuals and METRO packaging mockup; posts delivered in 1:1, 4:5, 3:4, 16:9 |
+| SEO | Technical review; Arabic and English keyword research for buying intent; on-page optimisation; bilingual setup (separate, correctly linked pages); monthly reporting | Source description (D-003); the bilingual hreflang/canonical implementation of this site (`SEO_FINAL_AUDIT.md`) |
+| Website Development & CRO | Bilingual RTL/LTR sites and landing pages; fast lightweight builds; one-objective pages; tracking-ready forms and buttons; A/B testing of landing pages and offers | This website (Astro, RTL/LTR, `data-track` events); web banners for Tech Hive; A/B testing of landing pages already in the Performance scope (D-003) |
+| Analytics & Growth | Measurement plan per channel; conversion tracking set-up and checks; reports separating platform-attributed from total business results; reviews ending with the next budget decision | Case-study measurement discipline (Meta-attributed vs total store sales, W-021); source description (D-003) |

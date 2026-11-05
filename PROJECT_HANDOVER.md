@@ -1,7 +1,7 @@
 # SAYTAMM website: project handover
 
-**Project:** SAYTAMM (قول تم) bilingual agency website · **Version:** v0.5 (Sprint 2, staging) · **Updated:** 2026-11-04
-**Source:** Git branch `claude/saytamm-brand-strategy-d2shzo` (repository `mostafaalisofy-ux/digitalagent`). The v0.4 baseline is commit `082a5f2`. What changed in Sprint 2: `docs/SPRINT_2_REPORT.md`
+**Project:** SAYTAMM (قول تم) bilingual agency website · **Version:** v0.6 (Sprint 3, staging) · **Updated:** 2026-11-05
+**Source:** Git branch `claude/saytamm-brand-strategy-d2shzo` (repository `mostafaalisofy-ux/digitalagent`). Sprint 3 baseline: tag `sprint3-baseline`. What changed: `docs/SPRINT_3_REPORT.md` (Sprint 2: `docs/SPRINT_2_REPORT.md`). Release gate: `docs/PRODUCTION_RELEASE_CHECKLIST.md`
 **Intended domain:** https://www.saytamm.com (not deployed yet; no hosting or DNS has been set up)
 
 This package is the complete, editable source. It builds on its own without network access to anything except the npm registry.
@@ -13,7 +13,7 @@ This package is the complete, editable source. It builds on its own without netw
 | | |
 |---|---|
 | Framework | **Astro 7.4.5**, static site generation (`output: static`, the default) |
-| Runtime | **Node.js ≥ 22.23.4** (required by Astro 7) and npm ≥ 9.6.5. Built and verified with Node 22.23.4 / npm 10.9.9 |
+| Runtime | **Node.js ≥ 22.23.4** (required by Astro 7; declared in `package.json` `engines` and `.nvmrc`) and npm ≥ 9.6.5. Built and verified with Node 22.23.4 / npm 10.9.9 |
 | Package manager | npm (`site/package-lock.json`) |
 | Runtime dependencies | `astro`, `@fontsource/ibm-plex-sans-arabic`. Nothing else |
 | Languages | `.astro` components; TypeScript in component frontmatter and in `src/data`, `src/i18n`, `src/config`, `src/lib` |
@@ -40,20 +40,23 @@ SAYTAMM_COMPLETE_SOURCE_HANDOVER/
 │   │   ├── i18n/paths.ts      locale-prefixed URL helpers: href(), caseHref(), other()
 │   │   ├── data/cases.ts      7 case studies: story, KPIs, visuals, evidence status
 │   │   ├── data/services.ts   4 disciplines and 9 services
-│   │   ├── data/clients.ts    "Brands we've worked with" (12 brands, logo slots, display-permission flag)
+│   │   ├── data/clients.ts    direct clients (23, with logos) and "Brands we've worked with" (12, team experience)
+│   │   ├── data/work.ts       SayTamm's direct client work (22 projects), deliverable tags, cover choice
 │   │   ├── lib/logo.ts        reads the official symbol paths verbatim from assets/logo/symbol.svg
 │   │   ├── assets/logo/symbol.svg   official symbol (source for every in-page logo)
 │   │   ├── styles/tokens.css, global.css
 │   │   ├── layouts/Base.astro <html lang/dir>, SEO head, JSON-LD, preview bar, header/footer, scripts
 │   │   ├── components/        Logo, Pattern, PageHero, SectionHead, Header, Footer, ContactForm
-│   │   ├── components/home/   Hero, SelectedWork, Brands, HomeServices, Approach, Results, HomeAbout, FinalCta
-│   │   ├── components/work/   CaseMedia (photos / screens / to-scale data composition)
+│   │   ├── components/home/   Hero, SelectedWork, WorkMarquee, HomeServices, Approach, Clients, Brands, Results, HomeAbout, FinalCta
+│   │   ├── components/work/   CaseMedia (case visuals), WorkWall (filterable gallery + dialog viewer)
 │   │   └── pages/             routes (see §5)
 │   ├── public/
 │   │   ├── brand/             favicons and logo files used by the site
 │   │   ├── fonts/satoshi/     Satoshi 400/500/700 WOFF2 (see the licence note in §8)
 │   │   ├── og/                Open Graph images EN/AR (1200×630)
-│   │   └── work/              portfolio images (WebP)
+│   │   ├── clients/           client logos (official colours, never recoloured)
+│   │   ├── visuals/           decorative AI illustrations (W-020)
+│   │   └── work/              portfolio images and video (WebP / MP4)
 │   ├── scripts/               fetch-satoshi.mjs, make-preview-link.py, make-review-html.py, make-og-images.cjs
 │   └── docs/preview/          v0.3 and v0.4 screenshots
 ├── brand/                     official brand assets, original quality
@@ -69,7 +72,7 @@ SAYTAMM_COMPLETE_SOURCE_HANDOVER/
 ├── source-material/portfolio/ original case-study PDFs that the case content and figures were taken from
 └── tools/
     ├── brand/                 scripts that produced the production logo files
-    └── qa/                    Playwright QA scripts: layout sweep, functional, accessibility (axe), figure leak check
+    └── qa/                    QA suite: layout sweep (9 widths), functional, accessibility (axe WCAG 2.2 AA), SEO/parity (seo.js), figure leak check
 ```
 
 ## 3. Install, run, build
@@ -127,15 +130,16 @@ At deploy time:
 
 | Route (EN) | Route (AR) | Source file |
 |---|---|---|
-| `/en/` | `/ar/` | `src/pages/[lang]/index.astro`: Hero → Selected work → Brands → Services → How we work → Results → About → CTA |
-| `/en/work/` | `/ar/work/` | `src/pages/[lang]/work/index.astro`: index of all cases |
+| `/en/` | `/ar/` | `src/pages/[lang]/index.astro`: Hero → Selected work → Client work wall → Services → How we work → Our clients → Brands we've worked with → Results → About → CTA |
+| `/en/work/` | `/ar/work/` | `src/pages/[lang]/work/index.astro`: client work gallery (filters, viewer, deep links `#w-<slug>`) + team case index |
 | `/en/work/<slug>/` | `/ar/work/<slug>/` | `src/pages/[lang]/work/[slug].astro`, one page per entry in `data/cases.ts`. Slugs: `fashion-beauty-scale`, `ks-furniture`, `qnb-ramadan`, `muriya`, `electronics-q4`, `bio-group`, `damac-paramount` |
 | `/en/services/` | `/ar/services/` | `src/pages/[lang]/services.astro`. Anchors `#strategy`, `#creative`, `#media`, `#digital` and one per service id |
 | `/en/about/` | `/ar/about/` | `src/pages/[lang]/about.astro` |
 | `/en/contact/` | `/ar/contact/` | `src/pages/[lang]/contact.astro`. `?service=<discipline-id>` preselects a discipline |
+| `/en/privacy/` | `/ar/privacy/` | `src/pages/[lang]/privacy.astro`: privacy notice, **draft — legal review required** (label shown until `SITE.legalReviewed`) |
 | `/` | | `src/pages/index.astro`: noindex meta-refresh to `/en/` |
-| `/404.html` | | `src/pages/404.astro` |
-| `/sitemap.xml` | | `src/pages/sitemap.xml.ts`: all 24 localised URLs with hreflang alternates |
+| `/404.html` | | `src/pages/404.astro` (noindex, no canonical) |
+| `/sitemap.xml` | | `src/pages/sitemap.xml.ts`: all 26 localised URLs with hreflang alternates |
 | `/robots.txt` | | `src/pages/robots.txt.ts`: `Disallow: /` on staging, `Allow` + sitemap on production |
 
 Every page is generated for both locales via `getStaticPaths` (`staticLangPaths()` in `i18n/paths.ts`). Always build internal links with `href(lang, page, hash?)` or `caseHref(lang, slug)`.
@@ -172,7 +176,7 @@ Every page is generated for both locales via `getStaticPaths` (`staticLangPaths(
 ## 8. Contact form
 
 `src/components/ContactForm.astro`:
-- Fields: name, work email, company, role, phone (optional), website (optional), needs (4 disciplines + "not sure"), monthly budget (optional), message, consent. A hidden honeypot field catches bots.
+- Fields (Sprint 3): name*, work email*, company*, role, industry, main market (select), timeline (select), needs* (4 disciplines + "not sure"), phone, website, monthly budget, message*, consent* linked to the privacy notice (*required). A hidden honeypot field catches bots. Full spec: `docs/CONTACT_AND_CRM_INTEGRATION.md`.
 - Client-side validation with an error summary, inline errors, `aria-invalid` and focus management. Optional phone and website fields are format-checked when filled in. The error line is always reserved so the layout doesn't shift.
 - An information note above the fields (linked to the submit button by `aria-describedby`) tells visitors the form opens their email app. The button reads "Open in my email app". After submitting, a confirmation appears with a **Copy message** fallback and the address, in case no email app opens.
 - **There is no backend.** Submitting opens the visitor's email app with a pre-filled message to **info@saytamm.com** (`mailto:`), and the form says so on screen. In the claude.ai preview build (`PUBLIC_DEPLOY_TARGET=artifact`), it shows the address instead.
@@ -184,7 +188,7 @@ To connect a real endpoint (OQ-19):
 2. Replace the `mailto` step in the submit handler with a `fetch()` POST, and show success or error states from the real response.
 3. Keep secrets server-side. A CRM key goes in a host environment variable used by a serverless function, never in client code. Add the variable names to `.env.example`.
 4. Keep the honeypot; add Turnstile or reCAPTCHA if spam appears.
-5. Publish a privacy notice and final consent wording first (OQ-49). Add a consent banner if analytics or tracking tags are added.
+5. Name the processor in the privacy notice (`/privacy/`, draft — legal review required) before switching. Add a consent banner if analytics or tracking tags are added.
 6. Update the on-page notice text so it no longer mentions the email app.
 
 ## 9. External services and integrations
@@ -208,32 +212,19 @@ No API keys, tokens, passwords or `.env` files are included or required.
 
 ## 11. Known issues and unfinished work
 
-**Content and approvals** (details in `docs/OPEN_QUESTIONS.md` and `docs/WEBSITE_V04_REPORT.md`):
-1. **No case figure is approved yet** (OQ-44, OQ-32). In production every case shows "Figures published once confirmed". Original platform exports and client approvals are needed.
-2. **Brand logos** for the 12 brands are not supplied; the wall shows names as text (OQ-39). Saudi GEA (a government entity) needs display permission.
-3. **Arabic copy** needs native review (OQ-25, OQ-42, OQ-43).
-4. **Five services** have scope pending: SEO, Content Marketing, Media Production, Website & CRO, Analytics & Growth (OQ-34).
-5. **Founder:** the photo, bio, Arabic name, founding year (2021) and team size (30) are in place (D-015). No previous employers are named (owner decision). The legal check on the founder's current role at Steps (OQ-38) is still open.
-6. Campaign visuals are missing for K.S Furniture, Muriya, Bio-Group, DAMAC and Electronics (OQ-41).
-7. There is no drawn "SayTamm" wordmark yet, so the header shows the symbol only (OQ-05). Phone, WhatsApp, legal entity, CR and address are unknown (OQ-08, OQ-09). Social handles are unconfirmed (OQ-24).
+Current, complete lists (Sprint 3): **`docs/OWNER_APPROVAL_REGISTER.md`** (open items and whether each blocks release), **`docs/PRODUCTION_RELEASE_CHECKLIST.md`** (the launch gate) and **`docs/SPRINT_3_REPORT.md`** (what changed, test results, risks).
 
-**Technical:**
-1. The contact form has no backend (mailto only), and no CRM is chosen (OQ-19).
-2. Hosting is not chosen and the root `/` uses a meta-refresh; replace it with a host-level 301 (OQ-21).
-3. There's no analytics or GTM container, and no cookie/consent banner. A privacy notice (PDPL) is still to be written and approved.
-4. `scripts/make-og-images.cjs` needs Playwright (path issue fixed in Sprint 2). The OG images are already generated in `public/og/`.
-5. `site/README.md` is a short pointer to this document.
-6. `brand/SOURCES.md` says `assets/`, `source/` and `reference/` are "not yet committed". They are included in this package but are still outside the Git repository, pending the owner's decision (OQ-29).
-7. The Playwright QA scripts are in `tools/qa/` (see its README). They aren't wired into a CI pipeline.
-8. Five services show a summary only until their scope is confirmed (OQ-34). Projects without supplied visuals use an editorial facts panel (OQ-41).
+Release-blocking at the end of Sprint 3:
+1. Legal review of the draft privacy notice, with the company's legal details and provider names (none is invented).
+2. The legal/owner checklist on the founder's role at Steps (`docs/LEGAL_AND_PRIVACY_REVIEW.md` §4).
+3. Native Arabic review of public copy.
+4. The owner's explicit launch instruction, hosting and DNS.
 
-**Last QA (Sprint 2):** see `docs/SPRINT_2_REPORT.md` §5.
+Not blocking, but outstanding: original exports for case figures (production withholds them), written client permissions for logos and names, form backend/CRM, analytics IDs and consent, social handles, Satoshi licence archive, drawn wordmark.
 
-**Previous QA (v0.4):**
-- 24 pages × 6 viewports (360 → 2560 px): no horizontal overflow, console errors or broken images.
-- 88/88 functional checks passed.
-- The production build was verified as indexable with no unconfirmed figures.
-- See `docs/WEBSITE_V04_REPORT.md`.
+**Technical notes:** hosting is not chosen, so the root `/` uses a noindex meta-refresh (replace with a host 301). `scripts/make-og-images.cjs` needs Playwright. QA scripts are in `tools/qa/` and are not wired into CI.
+
+**Last QA:** `docs/SPRINT_3_REPORT.md` §Tests and `docs/QA_REPORT.md`.
 
 ## 12. Rules to keep
 

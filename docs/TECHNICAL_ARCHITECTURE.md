@@ -1,5 +1,7 @@
 # Technical Architecture
 
+> **Sprint 3 status (2026-11-05): implemented.** The "recommended" stack below was adopted and built (W-008; OQ-20 approved 2026-11-05): Astro 7.4.5 static site, TypeScript strict, plain CSS tokens, bilingual routes `/en/` and `/ar/`, data in `site/src/data/*.ts`, copy in `site/src/i18n/*.ts`. Node ≥ 22.23.4 (declared in `site/package.json` `engines` and `site/.nvmrc`). Staging (`npm run build`, noindex) and production (`npm run build:production`) builds. No CMS, CRM or analytics is connected. Sections below that say "recommendation" are kept as the original rationale.
+
 ## Current state [CONFIRMED]
 No website code yet; the repo holds the knowledge base and brand production files. **Domain: www.saytamm.com (D-010).** Emails: tamm@saytamm.com (primary), info@saytamm.com (public contact, used on the site and for lead notifications unless told otherwise). DNS and hosting are not configured, and **nothing changes on DNS without explicit authorisation.**
 
