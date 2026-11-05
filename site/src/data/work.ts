@@ -193,12 +193,16 @@ export const SAYTAMM_WORK: StWork[] = [
     slug: 'tech-hive-banner',
     client: 'Tech Hive', clientAr: 'خلية التكنولوجيا',
     sector: { en: 'Electronics retail', ar: 'تجزئة إلكترونيات' },
-    title: { en: 'Product web banner', ar: 'بانر منتج للمتجر الإلكتروني' },
+    title: { en: 'Web banners and seasonal offers', ar: 'بانرات المتجر والعروض الموسمية' },
     summary: {
-      en: 'A product banner for Tech Hive’s online store: one product, one clear benefit — zero ambient noise, pixel-perfect audio clarity — and the offer and payment options in plain view.',
-      ar: 'بانر منتج لمتجر خلية التكنولوجيا الإلكتروني: منتج واحد، وميزة واحدة واضحة — صفر ضوضاء محيطة ووضوح صوت دقيق — والعرض وخيارات الدفع ظاهرة للعميل.',
+      en: 'Banners for Tech Hive’s online store: a single-product banner built on one clear benefit, plus seasonal offer banners for Saudi National Day and White Friday, each with the offer and payment options in plain view.',
+      ar: 'بانرات لمتجر خلية التكنولوجيا الإلكتروني: بانر لمنتج واحد مبني على ميزة واحدة واضحة، وبانرات عروض موسمية لليوم الوطني السعودي والجمعة البيضاء، والعرض وخيارات الدفع ظاهرة للعميل في كل منها.',
     },
-    format: { en: 'Web banner · 1600 × 759', ar: 'بانر للموقع · 1600 × 759' },
-    media: { kind: 'images', images: [{ src: '/work/techhive-banner.webp', w: 1600, h: 759, alt: { en: 'Tech Hive web banner: a gaming microphone on a desk with the line “Zero ambient noise, pixel-perfect audio clarity” and a 20% exclusive offer', ar: 'بانر خلية التكنولوجيا: ميكروفون ألعاب على مكتب مع عبارة «صفر ضوضاء محيطة، ووضوح صوت دقيق» وعرض حصري 20%' } }] },
+    format: { en: 'Web banners', ar: 'بانرات للموقع' },
+    media: { kind: 'images', images: [
+      { src: '/work/techhive-banner-3.webp', w: 1600, h: 900, alt: { en: 'Tech Hive White Friday banner: a gaming monitor, graphics cards, a processor and a PC case under a purple ribbon offer', ar: 'بانر الجمعة البيضاء من خلية التكنولوجيا: شاشة ألعاب وكروت شاشة ومعالج وكيس كمبيوتر مع شريط العرض البنفسجي' } },
+      { src: '/work/techhive-banner.webp', w: 1600, h: 759, alt: { en: 'Tech Hive web banner: a gaming microphone on a desk with the line “Zero ambient noise, pixel-perfect audio clarity”', ar: 'بانر خلية التكنولوجيا: ميكروفون ألعاب على مكتب مع عبارة «صفر ضوضاء محيطة، ووضوح صوت دقيق»' } },
+      { src: '/work/techhive-banner-2.webp', w: 1600, h: 759, alt: { en: 'Tech Hive National Day banner: a white PC build and cooling kit in front of Riyadh landmarks, line “Lock the setup”', ar: 'بانر اليوم الوطني من خلية التكنولوجيا: تجميعة كمبيوتر بيضاء وأدوات تبريد أمام معالم الرياض، وعبارة «قفّل السيت أب»' } },
+    ] },
   },
 ];
