@@ -205,13 +205,14 @@ export const SAYTAMM_WORK: StWork[] = [
     slug: 'alqimma-founding-day',
     client: 'Alqimma Equipment', clientAr: 'معدات القمة',
     sector: { en: 'Equipment', ar: 'معدات' },
-    title: { en: 'Saudi Founding Day post', ar: 'بوست يوم التأسيس' },
+    title: { en: 'Product and occasion posts', ar: 'بوستات المنتج والمناسبات' },
     summary: {
-      en: 'A Saudi Founding Day post for Alqimma Equipment Company: Najdi mud architecture and camels on a sand-paper texture, under the line “A story of glory we are proud of, and values that lead us to tomorrow”.',
-      ar: 'بوست يوم التأسيس لشركة معدات القمة: عمارة نجدية طينية وإبل على خلفية بملمس الرمل، تحت عبارة «قصة مجد نعتز بها، وقيم تقودنا نحو الغد».',
+      en: 'Posts for Alqimma Equipment Company: a product post for its Saudi-made concrete mixer, with the key specifications and contact details laid out for buyers, and a Saudi Founding Day post of Najdi mud architecture and camels under “A story of glory we are proud of, and values that lead us to tomorrow”.',
+      ar: 'بوستات لشركة معدات القمة: بوست منتج لخلاطة الخرسانة المصنوعة في السعودية، مع أهم المواصفات وأرقام التواصل أمام المشتري، وبوست يوم التأسيس بعمارة نجدية طينية وإبل تحت عبارة «قصة مجد نعتز بها، وقيم تقودنا نحو الغد».',
     },
-    format: { en: 'Social media post · 4:5', ar: 'بوست لمنصات التواصل · 4:5' },
+    format: { en: 'Social media posts · 4:5', ar: 'بوستات لمنصات التواصل · 4:5' },
     media: { kind: 'images', images: [
+      { src: '/work/alqimma-2.webp', w: 800, h: 1000, alt: { en: 'Alqimma Equipment post: a white planetary concrete mixer on a building site, headline “The high-quality mixer”, with specifications and phone numbers', ar: 'بوست معدات القمة: خلاطة خرسانة بيضاء في موقع بناء، وعنوان «الخلطة عالية الجودة»، مع المواصفات وأرقام التواصل' } },
       { src: '/work/alqimma-1.webp', w: 800, h: 1000, alt: { en: 'Alqimma Equipment Founding Day post: camels beside Najdi mud buildings, headline “Remembering the founding”', ar: 'بوست يوم التأسيس من معدات القمة: إبل بجانب مبانٍ نجدية طينية، وعنوان «ذكرى التأسيس»' } },
     ] },
   },

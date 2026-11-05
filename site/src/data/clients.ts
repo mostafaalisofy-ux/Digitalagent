@@ -65,7 +65,7 @@ export const CLIENTS: Client[] = [
     logo: { src: '/clients/cleanbasket-en.webp', w: 900, h: 387 }, logoAr: { src: '/clients/cleanbasket-ar.webp', w: 900, h: 454 } },
   { name: { en: 'Zahid Electra', ar: 'الزاهد إلكترا' }, sector: { en: 'Home appliances', ar: 'أجهزة منزلية' }, logo: { src: '/clients/zahid-electra.webp', w: 900, h: 277 } },
   { name: { en: 'MIX', ar: 'مكس' }, sector: { en: 'Events', ar: 'تنظيم فعاليات' }, logo: { src: '/clients/mix.webp', w: 320, h: 320 }, fill: true },
-  { name: { en: 'Alqimma Equipment', ar: 'معدات القمة' }, sector: { en: 'Equipment', ar: 'معدات' }, logo: { src: '/clients/alqimma.webp', w: 900, h: 625 } },
+  { name: { en: 'Alqimma Equipment', ar: 'معدات القمة' }, sector: { en: 'Equipment', ar: 'معدات' }, logo: { src: '/clients/alqimma.webp', w: 619, h: 166 } },
   { name: { en: 'DC BLOCK', ar: 'دي سي بلوك' }, sector: { en: 'Building materials', ar: 'مواد البناء' } }, // logo file pending
   { name: { en: 'BITUMAT', ar: 'BITUMAT' }, sector: { en: 'Building materials', ar: 'مواد البناء' }, logo: { src: '/clients/bitumat.webp', w: 900, h: 349 } },
   { name: { en: 'ALTOPIANO', ar: 'التبيانو' }, sector: { en: 'Restaurants · Italian', ar: 'مطاعم · إيطالي' }, logo: { src: '/clients/altopiano.webp', w: 502, h: 60 }, tile: '#050504' },
