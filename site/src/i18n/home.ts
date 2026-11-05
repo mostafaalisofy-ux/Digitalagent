@@ -23,8 +23,8 @@ export const HOME = {
       open: 'View project', close: 'Close', prev: 'Previous project', next: 'Next project', count: 'pieces', note: 'Note',
     },
     clients: {
-      eyebrow: 'Our clients', title: 'Brands that work with SayTamm.',
-      intro: 'Brands SayTamm works with directly.',
+      eyebrow: 'Our clients', title: 'Clients who trusted the SayTamm team.',
+      intro: 'Brands across industries and markets that have trusted the SayTamm team with their marketing.',
     },
     brands: {
       eyebrow: 'Experience', title: 'Brands we’ve worked with.',
@@ -180,8 +180,8 @@ export const HOME = {
       open: 'عرض المشروع', close: 'إغلاق', prev: 'المشروع السابق', next: 'المشروع التالي', count: 'عمل', note: 'ملاحظة',
     },
     clients: {
-      eyebrow: 'عملاؤنا', title: 'علامات تعمل مع قول تم.',
-      intro: 'علامات تتعامل مع قول تم مباشرة.',
+      eyebrow: 'عملاؤنا', title: 'عملاء وثقوا بفريق قول تم.',
+      intro: 'علامات تجارية من قطاعات وأسواق مختلفة وثقت بفريق قول تم في تسويقها.',
     },
     brands: {
       eyebrow: 'الخبرة', title: 'علامات تجارية عمل فريقنا معها.',

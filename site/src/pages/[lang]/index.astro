@@ -1,12 +1,11 @@
 ---
-// Homepage (final redesign brief): Hero → Selected work → Clients (direct) → Brands (team experience) → Services → How we work →
+// Homepage (final redesign brief): Hero → Selected work → Clients who trusted the SayTamm team (one list, owner 2026-11-05) → Services → How we work →
 // Results → About → Final CTA. Each section answers one question in the buyer's decision.
 import Base from '../../layouts/Base.astro';
 import Hero from '../../components/home/Hero.astro';
 import SelectedWork from '../../components/home/SelectedWork.astro';
 import Clients from '../../components/home/Clients.astro';
 import WorkMarquee from '../../components/home/WorkMarquee.astro';
-import Brands from '../../components/home/Brands.astro';
 import HomeServices from '../../components/home/HomeServices.astro';
 import Approach from '../../components/home/Approach.astro';
 import Results from '../../components/home/Results.astro';
@@ -28,7 +27,6 @@ const d = t(lang);
   <HomeServices lang={lang} />
   <Approach lang={lang} />
   <Clients lang={lang} />
-  <Brands lang={lang} />
   <Results lang={lang} />
   <HomeAbout lang={lang} />
   <FinalCta lang={lang} />

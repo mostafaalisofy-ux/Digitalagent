@@ -2,7 +2,9 @@
 
 Date: 2026-11-05 · Source of truth: `site/src/data/clients.ts`, `work.ts`, `cases.ts`.
 
-The site keeps three categories apart, in data, wording and layout:
+> **2026-11-05 (D-022):** the site now shows **one list**, «عملاء وثقوا بفريق قول تم» / "Clients who trusted the SayTamm team". The categories below remain as the **internal record** of each relationship (for permissions and legal review); they are no longer shown separately to visitors. Case pages keep their attribution line.
+
+Internal record — categories:
 
 | Category | Meaning | Where it appears | Wording on the site |
 |---|---|---|---|

@@ -90,11 +90,10 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
     ok((await p.locator('#e-phone').innerText()) === '' && (await p.locator('#e-website').innerText()) === '', `${lang} valid phone/website accepted`);
   }
   await p.goto(`${B}/en/`);
-  ok((await p.locator('.wall__cell').count()) === 11, 'staging shows 11 team brands (Saudi GEA tagged; STC moved to clients 2026-11-05)');
-  ok((await p.locator('.clw__item').count()) === 65, 'staging shows the 65-logo client wall (11 government bodies tagged)');
-  ok((await p.locator('.clw__tag').count()) === 11, 'exactly 11 wall logos tagged permission-pending');
-  ok((await p.locator('.wall__cell .tag-pending').count()) === 1, 'exactly one brand tagged permission-pending');
-  // production build is checked separately (indexable, no pending figures)
+    ok((await p.locator('.clw__item').count()) === 76, 'staging: one client list, 65 logos + 11 names (owner 2026-11-05)');
+  ok((await p.locator('#brands').count()) === 0, 'no separate team-experience section');
+  ok((await p.locator('.clw__tag').count()) === 12, 'exactly 12 government bodies tagged permission-pending (11 logos + Saudi GEA)');
+    // production build is checked separately (indexable, no pending figures)
   console.log(`${pass} passed, ${fail} failed (${checked.size} unique internal links)`);
   await br.close();
 })();
