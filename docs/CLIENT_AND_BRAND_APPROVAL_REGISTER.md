@@ -61,6 +61,8 @@ Commercial (54, shown): Shawarmer, Jahez, Sharar, Aljazirah Vehicles, Ford, Nati
 
 Note: several of these marks (Ford, Shell, Nintendo, Cisco, Huawei, National Geographic) are global brands whose regional work is often bought through distributors or agencies. If a relationship was with a local distributor or franchise, the owner should confirm the name shown is the right one.
 
+**Removed for logo quality (2026-11-05, owner):** VOV, LEAP, Mamnon, Smart Touch Solutions, Darb Al Omda, Chicken Spot, OHI, Al Majed Oud, AMEX Automotive, Bin Al Basha, Cleopatra, Abo El Kheir, Alia, Ministry of Education, Ministry of Public Works, Five Little Monkeys, Sahara, Saudi Falcons Club — the deck's copies were too small, cropped or unreadable. They can return with official logo files. The wall now shows 47 logos (7 government bodies staging-only) + 11 names.
+
 Also added to the main tiles with their own logos: GIG, Marriott, TECSPRO, SIEFCO. STC moved from team brands (B) to clients.
 
 ## B — Team experience (11 brands, names as text)
