@@ -22,7 +22,7 @@ export const UI = {
     hero: {
       eyebrow: 'Digital marketing & performance agency · Saudi Arabia',
       l1: 'Say it.', l2: 'Tamm it.',
-      sub: 'Strategic thinking. Creative execution. Measurable performance. We help ambitious brands move forward through connected digital marketing.',
+      sub: 'A digital marketing and performance agency for the Saudi market. Strategy, creative, paid media and digital run as one plan, and every channel answers to the sales, leads or revenue you set at the start.',
       cta: 'Start a project', cta2: 'Explore our work',
       scroll: 'Selected work below',
     },
@@ -64,7 +64,7 @@ export const UI = {
     hero: {
       eyebrow: 'وكالة تسويق رقمي وأداء · السعودية',
       l1: 'قول.', l2: 'تم.',
-      sub: 'استراتيجية تفهم أهدافك، وإبداع يلفت الانتباه، وأداء يقيس أثر كل خطوة. تسويق رقمي متكامل للعلامات التي تريد نمواً يمكن قياسه.',
+      sub: 'وكالة تسويق رقمي وأداء للسوق السعودي. الاستراتيجية والإبداع والإعلانات المدفوعة والقنوات الرقمية تعمل كخطة واحدة، وكل قناة مسؤولة عن المبيعات أو العملاء أو الإيرادات التي نحددها معك من البداية.',
       cta: 'ابدأ مشروعك', cta2: 'استكشف أعمالنا',
       scroll: 'أعمال مختارة في الأسفل',
     },

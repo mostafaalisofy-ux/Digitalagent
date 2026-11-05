@@ -1,7 +1,7 @@
 // Verified business facts only (docs/DECISION_LOG.md). Unknowns stay null — never invent.
 export const SITE = {
   name: 'SayTamm',
-  nameAr: 'قول تم', // canonical spelling pending OQ-04
+  nameAr: 'قول تم', // canonical spelling: owner-approved 2026-11-05 (OQ-04)
   url: 'https://www.saytamm.com', // D-010
   email: 'info@saytamm.com', // D-010 — public contact
   emailPrimary: 'tamm@saytamm.com', // D-010

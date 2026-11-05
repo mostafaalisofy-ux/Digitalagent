@@ -1,13 +1,13 @@
 // The 9 services SayTamm offers (D-003), organised in 4 disciplines (owner brief, final redesign).
 // Only these services are published. Capabilities listed under "includes" are limited to what the
-// adopted service scope or the team's case material supports. Scope for five services is still
-// being finalised (OQ-34): those show their one-line summary only — no capability list is implied.
+// adopted service scope (D-003), SayTamm's own delivered work (D-016–D-018) or the team's case
+// material supports — see docs/SERVICES_AND_CAPABILITIES.md §Evidence for the basis of each line.
+// Scope approved by the project owner, 2026-11-05 (Sprint 3 global authorisation). Never add a
+// capability here (a studio, a certification, a tool partnership) without evidence.
 import type { Lang } from '../config/site';
 type T = Record<Lang, string>;
 export interface Service { id: string; name: T; summary: T; includes: Record<Lang, string[]>; scopePending?: boolean }
 export interface Discipline { id: string; n: string; name: T; value: T; services: Service[] }
-
-const pending = { en: [] as string[], ar: [] as string[] };
 
 export const DISCIPLINES: Discipline[] = [
   {
@@ -46,11 +46,17 @@ export const DISCIPLINES: Discipline[] = [
       { id: 'content-marketing',
         name: { en: 'Content Marketing', ar: 'تسويق المحتوى' },
         summary: { en: 'Content that earns attention and moves buyers toward a decision.', ar: 'محتوى يكسب الانتباه ويقرّب المشتري من قراره.' },
-        includes: pending, scopePending: true },
+        includes: {
+          en: ['Content plan built around the questions buyers ask before they decide', 'Bilingual campaign and product content, written natively in Arabic and English, including Saudi dialect where it suits the brand', 'One clear message per piece: a product benefit, a service or an offer', 'Seasonal and occasion content, such as Ramadan, Saudi National Day and Founding Day', 'A review of what each piece moved, feeding the next content plan'],
+          ar: ['خطة محتوى مبنية على الأسئلة التي يطرحها المشتري قبل قراره', 'محتوى للحملات والمنتجات يُكتب أصلاً بالعربية والإنجليزية، وباللهجة السعودية حين تناسب العلامة', 'رسالة واحدة واضحة في كل قطعة: ميزة منتج أو خدمة أو عرض', 'محتوى المواسم والمناسبات مثل رمضان واليوم الوطني ويوم التأسيس', 'مراجعة ما حققته كل قطعة، لتبنى عليها خطة المحتوى التالية'],
+        } },
       { id: 'media-production',
         name: { en: 'Media Production', ar: 'الإنتاج الإعلامي' },
         summary: { en: 'Photography, video and motion produced for the feed it will run in.', ar: 'تصوير وفيديو وموشن يُنتج للمنصة التي سيُعرض عليها.' },
-        includes: pending, scopePending: true },
+        includes: {
+          en: ['Product photography', 'Short-form video for feed and story formats', 'Motion and animated social formats', 'Campaign key visuals and packaging presentation visuals', 'Each piece produced for its platform and aspect ratio (1:1, 4:5, 9:16)'],
+          ar: ['تصوير المنتجات', 'فيديو قصير لصيغ المنشورات والقصص', 'موشن وصيغ متحركة لمنصات التواصل', 'التصاميم الرئيسية للحملات وتصاميم عرض التغليف', 'كل قطعة تُنتج لمنصتها ومقاسها (1:1 و4:5 و9:16)'],
+        } },
     ],
   },
   {
@@ -75,15 +81,24 @@ export const DISCIPLINES: Discipline[] = [
       { id: 'seo',
         name: { en: 'SEO', ar: 'تحسين محركات البحث' },
         summary: { en: 'Be found by buyers who are already searching, in Arabic and English.', ar: 'كن حاضراً أمام من يبحث عنك بالفعل، بالعربية والإنجليزية.' },
-        includes: pending, scopePending: true },
+        includes: {
+          en: ['Technical review of site structure, speed and indexing', 'Arabic and English keyword research focused on buying intent', 'On-page optimisation of titles, content and internal links', 'Bilingual setup: separate Arabic and English pages, correctly linked for search engines', 'Monthly report on organic visibility and the enquiries it brings'],
+          ar: ['مراجعة تقنية لبنية الموقع وسرعته وفهرسته', 'بحث الكلمات المفتاحية بالعربية والإنجليزية مع التركيز على نية الشراء', 'تحسين العناوين والمحتوى والروابط الداخلية في الصفحات', 'إعداد ثنائي اللغة: صفحات عربية وإنجليزية منفصلة ومرتبطة بشكل صحيح لمحركات البحث', 'تقرير شهري عن الظهور في نتائج البحث والطلبات التي يجلبها'],
+        } },
       { id: 'website-development-cro',
         name: { en: 'Website Development & CRO', ar: 'تطوير المواقع وتحسين التحويل' },
         summary: { en: 'Fast, bilingual websites built to turn visits into enquiries and sales.', ar: 'مواقع سريعة بلغتين، تُبنى لتحويل الزيارة إلى طلب وبيع.' },
-        includes: pending, scopePending: true },
+        includes: {
+          en: ['Bilingual websites and landing pages, built right-to-left and left-to-right', 'Fast, lightweight builds with a clean structure for search', 'Pages built around one objective, a clear offer and a short path to contact', 'Enquiry forms and buttons ready for conversion tracking', 'A/B testing of landing pages and offers'],
+          ar: ['مواقع وصفحات هبوط بلغتين، تُبنى من اليمين إلى اليسار ومن اليسار إلى اليمين', 'بناء سريع وخفيف ببنية واضحة لمحركات البحث', 'صفحات مبنية حول هدف واحد وعرض واضح وطريق قصير للتواصل', 'نماذج طلب وأزرار جاهزة لقياس التحويل', 'اختبارات A/B لصفحات الهبوط والعروض'],
+        } },
       { id: 'analytics-growth',
         name: { en: 'Analytics & Growth', ar: 'التحليلات والنمو' },
         summary: { en: 'Tracking you can trust, and reports that end with the next decision.', ar: 'قياس يمكن الوثوق به، وتقارير تنتهي بالقرار التالي.' },
-        includes: pending, scopePending: true },
+        includes: {
+          en: ['A measurement plan: the number each channel is accountable for', 'Tracking set-up and checks for website and ad-platform conversions', 'Reports that separate platform-attributed results from total business results', 'Regular performance reviews that end with the next budget decision'],
+          ar: ['خطة قياس تحدد الرقم المسؤولة عنه كل قناة', 'إعداد القياس والتحقق من التحويلات في الموقع والمنصات الإعلانية', 'تقارير تفصل بين النتائج المنسوبة من المنصات ونتائج العمل الإجمالية', 'مراجعات أداء دورية تنتهي بقرار الميزانية التالي'],
+        } },
     ],
   },
 ];

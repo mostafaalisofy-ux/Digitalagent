@@ -76,8 +76,8 @@ export const HOME = {
       more: 'More about us',
     },
     contact: {
-      eyebrow: 'Start a project', title: ['Tell us what you need.', 'We’ll take it from there.'],
-      body: 'Share your objective, your market and where things stand today. We’ll reply with how we would approach it.',
+      eyebrow: 'Start a project', title: ['Name the number', 'you need to move.'],
+      body: 'Sales, qualified leads, a launch or a market entry. Tell us the objective, the market and your timeline, and we will reply with how we would plan it and what we would need from you to start.',
       email: 'Or email', cta: 'Start a project',
     },
     aboutPage: {
@@ -191,8 +191,8 @@ export const HOME = {
       more: 'المزيد عنّا',
     },
     contact: {
-      eyebrow: 'ابدأ مشروعك', title: ['قل لنا ما تحتاجه،', 'والباقي علينا.'],
-      body: 'شاركنا هدفك وسوقك ووضعك الحالي، وسنرد عليك بالطريقة التي نقترحها للعمل.',
+      eyebrow: 'ابدأ مشروعك', title: ['حدّد الرقم', 'الذي تريد تحريكه.'],
+      body: 'مبيعات، أو عملاء مؤهلون، أو إطلاق، أو دخول سوق جديد. أخبرنا بالهدف والسوق والجدول الزمني، وسنرد عليك بالطريقة التي نخطط بها للعمل وبما نحتاجه منك لنبدأ.',
       email: 'أو راسلنا على', cta: 'ابدأ مشروعك',
     },
     aboutPage: {
