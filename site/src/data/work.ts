@@ -5,10 +5,25 @@ import type { Lang } from '../config/site';
 type T = Record<Lang, string>;
 export type Media =
   | { kind: 'video'; src: string; poster: string; w: number; h: number }
-  | { kind: 'images'; images: { src: string; w: number; h: number; alt: T }[] };
+  | { kind: 'images'; images: { src: string; w: number; h: number; alt: T }[]; caption?: T };
 export interface StWork { slug: string; client: string; clientAr?: string; sector: T; title: T; summary: T; format: T; media: Media }
 
 export const SAYTAMM_WORK: StWork[] = [
+  {
+    slug: 'jora-identity',
+    client: 'JORA',
+    sector: { en: 'Restaurants · Street food', ar: 'مطاعم · أكل شارع' },
+    title: { en: 'Brand identity', ar: 'الهوية البصرية' },
+    summary: {
+      en: 'Brand identity for JORA, a gourmet street food brand established in 2026: a stamp-style logo in round and rectangular versions, built to work on paper, packaging and everyday takeaway items.',
+      ar: 'هوية بصرية لعلامة JORA، وهي علامة أكل شارع فاخر تأسست عام 2026: شعار بأسلوب الختم بصيغتين دائرية ومستطيلة، مصمم ليعمل على الورق والتغليف ومستلزمات الطلبات الخارجية.',
+    },
+    format: { en: 'Logo and identity system · shown on presentation mockups', ar: 'الشعار ونظام الهوية · معروض على نماذج عرض (موك أب)' },
+    media: { kind: 'images', caption: { en: 'Identity presentation on mockups, not photographs of the brand in use.', ar: 'عرض للهوية على نماذج (موك أب)، وليست صوراً للعلامة أثناء الاستخدام الفعلي.' }, images: [
+      { src: '/work/jora-identity-1.webp', w: 1200, h: 900, alt: { en: 'JORA logo in round and rectangular stamp versions on textured paper (mockup)', ar: 'شعار JORA بصيغتي الختم الدائرية والمستطيلة على ورق (موك أب)' } },
+      { src: '/work/jora-identity-2.webp', w: 1200, h: 900, alt: { en: 'JORA stamp logo printed on kraft paper bags (mockup)', ar: 'شعار JORA مطبوع على أكياس ورق كرافت (موك أب)' } },
+    ] },
+  },
   {
     slug: 'chery-saudi-trust',
     client: 'Chery Saudi', clientAr: 'شيري السعودية',

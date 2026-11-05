@@ -27,7 +27,7 @@ const iso = (text: string) => lang === 'ar' ? text.split(/([A-Za-z][A-Za-z0-9 .,
                 muted loop playsinline controls preload="none" data-autoplay-in-view aria-label={`${w.client} — ${w.title[lang]}`}></video>
             )}
             {w.media.kind === 'images' && (
-              <div class="rw__imgs">{w.media.images.map((im) => <img src={im.src} width={im.w} height={im.h} alt={im.alt[lang]} loading="lazy" decoding="async" />)}</div>
+              <figure class="rw__fig"><div class="rw__imgs">{w.media.images.map((im) => <img src={im.src} width={im.w} height={im.h} alt={im.alt[lang]} loading="lazy" decoding="async" />)}</div>{w.media.caption && <figcaption class="rw__cap">{w.media.caption[lang]}</figcaption>}</figure>
             )}
           </div>
           <div class="rw__text">
@@ -66,6 +66,8 @@ const iso = (text: string) => lang === 'ar' ? text.split(/([A-Za-z][A-Za-z0-9 .,
   .rw__item { display: grid; gap: var(--s-6); align-items: center; }
   .rw__media { justify-self: center; width: min(100%, 420px); }
   .rw__video { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; background: var(--surface); }
+  .rw__fig { margin: 0; }
+  .rw__cap { margin-top: var(--s-3); font-size: var(--fs-caption); color: var(--text-muted); }
   .rw__imgs { display: grid; gap: var(--s-3); }
   .rw__imgs:has(> img:nth-child(2)) { grid-template-columns: 1fr 1fr; }
   .rw__imgs img { display: block; width: 100%; height: auto; background: var(--surface); }
