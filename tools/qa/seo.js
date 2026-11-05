@@ -37,6 +37,12 @@ for (const { f, url } of pages) {
   for (const m of ld) { let j; try { j = JSON.parse(m[1]); } catch { j = null; } ok(j, `${url} JSON-LD does not parse`);
     const txt = m[1]; ok(!/aggregateRating|"review"|openingHours|"address"/.test(txt), `${url} JSON-LD contains an unverified field`); }
   ok((s.match(/<h1\b/g) || []).length === 1, `${url} h1 count`);
+  // Positioning D-020: SayTamm is never described as a Saudi / Saudi-based / Saudi-focused agency
+  const POS = [/Saudi[- ](?:[\w&]+[ -]){0,4}agency/i, /agency in Saudi/i, /for the Saudi market/i, /Saudi[- ]focused/i, /performance agency · Saudi/i,
+    /وكالة (?:تسويق (?:رقمي )?)?سعودية/, /وكالة (?:إعلانات|أداء) سعودية/, /مقرها السعودية/, /(?:تركّز على|متخصصة في)\s?السوق السعودي/, /للسوق السعودي/, /وأداء · السعودية/, /وكالة تسويق رقمي وأداء في السعودية/];
+  const txt = s.replace(/<(script|style)[\s\S]*?<\/\1>/g, '').replace(/<[^>]+>/g, ' ') + ' ' + (title || '') + ' ' + (desc || '') + ' ' + ld.map((m) => m[1]).join(' ');
+  const pos = POS.filter((re) => re.test(txt)).map(String);
+  ok(!pos.length, `${url} single-country agency positioning: ${pos.join(', ')}`);
   const robots = s.includes('name="robots" content="noindex, nofollow"');
   ok(PROD ? !robots : robots, `${url} robots meta wrong for ${PROD ? 'production' : 'staging'}`);
 }
