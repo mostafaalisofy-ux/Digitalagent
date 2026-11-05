@@ -1,0 +1,75 @@
+---
+// Privacy notice — DRAFT. Every statement below describes how this website actually works
+// (see docs/LEGAL_AND_PRIVACY_REVIEW.md for the evidence of each). It has NOT been reviewed by
+// legal counsel: the draft label stays until SITE.legalReviewed is set to true after that review.
+// Never add company registration details, retention periods or legal assurances that are not verified.
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import { SITE, type Lang } from '../../config/site';
+import { staticLangPaths, href } from '../../i18n/paths';
+export const getStaticPaths = staticLangPaths;
+const lang = Astro.params.lang as Lang;
+const email = SITE.email;
+
+const C = {
+  en: {
+    meta: { title: 'Privacy Notice | SayTamm', desc: 'How the SayTamm website handles the information you share with us through the enquiry form and by email.' },
+    eyebrow: 'Privacy', title: ['Privacy', 'notice.'],
+    intro: 'What this website collects, why, and what happens to it. Written in plain language.',
+    draft: 'Draft — legal review required. This notice describes how the website works today. It has not yet been reviewed by legal counsel and may change after that review.',
+    updated: 'Last updated: 5 November 2026',
+    sections: [
+      { h: 'Who we are', p: [`This website is operated by SayTamm (قول تم), a digital marketing and performance agency. For any question about this notice or your information, write to ${email}.`] },
+      { h: 'What we collect', p: ['We only receive information that you choose to send us. The enquiry form asks for your name, work email and company, and lets you add your role, industry, main market, timeline, phone number, website, monthly media budget, the services you are interested in and a message. Only name, email, company, your message, one service option and your consent are required.'] },
+      { h: 'How the enquiry form works', p: [`The form does not send your details to a SayTamm server or database. When you press the button, it opens your own email app with a pre-written message to ${email}. Nothing reaches us unless you send that email yourself. If you email us directly, we receive what you write.`] },
+      { h: 'Why we use it', p: ['We use your details only to reply to your enquiry and, if you choose to work with us, to discuss and manage that work. We do not sell your information and we do not add you to marketing lists from the enquiry form.'] },
+      { h: 'Cookies and tracking', p: ['This website does not set cookies and does not run analytics, advertising pixels or other tracking tags. Fonts and images are served from this website, not from third-party services. If we add analytics or advertising tags in the future, we will update this notice first and ask for your consent where it is required.'] },
+      { h: 'Who else handles your information', p: ['Emails you send us are delivered through our email service provider and, like any website, the company that hosts this site may keep standard technical logs of visits. We will name these providers here once they are confirmed.'] },
+      { h: 'How long we keep it', p: ['We keep enquiry emails for as long as we need them to respond and to manage any work that follows. A defined retention period will be added here after legal review.'] },
+      { h: 'Your choices', p: [`You can ask us what information we hold about you, ask us to correct it, or ask us to delete it, by writing to ${email}. We will reply to every request.`] },
+    ],
+  },
+  ar: {
+    meta: { title: 'إشعار الخصوصية | قول تم', desc: 'كيف يتعامل موقع قول تم مع المعلومات التي تشاركها معنا عبر نموذج التواصل أو البريد الإلكتروني.' },
+    eyebrow: 'الخصوصية', title: ['إشعار', 'الخصوصية.'],
+    intro: 'ما الذي يجمعه هذا الموقع، ولماذا، وماذا يحدث له. بلغة واضحة.',
+    draft: 'مسودة — تتطلب مراجعة قانونية. يصف هذا الإشعار طريقة عمل الموقع حالياً، ولم يُراجَع بعد من مستشار قانوني، وقد يتغير بعد هذه المراجعة.',
+    updated: 'آخر تحديث: 5 نوفمبر 2026',
+    sections: [
+      { h: 'من نحن', p: [`يدير هذا الموقع «قول تم» (SayTamm)، وكالة تسويق رقمي وأداء. لأي سؤال عن هذا الإشعار أو عن معلوماتك، راسلنا على ${email}.`] },
+      { h: 'ما الذي نجمعه', p: ['لا نستلم إلا المعلومات التي تختار إرسالها إلينا. يطلب نموذج التواصل اسمك وبريد العمل والشركة، ويتيح لك إضافة منصبك والقطاع والسوق الرئيسي والجدول الزمني ورقم الجوال والموقع الإلكتروني والميزانية الإعلانية الشهرية والخدمات التي تهمك ورسالة. والمطلوب فقط: الاسم والبريد والشركة والرسالة وخيار خدمة واحد وموافقتك.'] },
+      { h: 'كيف يعمل نموذج التواصل', p: [`لا يرسل النموذج بياناتك إلى خادم أو قاعدة بيانات لدى قول تم. عند الضغط على الزر يفتح تطبيق البريد لديك برسالة جاهزة إلى ${email}، ولا يصلنا شيء ما لم ترسل هذه الرسالة بنفسك. وإذا راسلتنا مباشرة فإننا نستلم ما تكتبه.`] },
+      { h: 'لماذا نستخدمها', p: ['نستخدم بياناتك فقط للرد على طلبك، وإذا قررت العمل معنا فلمناقشة هذا العمل وإدارته. لا نبيع معلوماتك، ولا نضيفك إلى قوائم تسويقية من خلال نموذج التواصل.'] },
+      { h: 'ملفات تعريف الارتباط والتتبع', p: ['لا يضع هذا الموقع ملفات تعريف ارتباط (كوكيز)، ولا يشغّل أدوات تحليلات أو بكسلات إعلانية أو أي أدوات تتبع أخرى. تُقدَّم الخطوط والصور من هذا الموقع نفسه لا من خدمات خارجية. وإذا أضفنا أدوات تحليلات أو إعلانات مستقبلاً، فسنحدّث هذا الإشعار أولاً ونطلب موافقتك حيث يلزم ذلك.'] },
+      { h: 'من يتعامل مع معلوماتك أيضاً', p: ['تصلنا الرسائل التي ترسلها عبر مزوّد خدمة البريد لدينا، وكما في أي موقع، قد تحتفظ الشركة التي تستضيف الموقع بسجلات تقنية معتادة للزيارات. وسنذكر أسماء هؤلاء المزوّدين هنا بعد تأكيدها.'] },
+      { h: 'مدة الاحتفاظ', p: ['نحتفظ برسائل الاستفسار طوال المدة التي نحتاجها للرد ولإدارة أي عمل يترتب عليها. وستُضاف مدة احتفاظ محددة هنا بعد المراجعة القانونية.'] },
+      { h: 'خياراتك', p: [`يمكنك أن تطلب معرفة المعلومات التي نحتفظ بها عنك، أو تصحيحها، أو حذفها، بمراسلتنا على ${email}، وسنرد على كل طلب.`] },
+    ],
+  },
+}[lang];
+---
+<Base lang={lang} page="privacy" title={C.meta.title} description={C.meta.desc}>
+  <PageHero eyebrow={C.eyebrow} title={C.title} intro={C.intro} />
+  <section class="section pv">
+    <div class="container pv__in">
+      {!SITE.legalReviewed && <p class="pv__draft" role="note"><strong>{C.draft}</strong></p>}
+      <p class="pv__updated">{C.updated}</p>
+      {C.sections.map((s) => (
+        <section class="pv__sec">
+          <h2>{s.h}</h2>
+          {s.p.map((t) => <p>{t.split(email).flatMap((part, i) => (i ? [<a class="link-diag latin" href={`mailto:${email}`}>{email}</a>, part] : [part]))}</p>)}
+        </section>
+      ))}
+      <p class="pv__back"><a class="link-diag" href={href(lang, 'contact')}>{lang === 'ar' ? 'العودة إلى صفحة التواصل' : 'Back to contact'}</a></p>
+    </div>
+  </section>
+</Base>
+<style>
+  .pv__in { max-width: 760px; display: grid; gap: var(--s-6); }
+  .pv__draft { padding: var(--s-3) var(--s-4); border-inline-start: 3px solid var(--accent); background: rgb(108 53 255 / 0.12); color: var(--text-strong); font-size: var(--fs-small); line-height: 1.55; }
+  .pv__draft strong { font-weight: 600; }
+  .pv__updated { color: var(--text-muted); font-size: var(--fs-small); }
+  .pv__sec { display: grid; gap: var(--s-3); padding-top: var(--s-5); border-top: 1px solid var(--line); }
+  .pv__sec h2 { font-size: var(--fs-h3, 1.375rem); letter-spacing: var(--track-tight); }
+  .pv__sec p { font-size: var(--fs-lead); line-height: 1.65; color: var(--text); }
+</style>

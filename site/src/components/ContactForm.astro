@@ -4,6 +4,7 @@
 import { SITE, type Lang } from '../config/site';
 import { DISCIPLINES } from '../data/services';
 import { t } from '../i18n/ui';
+import { href } from '../i18n/paths';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = t(lang).contact;
@@ -25,7 +26,11 @@ const opts = [...DISCIPLINES.map((p) => ({ id: p.id, label: p.name[lang] })), { 
   </div>
   <div class="cf__row">
     <div class="field"><label for="f-company">{f.company}</label><input id="f-company" name="company" autocomplete="organization" required aria-describedby="e-company" /><p class="field__err" id="e-company"></p></div>
-    <div class="field"><label for="f-role">{f.role}</label><input id="f-role" name="role" autocomplete="organization-title" required aria-describedby="e-role" /><p class="field__err" id="e-role"></p></div>
+    <div class="field"><label for="f-role">{f.role}</label><input id="f-role" name="role" autocomplete="organization-title" /></div>
+  </div>
+  <div class="cf__row">
+    <div class="field"><label for="f-industry">{f.industry}</label><input id="f-industry" name="industry" /></div>
+    <div class="field"><label for="f-market">{f.market}</label><select id="f-market" name="market"><option value="">{f.choose}</option>{d.markets.map((m) => <option>{m}</option>)}</select></div>
   </div>
 
   <fieldset class="field field--choices" aria-describedby="e-services">
@@ -42,11 +47,14 @@ const opts = [...DISCIPLINES.map((p) => ({ id: p.id, label: p.name[lang] })), { 
     <div class="field"><label for="f-phone">{f.phone}</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" dir="ltr" placeholder="+966" aria-describedby="e-phone" /><p class="field__err" id="e-phone"></p></div>
     <div class="field"><label for="f-website">{f.website}</label><input id="f-website" name="website" type="url" inputmode="url" dir="ltr" placeholder="https://" aria-describedby="e-website" /><p class="field__err" id="e-website"></p></div>
   </div>
-  <div class="field"><label for="f-budget">{f.budget}</label><input id="f-budget" name="budget" inputmode="text" /></div>
+  <div class="cf__row">
+    <div class="field"><label for="f-timeline">{f.timeline}</label><select id="f-timeline" name="timeline"><option value="">{f.choose}</option>{d.timelines.map((m) => <option>{m}</option>)}</select></div>
+    <div class="field"><label for="f-budget">{f.budget}</label><input id="f-budget" name="budget" inputmode="text" /></div>
+  </div>
   <div class="field"><label for="f-message">{f.message}</label><textarea id="f-message" name="message" rows="5" required aria-describedby="e-message"></textarea><p class="field__err" id="e-message"></p></div>
 
   <div class="field field--consent">
-    <label class="consent"><input type="checkbox" name="consent" required aria-describedby="e-consent" /><span>{f.consent}</span></label>
+    <label class="consent"><input type="checkbox" name="consent" required aria-describedby="e-consent" /><span>{f.consent} <a class="link-diag" href={href(lang, 'privacy')} target="_blank" rel="noopener">{f.privacy}</a>.</span></label>
     <p class="field__err" id="e-consent"></p>
   </div>
   <!-- honeypot -->
@@ -70,16 +78,21 @@ const opts = [...DISCIPLINES.map((p) => ({ id: p.id, label: p.name[lang] })), { 
   .cf__notice { display: flex; gap: var(--s-3); align-items: flex-start; padding: var(--s-3) var(--s-4); border: 1px solid var(--line-strong); color: var(--text); font-size: var(--fs-small); line-height: 1.5; }
   .cf__notice svg { flex: none; margin-top: 2px; color: var(--accent-text); }
   .cf__summary { padding: var(--s-3) var(--s-4); border-inline-start: 3px solid #ff6b6b; background: rgb(255 107 107 / 0.08); color: var(--text-strong); font-weight: 500; }
-  .cf__row { display: grid; gap: var(--s-5); }
+  /* align to the input line: labels may wrap and only required fields reserve an error line */
+  .cf__row { display: grid; gap: var(--s-5); align-items: end; }
+  .cf__row > .field:not(:has(.field__err)) { padding-bottom: calc(1.4em + var(--s-2)); }
   .field { display: grid; gap: var(--s-2); border: 0; padding: 0; min-width: 0; }
   .field label, .field legend { font-size: var(--fs-small); font-weight: 500; color: var(--text); padding: 0; }
-  .field input:not([type='checkbox']), .field textarea {
+  .field input:not([type='checkbox']), .field textarea, .field select {
     width: 100%; min-height: 54px; padding: 14px 0; background: transparent; border: 0; border-bottom: 1px solid var(--line-strong);
     color: var(--text-strong); font-size: var(--fs-lead); border-radius: 0; transition: border-color var(--d-2) var(--ease-out);
   }
+  .field select { appearance: none; cursor: pointer; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-inline-end: 28px; }
+  :global([dir='rtl']) .field select { background-position: 9px 50%, 14px 50%; }
+  .field select option { background: var(--c-graphite); color: var(--text-strong); }
   .field textarea { resize: vertical; min-height: 140px; line-height: 1.5; }
   .field input::placeholder { color: rgb(164 164 174 / 0.6); }
-  .field input:focus, .field textarea:focus { outline: none; border-bottom-color: var(--accent); box-shadow: 0 1px 0 0 var(--accent); }
+  .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-bottom-color: var(--accent); box-shadow: 0 1px 0 0 var(--accent); }
   .field [aria-invalid='true'] { border-bottom-color: #ff6b6b !important; }
   /* the error line is always reserved: clearing a message on blur must never shift the layout
      under the pointer (that swallowed clicks on the next control) */
@@ -152,7 +165,8 @@ const opts = [...DISCIPLINES.map((p) => ({ id: p.id, label: p.name[lang] })), { 
         return;
       }
       const lines = [
-        `Name: ${fd.get('name')}`, `Email: ${fd.get('email')}`, `Company: ${fd.get('company')}`, `Role: ${fd.get('role')}`,
+        `Name: ${fd.get('name')}`, `Email: ${fd.get('email')}`, `Company: ${fd.get('company')}`, `Role: ${fd.get('role') || '-'}`,
+        `Industry: ${fd.get('industry') || '-'}`, `Market: ${fd.get('market') || '-'}`, `Timeline: ${fd.get('timeline') || '-'}`,
         `Phone: ${fd.get('phone') || '-'}`, `Website: ${fd.get('website') || '-'}`,
         `Needs: ${services.map((s) => s.dataset.label).join(', ')}`, `Monthly media budget: ${fd.get('budget') || '-'}`, '', `${fd.get('message')}`,
       ];

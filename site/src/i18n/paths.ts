@@ -1,7 +1,7 @@
 import { LOCALES, type Lang } from '../config/site';
 
-export type PageKey = 'home' | 'about' | 'services' | 'work' | 'contact';
-const SLUG: Record<PageKey, string> = { home: '', about: 'about/', services: 'services/', work: 'work/', contact: 'contact/' };
+export type PageKey = 'home' | 'about' | 'services' | 'work' | 'contact' | 'privacy';
+const SLUG: Record<PageKey, string> = { home: '', about: 'about/', services: 'services/', work: 'work/', contact: 'contact/', privacy: 'privacy/' };
 
 /** Locale-prefixed path, e.g. href('ar','work') → "/ar/work/" ; hash optional. */
 export const href = (lang: Lang, page: PageKey = 'home', hash = '') => `/${lang}/${SLUG[page]}${hash ? `#${hash}` : ''}`;

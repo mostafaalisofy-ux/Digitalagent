@@ -1,7 +1,7 @@
 import { SITE, LOCALES } from '../config/site';
 import { href, caseHref, type PageKey } from '../i18n/paths';
 import { CASES } from '../data/cases';
-const PAGES: PageKey[] = ['home', 'about', 'services', 'work', 'contact'];
+const PAGES: PageKey[] = ['home', 'about', 'services', 'work', 'contact', 'privacy'];
 export function GET() {
   type L = (typeof LOCALES)[number];
   const abs = (path: string) => new URL(path, SITE.url).href;

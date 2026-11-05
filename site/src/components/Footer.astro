@@ -33,7 +33,7 @@ const nav: [PageKey, string][] = [['work', d.nav.work], ['services', d.nav.servi
       </div>
     </div>
     <div class="ftr__bottom">
-      <p>© {year} SayTamm · <bdi lang="ar">قول تم</bdi>. {d.footer.rights}</p>
+      <p>© {year} SayTamm · <bdi lang="ar">قول تم</bdi>. {d.footer.rights} <a class="ftr__legal" href={href(lang, 'privacy')} aria-current={page === 'privacy' ? 'page' : undefined}>{d.footer.privacy}</a></p>
       <p class="latin">saytamm.com</p>
     </div>
   </div>
@@ -67,4 +67,6 @@ const nav: [PageKey, string][] = [['work', d.nav.work], ['services', d.nav.servi
     .ftr__nav { grid-column: 9 / span 2; }
     .ftr__lang { grid-column: 11 / span 2; }
   }
+  .ftr__legal { margin-inline-start: var(--s-3); color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+  .ftr__legal:hover { color: var(--text-strong); }
 </style>
