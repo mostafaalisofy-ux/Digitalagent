@@ -62,7 +62,8 @@ for src, out in PAGES.items():
     # offline files can't fetch responsive variants: drop srcset/sizes and embed the base image
     html = re.sub(r'\s(?:srcset|sizes)="[^"]*"', '', html)
     html = html.replace(' loading="lazy"', '')  # everything is embedded already: render images at once
-    html = re.sub(r'src="(/(?:work|visuals|team)/[^"]+\.webp)"', lambda m: f'src="{b64(SRC + m.group(1), "image/webp")}"', html)
+    MIME = {'webp': 'image/webp', 'svg': 'image/svg+xml', 'png': 'image/png', 'jpg': 'image/jpeg'}
+    html = re.sub(r'(src|poster)="(/(?:work|visuals|team|clients)/[^"]+\.(webp|svg|png|jpg))"', lambda m: f'{m.group(1)}="{b64(SRC + m.group(2), MIME[m.group(3)])}"', html)
     html = re.sub(r'<link rel="icon"[^>]*href="(/brand/[^"]+\.svg)"[^>]*>', lambda m: f'<link rel="icon" type="image/svg+xml" href="{b64(SRC + m.group(1), "image/svg+xml")}">', html)
     html = re.sub(r'(href)="(/[^"]*)"', link, html)
     open(f'{OUT}/{out}', 'w', encoding='utf-8').write(html)
