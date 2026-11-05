@@ -104,6 +104,63 @@ export const SAYTAMM_WORK: StWork[] = [
     ] },
   },
   {
+    slug: 'fatora-plus-posts',
+    client: 'Fatora Plus', clientAr: 'فاتورة بلس',
+    sector: { en: 'Invoicing software', ar: 'برامج الفوترة' },
+    title: { en: 'Social posts for an invoicing platform', ar: 'بوستات لمنصة فوترة' },
+    summary: {
+      en: 'Social posts for Fatora Plus: a Saudi National Day contest post, “Take part and win”, and a product post inviting business owners to take control of their company’s finances.',
+      ar: 'بوستات سوشيال لفاتورة بلس: بوست مسابقة لليوم الوطني السعودي بعنوان «شارك واربح»، وبوست للمنتج يدعو أصحاب الأعمال إلى التحكم في حركة شركاتهم المالية.',
+    },
+    format: { en: 'Social media posts · 1:1', ar: 'بوستات لمنصات التواصل · 1:1' },
+    media: { kind: 'images', images: [
+      { src: '/work/fatora-1.webp', w: 1000, h: 1000, alt: { en: 'Fatora Plus Saudi National Day post over the Riyadh skyline at night, headline “Take part and win”', ar: 'بوست فاتورة بلس لليوم الوطني السعودي على أفق الرياض ليلاً، وعنوان «شارك واربح»' } },
+      { src: '/work/fatora-2.webp', w: 1000, h: 1000, alt: { en: 'Fatora Plus post: a laptop with financial charts, headline “Take control of your company’s finances”', ar: 'بوست فاتورة بلس: حاسوب محمول عليه رسوم مالية، وعنوان «تحكم في حركة شركتك المالية»' } },
+    ] },
+  },
+  {
+    slug: 'ks-furniture-offer',
+    client: 'K.S Furniture', clientAr: 'K.S للأثاث',
+    sector: { en: 'Furniture · E-commerce', ar: 'أثاث · تجارة إلكترونية' },
+    title: { en: 'National Day offer post', ar: 'بوست عرض اليوم الوطني' },
+    summary: {
+      en: 'A Saudi National Day offer post for K.S Furniture’s online store: a styled bedroom set, the discount in the brand’s deep red, an order button and the instalment options customers look for.',
+      ar: 'بوست عرض اليوم الوطني السعودي لمتجر K.S للأثاث الإلكتروني: غرفة منسّقة، والخصم بلون العلامة الأحمر الداكن، وزر طلب، وخيارات التقسيط التي يبحث عنها العميل.',
+    },
+    format: { en: 'Social media post · 1:1', ar: 'بوست لمنصات التواصل · 1:1' },
+    media: { kind: 'images', images: [
+      { src: '/work/ks-offer.webp', w: 1000, h: 1000, alt: { en: 'K.S Furniture National Day offer post: a black dresser, vanity and clear acrylic chair, with an order button and instalment payment logos', ar: 'بوست عرض اليوم الوطني من K.S للأثاث: تسريحة سوداء وكرسي أكريليك شفاف، مع زر الطلب وشعارات الدفع بالتقسيط' } },
+    ] },
+  },
+  {
+    slug: 'siyaq-post',
+    client: 'Siyaq', clientAr: 'سياق',
+    sector: { en: 'Content platform', ar: 'منصة محتوى' },
+    title: { en: 'App launch post', ar: 'بوست للتطبيق' },
+    summary: {
+      en: 'A post for Siyaq, an Arabic content platform: the website on a laptop between old print, a fountain pen and a lantern, inviting readers to share how they find information, with links to both app stores.',
+      ar: 'بوست لسياق، منصة المحتوى العربية: الموقع على حاسوب محمول بين صفحات مطبوعة قديمة وقلم حبر وفانوس، يدعو القرّاء لمشاركة طريقتهم في الحصول على المعلومة، مع روابط متجري التطبيقات.',
+    },
+    format: { en: 'Social media post · 1:1', ar: 'بوست لمنصات التواصل · 1:1' },
+    media: { kind: 'images', images: [
+      { src: '/work/siyaq-1.webp', w: 1000, h: 1000, alt: { en: 'Siyaq post: the Siyaq website on a laptop with open books, a lantern and a fountain pen, headline “Share your way of getting information”', ar: 'بوست سياق: موقع سياق على حاسوب محمول مع كتب مفتوحة وفانوس وقلم حبر، وعنوان «شاركنا طريقتك في الحصول على المعلومة»' } },
+    ] },
+  },
+  {
+    slug: 'exodus-travel-post',
+    client: 'Exodus Travel',
+    sector: { en: 'Travel', ar: 'سفر وسياحة' },
+    title: { en: 'Flight updates post', ar: 'بوست مواعيد الرحلات' },
+    summary: {
+      en: 'A post for Exodus Travel built on a departures board, inviting followers to stay updated on Cairo flights.',
+      ar: 'بوست لشركة Exodus Travel مبني على لوحة المغادرة في المطار، يدعو المتابعين لمتابعة مواعيد رحلات القاهرة.',
+    },
+    format: { en: 'Social media post · 1:1', ar: 'بوست لمنصات التواصل · 1:1' },
+    media: { kind: 'images', images: [
+      { src: '/work/exodus-1.webp', w: 1000, h: 1000, alt: { en: 'Exodus Travel post: an airport departures board with dashed flight paths, headline “Stay updated on Cairo flights”', ar: 'بوست Exodus Travel: لوحة مغادرة في المطار مع مسارات طيران منقّطة، وعنوان «Stay Updated On Cairo Flights»' } },
+    ] },
+  },
+  {
     slug: 'niimee-the-dot',
     client: 'niimee',
     sector: { en: 'Fashion', ar: 'أزياء' },

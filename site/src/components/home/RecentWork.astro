@@ -4,8 +4,10 @@
 import { SAYTAMM_WORK } from '../../data/work';
 import { type Lang } from '../../config/site';
 import { h } from '../../i18n/home';
-interface Props { lang: Lang; headingLevel?: 'h2' | 'h3' }
-const { lang } = Astro.props;
+import { href } from '../../i18n/paths';
+interface Props { lang: Lang; headingLevel?: 'h2' | 'h3'; limit?: number }
+const { lang, limit } = Astro.props;
+const items = limit ? SAYTAMM_WORK.slice(0, limit) : SAYTAMM_WORK;
 const d = h(lang).recent;
 // In Arabic text, isolate Latin runs (brand lines, product names) so bidi never reorders their punctuation
 const iso = (text: string) => lang === 'ar' ? text.split(/([A-Za-z][A-Za-z0-9 .,'’&-]*[A-Za-z0-9.])/) : [text];
@@ -19,7 +21,7 @@ const iso = (text: string) => lang === 'ar' ? text.split(/([A-Za-z][A-Za-z0-9 .,
       <p class="rw__intro" data-reveal>{d.intro}</p>
     </header>
     <ul role="list" class="rw__list">
-      {SAYTAMM_WORK.map((w) => (
+      {items.map((w) => (
         <li class:list={['rw__item', { 'rw__item--wide': w.media.kind === 'images' }]} data-reveal>
           <div class="rw__media">
             {w.media.kind === 'video' && (
@@ -42,6 +44,9 @@ const iso = (text: string) => lang === 'ar' ? text.split(/([A-Za-z][A-Za-z0-9 .,
         </li>
       ))}
     </ul>
+    {limit && SAYTAMM_WORK.length > limit && (
+      <div class="rw__foot"><a class="btn" href={`${href(lang, 'work')}#saytamm-work`} data-track="cta_click" data-cta-id="all_client_work" data-cta-location="home_recent">{d.all}<span class="arrow" aria-hidden="true"></span></a></div>
+    )}
   </div>
 </section>
 )}
@@ -62,6 +67,7 @@ const iso = (text: string) => lang === 'ar' ? text.split(/([A-Za-z][A-Za-z0-9 .,
   .rw .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
   .rw__title { font-size: var(--fs-h1); letter-spacing: var(--track-tight); line-height: var(--lh-head); }
   .rw__intro { color: var(--text); font-size: var(--fs-lead); max-width: 48ch; }
+  .rw__foot { margin-top: var(--s-8); }
   .rw__list { display: grid; gap: var(--s-9); margin-top: var(--s-8); }
   .rw__item { display: grid; gap: var(--s-6); align-items: center; }
   .rw__media { justify-self: center; width: min(100%, 420px); }

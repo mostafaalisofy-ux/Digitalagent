@@ -17,7 +17,7 @@ export const HOME = {
     recent: {
       eyebrow: 'SayTamm work', title: 'Latest work for our clients.',
       intro: 'Recent work SayTamm has delivered for its clients.',
-      client: 'Client', format: 'Format', play: 'Play video', pause: 'Pause video',
+      client: 'Client', format: 'Format', play: 'Play video', pause: 'Pause video', all: 'See all client work',
     },
     clients: {
       eyebrow: 'Our clients', title: 'Brands that work with SayTamm.',
@@ -129,7 +129,7 @@ export const HOME = {
     recent: {
       eyebrow: 'أعمال قول تم', title: 'أحدث أعمالنا لعملائنا.',
       intro: 'أعمال نفّذتها قول تم مؤخراً لعملائها.',
-      client: 'العميل', format: 'الصيغة', play: 'تشغيل الفيديو', pause: 'إيقاف الفيديو',
+      client: 'العميل', format: 'الصيغة', play: 'تشغيل الفيديو', pause: 'إيقاف الفيديو', all: 'كل أعمالنا لعملائنا',
     },
     clients: {
       eyebrow: 'عملاؤنا', title: 'علامات تعمل مع قول تم.',

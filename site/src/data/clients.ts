@@ -53,6 +53,10 @@ export const CLIENTS: Client[] = [
   { name: { en: 'JORA', ar: 'JORA' }, sector: { en: 'Restaurants · Street food', ar: 'مطاعم · أكل شارع' } }, // logo file pending
   { name: { en: 'Al Bustan', ar: 'البستان' }, sector: { en: 'Food · Nuts', ar: 'أغذية · مكسرات' } }, // logo file pending
   { name: { en: 'niimee', ar: 'niimee' }, sector: { en: 'Fashion', ar: 'أزياء' } }, // logo file pending
+  { name: { en: 'K.S Furniture', ar: 'K.S للأثاث' }, sector: { en: 'Furniture · E-commerce', ar: 'أثاث · تجارة إلكترونية' } }, // logo file pending
+  { name: { en: 'Fatora Plus', ar: 'فاتورة بلس' }, sector: { en: 'Invoicing software', ar: 'برامج الفوترة' } }, // logo file pending
+  { name: { en: 'Siyaq', ar: 'سياق' }, sector: { en: 'Content platform', ar: 'منصة محتوى' } }, // logo file pending
+  { name: { en: 'Exodus Travel', ar: 'Exodus Travel' }, sector: { en: 'Travel', ar: 'سفر وسياحة' } }, // logo file pending
   { name: { en: 'Beauty Lab', ar: 'بيوتي لاب' }, sector: { en: 'Natural cosmetics', ar: 'مستحضرات تجميل طبيعية' } }, // logo file pending
   { name: { en: 'METRO', ar: 'مترو' }, sector: { en: 'Food products', ar: 'منتجات غذائية' } }, // logo file pending
   { name: { en: 'Clean Basket', ar: 'كلين باسكت' }, sector: { en: 'Cleaning services', ar: 'خدمات تنظيف' },
