@@ -47,6 +47,7 @@ type Logo = { src: string; w: number; h: number };
 /** `logoAr` = the client's official Arabic lockup, used on Arabic pages when supplied. */
 export interface Client { name: T; sector?: T; logo?: Logo; logoAr?: Logo; caseSlug?: string }
 export const CLIENTS: Client[] = [
+  { name: { en: 'Chery Saudi', ar: 'شيري السعودية' }, sector: { en: 'Automotive', ar: 'سيارات' } }, // logo file pending
   { name: { en: 'Al Bustan', ar: 'البستان' }, sector: { en: 'Food · Nuts', ar: 'أغذية · مكسرات' } }, // logo file pending
   { name: { en: 'niimee', ar: 'niimee' }, sector: { en: 'Fashion', ar: 'أزياء' } }, // logo file pending
   { name: { en: 'Arhab', ar: 'أرحب' }, logo: { src: '/clients/arhab.svg', w: 858, h: 629 } },

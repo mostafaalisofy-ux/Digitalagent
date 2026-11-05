@@ -10,6 +10,21 @@ export interface StWork { slug: string; client: string; clientAr?: string; secto
 
 export const SAYTAMM_WORK: StWork[] = [
   {
+    slug: 'chery-saudi-trust',
+    client: 'Chery Saudi', clientAr: 'شيري السعودية',
+    sector: { en: 'Automotive', ar: 'سيارات' },
+    title: { en: 'Trust starts before the road', ar: 'ثقة تبدأ قبل الطريق' },
+    summary: {
+      en: 'Social posts for Chery Saudi featuring the Tiggo 8 Pro, built around family, safety and comfort, under the line “Trust starts before the road”.',
+      ar: 'بوستات سوشيال لشيري السعودية تقدّم Tiggo 8 Pro من زاوية العائلة والأمان والراحة، تحت شعار «ثقة تبدأ قبل الطريق».',
+    },
+    format: { en: 'Social media posts · 1:1', ar: 'بوستات لمنصات التواصل · 1:1' },
+    media: { kind: 'images', images: [
+      { src: '/work/chery-post-1.webp', w: 1000, h: 1000, alt: { en: 'Chery Saudi post: a family beside a Tiggo 8 Pro at sunset, headline “Because they deserve the best”', ar: 'بوست شيري السعودية: عائلة بجانب Tiggo 8 Pro وقت الغروب، وعنوان «لأنهم يستحقون الأفضل»' } },
+      { src: '/work/chery-post-2.webp', w: 1000, h: 1000, alt: { en: 'Chery Saudi post: a father and daughter walking to a Tiggo 8 Pro, headline “Trust… the start of every journey”', ar: 'بوست شيري السعودية: أب وابنته متجهان إلى Tiggo 8 Pro، وعنوان «الثقة… بداية كل رحلة»' } },
+    ] },
+  },
+  {
     slug: 'niimee-the-dot',
     client: 'niimee',
     sector: { en: 'Fashion', ar: 'أزياء' },

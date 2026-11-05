@@ -66,6 +66,8 @@ const iso = (text: string) => lang === 'ar' ? text.split(/([A-Za-z][A-Za-z0-9 .,
   .rw__item { display: grid; gap: var(--s-6); align-items: center; }
   .rw__media { justify-self: center; width: min(100%, 420px); }
   .rw__video { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; background: var(--surface); }
+  .rw__imgs { display: grid; gap: var(--s-3); }
+  .rw__imgs:has(> img:nth-child(2)) { grid-template-columns: 1fr 1fr; }
   .rw__imgs img { display: block; width: 100%; height: auto; background: var(--surface); }
   .rw__item--wide .rw__media { width: 100%; }
   .rw__text { display: grid; gap: var(--s-3); align-content: start; }
