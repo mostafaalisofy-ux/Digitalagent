@@ -40,6 +40,22 @@ export const SAYTAMM_WORK: StWork[] = [
     ] },
   },
   {
+    slug: 'zahid-electra-appliances',
+    client: 'Zahid Electra', clientAr: 'الزاهد إلكترا',
+    sector: { en: 'Home appliances', ar: 'أجهزة منزلية' },
+    title: { en: 'Saudi-made appliances, in Saudi homes', ar: 'أجهزة صناعة سعودية في البيت السعودي' },
+    summary: {
+      en: 'Social posts for Zahid Electra’s washing machines, refrigerators and freezers, placing each appliance in a Saudi home and leading with local manufacturing: “Al Zahid in every home”, “Made by Saudi hands” and “We make pride”.',
+      ar: 'بوستات سوشيال لغسالات وثلاجات وفريزرات الزاهد إلكترا، تضع كل جهاز داخل بيت سعودي وتقدّم التصنيع المحلي في الواجهة: «الزاهد في كل بيت» و«بسواعد سعودية» و«نصنع الفخر».',
+    },
+    format: { en: 'Social media posts', ar: 'بوستات لمنصات التواصل' },
+    media: { kind: 'images', images: [
+      { src: '/work/zahid-1.webp', w: 1600, h: 1200, alt: { en: 'Zahid Electra post: a washing machine, upright freezer and side-by-side refrigerator on a dark stage, line “We make pride”', ar: 'بوست الزاهد إلكترا: غسالة وفريزر وثلاجة بابين على خلفية داكنة، وعبارة «نصنع الفخر»' } },
+      { src: '/work/zahid-2.webp', w: 1000, h: 750, alt: { en: 'Zahid Electra post: a family watching TV beside a washing machine set into wooden panelling, line “Al Zahid in every home”', ar: 'بوست الزاهد إلكترا: عائلة تشاهد التلفاز بجانب غسالة داخل جدار خشبي، وعبارة «الزاهد في كل بيت»' } },
+      { src: '/work/zahid-3.webp', w: 1000, h: 750, alt: { en: 'Zahid Electra post: a woman holding groceries beside an upright refrigerator overlooking Riyadh, line “Made by Saudi hands”', ar: 'بوست الزاهد إلكترا: سيدة تحمل مشتريات بجانب ثلاجة بإطلالة على الرياض، وعبارة «بسواعد سعودية»' } },
+    ] },
+  },
+  {
     slug: 'beauty-lab-packaging',
     client: 'Beauty Lab', clientAr: 'بيوتي لاب',
     sector: { en: 'Natural cosmetics', ar: 'مستحضرات تجميل طبيعية' },

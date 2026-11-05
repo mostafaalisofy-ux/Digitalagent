@@ -57,7 +57,7 @@ export const CLIENTS: Client[] = [
   { name: { en: 'METRO', ar: 'مترو' }, sector: { en: 'Food products', ar: 'منتجات غذائية' } }, // logo file pending
   { name: { en: 'Clean Basket', ar: 'كلين باسكت' }, sector: { en: 'Cleaning services', ar: 'خدمات تنظيف' },
     logo: { src: '/clients/cleanbasket-en.webp', w: 900, h: 387 }, logoAr: { src: '/clients/cleanbasket-ar.webp', w: 900, h: 454 } },
-  { name: { en: 'Zahid Electra', ar: 'زاهد إلكترا' }, logo: { src: '/clients/zahid-electra.webp', w: 900, h: 277 } },
+  { name: { en: 'Zahid Electra', ar: 'الزاهد إلكترا' }, sector: { en: 'Home appliances', ar: 'أجهزة منزلية' }, logo: { src: '/clients/zahid-electra.webp', w: 900, h: 277 } },
   { name: { en: 'Arhab', ar: 'أرحب' }, logo: { src: '/clients/arhab.svg', w: 858, h: 629 } },
   { name: { en: 'Tech Hive', ar: 'خلية التكنولوجيا' }, sector: { en: 'Electronics retail', ar: 'تجزئة إلكترونيات' },
     logo: { src: '/clients/techhive-en.webp', w: 478, h: 294 }, logoAr: { src: '/clients/techhive-ar.webp', w: 478, h: 280 } },
