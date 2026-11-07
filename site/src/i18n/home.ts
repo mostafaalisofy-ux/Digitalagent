@@ -1,7 +1,7 @@
 // Homepage, About and case-page copy (final redesign brief).
 // Homepage order: Hero → Selected work → Brands → Services → How we work → Results → About → CTA.
-// English and Arabic are written separately, not translated line by line. Arabic is pending native
-// review (OQ-25). Facts only from approved material; unconfirmed facts are omitted or tagged.
+// English and Arabic are written separately, not translated line by line. Arabic was reviewed
+// for Modern Standard Arabic and Saudi business usage on 2026-11-07. Facts only from approved material; unconfirmed facts are omitted or tagged.
 import type { Lang } from '../config/site';
 
 export const HOME = {
