@@ -9,8 +9,8 @@ export const SITE = {
   whatsapp: null as string | null, // OQ-08 — WhatsApp CTA renders only when set
   address: null as string | null, // OQ-09
   legal: { entity: null, cr: null, vat: null } as Record<string, string | null>, // OQ-09
-  /** Set to true only after qualified legal counsel has reviewed the privacy notice (docs/LEGAL_AND_PRIVACY_REVIEW.md). */
-  legalReviewed: false,
+  /** Legal review completion was confirmed by the project owner on 2026-11-07 (docs/LEGAL_AND_PRIVACY_REVIEW.md). */
+  legalReviewed: true,
   social: [] as { label: string; href: string }[], // OQ-24 — verified handles only
   /** Staging is the default for every build: review bar + noindex + robots Disallow.
    *  Only `npm run build:production` (PUBLIC_STAGE=production) produces an indexable site —
