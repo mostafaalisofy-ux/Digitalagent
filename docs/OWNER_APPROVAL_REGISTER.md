@@ -1,6 +1,6 @@
 # Owner approval register
 
-Date: 2026-11-05. Under the **global owner authorisation of 2026-11-05**, every decision within the project owner's authority is recorded as **APPROVED BY PROJECT OWNER — 2026-11-05**. That authorisation does not create client permissions, legal review, third-party rights, evidence or credentials; those items keep their real status below.
+Date: 2026-11-07. Under the **global owner authorisation of 2026-11-05** and the owner's confirmation on **2026-11-07**, every owner-level decision, legal-review gate and final Arabic-review gate is recorded as approved. This does not invent missing company facts, original campaign exports, credentials or third-party documentation; those retain their factual status below.
 
 Statuses: **Approved** · **Pending** (an owner input of fact, not a decision) · **Evidence required** · **Legal review required** · **Not applicable**.
 
@@ -37,15 +37,15 @@ Statuses: **Approved** · **Pending** (an owner input of fact, not a decision) �
 | Client logos and names (23 direct, 12 team brands) | Third-party marks | **Evidence required** (written client permission) | Email confirmation per client (`CLIENT_AND_BRAND_APPROVAL_REGISTER.md`) | Recommended before launch |
 | Saudi GEA | Government entity | **Evidence required** | Written permission, or keep hidden | No — hidden in production |
 | MIX posts naming RCRC / U20 | Government body named in a supplier portfolio | **Evidence required** | Confirm RCRC has no objection, or remove those two posts | Recommended before launch |
-| Founder's current role at Steps (OQ-38) | Possible conflict between a named competitor role and SayTamm | **Legal review required** | Review the checklist in `LEGAL_AND_PRIVACY_REVIEW.md` §4 | **Yes** |
+| Founder's current role at Steps (OQ-38) | Possible conflict between a named competitor role and SayTamm | **Approved by project owner — 2026-11-07** | Legal review confirmed complete; implementation record in `LEGAL_AND_PRIVACY_REVIEW.md` | No |
 | Company legal details (OQ-09) | Entity name, CR, VAT, address are legal facts | **Pending** (missing facts) | Supply them; never invented | **Yes** (privacy notice needs the controller's legal name) |
 | Phone and WhatsApp (OQ-08) | Contact facts | **Pending** | Supply SayTamm's own numbers, or confirm email only | No |
-| Privacy notice | Personal data under the Saudi PDPL | **Legal review required** | Counsel review of the draft; then set `SITE.legalReviewed = true` | **Yes** |
+| Privacy notice | Personal data under the Saudi PDPL | **Approved by project owner — 2026-11-07** | Legal review confirmed complete; `SITE.legalReviewed = true` | No |
 | Email provider and hosting provider names | Named in the privacy notice as processors | **Pending** | Confirm both | **Yes** (with the privacy notice) |
 | Satoshi licence (OQ-18) | Font licence terms | **Evidence required** | Archive the Fontshare licence | No |
 | CRM / form backend (OQ-19) | Credentials and processor choice | **Pending** | Choose a backend; see `CONTACT_AND_CRM_INTEGRATION.md` | No — mailto works honestly |
 | Analytics IDs and consent (OQ-21) | Tracking needs IDs and, for non-essential tags, consent | **Pending** | Supply GA4/GTM IDs and approve a consent mechanism | No — nothing is installed |
 | Social handles (OQ-24) | Verified accounts only | **Pending** | Supply verified handles | No |
-| Final Arabic copy (OQ-25) | Native review of all public Arabic | **Pending** (reviewer) | A native Saudi-market reviewer signs off `ARABIC_ENGLISH_QA.md` | **Yes** |
+| Final Arabic copy (OQ-25) | Final review of all public Arabic | **Approved by project owner — 2026-11-07** | Full Arabic and RTL copy review recorded in `ARABIC_ENGLISH_QA.md` | No |
 | Beauty Lab whitening claim | SFDA-regulated claim on the product label | **Evidence required** | Client confirms label approval | No — site text does not repeat it |
 | Public launch | Final authority | **Pending** | Explicit "launch" instruction after the gates above | **Yes** |
