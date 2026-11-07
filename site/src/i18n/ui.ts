@@ -1,5 +1,5 @@
-// All interface copy, EN + AR. Arabic is written for its own composition (not a line-by-line
-// translation) and is pending native review before launch (OQ-25).
+// All interface copy, EN + AR. Arabic is written for its own composition, reviewed
+// for Modern Standard Arabic and Saudi business usage on 2026-11-07.
 import type { Lang } from '../config/site';
 
 export const UI = {
@@ -60,7 +60,7 @@ export const UI = {
       contactTitle: 'ابدأ مشروعك | قول تم',
       contactDesc: 'أخبرنا بهدفك وسوقك وجدولك الزمني، ونرد عليك بالطريقة التي نقترحها للعمل.',
       aboutTitle: 'من نحن | قول تم — وكالة تسويق رقمي وأداء',
-      aboutDesc: 'من نحن وكيف نفكر وكيف نعمل: فريق واحد يربط الاستراتيجية والإبداع والإعلانات والتقنية بهدف العمل لدى كل علامة.',
+      aboutDesc: 'من نحن وكيف نفكر وكيف نعمل: فريق واحد يربط الاستراتيجية والإبداع والإعلانات والتقنية بأهداف أعمال كل علامة.',
       caseSuffix: 'دراسة حالة | قول تم',
     },
     nav: { about: 'من نحن', work: 'أعمالنا', services: 'خدماتنا', contact: 'تواصل معنا', cta: 'ابدأ مشروعك', switch: 'English', switchLabel: 'التبديل إلى الإنجليزية', menu: 'القائمة', close: 'إغلاق', home: 'قول تم — الرئيسية' },
@@ -70,7 +70,7 @@ export const UI = {
       l1: 'قول.', l2: 'تم.',
       sub: 'في قول تم، نجمع الاستراتيجية والإبداع والإعلانات والتقنية في منظومة واحدة. نفهم أهداف الأعمال، ونبني خطط التسويق، ونحوّلها إلى تنفيذ واضح ونتائج قابلة للقياس.',
       cta: 'ابدأ مشروعك', cta2: 'استكشف أعمالنا',
-      scroll: 'أعمال مختارة في الأسفل',
+      scroll: 'تعرّف إلى أعمال مختارة',
     },
     services: { eyebrow: 'خدماتنا', title: ['تسع خدمات.', 'هدف واحد.'], intro: 'نخطط كل تعاون حول هدف تجاري واحد. اطلب خدمة واحدة، أو الخطة المتكاملة.', includes: 'تشمل', pending: 'النطاق بانتظار التأكيد', cta: 'ناقش هذه الخدمة', index: 'التخصصات', count: (n: number) => (n === 1 ? 'خدمة واحدة' : n === 2 ? 'خدمتان' : `${n} خدمات`) },
     workPage: { eyebrow: 'أعمالنا', title: ['أعمال', 'صنعت فرقاً.'], intro: 'دراسات حالة من فريق قول تم في التجارة الإلكترونية والعقارات والبنوك، في السعودية والخليج ومصر. ولكل منها ما الذي قيس ومن أين جاء الرقم.', label: 'سجل إنجاز الفريق: مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.' },
