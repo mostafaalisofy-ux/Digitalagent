@@ -1,6 +1,6 @@
 # Legal and privacy review
 
-Date: 2026-11-05. **This is a technical and factual preparation for legal review, not legal advice.** No statement here or on the site has been reviewed by legal counsel. Final approval belongs to the owner and qualified counsel.
+Date: 2026-11-07. **The project owner confirms that the legal review is complete.** This file remains a factual implementation record, not legal advice. The underlying legal advice, contracts and correspondence are not stored in this repository.
 
 ## 1. What exists on the site
 
@@ -51,3 +51,10 @@ This checklist records questions only. It draws no conclusion.
 2. Owner names the email and hosting providers.
 3. Set `SITE.legalReviewed = true` in `site/src/config/site.ts`; the draft label disappears.
 4. If analytics or advertising tags are ever added: update the notice first, add a consent mechanism, and load non-essential tags only after consent.
+
+
+## 6. Review completion — 2026-11-07
+
+The project owner confirms that the privacy notice, the Steps/founder checklist and the website's legal presentation have been reviewed and cleared for launch. `SITE.legalReviewed` is therefore set to `true`, and the public draft label is removed.
+
+This confirmation does not manufacture missing public facts. The legal entity details, CR/VAT number, address, provider names and a retention period remain unpublished until the owner elects to provide them. They are not represented as facts on the site.
