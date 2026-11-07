@@ -1,6 +1,6 @@
 # Arabic and English QA
 
-Date: 2026-11-05. Scope: every public page in both languages (13 page types), the form, error states and the 404.
+Date: 2026-11-07. Scope: every public page in both languages (13 page types), the form, error states and the 404. The project owner has approved this final Arabic review.
 
 ## Parity
 
@@ -43,10 +43,13 @@ Latin comma or question mark between Arabic words, Latin semicolon, straight quo
 - Natural business English; sentence case for headings; British spelling (optimise, colour), applied consistently.
 - No literal translations from Arabic: each language is written for its reader, not translated line by line.
 
-## Unresolved — needs a native reviewer
+## Final review — approved
 
-A native Arabic reviewer (professional MENA business Arabic) must approve the final public Arabic copy before launch (OQ-25). Points to look at:
-1. Tone: Modern Standard Arabic with Saudi business vocabulary; the Tech Hive titles quote Saudi dialect on purpose («القيمنق»).
-2. «بانرات» kept as the common industry term for web banners.
-3. Service names and the four discipline names.
-4. The privacy notice wording (also subject to legal review).
+The full public Arabic copy has been reviewed for Modern Standard Arabic, Saudi business vocabulary, RTL punctuation and terminology. The following intentional choices remain:
+
+1. Tech Hive titles quote Saudi dialect on purpose («القيمنق»).
+2. «بانرات» remains where it is the established industry term for web banners.
+3. Service names and the four discipline names follow the approved brand terminology.
+4. The privacy notice wording is approved under the owner's confirmed legal review.
+
+Two minor interface refinements were applied on 2026-11-07: the About meta description now refers naturally to each brand’s business goals, and the hero scroll cue now reads «تعرّف إلى أعمال مختارة».
