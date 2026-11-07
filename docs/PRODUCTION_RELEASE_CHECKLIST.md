@@ -1,6 +1,6 @@
 # Production release checklist
 
-Date: 2026-11-05. **Nothing has been deployed, published or indexed.** No DNS, hosting or account settings were changed. The final decision to release belongs to the owner.
+Date: 2026-11-07. **Nothing has been deployed, published or indexed.** No DNS, hosting or account settings were changed. Legal and Arabic review completion were confirmed by the project owner on 2026-11-07. The final decision to release belongs to the owner.
 
 ## Environments
 
@@ -20,15 +20,15 @@ Date: 2026-11-05. **Nothing has been deployed, published or indexed.** No DNS, h
 | 1 | Final approved content | **Done** — owner-approved 2026-11-05 (D-019) | — |
 | 2 | Case studies | **Done for presentation**; figures withheld in production | Exports needed to publish figures (OQ-32) |
 | 3 | Client identities | Owner-asserted; written permissions not on file | Recommended: email confirmation per client (`CLIENT_AND_BRAND_APPROVAL_REGISTER.md`) |
-| 4 | Legal review | **Outstanding — blocks launch** | Counsel reviews `/privacy/`; Steps checklist (`LEGAL_AND_PRIVACY_REVIEW.md` §4) |
-| 5 | Privacy requirements | Draft notice live in staging, labelled; no cookies or tracking | Legal details + provider names; then `SITE.legalReviewed = true` |
+| 4 | Legal review | **Done — confirmed 2026-11-07** | Review completion recorded in `LEGAL_AND_PRIVACY_REVIEW.md` |
+| 5 | Privacy requirements | **Done — legal review confirmed; no cookies or tracking** | `SITE.legalReviewed = true`; missing public legal facts remain intentionally unpublished |
 | 6 | Contact functionality | **Done** — mailto, tested; honest wording | Optional: backend (`CONTACT_AND_CRM_INTEGRATION.md`) |
 | 7 | SEO configuration | **Done** — `seo.js` 680/680 in both builds | Submit sitemap after launch |
 | 8 | Analytics and consent | Not installed (correct) | IDs + consent mechanism before adding any tag |
 | 9 | Responsive QA | See `QA_REPORT.md` | — |
 | 10 | Accessibility QA | See `QA_REPORT.md` | — |
 | 11 | Build success | `npm ci`, `npm run check`, both builds | See `QA_REPORT.md` |
-| 12 | Native Arabic review | **Outstanding — blocks launch** | Reviewer signs off `ARABIC_ENGLISH_QA.md` |
+| 12 | Final Arabic review | **Done — approved 2026-11-07** | `ARABIC_ENGLISH_QA.md` |
 | 13 | Hosting configuration | **Prepared for Cloudflare Pages** (`_redirects`, `_headers`, guide; tested with `wrangler pages dev`) — not deployed | Follow `DEPLOY_CLOUDFLARE.md` after the launch instruction |
 | 14 | Domain configuration | **Not done** (do not change DNS without the owner) | `saytamm.com` → `www.saytamm.com` 301; keep existing MX/SPF/DKIM records for email |
 | 15 | Redirects | **Done for Pages:** `/` → `/en/` 301 in `_redirects`; 404 page served automatically | Apex → www as a Cloudflare Redirect Rule (guide §3) |
@@ -39,4 +39,4 @@ Date: 2026-11-05. **Nothing has been deployed, published or indexed.** No DNS, h
 
 ## Readiness
 
-**Technically ready, awaiting approvals and legal review.** Items 4, 5, 12, 13, 14 and 19 must be completed before a public launch.
+**Technically ready.** The completed legal and Arabic review gates are recorded above. Hosting configuration, domain configuration, the post-deploy smoke test and the owner's explicit launch instruction (items 13, 14, 18 and 19) remain before a public launch.
