@@ -1,0 +1,11 @@
+# Cloudflare Pages redirects (applied before static files).
+# The apex domain (saytamm.com → www.saytamm.com) is a domain-level redirect: set it up as a
+# Cloudflare Bulk Redirect, see docs/DEPLOY_CLOUDFLARE.md. Pages _redirects cannot do it.
+
+# Root: send visitors to the English home (x-default). The static index.html stays as a fallback.
+/                /en/            301
+/index.html      /en/            301
+
+# Language roots without the trailing slash
+/en              /en/            301
+/ar              /ar/            301

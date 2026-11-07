@@ -29,9 +29,9 @@ Date: 2026-11-05. **Nothing has been deployed, published or indexed.** No DNS, h
 | 10 | Accessibility QA | See `QA_REPORT.md` | — |
 | 11 | Build success | `npm ci`, `npm run check`, both builds | See `QA_REPORT.md` |
 | 12 | Native Arabic review | **Outstanding — blocks launch** | Reviewer signs off `ARABIC_ENGLISH_QA.md` |
-| 13 | Hosting configuration | **Not chosen** | Owner chooses host; build `npm run build:production`, output `dist`, Node 22.23.4 |
+| 13 | Hosting configuration | **Prepared for Cloudflare Pages** (`_redirects`, `_headers`, guide; tested with `wrangler pages dev`) — not deployed | Follow `DEPLOY_CLOUDFLARE.md` after the launch instruction |
 | 14 | Domain configuration | **Not done** (do not change DNS without the owner) | `saytamm.com` → `www.saytamm.com` 301; keep existing MX/SPF/DKIM records for email |
-| 15 | Redirects | Static meta-refresh `/` → `/en/` (noindex) | Host-level 301 `/` → `/en/`; serve `404.html` |
+| 15 | Redirects | **Done for Pages:** `/` → `/en/` 301 in `_redirects`; 404 page served automatically | Apex → www as a Cloudflare Redirect Rule (guide §3) |
 | 16 | Sitemap | **Done** — 26 URLs with hreflang | — |
 | 17 | robots.txt | **Done** — by stage | Confirm production file after deploy |
 | 18 | Final smoke test | After deploy | Open every page in both languages; submit the form; check `robots.txt`, `sitemap.xml`, no `noindex` on content pages |
