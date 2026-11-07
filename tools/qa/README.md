@@ -34,3 +34,5 @@ find ../../site/dist -name index.html | sed 's#^../../site/dist##; s#index.html$
 Set `BASE=http://host:port` to test another server.
 
 `paths.txt` and `paths-pages.txt` are committed (Sprint 3: they include `/en/privacy/` and `/ar/privacy/`). The home work wall (`.wm__track`) is excluded from the lazy-image wait because it is a horizontally clipped marquee whose tiles load as they slide in.
+
+**Dependencies:** Playwright (pre-installed globally here) and `axe-core` for `a11y.js`. Install axe-core once in any folder (`npm i axe-core`) and point Node at it, e.g. `NODE_PATH=<that folder>/node_modules:$(npm root -g) node a11y.js < paths.txt`. Without it `a11y.js` fails with `Cannot find module` instead of running — check the output, not just the exit code.
