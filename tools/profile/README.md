@@ -19,3 +19,11 @@ node tools/profile/build-profile-global.mjs
 ```
 
 "The Tamm Edition": 30 pages in four chapters built on the tagline (Say it. → Plan it. → Make it. → Tamm it.), using the brand visuals, six featured projects with individual layouts, the client grids and five commitments. No founder page. Output: `handover/company-profile-global/SayTamm_Company_Profile_2026.pdf` (~7 MB). Same data rules as above: production view, no pending figures, no government logos.
+
+## Option C — "Six Questions" (English, light, poster style)
+
+```bash
+node tools/profile/build-profile-questions.mjs
+```
+
+26 pages that answer the six questions every new client asks (Who are you? · What do you actually do? · How do you work? · Show me the work. · Who trusts you? · What happens next?). Purple question pages, light answer pages, the logo's 45° blade enlarged as a supergraphic, image frames with a 45° corner cut. No founder page. Output: `handover/company-profile-questions/SayTamm_Company_Profile_2026_SixQuestions.pdf` (~5.6 MB).
