@@ -350,7 +350,7 @@ body{font-family:${lang === 'ar' ? "'Plex Arabic',Satoshi" : "Satoshi,'Plex Arab
 .tile img{position:absolute;inset:16% 16%;width:68%;height:68%;object-fit:contain}
 .tile--fill img{inset:0;width:100%;height:100%;object-fit:cover}
 .word{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-size:18px;font-weight:500;color:#55525e;padding:0 10px}
-ul.wall{list-style:none;display:grid;grid-template-columns:repeat(10,1fr);gap:12px}
+ul.wall{list-style:none;display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
 ul.wall li{position:relative;aspect-ratio:3/2;background:var(--gr)}
 ul.wall li img{position:absolute;inset:20% 16%;width:68%;height:60%;object-fit:contain}
 ul.wall li.nm{display:grid;place-items:center;text-align:center;font-size:19px;font-weight:500;color:#C9C6D1;padding:0 8px}

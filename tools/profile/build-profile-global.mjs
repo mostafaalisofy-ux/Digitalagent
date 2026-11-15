@@ -473,8 +473,8 @@ body{font-family:Satoshi,Plex,sans-serif;background:var(--ob);color:var(--sw);-w
 .lg li.fill img{inset:0;width:100%;height:100%;object-fit:cover}
 .lg li span{position:absolute;inset:0;display:grid;place-items:center;font-size:21px;font-weight:500;color:#4a4753;letter-spacing:.02em}
 .lg li.empty{background:transparent}
-.wl{list-style:none;display:grid;grid-template-columns:repeat(10,1fr);border-top:1px solid var(--ln);border-left:1px solid var(--ln)}
-.wl li{position:relative;height:138px;border-right:1px solid var(--ln);border-bottom:1px solid var(--ln)}
+.wl{list-style:none;display:grid;grid-template-columns:repeat(12,1fr);border-top:1px solid var(--ln);border-left:1px solid var(--ln)}
+.wl li{position:relative;height:104px;border-right:1px solid var(--ln);border-bottom:1px solid var(--ln)}
 .wl li img{position:absolute;inset:24% 18%;width:64%;height:52%;object-fit:contain}
 .wl li.nm{display:grid;place-items:center;text-align:center;font-size:20px;font-weight:500;color:var(--tx)}
 /* promises */

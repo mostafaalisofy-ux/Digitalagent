@@ -104,3 +104,11 @@ The Chedi Hegra, Qassim Cement, Saudi Paper Group, UNIMAC, UNIMINE, Musalli Jewe
 Replaced with the official files: JORA (was name only), ALTOPIANO (bilingual logo replaces the extracted one), BITUMAT (main logo), niimee (SVG). MIX, Tech Hive and Tech Craft kept their existing files.
 
 **Risk to confirm:** the archive's own index calls it "Client and pitch logos". Most of the new logos were taken from proposals (several prepared under Infinity Corp, one under Steps for UNIMAC). A proposal is not proof of a client relationship. The owner should confirm that each of these brands actually worked with the SayTamm team before launch; any that were only pitched should be removed. S&P Industries came as a 100 × 60 px file and is shown upscaled; an original file is needed. Sectors are given only where the logo or file name states them.
+
+## 2026-11-15 (2) — DC BLOCK, Exodus, wall archive, S&P removed
+
+- DC BLOCK and Exodus Travel: official logos supplied by the owner in chat; now shown as logos.
+- S&P Industries: removed at the owner's request.
+- Client wall rebuilt from the owner's archive "Steps Client Logos - Website Collection" (official white versions, higher resolution). Existing wall logos replaced where the archive had them; added: illy, Ceramica Cleopatra, EIPICO, Air Arabia, Edita, Costa Coffee, Saudi Falcons Club, Baheya, Dar Al Fouad Hospitals, Sun Capital, AMEX, Abu Qamar, Maggadit, MSA University, Neuro Espitalia, Genena Mall, Kabbani Furniture, Bluebell, Five Little Monkeys, Zara. Air Arabia, Edita and Costa moved from name-only to logos.
+- Government or state-owned bodies added with `permission: 'pending'` (staging only, hidden in production): Ministry of Education, Ministry of Public Works, KIPIC.
+- Production totals: 45 main clients + 67 on the wall (60 logos, 7 names). Same risk note as above: these logos come from the Steps collection; the owner confirmed in D-021/D-022 that they are shown as clients of the SayTamm team.
