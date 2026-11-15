@@ -53,9 +53,9 @@ export const CLIENTS: Client[] = [
   { name: { en: 'TECSPRO', ar: 'التقنيات الاحترافية' }, sector: { en: 'Business technology', ar: 'حلول تقنية للأعمال' }, logo: { src: '/clients/tecspro.webp', w: 282, h: 254 } },
   { name: { en: 'SIEFCO', ar: 'سفكو' }, sector: { en: 'Concrete products', ar: 'منتجات خرسانية' }, logo: { src: '/clients/siefco.webp', w: 280, h: 186 } },
   { name: { en: 'Chery Saudi', ar: 'شيري السعودية' }, sector: { en: 'Automotive', ar: 'سيارات' }, logo: { src: '/clients/chery.svg', w: 500, h: 192 } },
-  { name: { en: 'JORA', ar: 'JORA' }, sector: { en: 'Restaurants · Street food', ar: 'مطاعم · أكل شارع' } }, // logo file pending
+  { name: { en: 'JORA', ar: 'JORA' }, sector: { en: 'Restaurants · Street food', ar: 'مطاعم · أكل شارع' }, logo: { src: '/clients/jora.webp', w: 512, h: 512 }, tile: '#dcd2c3' }, // official logo, owner upload 2026-11-15
   { name: { en: 'Al Bustan', ar: 'البستان' }, sector: { en: 'Food · Nuts', ar: 'أغذية · مكسرات' } }, // logo file pending
-  { name: { en: 'niimee', ar: 'niimee' }, sector: { en: 'Fashion', ar: 'أزياء' }, logo: { src: '/clients/niimee.webp', w: 581, h: 149 } },
+  { name: { en: 'niimee', ar: 'niimee' }, sector: { en: 'Fashion', ar: 'أزياء' }, logo: { src: '/clients/niimee.svg', w: 503, h: 132 } },
   { name: { en: 'K.S Furniture', ar: 'K.S للأثاث' }, sector: { en: 'Furniture · E-commerce', ar: 'أثاث · تجارة إلكترونية' }, logo: { src: '/clients/ks.webp', w: 525, h: 513 } },
   { name: { en: 'Fatora Plus', ar: 'فاتورة بلس' }, sector: { en: 'Invoicing software', ar: 'برامج الفوترة' }, logo: { src: '/clients/fatora.webp', w: 900, h: 264 }, tile: '#052249' },
   { name: { en: 'Siyaq', ar: 'سياق' }, sector: { en: 'Content platform', ar: 'منصة محتوى' }, logo: { src: '/clients/siyaq.webp', w: 900, h: 397 } },
@@ -69,12 +69,33 @@ export const CLIENTS: Client[] = [
   { name: { en: 'MIX', ar: 'مكس' }, sector: { en: 'Events', ar: 'تنظيم فعاليات' }, logo: { src: '/clients/mix.webp', w: 320, h: 320 }, fill: true },
   { name: { en: 'Alqimma Equipment', ar: 'معدات القمة' }, sector: { en: 'Equipment', ar: 'معدات' }, logo: { src: '/clients/alqimma.webp', w: 619, h: 166 } },
   { name: { en: 'DC BLOCK', ar: 'دي سي بلوك' }, sector: { en: 'Building materials', ar: 'مواد البناء' } }, // logo file pending
-  { name: { en: 'BITUMAT', ar: 'BITUMAT' }, sector: { en: 'Building materials', ar: 'مواد البناء' }, logo: { src: '/clients/bitumat.webp', w: 900, h: 349 } },
-  { name: { en: 'ALTOPIANO', ar: 'التبيانو' }, sector: { en: 'Restaurants · Italian', ar: 'مطاعم · إيطالي' }, logo: { src: '/clients/altopiano.webp', w: 502, h: 60 }, tile: '#050504' },
+  { name: { en: 'BITUMAT', ar: 'BITUMAT' }, sector: { en: 'Building materials', ar: 'مواد البناء' }, logo: { src: '/clients/bitumat-2.webp', w: 900, h: 311 } },
+  { name: { en: 'ALTOPIANO', ar: 'التبيانو' }, sector: { en: 'Restaurants · Italian', ar: 'مطاعم · إيطالي' }, logo: { src: '/clients/altopiano-2.webp', w: 245, h: 92 } },
   { name: { en: 'Arhab', ar: 'أرحب' }, sector: { en: 'Ride booking app', ar: 'تطبيق حجز رحلات' }, logo: { src: '/clients/arhab.svg', w: 858, h: 629 } },
   { name: { en: 'Tech Hive', ar: 'خلية التكنولوجيا' }, sector: { en: 'Electronics retail', ar: 'تجزئة إلكترونيات' },
     logo: { src: '/clients/techhive-en.webp', w: 478, h: 294 }, logoAr: { src: '/clients/techhive-ar.webp', w: 478, h: 280 } },
   { name: { en: 'Tech Craft', ar: 'التقانة العربية للمقاولات' }, sector: { en: 'Contracting', ar: 'مقاولات' }, logo: { src: '/clients/techcraft.svg', w: 552, h: 418 } },
+  // Added from the owner's logo archive (2026-11-15, 'Client-Logos-from-Mac.zip'). Sectors only where the logo or file names state them.
+  { name: { en: 'The Chedi Hegra', ar: 'شيدي الحجر' }, sector: { en: 'Hospitality', ar: 'ضيافة' }, logo: { src: '/clients/chedi-hegra.webp', w: 900, h: 452 } },
+  { name: { en: 'Qassim Cement', ar: 'أسمنت القصيم' }, sector: { en: 'Cement', ar: 'أسمنت' }, logo: { src: '/clients/qassim-cement.webp', w: 484, h: 222 }, tile: '#2a6453' },
+  { name: { en: 'Saudi Paper Group', ar: 'المجموعة السعودية للورق' }, sector: { en: 'Paper manufacturing', ar: 'صناعة الورق' }, logo: { src: '/clients/saudi-paper.webp', w: 490, h: 160 }, tile: '#999999' },
+  { name: { en: 'UNIMAC', ar: 'UNIMAC' }, logo: { src: '/clients/unimac.webp', w: 900, h: 172 } },
+  { name: { en: 'UNIMINE', ar: 'يونيماين' }, logo: { src: '/clients/unimine.webp', w: 900, h: 324 } },
+  { name: { en: 'Musalli Jewelry', ar: 'مصلي للمجوهرات' }, sector: { en: 'Jewellery', ar: 'مجوهرات' }, logo: { src: '/clients/musalli.webp', w: 798, h: 196 } },
+  { name: { en: 'AD-DARAH', ar: 'الدارة' }, sector: { en: 'Catering', ar: 'تموين وضيافة' }, logo: { src: '/clients/ad-darah.webp', w: 900, h: 291 } },
+  { name: { en: 'Aleter The Perfume', ar: 'Aleter The Perfume' }, sector: { en: 'Perfume', ar: 'عطور' }, logo: { src: '/clients/aleter.webp', w: 369, h: 379 } },
+  { name: { en: 'Kitchen Haus', ar: 'كيتشن هاوس' }, logo: { src: '/clients/kitchen-haus.webp', w: 795, h: 258 } },
+  { name: { en: 'Beans Hub', ar: 'Beans Hub' }, sector: { en: 'Coffee roastery', ar: 'محمصة قهوة' }, logo: { src: '/clients/beans-hub.webp', w: 893, h: 900 }, tile: '#222631' },
+  { name: { en: 'Banaja Consulting', ar: 'مكتب أحمد فؤاد باناجة' }, sector: { en: 'Engineering consultancy', ar: 'استشارات هندسية' }, logo: { src: '/clients/banaja.webp', w: 426, h: 174 }, tile: '#232120' },
+  { name: { en: 'GLOBIX Industries', ar: 'GLOBIX Industries' }, logo: { src: '/clients/globix.webp', w: 900, h: 335 } },
+  { name: { en: 'MACC', ar: 'MACC' }, logo: { src: '/clients/macc.webp', w: 241, h: 134 } },
+  { name: { en: 'MELAS', ar: 'ملّاس' }, logo: { src: '/clients/melas.webp', w: 620, h: 494 } },
+  { name: { en: 'Maheer', ar: 'مهير' }, logo: { src: '/clients/maheer.webp', w: 448, h: 900 } },
+  { name: { en: 'A&SUZ', ar: 'A&SUZ' }, logo: { src: '/clients/asuz.webp', w: 806, h: 205 } },
+  { name: { en: 'iSelfie', ar: 'iSelfie' }, logo: { src: '/clients/iselfie.webp', w: 270, h: 270 } },
+  { name: { en: 'wtrBoost', ar: 'wtrBoost' }, logo: { src: '/clients/wtrboost.webp', w: 600, h: 600 } },
+  { name: { en: 'QEC', ar: 'QEC' }, logo: { src: '/clients/qec.webp', w: 572, h: 578 } },
+  { name: { en: 'S&P Industries', ar: 'S&P Industries' }, logo: { src: '/clients/sp-industries.webp', w: 300, h: 168 } },
 ];
 
 /** More direct clients (owner, 2026-11-05: "add them all as SayTamm clients"), logos taken from the

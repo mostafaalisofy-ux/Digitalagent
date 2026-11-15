@@ -344,8 +344,8 @@ body{font-family:${lang === 'ar' ? "'Plex Arabic',Satoshi" : "Satoshi,'Plex Arab
 /* clients */
 .cl__head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px}.cl__head .eb,.cl__head .h2{margin:0}
 .clients .h2,.wall .h2{font-size:48px}
-.tiles{list-style:none;display:grid;grid-template-columns:repeat(9,1fr);gap:20px 16px}
-.tiles li p{font-size:15px;color:var(--mu);margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tiles{list-style:none;display:grid;grid-template-columns:repeat(10,1fr);gap:12px 12px}
+.tiles li p{font-size:13px;color:var(--mu);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tile{position:relative;aspect-ratio:16/11;background:var(--sw);overflow:hidden}
 .tile img{position:absolute;inset:16% 16%;width:68%;height:68%;object-fit:contain}
 .tile--fill img{inset:0;width:100%;height:100%;object-fit:cover}

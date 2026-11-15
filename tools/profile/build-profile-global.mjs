@@ -260,7 +260,7 @@ opener(4, '/visuals/services-media.webp', 'The brands that trusted the team, and
 const list = [...CLIENTS.filter((c) => c.logo), ...CLIENTS.filter((c) => !c.logo)];
 P('light', CH[4], `
   <div class="cl-head"><div><p class="kicker">${blade()}Clients</p><h2 class="h-l">In good company.</h2></div><p class="body dk">${esc(H.clients.title)}</p></div>
-  <ul class="lg">${list.map((c) => `<li${c.tile ? ` style="background:${c.tile}"` : ''} class="${c.fill ? 'fill' : ''}">${c.logo ? `<img src="${asset(c.logo.src)}" alt="">` : `<span>${esc(c.name.en)}</span>`}</li>`).join('')}${Array.from({ length: (7 - (list.length % 7)) % 7 }, () => '<li class="empty"></li>').join('')}</ul>`);
+  <ul class="lg">${list.map((c) => `<li${c.tile ? ` style="background:${c.tile}"` : ''} class="${c.fill ? 'fill' : ''}">${c.logo ? `<img src="${asset(c.logo.src)}" alt="">` : `<span>${esc(c.name.en)}</span>`}</li>`).join('')}${Array.from({ length: (10 - (list.length % 10)) % 10 }, () => '<li class="empty"></li>').join('')}</ul>`);
 
 P('dark', CH[4], `
   <div class="cl-head"><div><p class="kicker">${blade()}Clients</p><h2 class="h-l">Also among our clients <span class="p">${wall.length + named.length}</span></h2></div></div>
@@ -467,8 +467,8 @@ body{font-family:Satoshi,Plex,sans-serif;background:var(--ob);color:var(--sw);-w
 .mw p{display:flex;flex-direction:column;margin-top:10px}.mw b{font-size:19px}.mw p span{font-size:15px;color:var(--mu)}
 /* clients */
 .cl-head{display:flex;justify-content:space-between;align-items:flex-end;gap:60px;margin-bottom:46px}.cl-head .body{margin:0;max-width:560px;text-align:right}
-.lg{list-style:none;display:grid;grid-template-columns:repeat(7,1fr);border-top:1px solid rgba(9,9,13,.16);border-left:1px solid rgba(9,9,13,.16)}
-.lg li{position:relative;height:166px;border-right:1px solid rgba(9,9,13,.16);border-bottom:1px solid rgba(9,9,13,.16);background:#fff}
+.lg{list-style:none;display:grid;grid-template-columns:repeat(10,1fr);border-top:1px solid rgba(9,9,13,.16);border-left:1px solid rgba(9,9,13,.16)}
+.lg li{position:relative;height:124px;border-right:1px solid rgba(9,9,13,.16);border-bottom:1px solid rgba(9,9,13,.16);background:#fff}
 .lg li img{position:absolute;inset:22% 20%;width:60%;height:56%;object-fit:contain}
 .lg li.fill img{inset:0;width:100%;height:100%;object-fit:cover}
 .lg li span{position:absolute;inset:0;display:grid;place-items:center;font-size:21px;font-weight:500;color:#4a4753;letter-spacing:.02em}

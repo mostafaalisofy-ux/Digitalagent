@@ -94,3 +94,13 @@ The owner stated (2026-11-05) that SayTamm has the legal right to use the client
 ## Pre-launch check (owner)
 
 For each category A and B brand: confirm in writing (an email from the client is enough) that the logo or name may be shown. This is **recommended before public launch**; it is not something this project can mark as obtained.
+
+## 2026-11-15 — Logo archive from the owner ("Client-Logos-from-Mac.zip")
+
+Owner instruction: use every logo in the archive and fill missing logos from it. Added to the client list (site + company profiles):
+
+The Chedi Hegra, Qassim Cement, Saudi Paper Group, UNIMAC, UNIMINE, Musalli Jewelry, AD-DARAH, Aleter The Perfume, Kitchen Haus, Beans Hub, Banaja Consulting, GLOBIX Industries, MACC, MELAS, Maheer, A&SUZ, iSelfie, wtrBoost, QEC, S&P Industries.
+
+Replaced with the official files: JORA (was name only), ALTOPIANO (bilingual logo replaces the extracted one), BITUMAT (main logo), niimee (SVG). MIX, Tech Hive and Tech Craft kept their existing files.
+
+**Risk to confirm:** the archive's own index calls it "Client and pitch logos". Most of the new logos were taken from proposals (several prepared under Infinity Corp, one under Steps for UNIMAC). A proposal is not proof of a client relationship. The owner should confirm that each of these brands actually worked with the SayTamm team before launch; any that were only pitched should be removed. S&P Industries came as a 100 × 60 px file and is shown upscaled; an original file is needed. Sectors are given only where the logo or file name states them.

@@ -216,7 +216,7 @@ const vert = (name) => `<div class="vname">${esc(name)}</div>`;
 Q(5);
 const list = [...CLIENTS.filter((c) => c.logo), ...CLIENTS.filter((c) => !c.logo)];
 P('paper', 5, `<div class="cl-h"><h2 class="h2">${esc(H.clients.title)}</h2><span class="cl-c">${list.length}</span></div>
-  <ul class="lg">${list.map((c) => `<li${c.tile ? ` style="background:${c.tile}"` : ''} class="${c.fill ? 'fill' : ''}">${c.logo ? `<img src="${asset(c.logo.src)}" alt="">` : `<span>${esc(c.name.en)}</span>`}</li>`).join('')}${Array.from({ length: (7 - (list.length % 7)) % 7 }, () => '<li class="e"></li>').join('')}</ul>`);
+  <ul class="lg">${list.map((c) => `<li${c.tile ? ` style="background:${c.tile}"` : ''} class="${c.fill ? 'fill' : ''}">${c.logo ? `<img src="${asset(c.logo.src)}" alt="">` : `<span>${esc(c.name.en)}</span>`}</li>`).join('')}${Array.from({ length: (10 - (list.length % 10)) % 10 }, () => '<li class="e"></li>').join('')}</ul>`);
 P('ink', 5, `<div class="cl-h"><h2 class="h2">And ${wall.length + named.length} more.</h2><span class="cl-c pp">+${wall.length + named.length}</span></div>
   <ul class="wl">${wall.map((c) => `<li><img src="${asset(c.logo.src)}" alt=""></li>`).join('')}${named.map((c) => `<li class="nm"><span>${esc(c.name)}</span></li>`).join('')}</ul>`);
 
@@ -367,9 +367,9 @@ i.t1,i.t2,i.t3,i.t4{display:inline-block;width:26px;height:9px;transform:skewX(-
 .mw div{aspect-ratio:6/5;overflow:hidden}.mw img{width:100%;height:100%;object-fit:cover;display:block}
 .mw b{display:block;font-size:19px;margin-top:10px}.mw span{font-size:15px;color:var(--mu)}
 /* clients */
-.cl-h{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px}.cl-c{font-size:120px;line-height:.8;font-weight:700;letter-spacing:-.05em;color:var(--pp)}
-.lg{list-style:none;display:grid;grid-template-columns:repeat(7,1fr);gap:12px}
-.lg li{position:relative;height:160px;background:#fff}
+.cl-h{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px}.cl-c{font-size:120px;line-height:.8;font-weight:700;letter-spacing:-.05em;color:var(--pp)}
+.lg{list-style:none;display:grid;grid-template-columns:repeat(10,1fr);gap:10px}
+.lg li{position:relative;height:122px;background:#fff}
 .lg li img{position:absolute;inset:22% 20%;width:60%;height:56%;object-fit:contain}.lg li.fill img{inset:0;width:100%;height:100%;object-fit:cover}
 .lg li span{position:absolute;inset:0;display:grid;place-items:center;font-size:21px;font-weight:700;color:#4a4753}
 .lg li.e{background:transparent;border:2px dashed rgba(9,9,13,.08)}
