@@ -40,7 +40,7 @@ const IM = {};
 // landing beat of each world: 4 beats each, 5 where the voice line needs the room (EG_call, EN_call)
 const STEPS = [4, 4, 4, 5, 4, 5, 4, 4, 4, 4];   // beats into world 1 … 10
 const HB = [4]; STEPS.forEach((s) => HB.push(HB[HB.length - 1] + s));   // HB[0] = zoom starts, HB[10] = card again
-const OUTRO = 9, DUR = (HB[10] + OUTRO) * BEAT;  // 56 beats = 14 bars = 24.0 s
+const OUTRO = 9, DUR = (HB[10] + OUTRO) * BEAT;  // 55 beats = 23.6 s
 window.DUR_S = DUR;
 const NW = 10;
 const homeT = (k) => HB[k] * BEAT;               // world k fully framed (k = NW → the card again)

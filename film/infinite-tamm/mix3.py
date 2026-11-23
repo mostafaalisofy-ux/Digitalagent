@@ -10,7 +10,7 @@ SCORE = os.path.join(D, 'InfiniteTamm_v3_Score.wav')
 BEAT = 60 / 140; STEPS = [4, 4, 4, 5, 4, 5, 4, 4, 4, 4]   # must match film3.html
 HB = [4]
 for st in STEPS: HB.append(HB[-1] + st)
-DUR = (HB[10] + 9) * BEAT                                 # 24.0 s
+DUR = (HB[10] + 9) * BEAT                                 # 55 beats = 23.6 s
 home = lambda k: HB[k] * BEAT                             # world k lands on this beat
 CUES = [  # (take, start seconds, options)
     ('SA_hook.mp3', 0.15, {}),                # «عندك فكرة؟» (Saudi)
@@ -37,7 +37,7 @@ n = len(CUES)
 graph = ';'.join(chains + [''.join(f'[v{i}]' for i in range(n)) + f'amix=inputs={n}:normalize=0:duration=longest,apad=whole_dur={DUR:.4f}[vo]',
     '[vo]asplit=2[key][vin]', '[0:a]aresample=48000,volume=-3dB,equalizer=f=2500:t=q:w=1.2:g=-3[mus]',
     '[mus][key]sidechaincompress=threshold=0.05:ratio=4:attack=8:release=260[duck]',
-    '[duck][vin]amix=inputs=2:normalize=0:duration=first,alimiter=limit=0.84:level=false,atrim=0:{DUR:.4f}[out]'])
+    f'[duck][vin]amix=inputs=2:normalize=0:duration=first,alimiter=limit=0.84:level=false,atrim=0:{DUR:.4f}[out]'])
 pre = os.path.join(D, 'InfiniteTamm_v3_premaster.wav'); master = os.path.join(D, 'InfiniteTamm_v3_master.wav')
 subprocess.run(['ffmpeg', '-y', '-v', 'error', *inputs, '-filter_complex', graph, '-map', '[out]', pre], check=True)
 m = subprocess.run(['ffmpeg', '-hide_banner', '-i', pre, '-af', 'loudnorm=I=-14:TP=-1.6:LRA=9:print_format=json', '-f', 'null', '-'], capture_output=True, text=True).stderr
