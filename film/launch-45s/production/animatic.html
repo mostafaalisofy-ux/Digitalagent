@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>SayTamm launch film: animatic 45 s</title>
+<style>
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-600-normal.woff2); font-weight: 600; }
+  :root { --ob: #09090D; --gr: #17171E; --wh: #F5F3FA; --mu: #96939F; --pu: #6C35FF; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ob); }
+  .a { position: absolute; }
+  .layer { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; }
+  .ar { font-family: Plex, Sat, sans-serif; direction: rtl; }
+  .en { font-family: Sat, Plex, sans-serif; }
+  #world { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .panel { position: absolute; width: 1080px; height: 1920px; overflow: hidden; background: var(--ob); border-radius: 0; }
+  .pframe { position: absolute; inset: 0; border: 3px solid rgba(245,243,250,0); border-radius: 0; pointer-events: none; }
+  .glass { position: absolute; background: var(--gr); border: 1.5px solid rgba(245,243,250,.07); border-radius: 64px; }
+  .spec { position: absolute; height: 1.5px; background: linear-gradient(90deg, rgba(245,243,250,0), rgba(245,243,250,.22) 40%, rgba(245,243,250,0)); }
+  .bar { position: absolute; height: 18px; border-radius: 9px; background: rgba(150,147,159,.3); }
+  .btn { position: absolute; height: 120px; border-radius: 60px; display: flex; align-items: center; justify-content: center; font: 700 44px/1 Sat, sans-serif; letter-spacing: .02em; }
+  .ring { position: absolute; border-radius: 50%; border: 3px solid var(--pu); }
+  .dot { position: absolute; border-radius: 50%; background: var(--pu); }
+  .card { position: absolute; background: var(--gr); border: 1.5px solid rgba(245,243,250,.14); border-radius: 18px; }
+  .brk { position: absolute; width: 64px; height: 64px; border: 0 solid var(--wh); }
+  .band { position: absolute; width: 260px; height: 5000px; background: linear-gradient(90deg, rgba(245,243,250,0), rgba(245,243,250,.07), rgba(245,243,250,0)); transform: rotate(45deg); transform-origin: 0 0; }
+  .cap { position: absolute; left: 90px; right: 90px; top: 1388px; text-align: center; font: 500 42px/1.5 Plex, Sat, sans-serif; color: var(--wh); }
+  /* review-only overlay (top margin, outside the picture-safe area) */
+  #rev { position: absolute; left: 0; right: 0; top: 0; height: 200px; padding: 64px 64px 0; display: none; font: 500 24px/1.4 Sat, sans-serif; color: rgba(150,147,159,.95); letter-spacing: .04em; }
+  #rev b { color: var(--wh); font-weight: 700; }
+  body.review #rev { display: block; }
+</style>
+</head>
+<body>
+
+<!-- S1 · caret in Obsidian -->
+<div class="layer" id="s1">
+  <div class="glass" style="left:300px;top:1180px;width:1100px;height:1100px;transform:rotate(-8deg);opacity:.55"></div>
+  <div class="spec" style="left:330px;top:1222px;width:560px;transform:rotate(-8deg);transform-origin:0 0;opacity:.55"></div>
+  <div class="a" id="caret" style="left:537px;top:880px;width:5px;height:118px;background:var(--wh)"></div>
+</div>
+
+<!-- S2–S5 · one world, four panels; the camera cuts between them, then pulls back to show all four -->
+<div class="layer" id="sw">
+  <div id="world">
+    <!-- P1 · the device and the Publish button -->
+    <div class="panel" id="P1">
+      <div class="glass" style="left:110px;top:300px;width:1180px;height:1900px"></div>
+      <div class="spec" style="left:180px;top:302px;width:700px"></div>
+      <div class="a" id="p1frame" style="left:200px;top:420px;width:760px;height:600px;border:3px dashed rgba(150,147,159,.62);border-right-color:transparent;border-bottom-color:transparent"></div>
+      <div class="a" id="p1fill" style="left:202px;top:422px;width:756px;height:596px;background:rgba(245,243,250,.07);opacity:0"></div>
+      <div class="bar" id="p1b1" style="left:200px;top:1066px;width:520px"></div>
+      <div class="bar" id="p1b2" style="left:200px;top:1104px;width:330px"></div>
+      <div class="btn en" id="btn" style="left:200px;top:1180px;width:760px;border:2px solid rgba(245,243,250,.18);color:rgba(245,243,250,.42)">Publish</div>
+      <div class="a" id="tip" style="left:400px;top:1050px;width:420px;height:300px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.82),rgba(0,0,0,.5) 45%,rgba(0,0,0,0))"></div>
+      <div class="ring" id="r1"></div><div class="ring" id="r2"></div>
+      <div class="dot" id="p1dot" style="width:16px;height:16px"></div>
+      <div class="band" id="bd1"></div><div class="pframe" id="pf1"></div>
+    </div>
+    <!-- P2 · the design page, unfinished -->
+    <div class="panel" id="P2">
+      <div class="a" style="left:90px;top:250px;width:900px;height:1330px;background:var(--gr);border-radius:28px"></div>
+      <svg class="a" style="left:0;top:0" width="1080" height="1920">
+        <path d="M170 980 L170 360 L910 360" fill="none" stroke="rgba(150,147,159,.62)" stroke-width="3" stroke-dasharray="12 10"/>
+        <path id="p2solid" d="M170 980 L170 360 L910 360 L910 980 L170 980" fill="none" stroke="#F5F3FA" stroke-width="3"/>
+        <circle cx="540" cy="670" r="150" fill="none" stroke="rgba(150,147,159,.5)" stroke-width="3" stroke-dasharray="12 10"/>
+        <circle id="p2circ" cx="540" cy="670" r="150" fill="none" stroke="#F5F3FA" stroke-width="3" transform="rotate(90 540 670)"/>
+      </svg>
+      <div class="bar" id="p2b1" style="left:170px;top:1040px;width:0"></div>
+      <div class="bar" id="p2b2" style="left:170px;top:1082px;width:0"></div>
+      <div class="bar" style="left:170px;top:1040px;width:280px;background:rgba(150,147,159,.18)"></div>
+      <div class="dot" id="p2dot" style="width:16px;height:16px"></div>
+      <div class="band" id="bd2"></div><div class="pframe" id="pf2"></div>
+    </div>
+    <!-- P3 · a practical light, off -->
+    <div class="panel" id="P3">
+      <div class="a" style="left:0;top:0;width:1080px;height:1920px;background:var(--gr)"></div>
+      <div class="a" id="wall" style="left:-260px;top:120px;width:1600px;height:1500px;border-radius:50%;background:radial-gradient(closest-side,rgba(245,243,250,.16),rgba(245,243,250,0));opacity:0"></div>
+      <div class="a" style="left:496px;top:300px;width:88px;height:1100px;border-radius:44px;background:#101016;border:1.5px solid rgba(245,243,250,.12);overflow:hidden">
+        <div class="a" id="strip" style="left:0;top:0;width:100%;height:0;background:var(--wh)"></div>
+      </div>
+      <div class="dot" id="p3dot" style="width:16px;height:16px"></div>
+      <div class="band" id="bd3"></div><div class="pframe" id="pf3"></div>
+    </div>
+    <!-- P4 · three pieces that align -->
+    <div class="panel" id="P4">
+      <div class="card" id="cA" style="left:160px;top:420px;width:360px;height:480px"><div class="a" style="left:110px;top:170px;width:140px;height:140px;border-radius:50%;border:3px solid rgba(245,243,250,.5)"></div></div>
+      <div class="card" id="cB" style="left:560px;top:420px;width:360px;height:240px"><div class="a" style="left:40px;top:150px;width:280px;height:2px;background:rgba(245,243,250,.5)"></div></div>
+      <div class="card" id="cC" style="left:560px;top:700px;width:360px;height:200px"><div class="a" style="left:40px;top:56px;width:240px;height:14px;border-radius:7px;background:rgba(245,243,250,.35)"></div><div class="a" style="left:40px;top:92px;width:170px;height:14px;border-radius:7px;background:rgba(245,243,250,.35)"></div></div>
+      <div class="brk" id="k1" style="left:120px;top:380px;border-left-width:3px;border-top-width:3px"></div>
+      <div class="brk" id="k2" style="left:896px;top:380px;border-right-width:3px;border-top-width:3px"></div>
+      <div class="brk" id="k3" style="left:120px;top:876px;border-left-width:3px;border-bottom-width:3px"></div>
+      <div class="brk" id="k4" style="left:896px;top:876px;border-right-width:3px;border-bottom-width:3px"></div>
+      <div class="dot" id="p4dot" style="width:16px;height:16px"></div>
+      <div class="dot" id="ready" style="left:932px;top:340px;width:18px;height:18px"></div>
+      <div class="band" id="bd4"></div><div class="pframe" id="pf4"></div>
+    </div>
+  </div>
+</div>
+
+<!-- S6 · three words, one point -->
+<div class="layer" id="s6">
+  <svg class="a" style="left:0;top:0" width="1080" height="1920"><g stroke="rgba(150,147,159,.45)" stroke-width="1.5" fill="none"><line id="l0"/><line id="l1"/><line id="l2"/></g></svg>
+  <div class="a ar" id="w0" style="right:150px;top:340px;font-weight:600;font-size:230px;line-height:1.2;color:var(--wh)">قول</div>
+  <div class="a ar" id="w1" style="left:90px;top:790px;font-weight:500;font-size:150px;line-height:1.2;color:rgba(245,243,250,.72)">اعتبره</div>
+  <div class="a en" id="w2" style="left:300px;top:1180px;font-weight:700;font-size:136px;line-height:1;letter-spacing:-.02em;color:rgba(245,243,250,.86)">Consider</div>
+</div>
+
+<!-- S7 · تم -->
+<div class="layer" id="s7">
+  <div id="tam" class="a" style="left:0;top:0;width:1080px;height:1920px">
+    <div class="a ar" id="tamP" style="left:0;right:0;top:440px;text-align:center;font-weight:600;font-size:640px;line-height:1.4;color:var(--pu)">تم</div>
+    <div class="a ar" id="tamW" style="left:0;right:0;top:440px;text-align:center;font-weight:600;font-size:640px;line-height:1.4;color:var(--wh)">ٮم</div>
+  </div>
+</div>
+
+<!-- S7–S8 · the official symbol (paths from the original SVG, fills unchanged) and the end card -->
+<div class="layer" id="s8">
+  <svg class="a" id="symT" style="left:372px;top:520px" width="336" height="404" viewBox="__VB__"><path fill="#FFFFFF" fill-rule="evenodd" d="__T__"/></svg>
+  <svg class="a" id="symB" style="left:372px;top:520px" width="336" height="404" viewBox="__VB__"><path fill="#6C35FF" fill-rule="evenodd" d="__B__"/></svg>
+  <div class="a en" id="e1" style="left:0;right:0;top:1030px;text-align:center;font-weight:700;font-size:104px;line-height:1;letter-spacing:-.02em;color:var(--wh)">SayTamm</div>
+  <div class="a" id="e2" style="left:510px;top:1182px;width:60px;height:1.5px;background:rgba(150,147,159,.6)"></div>
+  <div class="a en" id="e3" style="left:0;right:0;top:1228px;text-align:center;font-weight:500;font-size:46px;line-height:1;color:var(--wh)">Say it. Tamm it.</div>
+  <div class="a ar" id="e4" style="left:0;right:0;top:1300px;text-align:center;font-weight:500;font-size:50px;line-height:1.3;color:var(--mu)">قول. تم.</div>
+</div>
+
+<!-- the pulse in screen space (S5→S6 hand-off, S6 point, S7 dots) -->
+<div class="dot" id="pt" style="width:18px;height:18px"></div>
+<div class="a" id="dA" style="border-radius:22%;background:var(--pu)"></div>
+<div class="a" id="dB" style="border-radius:22%;background:var(--pu)"></div>
+
+<div class="cap" id="cap"></div>
+<div id="rev"><div><b>ANIMATIC</b> · REVIEW ONLY · NOT FOR PUBLICATION · SILENT</div><div><b id="tc">00:00.00</b> · <span id="shot"></span></div></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, q) => a + (b - a) * q;
+const eo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x));
+const eio = (x) => (x < 0.5 ? 16 * x ** 5 : 1 - Math.pow(-2 * x + 2, 5) / 2);
+const ss = (x) => x * x * (3 - 2 * x);
+const spring = (t, t0, d) => { const x = (t - t0) / d; if (x <= 0) return 0; if (x >= 1.6) return 1; const z = 0.8, w = 9, wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + z / Math.sqrt(1 - z * z) * Math.sin(wd * x)); };
+const show = (e, on) => { e.style.display = on ? '' : 'none'; };
+
+// ---- shot list (single source of truth for the overlay and the shot list doc) ----
+const SHOTS = [
+  [0, 4, 'S1', 'The world before the decision: one caret in Obsidian'],
+  [4, 8, 'S2', '«قول تم.» Three frozen details, 1.2 s each, cut on consonants'],
+  [8, 15, 'S3', 'The pulse completes three acts: press, layout, light'],
+  [15, 20, 'S4', '«اعتبره حصل.» Everything aligns instead of exploding'],
+  [20, 27, 'S5', '“Consider it done.” The frame widens for the first time'],
+  [27, 35, 'S6', 'قول / اعتبره / Consider gravitate to one point'],
+  [35, 40, 'S7', '«تم». The two dots become the two pulses and reveal the symbol'],
+  [40, 45, 'S8', 'End card: settle only'],
+];
+const CAPS = [
+  [4.0, 5.6, 'ar', 'قول تم.'],
+  [15.2, 16.8, 'ar', 'اعتبره حصل.'],
+  [20.2, 21.8, 'en', 'Consider it done.'],
+  [28.0, 32.4, 'ar', 'في كل لغة، في لحظة بتفصل بين الفكرة وحصولها.'],
+  [32.6, 35.4, 'ar', 'فيه كلمات بتقفل الكلام.'],
+  [35.6, 39.4, 'ar', 'و«تم»؟ بتفتحه على واقع جديد.'],
+];
+window.SHOTS = SHOTS; window.CAPS = CAPS;
+
+// ---- world layout ----
+const G = 120, PP = { P1: [0, 0], P2: [1080 + G, 0], P3: [0, 1920 + G], P4: [1080 + G, 1920 + G] };
+const PC = (p, lx, ly) => [PP[p][0] + lx, PP[p][1] + ly]; // panel-local → world
+// camera keys: [t, cx, cy, s]  (cuts = two keys at the same t)
+const CAM = [
+  [4.0, ...PC('P1', 560, 1220), 1.42], [5.2, ...PC('P1', 575, 1215), 1.46],
+  [5.2, ...PC('P2', 540, 700), 1.34], [6.4, ...PC('P2', 548, 690), 1.38],
+  [6.4, ...PC('P3', 540, 850), 1.30], [7.6, ...PC('P3', 540, 840), 1.34],
+  [7.6, ...PC('P1', 580, 1220), 1.55], [8.0, ...PC('P1', 584, 1222), 1.57],
+  [8.0, ...PC('P1', 580, 1200), 1.57], [9.4, ...PC('P1', 560, 1000), 1.12],
+  [9.4, ...PC('P2', 540, 760), 1.10], [11.5, ...PC('P2', 540, 720), 1.04],
+  [11.5, ...PC('P3', 540, 1000), 1.12], [12.8, ...PC('P3', 540, 980), 1.06], [15.0, ...PC('P3', 540, 960), 1.0],
+  [15.0, ...PC('P4', 540, 700), 1.12], [20.0, ...PC('P4', 540, 680), 1.17],
+  [23.0, 1140, 1980, 0.455], [27.0, 1140, 1980, 0.44],
+];
+function camAt(t) {
+  // 20–23 s: zoom out anchored on the panel we are in (log-scale zoom, the anchor glides to its place in the wide shot)
+  if (t >= 20 && t < 23) {
+    const a = CAM.find((k) => k[0] === 20.0), b = CAM.find((k) => k[0] === 23.0), q = eio(seg(t, 20, 23));
+    const s = Math.exp(lerp(Math.log(a[3]), Math.log(b[3]), q));
+    const end = [540 + (a[1] - b[1]) * b[3], 960 + (a[2] - b[2]) * b[3]]; // where the anchor sits in the wide shot
+    const ax = lerp(540, end[0], q), ay = lerp(960, end[1], q);
+    return { x: a[1] - (ax - 540) / s, y: a[2] - (ay - 960) / s, s };
+  }
+  for (let i = CAM.length - 1; i >= 0; i--) {
+    if (t >= CAM[i][0]) {
+      const k = CAM[i], n = CAM[i + 1];
+      if (!n || n[0] === k[0]) return { x: k[1], y: k[2], s: k[3] };
+      const q = n[0] - k[0] > 2.5 ? eio(seg(t, k[0], n[0])) : seg(t, k[0], n[0]); // long moves ease, holds drift linearly
+      return { x: lerp(k[1], n[1], q), y: lerp(k[2], n[2], q), s: lerp(k[3], n[3], q) };
+    }
+  }
+  return { x: CAM[0][1], y: CAM[0][2], s: CAM[0][3] };
+}
+const toScreen = (wx, wy, c) => [540 + (wx - c.x) * c.s, 960 + (wy - c.y) * c.s];
+
+// ---- measured geometry ----
+const P2LEN = 2720; // frame path length
+const ptOnFrame = (d) => { // point at distance d along M170 980 → 170 360 → 910 360 → 910 980 → 170 980
+  const L = [[170, 980, 170, 360], [170, 360, 910, 360], [910, 360, 910, 980], [910, 980, 170, 980]];
+  for (const [x0, y0, x1, y1] of L) { const l = Math.hypot(x1 - x0, y1 - y0); if (d <= l) return [lerp(x0, x1, d / l), lerp(y0, y1, d / l)]; d -= l; }
+  return [170, 980];
+};
+const DOTL = { x: 683, y: 702, w: 80, h: 78 }, DOTR = { x: 778, y: 702, w: 81, h: 78 }; // measured from the font render (F05)
+const WORDS = [[770, 560], [300, 905], [560, 1240]]; // where each word's hairline starts
+let WO = []; // word transform origins
+let SYM = null;
+
+window.ready = (async () => {
+  await document.fonts.ready;
+  for (const [k, [x, y]] of Object.entries(PP)) { const e = $(k); e.style.left = x + 'px'; e.style.top = y + 'px'; }
+  WO = WORDS.map(([x, y], i) => { const r = $('w' + i).getBoundingClientRect(); return [x - r.left, y - r.top]; });
+  WORDS.forEach(([x, y], i) => { const l = $('l' + i); l.setAttribute('x2', 540); l.setAttribute('y2', 960); });
+  // symbol geometry from the original paths (viewBox → screen)
+  const sc = 404 / __VH__, bb = (id) => $(id).querySelector('path').getBBox();
+  const T = bb('symT'), B = bb('symB');
+  SYM = { T: { x: 372 + T.x * sc, y: 520 + T.y * sc, w: T.width * sc, h: T.height * sc }, B: { x: 372 + B.x * sc, y: 520 + B.y * sc, w: B.width * sc, h: B.height * sc } };
+  window.seek(0);
+  return true;
+})();
+
+window.seek = (t) => {
+  const tc = $('tc'); tc.textContent = `${String(Math.floor(t / 60)).padStart(2, '0')}:${(t % 60).toFixed(2).padStart(5, '0')}`;
+  const sh = SHOTS.find((s) => t >= s[0] && t < s[1]) || SHOTS[SHOTS.length - 1];
+  $('shot').textContent = `${sh[2]} · ${sh[0].toFixed(0).padStart(2, '0')}–${sh[1].toFixed(0).padStart(2, '0')} s · ${sh[3]}`;
+
+  // ---------- S1 ----------
+  show($('s1'), t < 4);
+  $('caret').style.opacity = 0.15 + 0.85 * ss(0.5 + 0.5 * Math.cos(Math.PI * 2 * t / 1.6)); // slow blink
+
+  // ---------- world S2–S5 ----------
+  show($('sw'), t >= 4 && t < 27.2);
+  if (t >= 4 && t < 27.2) {
+    const c = camAt(Math.min(t, 27));
+    $('world').style.transform = `translate(${540 - c.x * c.s}px, ${960 - c.y * c.s}px) scale(${c.s})`;
+    // P1 · the press at 8.0
+    const press = spring(t, 8.0, 0.35);
+    const btn = $('btn');
+    btn.style.background = `rgba(245,243,250,${press})`;
+    btn.style.color = press > 0.5 ? 'var(--ob)' : 'rgba(245,243,250,.42)';
+    btn.style.borderColor = `rgba(245,243,250,${0.18 + 0.82 * press})`;
+    const approach = t < 8 ? (t < 7.6 ? lerp(0, 0.45, seg(t, 4, 5.2)) : lerp(0.45, 1, eio(seg(t, 7.6, 8.0)))) : 1;
+    $('tip').style.transform = `rotate(-14deg) scale(${lerp(1.25, 0.92, approach)})`;
+    $('tip').style.opacity = t < 8 ? lerp(0.55, 1, approach) : 1 - seg(t, 8.15, 8.7);
+    [['r1', 8.0, 0.9, 330], ['r2', 8.12, 1.1, 720]].forEach(([id, t0, d, R]) => {
+      const q = seg(t, t0, t0 + d), r = R * eo(q) + 20, e = $(id);
+      e.style.display = t >= t0 && q < 1 ? '' : 'none';
+      e.style.left = 580 - r / 2 + 'px'; e.style.top = 1240 - r / 2 + 'px'; e.style.width = e.style.height = r + 'px';
+      e.style.opacity = 1 - q;
+    });
+    // P1 · after the rings, the pulse leaves the button along the glass toward the layout (match-cut into P2 at 9.4)
+    const p1d = $('p1dot'); show(p1d, t >= 8.9 && t < 9.4);
+    { const q = eio(seg(t, 8.9, 9.4)); p1d.style.left = lerp(572, 192, q) + 'px'; p1d.style.top = lerp(1232, 972, q) + 'px'; }
+    // P1 layout completes once P2 is done (seen in the wide shot)
+    const p1done = t >= 11.4 ? 1 : 0;
+    $('p1frame').style.border = p1done ? '3px solid rgba(245,243,250,.85)' : '';
+    $('p1fill').style.opacity = p1done;
+    ['p1b1', 'p1b2'].forEach((id) => ($(id).style.background = p1done ? 'rgba(245,243,250,.85)' : ''));
+    // P2 · the pulse draws the frame, the circle, then the copy lines
+    const dq = eio(seg(t, 9.4, 10.9));
+    const sol = $('p2solid'); sol.style.strokeDasharray = P2LEN; sol.style.strokeDashoffset = P2LEN * (1 - dq);
+    const C = 2 * Math.PI * 150, cq = eio(seg(t, 10.5, 11.1));
+    const ci = $('p2circ'); ci.style.strokeDasharray = C; ci.style.strokeDashoffset = C * (1 - cq);
+    $('p2b1').style.width = 520 * eo(seg(t, 10.9, 11.3)) + 'px';
+    $('p2b2').style.width = 330 * eo(seg(t, 11.0, 11.4)) + 'px';
+    const p2d = $('p2dot'); show(p2d, t >= 9.4 && t < 11.5);
+    if (t < 10.9) { const [x, y] = ptOnFrame(P2LEN * dq); p2d.style.left = x - 8 + 'px'; p2d.style.top = y - 8 + 'px'; }
+    else { const q = eio(seg(t, 10.9, 11.45)); p2d.style.left = lerp(162, 540, q) + 'px'; p2d.style.top = lerp(972, -40, q) + 'px'; }
+    // P3 · the pulse runs down the strip and the light comes on
+    const lq = eio(seg(t, 11.6, 12.6));
+    $('strip').style.height = 1100 * lq + 'px';
+    $('wall').style.opacity = ss(seg(t, 12.0, 13.6));
+    const p3d = $('p3dot'); show(p3d, (t >= 11.5 && t < 12.65) || (t >= 14.3 && t < 15));
+    if (t < 13) { p3d.style.left = 532 + 'px'; p3d.style.top = lerp(250, 300 + 1100, lq) - 8 + 'px'; }
+    else { const q = eio(seg(t, 14.3, 15)); p3d.style.left = lerp(532, 1100, q) + 'px'; p3d.style.top = lerp(1400, 1500, q) + 'px'; }
+    // P4 · three pieces align on three pulses, then the viewfinder snaps
+    const CARDS = [['cA', 15.4, -12, -40, 60], ['cB', 16.4, 9, 50, -30], ['cC', 17.4, -7, 30, 90]];
+    CARDS.forEach(([id, t0, r, dx, dy]) => { const k = 1 - spring(t, t0, 0.55); $(id).style.transform = `translate(${dx * k}px, ${dy * k}px) rotate(${r * k}deg)`; });
+    const p4d = $('p4dot'), CT = [[340, 660], [740, 540], [740, 800]];
+    let shown = false;
+    CARDS.forEach(([, t0], i) => {
+      if (t >= t0 - 0.35 && t < t0) {
+        const from = i === 0 ? [-20, 1000] : CT[i - 1], q = eio(seg(t, t0 - 0.35, t0));
+        p4d.style.left = lerp(from[0], CT[i][0], q) - 8 + 'px'; p4d.style.top = lerp(from[1], CT[i][1], q) - 8 + 'px'; shown = true;
+      }
+    });
+    show(p4d, shown);
+    const kq = spring(t, 18.4, 0.45), ko = 70 * (1 - kq);
+    [['k1', -1, -1], ['k2', 1, -1], ['k3', -1, 1], ['k4', 1, 1]].forEach(([id, sx, sy]) => { $(id).style.transform = `translate(${sx * ko}px, ${sy * ko}px)`; $(id).style.opacity = seg(t, 18.4, 18.6); });
+    const rd = $('ready'); rd.style.transform = `scale(${spring(t, 18.8, 0.4)})`; show(rd, t >= 18.8 && t < 26.0);
+    // S5 · wide: panel frames appear, a reflection sweeps, the panels close the gaps, then dim
+    const fq = seg(t, 20.6, 21.6);
+    ['pf1', 'pf2', 'pf3', 'pf4'].forEach((id) => ($(id).style.borderColor = `rgba(245,243,250,${0.1 * fq * (1 - seg(t, 24.6, 26.0))})`));
+    const gq = eio(seg(t, 24.6, 26.0));
+    [['P1', 1, 1], ['P2', -1, 1], ['P3', 1, -1], ['P4', -1, -1]].forEach(([id, sx, sy], i) => {
+      $(id).style.left = PP[id][0] + sx * (G / 2) * gq + 'px'; $(id).style.top = PP[id][1] + sy * (G / 2) * gq + 'px';
+      const bx = lerp(-1800, 3600, seg(t, 23.0, 24.8)), b = $('bd' + (i + 1));
+      b.style.left = bx - (PP[id][0] + sx * (G / 2) * gq) + 'px'; b.style.top = -2600 - (PP[id][1] + sy * (G / 2) * gq) + 'px';
+    });
+    $('world').style.opacity = 1 - ss(seg(t, 26.0, 26.9));
+  }
+
+  // ---------- the point: P4 ready dot → screen centre (26.0–27.0), S6 centre, S7 hand-off ----------
+  const pt = $('pt');
+  if (t >= 26.0 && t < 35.0) {
+    show(pt, true);
+    let x = 540, y = 960, s = 1;
+    if (t < 27.0) {
+      const c = camAt(t), gq = 1;
+      const [sx, sy] = toScreen(PP.P4[0] - G / 2 * gq + 941, PP.P4[1] - G / 2 * gq + 349, c);
+      const q = eio(seg(t, 26.0, 27.0)); x = lerp(sx, 540, q); y = lerp(sy, 960, q); s = lerp(0.5, 1, q);
+    }
+    if (t >= 34.6) s = 1 + 0.6 * Math.sin(Math.PI * seg(t, 34.6, 35.0));
+    pt.style.left = x - 9 + 'px'; pt.style.top = y - 9 + 'px'; pt.style.transform = `scale(${s})`;
+  } else show(pt, false);
+
+  // ---------- S6 ----------
+  show($('s6'), t >= 27 && t < 35);
+  if (t >= 27 && t < 35) {
+    WORDS.forEach(([ax, ay], i) => {
+      const tin = 27.0 + i * 0.8, tg = 31.0 + i * 0.6;
+      const inq = eo(seg(t, tin, tin + 0.7)), g = eio(seg(t, tg, tg + 2.4));
+      const w = $('w' + i);
+      w.style.transformOrigin = `${WO[i][0]}px ${WO[i][1]}px`;
+      w.style.transform = `translate(${(540 - ax) * g}px, ${(960 - ay) * g + 40 * (1 - inq)}px) scale(${lerp(1, 0.06, g)})`;
+      w.style.opacity = inq * (1 - seg(g, 0.75, 1));
+      w.style.clipPath = `inset(0 0 ${100 * (1 - inq)}% 0)`;
+      const lq = eo(seg(t, 29.0 + i * 0.3, 30.2 + i * 0.3)), l = $('l' + i);
+      const sx = lerp(ax, 540, g), sy = lerp(ay, 960, g);
+      l.setAttribute('x1', sx); l.setAttribute('y1', sy);
+      l.setAttribute('x2', lerp(sx, 540, lq)); l.setAttribute('y2', lerp(sy, 960, lq));
+      l.style.opacity = lq > 0 ? 1 : 0;
+    });
+  }
+
+  // ---------- S7 · تم ----------
+  show($('s7'), t >= 35 && t < 39.0);
+  const dA = $('dA'), dB = $('dB');
+  if (t >= 35 && t < 39.0) {
+    const r = 1400 * eo(seg(t, 35.0, 35.9));
+    $('tam').style.clipPath = `circle(${r}px at 540px 960px)`;
+    $('tam').style.transform = `scale(${lerp(0.94, 1, spring(t, 35.0, 0.6))}) translateY(${-14 * seg(t, 35.9, 37.2)}px)`;
+    $('tam').style.transformOrigin = '540px 960px';
+    // the dots leave the letter at 37.2 (purple layer hidden, real dot shapes take over); the body sinks away
+    $('tamP').style.visibility = t < 37.2 ? 'visible' : 'hidden';
+    const sink = eio(seg(t, 37.5, 38.4));
+    $('tamW').style.transform = `translateY(${160 * sink}px)`; $('tamW').style.opacity = 1 - sink;
+  }
+  // the two pulses: lift, travel, and reveal the symbol along its own geometry
+  const travel = t >= 37.2 && t < 40.0;
+  show(dA, travel); show(dB, travel);
+  if (travel && SYM) {
+    const lift = eio(seg(t, 37.2, 37.6)), go = eio(seg(t, 37.6, 38.35));
+    const baseY = -14; // matches the S7 drift
+    const sz = lerp(80, 24, go);
+    // dot R (first in reading order) → start of the T bar; dot L → top-right corner of the blade
+    const aStart = [DOTR.x + DOTR.w / 2, DOTR.y + DOTR.h / 2 + baseY - 50 * lift], bStart = [DOTL.x + DOTL.w / 2, DOTL.y + DOTL.h / 2 + baseY - 50 * lift];
+    const T = SYM.T, B = SYM.B, tbarY = T.y + 0.11 * T.h;
+    const rq = eio(seg(t, 38.35, 39.4));
+    const aPos = t < 38.35 ? [lerp(aStart[0], T.x, go), lerp(aStart[1], tbarY, go)] : [lerp(T.x, T.x + T.w, rq), tbarY];
+    const bPos = t < 38.35 ? [lerp(bStart[0], B.x + B.w, go), lerp(bStart[1], B.y, go)] : [lerp(B.x + B.w, B.x, rq), lerp(B.y, B.y + B.h, rq)];
+    const fade = 1 - eio(seg(t, 39.4, 39.8));
+    [[dA, aPos], [dB, bPos]].forEach(([d, [x, y]]) => { const s = sz * fade; d.style.width = d.style.height = s + 'px'; d.style.left = x - s / 2 + 'px'; d.style.top = y - s / 2 + 'px'; });
+  }
+
+  // ---------- S8 (symbol reveal from 38.35, end card from 40.3) ----------
+  show($('s8'), t >= 38.35);
+  if (t >= 38.35) {
+    // each mask front passes exactly through its pulse: T wipes left→right, the blade along its own 45° axis
+    const rq = eio(seg(t, 38.35, 39.4)), W = 336, H = 404, T = SYM.T, B = SYM.B;
+    const qT = t >= 39.4 ? 100 : (lerp(T.x, T.x + T.w, rq) - 372) / W * 100;
+    const bx = lerp(B.x + B.w, B.x, rq) - 372, by = lerp(B.y, B.y + B.h, rq) - 520;
+    const qB = t >= 39.4 ? 100 : ((W - bx) + by) / (W + H) * 100;
+    $('symT').style.webkitMaskImage = $('symT').style.maskImage = `linear-gradient(90deg, #000 ${qT}%, transparent ${qT + 0.01}%)`;
+    $('symB').style.webkitMaskImage = $('symB').style.maskImage = `linear-gradient(225deg, #000 ${qB}%, transparent ${qB + 0.01}%)`;
+    const settle = 1 - spring(t, 39.4, 0.7);
+    ['symT', 'symB'].forEach((id) => ($(id).style.transform = `translateY(${-6 * settle}px)`));
+    [['e1', 40.3], ['e2', 40.8], ['e3', 41.1], ['e4', 41.5]].forEach(([id, t0]) => {
+      const k = eo(seg(t, t0, t0 + 0.7)); $(id).style.opacity = k; $(id).style.transform = `translateY(${14 * (1 - k)}px)`;
+    });
+  }
+
+  // ---------- captions ----------
+  const cp = CAPS.find((c) => t >= c[0] && t < c[1]), cap = $('cap');
+  if (cp) {
+    cap.textContent = cp[3]; cap.style.direction = cp[2] === 'ar' ? 'rtl' : 'ltr';
+    cap.style.fontFamily = cp[2] === 'ar' ? 'Plex, Sat, sans-serif' : 'Sat, Plex, sans-serif';
+    cap.style.opacity = Math.min(seg(t, cp[0], cp[0] + 0.15), 1 - seg(t, cp[1] - 0.15, cp[1]));
+  } else cap.textContent = '';
+};
+</script>
+</body>
+</html>
