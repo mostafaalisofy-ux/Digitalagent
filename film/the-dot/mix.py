@@ -53,11 +53,12 @@ def master(v):
     def inp(p):
         inputs.extend(['-i', p]); return len(inputs) // 2 - 1
     # ---- Act 1: the talk ----
-    pool = []
+    lists = []
     for f in m['chatter']:
         p = os.path.join(VO, f)
         if not os.path.exists(p): print('missing (skipped):', f); continue
-        for a, b in phrases(p): pool.append((p, a, b))
+        lists.append([(p, a, b) for a, b in phrases(p) if b - a > 0.4])   # drop sighs and breaths
+    pool = [x for grp in zip(*lists) for x in grp] if len(lists) > 1 else (lists[0] if lists else [])
     for k, at in enumerate(CHATTER_AT):
         if not pool: break
         p, a, b = pool[k % len(pool)]
