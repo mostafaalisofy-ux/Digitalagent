@@ -232,7 +232,10 @@ const PILE = [
   ['ar', 'نبي الموقع يطلع أول في قوقل.'], ['en', 'Rebrand before Q3?'], ['ar', 'عايزين نزود المبيعات.'], ['ar', 'نبي فيديو للإطلاق.'],
   ['en', 'Media plan by Friday?'], ['ar', 'عايزين نفتح سوق جديد.'], ['ar', 'متى نقدر نبدأ؟'], ['en', 'ASAP?'],
 ];
-const PILE_T = [0.1, 0.45, 0.8, 1.1, 1.35, 1.6, 1.8, 1.98, 2.14, 2.28, 2.4, 2.52, 2.62, 2.72, 2.8, 2.88];
+const VARIANT = '__VARIANT__';
+let PILE_T = [0.1, 0.45, 0.8, 1.1, 1.35, 1.6, 1.8, 1.98, 2.14, 2.28, 2.4, 2.52, 2.62, 2.72, 2.8, 2.88];
+// TikTok: the first frame must already stop the scroll (it is also the default cover), so the pile starts mid-flood
+if (VARIANT === 'tiktok') PILE_T = [-0.5, -0.36, -0.22, -0.08, 0.12, 0.34, 0.56, 0.8, 1.05, 1.3, 1.55, 1.8, 2.05, 2.3, 2.55, 2.8];
 const PILE_XY = [[80, 300], [560, 380], [140, 520], [470, 640], [60, 760], [520, 880], [110, 1000], [600, 1110], [70, 1230], [560, 1340], [150, 1440], [430, 300], [620, 560], [40, 640], [700, 820], [380, 1020]];
 $('hook').innerHTML = PILE.map(([l, txt], i) => `<div class="bub ${l === 'en' ? 'en' : 'ar'}" id="pb${i}" style="left:${PILE_XY[i][0]}px;top:${PILE_XY[i][1]}px">${txt}</div>`).join('') +
   `<div class="a" id="hcaret" style="left:536px;top:1360px;width:6px;height:90px;background:var(--wh)"></div>`;
@@ -267,8 +270,13 @@ const FI = [['instagram', 110, 360, 130, 0.9], ['tiktok', 820, 300, 112, 0.7], [
   ['facebook', 300, 1600, 100, 0.7], ['whatsapp', 900, 1640, 112, 0.8], ['google', 470, 190, 84, 0.5], ['meta', 170, 860, 104, 0.65], ['threads', 620, 1030, 92, 0.55]];
 $('hook').insertAdjacentHTML('afterbegin', FI.map(([n, x, y, sz], i) => svgIcon(n, 'fi', `left:${x}px;top:${y}px;width:${sz}px;height:${sz}px`).replace('<svg ', `<svg id="fi${i}" `)).join(''));
 // launch bursts: the post goes out across the platforms
-const CH1 = [['snapchat', 860, 930], ['tiktok', 950, 1110], ['instagram', 870, 1290], ['x', 200, 1230], ['youtube', 250, 1395]];
-const CH2 = [['facebook', 870, 930], ['instagram', 950, 1110], ['tiktok', 870, 1290], ['whatsapp', 300, 890], ['youtube', 190, 1300]];
+let CH1 = [['snapchat', 860, 930], ['tiktok', 950, 1110], ['instagram', 870, 1290], ['x', 200, 1230], ['youtube', 250, 1395]];
+let CH2 = [['facebook', 870, 930], ['instagram', 950, 1110], ['tiktok', 870, 1290], ['whatsapp', 300, 890], ['youtube', 190, 1300]];
+// TikTok: keep the bursts clear of the right-hand action rail (x > 930, y 950–1760)
+if (VARIANT === 'tiktok') {
+  CH1 = [['snapchat', 800, 900], ['tiktok', 830, 1070], ['instagram', 800, 1240], ['x', 230, 1230], ['youtube', 270, 1395]];
+  CH2 = [['facebook', 800, 900], ['instagram', 830, 1070], ['tiktok', 800, 1240], ['whatsapp', 290, 880], ['youtube', 200, 1300]];
+}
 $('p1chips').innerHTML = CH1.map(([n], i) => `<div class="ic" id="ca${i}">${svgIcon(n)}</div>`).join('');
 $('p2chips').innerHTML = CH2.map(([n], i) => `<div class="ic" id="cb${i}">${svgIcon(n)}</div>`).join('');
 function chips(list, pre, t, t0, fn, from = [540, 1180]) {
@@ -550,7 +558,7 @@ window.renderAudio = async (DUR) => {
   const B = 0.5, E = 0.25; // 120 BPM
 
   // HOOK: notifications pile up, faster and higher; silence at 3.0; the blade at 3.5
-  PILE_T.forEach((t0, i) => { ping(t0, 660 * Math.pow(2, (i % 7) / 12 + Math.floor(i / 7) * 0.25), 0.1 + i * 0.004, (i % 2 ? 0.4 : -0.4)); pop(t0, 0.05); });
+  PILE_T.forEach((t0, i) => { if (t0 < 0) return; ping(t0, 660 * Math.pow(2, (i % 7) / 12 + Math.floor(i / 7) * 0.25), 0.1 + i * 0.004, (i % 2 ? 0.4 : -0.4)); pop(t0, 0.05); });
   for (let i = 0; i < 6; i++) tick(3.0 + i * 0.125, 0.03);
   whoosh(3.32, 0.3); hit(3.5, 0.9);
 

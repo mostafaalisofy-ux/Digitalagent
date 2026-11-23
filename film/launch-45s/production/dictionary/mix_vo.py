@@ -21,9 +21,11 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../..'))
 D = os.path.join(ROOT, 'handover/launch-film/dictionary')
 VO = os.path.join(D, 'vo')
 V2 = '--v2' in sys.argv
-TAG = 'Dictionary_v2' if V2 else 'Dictionary'
-FILM = os.path.join(D, 'SayTamm_Launch_Dictionary_v2_45s_9x16_music.mp4' if V2 else 'SayTamm_Launch_Dictionary_45s_9x16.mp4')
-MUSIC = os.path.join(D, 'SayTamm_Launch_Dictionary_v2_Sound.wav' if V2 else 'SayTamm_Launch_Dictionary_Sound.wav')
+VARIANT = sys.argv[sys.argv.index('--variant') + 1] if '--variant' in sys.argv else 'main'
+VT = '' if VARIANT == 'main' else f'_{VARIANT}'
+TAG = f'Dictionary_v2{VT}' if V2 else 'Dictionary'
+FILM = os.path.join(D, f'SayTamm_Launch_{TAG}_45s_9x16_music.mp4' if V2 else 'SayTamm_Launch_Dictionary_45s_9x16.mp4')
+MUSIC = os.path.join(D, f'SayTamm_Launch_{TAG}_Sound.wav' if V2 else 'SayTamm_Launch_Dictionary_Sound.wav')
 
 # (file, place_at_seconds, options)  — place_at is where the clip's first sample goes on the timeline
 #   tempo: atempo factor (tightens the pause in a phrase); seg: (start, end) cut inside the take
@@ -99,7 +101,7 @@ def main():
               f":measured_thresh={js['input_thresh']}:offset={js['target_offset']}:linear=true,aresample=48000")
         subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', out_wav, '-af', ln, '-ar', '48000', master], check=True)
         out_wav = master
-    out_mp4 = os.path.join(D, f'SayTamm_Launch_{TAG}_45s_9x16{"_PREMIUM" if V2 else "_VO"}.mp4')
+    out_mp4 = os.path.join(D, f'SayTamm_Launch_{TAG}_45s_9x16{("_TIKTOK" if VARIANT == "tiktok" else "_PREMIUM") if V2 else "_VO"}.mp4')
     subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', FILM, '-i', out_wav, '-map', '0:v', '-map', '1:a', '-c:v', 'copy',
                     '-c:a', 'aac', '-b:a', '320k' if V2 else '256k', '-shortest', '-movflags', '+faststart', out_mp4], check=True)
     print('wrote', out_mp4)

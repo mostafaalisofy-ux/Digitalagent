@@ -16,13 +16,15 @@ const sig = fs.readFileSync(path.join(ROOT, 'brand/production/logo/SayTamm_Symbo
 const ds = [...sig.matchAll(/<path[^>]*\sd="([^"]+)"/g)].map((m) => m[1]);
 const vb = sig.match(/viewBox="([^"]+)"/)[1];
 const DIR = path.join(ROOT, 'film/launch-45s/production/dictionary');
+const VARIANT = arg('--variant') || 'main', VTAG = VARIANT === 'main' ? '' : `_${VARIANT}`;
 const html = fs.readFileSync(path.join(DIR, 'film_v2.html'), 'utf8')
+  .replace('__VARIANT__', VARIANT)
   .replace('__LANDMARKS__', fs.readFileSync(path.join(DIR, 'assets/landmarks.js'), 'utf8'))
   .replace('__ICONS__', fs.readFileSync(path.join(DIR, 'assets/platform-icons.json'), 'utf8'))
   .replaceAll('__SAT__', pathToFileURL(path.join(ROOT, 'site/public/fonts/satoshi')).href)
   .replaceAll('__PLEX__', pathToFileURL(path.join(ROOT, 'site/node_modules/@fontsource/ibm-plex-sans-arabic/files')).href)
   .replaceAll('__VB__', vb).replaceAll('__T__', ds[0]).replaceAll('__B__', ds[1]).replaceAll('__VH__', vb.split(' ')[3]);
-const TMP = path.join(OUT, `_film_v2${process.argv.includes('--part') ? '_' + process.argv[process.argv.indexOf('--part') + 1] : ''}.html`); fs.writeFileSync(TMP, html);
+const TMP = path.join(OUT, `_film_v2${VTAG}${process.argv.includes('--part') ? '_' + process.argv[process.argv.indexOf('--part') + 1] : ''}.html`); fs.writeFileSync(TMP, html);
 
 const require = createRequire(import.meta.url);
 let playwright;
@@ -37,7 +39,7 @@ const at = async (t, o = {}) => { await page.evaluate((x) => window.seek(x), t);
 const done = async () => { if (errs.length) throw new Error(errs.join('\n')); await browser.close(); fs.rmSync(TMP); };
 
 if (arg('--beats') || arg('--frames')) {
-  const d = path.join(OUT, '_beats_v2'); fs.rmSync(d, { recursive: true, force: true }); fs.mkdirSync(d);
+  const d = path.join(OUT, `_beats_v2${VTAG}`); fs.rmSync(d, { recursive: true, force: true }); fs.mkdirSync(d);
   const T = arg('--frames') ? String(arg('--frames')).split(',').map(Number) : Array.from({ length: 90 }, (_, b) => b * 0.5 + 0.3);
   for (const t of T) await at(t, { path: path.join(d, `t${t.toFixed(2).padStart(5, '0')}.jpg`), quality: 80 });
   await done(); console.log('frames in', d); process.exit(0);
@@ -49,9 +51,10 @@ const F0 = PART === null ? 0 : Math.floor((Number(PART) * FT) / PARTS), F1 = PAR
 let WAV = null;
 if (PART === null) {
   const b64 = await page.evaluate((d) => window.renderAudio(d), DUR);
-  WAV = path.join(OUT, 'SayTamm_Launch_Dictionary_v2_Sound.wav'); fs.writeFileSync(WAV, Buffer.from(b64, 'base64'));
+  WAV = path.join(OUT, `SayTamm_Launch_Dictionary_v2${VTAG}_Sound.wav`); fs.writeFileSync(WAV, Buffer.from(b64, 'base64'));
+  if (arg('--audio-only')) { await done(); console.log('wrote', WAV); process.exit(0); }
 }
-const MP4 = PART === null ? path.join(OUT, 'SayTamm_Launch_Dictionary_v2_45s_9x16_music.mp4') : path.join(OUT, `_v2_part${PART}.mp4`);
+const MP4 = PART === null ? path.join(OUT, `SayTamm_Launch_Dictionary_v2${VTAG}_45s_9x16_music.mp4`) : path.join(OUT, `_v2${VTAG}_part${PART}.mp4`);
 const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS * SUB), '-c:v', 'mjpeg', '-i', '-', ...(WAV ? ['-i', WAV] : []),
   '-vf', `tmix=frames=${SUB},select='not(mod(n\\,${SUB}))',setpts=N/(${FPS}*TB)`, '-r', String(FPS),
   '-c:v', 'libx264', '-preset', 'slow', '-crf', '14', '-profile:v', 'high', '-tune', 'film', '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
