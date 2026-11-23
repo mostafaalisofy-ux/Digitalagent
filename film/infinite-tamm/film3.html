@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>SayTamm: Infinite Tamm v3 (24 s loop, 140 BPM)</title>
+<style>
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-600-normal.woff2); font-weight: 600; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #09090D; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// =====================================================================================
+//  INFINITE TAMM v3 — the v2 worlds and voices, twice as fast: a zoom-out every 4–5 beats (140 BPM, 14 bars = 24 s loop).
+//  «تم» card ⊂ app post ⊂ Cairo café ⊂ Cairo façade ⊂ Riyadh billboard ⊂ region map ⊂ moodboard wall
+//  ⊂ stamped brief ⊂ camera viewfinder ⊂ kinetic word wall ⊂ the ت dot of «تم» …
+// =====================================================================================
+const W = 1080, H = 1920, BPM = 140, BEAT = 60 / BPM, BAR = 4 * BEAT;
+const OB = '#09090D', GR = '#17171E', WH = '#F5F3FA', MU = '#96939F', PU = '#6C35FF';
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, q) => a + (b - a) * q;
+const eo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x));
+const ss = (x) => x * x * (3 - 2 * x);
+const eioX = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x < 0.5 ? Math.pow(2, 20 * x - 10) / 2 : (2 - Math.pow(2, -20 * x + 10)) / 2);
+const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const spring = (t, t0, d = 0.5) => { const x = (t - t0) / d; if (x <= 0) return 0; if (x >= 1.6) return 1; const z = 0.55, w = 11, wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + z / Math.sqrt(1 - z * z) * Math.sin(wd * x)); };
+let T_NOW = 0, SYMBOL = null, CARD = null;
+const IMGS = __WORLDS__;      // image worlds: {name, src, portal, frame}
+const IM = {};
+
+// ---------------- timeline: each world is "home" on an odd bar; a punch zoom gets us out ----------------
+// landing beat of each world: 4 beats each, 5 where the voice line needs the room (EG_call, EN_call)
+const STEPS = [4, 4, 4, 5, 4, 5, 4, 4, 4, 4];   // beats into world 1 … 10
+const HB = [4]; STEPS.forEach((s) => HB.push(HB[HB.length - 1] + s));   // HB[0] = zoom starts, HB[10] = card again
+const OUTRO = 9, DUR = (HB[10] + OUTRO) * BEAT;  // 56 beats = 14 bars = 24.0 s
+window.DUR_S = DUR;
+const NW = 10;
+const homeT = (k) => HB[k] * BEAT;               // world k fully framed (k = NW → the card again)
+const stepIn = (k) => homeT(k) - homeT(k - 1);   // length of the zoom that lands on world k
+const eioQ = (x) => (x < 0.5 ? 8 * x ** 4 : 1 - Math.pow(-2 * x + 2, 4) / 2);
+function zAt(t) {
+  if (t < homeT(0)) return 0; if (t >= homeT(NW)) return NW;
+  let k = 0; while (t >= homeT(k + 1)) k++;
+  const q = (t - homeT(k)) / stepIn(k + 1);
+  // never still: a steady pull plus a hard punch that lands on the beat
+  return k + 0.22 * q + 0.78 * eioQ(q);
+}
+
+// ---------------- shared drawing helpers ----------------
+const rr = (c, x, y, w, h, r) => { c.beginPath(); c.roundRect(x, y, w, h, r); };
+function glass(c, x, y, w, h, r, a = 1) { c.save(); c.globalAlpha *= a; rr(c, x, y, w, h, r); const g = c.createLinearGradient(x, y, x, y + h); g.addColorStop(0, 'rgba(255,255,255,0.14)'); g.addColorStop(1, 'rgba(255,255,255,0.05)'); c.fillStyle = g; c.fill(); c.strokeStyle = 'rgba(255,255,255,0.18)'; c.lineWidth = 2; c.stroke(); c.restore(); }
+function txt(c, s, x, y, font, color, align = 'center', dir = 'ltr') { c.font = font; c.fillStyle = color; c.textAlign = align; c.direction = dir; c.fillText(s, x, y); c.direction = 'ltr'; }
+function bg(c, top = '#0E0B1A', bottom = OB) { const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, top); g.addColorStop(1, bottom); c.fillStyle = g; c.fillRect(-W, -H, 3 * W, 3 * H); }
+
+// ---------------- the worlds ----------------
+// each: frame (9:16 home view), portal (where the previous world lives), shape, draw(c, t)
+const WORLDS = [];
+// 0 · the «تم» card (loop point; its ت dot holds the word wall)
+WORLDS[0] = {
+  name: 'card', frame: { x: 0, y: 0, w: W, h: H }, shape: 'dot',
+  draw(c, t) {
+    bg(c, '#120C24', OB);
+    const g = c.createRadialGradient(540, 860, 40, 540, 900, 1000); g.addColorStop(0, 'rgba(108,53,255,0.26)'); g.addColorStop(1, 'rgba(108,53,255,0)'); c.fillStyle = g; c.fillRect(-W, -H, 3 * W, 3 * H);
+    c.font = '600 600px Plex'; c.direction = 'rtl'; c.textAlign = 'center'; c.fillStyle = WH; c.fillText('ٮم', 540, CARD.base);
+    c.save(); c.beginPath(); c.rect(CARD.left.x - 2, CARD.left.y - 2, CARD.left.w + 4, CARD.left.h + 4); c.clip(); c.fillStyle = PU; c.fillText('تم', 540, CARD.base); c.restore(); c.direction = 'ltr';
+    const dress = 1 - ss(seg(t, 1.0, 1.7)) + ss(seg(t, homeT(NW) + 0.1, homeT(NW) + 0.55));
+    if (dress > 0.01) {
+      c.save(); c.globalAlpha = dress; const SH = 150, SW = SH * 600 / 721; c.drawImage(SYMBOL, 540 - SW / 2, 320, SW, SH);
+      txt(c, 'SayTamm', 540, 1360, '700 76px Sat', WH); txt(c, 'Say it. Tamm it.', 540, 1432, '500 40px Sat', 'rgba(245,243,250,0.9)'); txt(c, 'قول. تم.', 540, 1494, '500 42px Plex', MU, 'center', 'rtl'); c.restore();
+    }
+  },
+};
+// 1 · the app: the card is a post being published
+WORLDS[1] = {
+  name: 'app', frame: { x: 0, y: 0, w: W, h: H }, portal: { x: 60, y: 330, w: 960, h: 1200 }, shape: 'round', r: 34,
+  draw(c, t) {
+    bg(c, '#0D0D12', '#09090D');
+    c.save(); c.globalAlpha = 0.5; for (let i = 0; i < 3; i++) { c.fillStyle = WH; c.fillRect(940 + i * 26, 74, 16, 26 - i * 0); } c.restore();
+    c.beginPath(); c.arc(120, 220, 52, 0, Math.PI * 2); c.fillStyle = '#1B1630'; c.fill(); c.strokeStyle = PU; c.lineWidth = 4; c.stroke();
+    const s = 56, sw = s * 600 / 721; c.drawImage(SYMBOL, 120 - sw / 2, 220 - s / 2, sw, s);
+    txt(c, 'SayTamm', 196, 212, '700 40px Sat', WH, 'left'); txt(c, 'قول تم · Say Tamm', 196, 258, '500 28px Plex', MU, 'left');
+    for (let i = 0; i < 3; i++) { c.beginPath(); c.arc(960 + i * 0, 200 + i * 20, 5, 0, 7); c.fillStyle = MU; c.fill(); }
+    // action row: the heart pops purple when the world is home
+    const like = spring(t, homeT(1) + 0.2, 0.5), lk = t >= homeT(1) + 0.2;
+    c.save(); c.translate(110, 1610); c.scale(1 + 0.35 * Math.sin(Math.PI * clamp((t - homeT(1) - 0.2) / 0.3)) * (lk ? 1 : 0), 1 + 0.35 * Math.sin(Math.PI * clamp((t - homeT(1) - 0.2) / 0.3)) * (lk ? 1 : 0));
+    c.beginPath(); c.moveTo(0, 22); c.bezierCurveTo(-48, -10, -26, -44, 0, -22); c.bezierCurveTo(26, -44, 48, -10, 0, 22); c.closePath();
+    c.fillStyle = lk ? PU : 'transparent'; c.fill(); c.strokeStyle = lk ? PU : WH; c.lineWidth = 5; c.stroke(); c.restore();
+    c.strokeStyle = WH; c.lineWidth = 5; c.beginPath(); c.arc(220, 1606, 26, 0.3, Math.PI * 2 - 0.3); c.stroke();
+    c.beginPath(); c.moveTo(300, 1590); c.lineTo(350, 1610); c.lineTo(300, 1630); c.closePath(); c.stroke();
+    c.beginPath(); c.moveTo(955, 1582); c.lineTo(955, 1636); c.lineTo(975, 1622); c.lineTo(995, 1636); c.lineTo(995, 1582); c.closePath(); c.stroke();
+    [[0, 700], [1, 520]].forEach(([i, w]) => { c.fillStyle = 'rgba(245,243,250,0.22)'; rr(c, 60, 1690 + i * 46, w, 22, 11); c.fill(); });
+    // hearts float up after the like
+    for (let i = 0; i < 6; i++) { const t0 = homeT(1) + 0.25 + i * 0.09, q = seg(t, t0, t0 + 1.1); if (q <= 0 || q >= 1) continue; c.save(); c.globalAlpha = 1 - q; c.translate(110 + Math.sin(i * 2 + q * 6) * 30, 1560 - q * 420); c.scale(0.5, 0.5); c.beginPath(); c.moveTo(0, 22); c.bezierCurveTo(-48, -10, -26, -44, 0, -22); c.bezierCurveTo(26, -44, 48, -10, 0, 22); c.fillStyle = i % 2 ? PU : WH; c.fill(); c.restore(); }
+    // "published" toast drops in
+    const tq = spring(t, homeT(1) - 0.6 * stepIn(1), 0.45);
+    if (t > homeT(1) - 0.6 * stepIn(1)) { c.save(); c.translate(0, -160 * (1 - tq)); glass(c, 250, 90, 580, 96, 48); c.beginPath(); c.arc(312, 138, 24, 0, 7); c.fillStyle = PU; c.fill(); c.strokeStyle = WH; c.lineWidth = 5; c.beginPath(); c.moveTo(301, 138); c.lineTo(310, 148); c.lineTo(326, 128); c.stroke(); txt(c, 'تم النشر · Published', 578, 152, '600 38px Plex', WH, 'center', 'ltr'); c.restore(); }
+  },
+};
+// 5 · the region map: Riyadh's pin is a window onto Riyadh
+WORLDS[5] = {
+  name: 'map', frame: { x: 0, y: 0, w: W, h: H }, portal: { x: 605, y: 915, w: 190, h: 190 }, shape: 'circle',
+  draw(c, t) {
+    bg(c, '#0B0A14', '#07060B');
+    c.fillStyle = 'rgba(245,243,250,0.10)'; for (let y = 40; y < H; y += 28) for (let x = 20 + ((y / 28) % 2) * 14; x < W; x += 28) { c.beginPath(); c.arc(x, y, 2.2, 0, 7); c.fill(); }
+    const N = { cairo: [290, 700, 'القاهرة', 'Cairo'], riyadh: [700, 1010, 'الرياض', 'Riyadh'], jeddah: [500, 1230, 'جدة', 'Jeddah'], dubai: [930, 860, 'دبي', 'Dubai'], amman: [390, 520, 'عمّان', 'Amman'] };
+    const h0 = homeT(5);
+    const arcs = [['cairo', 'riyadh'], ['riyadh', 'dubai'], ['riyadh', 'jeddah'], ['cairo', 'jeddah'], ['amman', 'riyadh']];
+    arcs.forEach(([a, b], i) => {
+      const [x0, y0] = N[a], [x1, y1] = N[b], q = eo(seg(t, h0 - (0.85 - i * 0.08) * stepIn(5), h0 - (0.45 - i * 0.08) * stepIn(5))), mx = (x0 + x1) / 2, my = (y0 + y1) / 2 - 160;
+      c.save(); c.strokeStyle = 'rgba(138,92,255,0.85)'; c.lineWidth = 4; c.setLineDash([2000]); c.lineDashOffset = 2000 * (1 - q);
+      c.beginPath(); c.moveTo(x0, y0); c.quadraticCurveTo(mx, my, x1, y1); c.stroke(); c.restore();
+    });
+    Object.entries(N).forEach(([k, [x, y, ar, en]], i) => {
+      if (k !== 'riyadh') { c.beginPath(); c.arc(x, y, 14, 0, 7); c.fillStyle = WH; c.fill(); c.beginPath(); c.arc(x, y, 26, 0, 7); c.strokeStyle = 'rgba(245,243,250,0.35)'; c.lineWidth = 3; c.stroke(); }
+      txt(c, ar, x, y - (k === 'riyadh' ? 130 : 46), '600 40px Plex', WH, 'center', 'rtl'); txt(c, en, x, y + (k === 'riyadh' ? 150 : 62), '500 28px Sat', MU);
+    });
+    // Riyadh pin: pulse rings on the beat
+    const [rx, ry] = N.riyadh; c.beginPath(); c.arc(rx, ry, 104, 0, 7); c.strokeStyle = PU; c.lineWidth = 8; c.stroke();
+    for (let b = 0; b < 3; b++) { const ph = ((t / BEAT) + b / 3) % 1; c.beginPath(); c.arc(rx, ry, 104 + ph * 120, 0, 7); c.strokeStyle = `rgba(108,53,255,${0.5 * (1 - ph)})`; c.lineWidth = 3; c.stroke(); }
+  },
+};
+// 6 · the moodboard wall: the map is one card among many
+const MOOD = []; for (let r = 0; r < 5; r++) for (let col = 0; col < 3; col++) MOOD.push({ x: 60 + col * 340, y: -349 + r * 530, r, col });
+WORLDS[6] = {
+  name: 'mood', frame: { x: 0, y: 0, w: W, h: H }, portal: { x: 400, y: 711, w: 280, h: 498 }, shape: 'round', r: 22,
+  draw(c, t) {
+    bg(c, '#15141B', '#0B0B0F');
+    const h0 = homeT(6);
+    MOOD.forEach((m, i) => {
+      if (m.r === 2 && m.col === 1) { c.fillStyle = 'rgba(0,0,0,0.5)'; rr(c, m.x - 6, m.y + 10, 292, 510, 26); c.fill(); return; }
+      const fl = spring(t, h0 - (0.8 - (i % 7) * 0.07) * stepIn(6), 0.4), sx = Math.max(0.02, fl);
+      c.save(); c.translate(m.x + 140, m.y + 249); c.rotate((hash(i) - 0.5) * 0.06); c.scale(sx, 1);
+      const g = c.createLinearGradient(-140, -249, 140, 249); const pal = [['#2A1D5C', '#0E0B1A'], ['#F5F3FA', '#C9C2DD'], ['#17171E', '#0B0B0F'], ['#6C35FF', '#3A1C99'], ['#2B2935', '#121218']][i % 5];
+      g.addColorStop(0, pal[0]); g.addColorStop(1, pal[1]); c.fillStyle = g; rr(c, -140, -249, 280, 498, 22); c.fill();
+      const ink = i % 5 === 1 ? OB : WH; c.fillStyle = ink; c.strokeStyle = ink;
+      if (i % 4 === 0) { c.beginPath(); c.arc(0, -40, 90, 0, 7); c.lineWidth = 6; c.stroke(); }
+      if (i % 4 === 1) { txt(c, ['ت', 'SAY', '/', 'م'][i % 4 + (i % 2)] || 'ت', 0, 60, '700 200px Plex', ink, 'center', 'rtl'); }
+      if (i % 4 === 2) { c.save(); c.rotate(-Math.PI / 4); c.fillStyle = PU; c.fillRect(-30, -200, 60, 400); c.restore(); }
+      if (i % 4 === 3) { for (let k = 0; k < 4; k++) { c.globalAlpha = 0.7; rr(c, -100, -120 + k * 60, 200 - k * 30, 18, 9); c.fill(); } c.globalAlpha = 1; }
+      c.restore();
+    });
+  },
+};
+// 7 · the brief: a document stamped «تم» (the stamp's centre is the window onto the moodboard)
+WORLDS[7] = {
+  name: 'brief', frame: { x: 0, y: 0, w: W, h: H }, portal: { x: 420, y: 890, w: 240, h: 240 }, shape: 'circle',
+  draw(c, t) {
+    bg(c, '#121117', '#08080A');
+    c.save(); c.shadowColor = 'rgba(0,0,0,0.6)'; c.shadowBlur = 60; c.shadowOffsetY = 20; c.fillStyle = '#EFEDF5'; c.fillRect(110, 170, 860, 1580); c.restore();
+    txt(c, 'بريف الحملة', 900, 300, '700 64px Plex', OB, 'right', 'rtl'); txt(c, 'Campaign brief', 180, 300, '500 34px Sat', '#6E6B78', 'left');
+    c.fillStyle = 'rgba(9,9,13,0.85)'; c.fillRect(180, 340, 720, 4);
+    const items = [['الهدف', 'Goal'], ['الجمهور', 'Audience'], ['القناة', 'Channel'], ['الموعد', 'Deadline']];
+    items.forEach(([ar, en], i) => {
+      const y = 430 + i * 92, done = t > homeT(7) - (0.75 - i * 0.15) * stepIn(7);
+      txt(c, ar, 900, y + 16, '600 40px Plex', OB, 'right', 'rtl'); txt(c, en, 180 + 80, y + 14, '500 28px Sat', '#6E6B78', 'left');
+      c.strokeStyle = OB; c.lineWidth = 4; c.strokeRect(180, y - 22, 48, 48); if (done) { c.fillStyle = PU; c.fillRect(184, y - 18, 40, 40); c.strokeStyle = WH; c.lineWidth = 6; c.beginPath(); c.moveTo(192, y + 2); c.lineTo(202, y + 13); c.lineTo(218, y - 8); c.stroke(); }
+    });
+    for (let i = 0; i < 6; i++) { c.fillStyle = 'rgba(9,9,13,0.14)'; c.fillRect(180, 1300 + i * 54, 720 - (i % 3) * 140, 18); }
+    // the stamp
+    c.save(); c.translate(540, 1010); c.rotate(-0.12);
+    c.strokeStyle = PU; c.lineWidth = 12; c.beginPath(); c.arc(0, 0, 150, 0, 7); c.stroke(); c.lineWidth = 4; c.beginPath(); c.arc(0, 0, 176, 0, 7); c.stroke();
+    for (let a = 0; a < 24; a++) { const r0 = 186, r1 = 200, an = a / 24 * Math.PI * 2; c.beginPath(); c.moveTo(Math.cos(an) * r0, Math.sin(an) * r0); c.lineTo(Math.cos(an) * r1, Math.sin(an) * r1); c.stroke(); }
+    txt(c, 'تم', 0, -205, '700 56px Plex', PU, 'center', 'rtl'); txt(c, 'DONE', 0, 250, '700 40px Sat', PU);
+    c.restore();
+  },
+};
+// 8 · the camera: the brief is in the viewfinder
+WORLDS[8] = {
+  name: 'viewfinder', frame: { x: 0, y: 0, w: W, h: H }, portal: { x: 250, y: 440, w: 580, h: 1031 }, shape: 'rect',
+  draw(c, t) {
+    bg(c, '#0E0D14', '#060609');
+    for (let i = 0; i < 9; i++) { c.beginPath(); c.arc(hash(i) * W, hash(i + 9) * H, 60 + hash(i + 3) * 120, 0, 7); c.fillStyle = `rgba(${i % 2 ? '108,53,255' : '245,243,250'},0.05)`; c.fill(); }
+    c.strokeStyle = WH; c.lineWidth = 6; const P = this.portal, L = 70;
+    [[P.x - 30, P.y - 30, 1, 1], [P.x + P.w + 30, P.y - 30, -1, 1], [P.x - 30, P.y + P.h + 30, 1, -1], [P.x + P.w + 30, P.y + P.h + 30, -1, -1]].forEach(([x, y, sx, sy]) => { c.beginPath(); c.moveTo(x, y + sy * L); c.lineTo(x, y); c.lineTo(x + sx * L, y); c.stroke(); });
+    const blink = Math.floor(t / (BEAT)) % 2 === 0; c.beginPath(); c.arc(300, 300, 18, 0, 7); c.fillStyle = blink ? PU : 'rgba(108,53,255,0.3)'; c.fill(); txt(c, 'REC', 332, 313, '700 38px Sat', WH, 'left');
+    const fr = Math.floor(t * 25), tc = `00:00:${String(Math.floor(t) % 60).padStart(2, '0')}:${String(fr % 25).padStart(2, '0')}`; txt(c, tc, 780, 313, '500 36px Sat', WH, 'right');
+    txt(c, 'ISO 400   ·   f/2.8   ·   1/120', 540, 1590, '500 30px Sat', MU);
+    for (let i = 0; i < 16; i++) { const v = 0.3 + 0.7 * Math.abs(Math.sin(t * 7 + i * 0.7)) * (0.5 + 0.5 * hash(i + Math.floor(t * 8))); c.fillStyle = i > 12 ? PU : 'rgba(245,243,250,0.7)'; c.fillRect(300 + i * 30, 1680 - v * 60, 18, v * 60); }
+    const fq = spring(t, homeT(8) - 0.15, 0.3); c.strokeStyle = PU; c.lineWidth = 4; const fs = lerp(260, 160, fq); c.strokeRect(540 - fs / 2, 960 - fs / 2, fs, fs);
+  },
+};
+// 9 · the word wall: kinetic rows; the centre tile holds the viewfinder
+const ROWS = [['قول تم', 'ar', 1], ['CONSIDER IT DONE', 'en', 0], ['اعتبره حصل', 'ar', 0], ['SAY IT. TAMM IT.', 'en', 1], ['تم', 'ar', 1], ['DONE', 'en', 0], ['قول. تم.', 'ar', 0]];
+WORLDS[9] = {
+  name: 'words', frame: { x: 0, y: 0, w: W, h: H }, portal: { x: 330, y: 587, w: 420, h: 746 }, shape: 'round', r: 26,
+  draw(c, t) {
+    bg(c, '#0A0910', '#060608');
+    ROWS.forEach(([s, lang, fill], i) => {
+      const y = 170 + i * 270, dir = i % 2 ? -1 : 1, speed = 110 + i * 14, font = lang === 'ar' ? '700 190px Plex' : '700 170px Sat';
+      c.font = font; c.direction = lang === 'ar' ? 'rtl' : 'ltr'; c.textAlign = 'left'; const w = c.measureText(s + '   ').width;
+      let x0 = ((t * speed * dir) % w) - w; for (let x = x0; x < W + w; x += w) {
+        if (fill) { c.fillStyle = i === 4 ? PU : WH; c.fillText(s, x, y); } else { c.strokeStyle = 'rgba(245,243,250,0.55)'; c.lineWidth = 3; c.strokeText(s, x, y); }
+      }
+      c.direction = 'ltr';
+    });
+    const P = this.portal; c.fillStyle = '#060608'; rr(c, P.x - 26, P.y - 26, P.w + 52, P.h + 52, 40); c.fill(); c.strokeStyle = 'rgba(245,243,250,0.3)'; c.lineWidth = 3; c.stroke();
+  },
+};
+// image worlds 2–4 come from the generated illustrations
+const IMGIDX = { cafe: 2, facade: 3, riyadh: 4 };
+
+// ---------------- geometry + rendering ----------------
+const frameOf = (i) => WORLDS[i].frame;
+const portalOf = (i) => WORLDS[i].portal;
+function innerRect(i) { const p = portalOf(i), f = frameOf((i - 1 + NW) % NW), s = Math.max(p.w / f.w, p.h / f.h), w = f.w * s, h = f.h * s; return { x: p.x + p.w / 2 - w / 2, y: p.y + p.h / 2 - h / 2, w, h }; }
+function viewRect(i, p) {
+  const R = innerRect(i), C = frameOf(i), a = C.w / R.w, Rc = [R.x + R.w / 2, R.y + R.h / 2], Cc = [C.x + C.w / 2, C.y + C.h / 2];
+  const f = [(Cc[0] - a * Rc[0]) / (1 - a), (Cc[1] - a * Rc[1]) / (1 - a)], ap = Math.pow(a, p);
+  const w = R.w * ap, h = R.h * ap; return { x: f[0] + ap * (Rc[0] - f[0]) - w / 2, y: f[1] + ap * (Rc[1] - f[1]) - h / 2, w, h };
+}
+function drawWorld(i, view, depth, p) {
+  const sx = W / view.w, sy = H / view.h;
+  ctx.save(); ctx.setTransform(sx, 0, 0, sy, -view.x * sx, -view.y * sy); WORLDS[i].draw(ctx, T_NOW); ctx.restore();
+  if (depth > 5) return;
+  const P = portalOf(i), R = innerRect(i), scr = (r) => ({ x: (r.x - view.x) * sx, y: (r.y - view.y) * sy, w: r.w * sx, h: r.h * sy });
+  const Ps = scr(P); if (Ps.w < 3) return;
+  const reveal = depth === 0 ? ss(clamp(p / 0.2)) : 1, Rs = scr(R);
+  const cr = { x: lerp(Rs.x, Ps.x, reveal), y: lerp(Rs.y, Ps.y, reveal), w: lerp(Rs.w, Ps.w, reveal), h: lerp(Rs.h, Ps.h, reveal) };
+  const inner = (i - 1 + NW) % NW, fr = frameOf(inner), k = fr.w / Rs.w, iv = { x: fr.x - Rs.x * k, y: fr.y - Rs.y * k, w: W * k, h: H * k };
+  const sh = WORLDS[i].shape, m = Math.min(cr.w, cr.h);
+  const rad = (sh === 'dot' ? 0.22 * m : sh === 'circle' ? 0.5 * m : sh === 'round' ? (WORLDS[i].r || 20) * sx : sh === 'phone' ? 0.12 * m : 0) * reveal;
+  ctx.save(); rr(ctx, cr.x, cr.y, cr.w, cr.h, Math.min(rad, m / 2)); ctx.clip();
+  drawWorld(inner, iv, depth + 1, 1);
+  if (sh === 'dot') { ctx.fillStyle = PU; ctx.globalAlpha = 1 - ss(seg(cr.w, 90, 420)); ctx.fillRect(cr.x, cr.y, cr.w, cr.h); ctx.globalAlpha = 1; }
+  ctx.restore();
+}
+
+// ---------------- captions: the voice lines, set big ----------------
+const capEnd = (k, len) => Math.min(homeT(k) + len, homeT(k + 1) - 0.04);
+const CAPS = [
+  [0.1, 1.15, 'ar', 'عندك فكرة؟', 1660, 96],
+  [homeT(1) - 0.08, capEnd(1, 1.4), 'ar', 'عايزها توصل؟', 1830 - 60, 84],
+  [homeT(2) - 0.08, capEnd(2, 1.65), 'en', 'Want it everywhere?', 300, 76],
+  [homeT(3) - 0.05, capEnd(3, 2.1), 'ar', 'اعتبره حصل!', 1400, 120],
+  [homeT(4) - 0.05, capEnd(4, 1.7), 'ar', 'قول تم!', 1400, 140],
+  [homeT(5) - 0.05, capEnd(5, 2.05), 'en', 'Consider it done!', 330, 96],
+  [homeT(7) - 0.05, capEnd(7, 0.95), 'ar', 'تم!', 1640, 120, 1],
+  [homeT(9) - 0.05, capEnd(9, 0.95), 'ar', 'تم!', 1640, 120, 1],
+];
+function captions(t) {
+  for (const [a, b, lang, s, y, size, pill] of CAPS) {
+    if (t < a || t > b) continue;
+    const k = spring(t, a, 0.32), out = 1 - ss(seg(t, b - 0.2, b));
+    ctx.save(); ctx.globalAlpha = clamp(k * 1.4) * out; ctx.translate(540, y); ctx.scale(lerp(1.25, 1, Math.min(1, k)), lerp(1.25, 1, Math.min(1, k)));
+    if (pill) { ctx.font = `700 ${size}px Plex`; const pw = ctx.measureText(s).width + 120; ctx.fillStyle = PU; rr(ctx, -pw / 2, -size * 0.95, pw, size * 1.45, size * 0.72); ctx.fill(); }
+    ctx.shadowColor = pill ? 'rgba(0,0,0,0)' : 'rgba(0,0,0,0.7)'; ctx.shadowBlur = 50; txt(ctx, s, 0, 0, `700 ${size}px ${lang === 'ar' ? 'Plex' : 'Sat'}`, WH, 'center', lang === 'ar' ? 'rtl' : 'ltr');
+    ctx.restore();
+  }
+}
+const GRAIN = document.createElement('canvas'); GRAIN.width = GRAIN.height = 360;
+{ const g = GRAIN.getContext('2d'), im = g.createImageData(360, 360); let s = 7; for (let i = 0; i < im.data.length; i += 4) { s = (s * 16807) % 2147483647; const v = 128 + (s / 2147483647 - 0.5) * 110; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } g.putImageData(im, 0, 0); }
+function finish(t) {
+  // a flash of light on each landing (the downbeat), very short
+  for (let k = 1; k <= NW; k++) { const q = seg(t, homeT(k), homeT(k) + 0.18); if (q > 0 && q < 1) { ctx.fillStyle = `rgba(245,243,250,${0.10 * (1 - q)})`; ctx.fillRect(0, 0, W, H); } }
+  const vg = ctx.createRadialGradient(540, 900, 520, 540, 960, 1260); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.42)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+  const f = Math.floor(t * 30); ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = 0.12; ctx.translate(-Math.floor(hash(f) * 360), -Math.floor(hash(f + 3) * 360)); ctx.fillStyle = ctx.createPattern(GRAIN, 'repeat'); ctx.fillRect(0, 0, W + 360, H + 360); ctx.restore();
+}
+window.seek = (t) => {
+  T_NOW = ((t % DUR) + DUR) % DUR;
+  const z = zAt(T_NOW), k = Math.min(NW - 1, Math.floor(z)), p = z - k, outer = (k + 1) % NW;
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H);
+  drawWorld(outer, viewRect(outer, p), 0, p);
+  captions(T_NOW); finish(T_NOW);
+};
+
+function buildCard() {
+  const o = document.createElement('canvas'); o.width = W; o.height = H; const c = o.getContext('2d');
+  c.font = '600 600px Plex'; c.direction = 'rtl'; c.textAlign = 'center';
+  const mt = c.measureText('تم'), base = 870 + (mt.actualBoundingBoxAscent - mt.actualBoundingBoxDescent) / 2;
+  c.fillStyle = '#fff'; c.fillText('تم', 540, base); c.globalCompositeOperation = 'destination-out'; c.fillText('ٮم', 540, base);
+  const d = c.getImageData(0, 0, W, H).data; let x0 = W, y0 = H, x1 = 0, y1 = 0;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (d[(y * W + x) * 4 + 3] > 128) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+  const mid = (x0 + x1) / 2; let rx0 = W, rx1 = 0;
+  for (let y = y0; y <= y1; y++) for (let x = Math.ceil(mid); x <= x1; x++) if (d[(y * W + x) * 4 + 3] > 128) { rx0 = Math.min(rx0, x); rx1 = Math.max(rx1, x); }
+  CARD = { base, portal: { x: rx0, y: y0, w: rx1 - rx0 + 1, h: y1 - y0 + 1 }, left: { x: x0, y: y0, w: Math.floor(mid) - x0, h: y1 - y0 + 1 } };
+  WORLDS[0].portal = CARD.portal;
+}
+window.ready = (async () => {
+  await Promise.all(['600 600px Plex', '700 190px Plex', '500 42px Plex', '700 170px Sat', '500 40px Sat'].map((f) => document.fonts.load(f, 'تم ٮم قول اعتبره حصل SayTamm')));
+  await document.fonts.ready;
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
+  for (const w of IMGS) { const im = new Image(); im.src = w.src; await im.decode(); const idx = IMGIDX[w.name]; WORLDS[idx] = { name: w.name, frame: w.frame, portal: w.portal, shape: w.name === 'cafe' ? 'phone' : 'rect', draw: (c) => c.drawImage(im, 0, 0) }; }
+  buildCard();
+  window.seek(0);
+  return true;
+})();
+
+// ================= music: 140 BPM, darbuka + four-on-the-floor + a Hijaz hook, 14 bars (seamless) =================
+window.renderAudio = async () => {
+  const SR = 48000, ac = new OfflineAudioContext(2, Math.round(SR * DUR), SR);
+  const bus = ac.createDynamicsCompressor(); bus.threshold.value = -16; bus.ratio.value = 3; bus.attack.value = 0.004; bus.release.value = 0.12;
+  const sat = ac.createWaveShaper(); { const cu = new Float32Array(2048); for (let i = 0; i < 2048; i++) { const x = i / 1023.5 - 1; cu[i] = Math.tanh(1.6 * x) / Math.tanh(1.6); } sat.curve = cu; sat.oversample = '4x'; }
+  bus.connect(sat); sat.connect(ac.destination);
+  const rev = ac.createConvolver(); { const len = SR * 2.2, ir = ac.createBuffer(2, len, SR); for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let s = 5 + ch; for (let i = 0; i < len; i++) { s = (s * 16807) % 2147483647; d[i] = (s / 1073741823.5 - 1) * Math.pow(1 - i / len, 3.2); } } rev.buffer = ir; }
+  const revIn = ac.createGain(), revOut = ac.createGain(); revOut.gain.value = 0.3; revIn.connect(rev); rev.connect(revOut); revOut.connect(bus);
+  const nb = (() => { const b = ac.createBuffer(1, SR, SR), d = b.getChannelData(0); let s = 3; for (let i = 0; i < d.length; i++) { s = (s * 16807) % 2147483647; d[i] = s / 1073741823.5 - 1; } return b; })();
+  const env = (g, t, a, pk, d) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+  const osc = (t, type, f0, f1, a, d, pk, pan = 0, send = 0) => { const o = ac.createOscillator(), g = ac.createGain(), p = ac.createStereoPanner(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + a + d * 0.6); env(g, t, a, pk, d); p.pan.value = pan; o.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } o.start(t); o.stop(t + a + d + 0.05); };
+  const noise = (t, type, f, q, a, d, pk, pan = 0, f1, send = 0) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(), p = ac.createStereoPanner(); s.buffer = nb; s.loop = true; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + a + d); fl.Q.value = q; env(g, t, a, pk, d); p.pan.value = pan; s.connect(fl); fl.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } s.start(t, (t * 0.37) % 0.8); s.stop(t + a + d + 0.05); };
+  const kick = (t, g = 0.95) => { osc(t, 'sine', 160, 44, 0.002, 0.3, g); noise(t, 'lowpass', 1400, 0.7, 0.001, 0.02, g * 0.3); };
+  const clap = (t, g = 0.36) => { for (let i = 0; i < 3; i++) noise(t + i * 0.01, 'bandpass', 1600, 0.9, 0.001, i === 2 ? 0.17 : 0.011, g, -0.1, 0, 0.35); };
+  const hat = (t, g = 0.11, open = false) => noise(t, 'highpass', 8500, 0.7, 0.001, open ? 0.16 : 0.035, g, 0.3);
+  const doum = (t, g = 0.5) => { osc(t, 'sine', 120, 70, 0.003, 0.3, g); };
+  const tak = (t, g = 0.28, pan = 0.25) => { noise(t, 'bandpass', 2800, 1.5, 0.001, 0.06, g, pan, 0, 0.25); osc(t, 'triangle', 820, 680, 0.001, 0.04, g * 0.3, pan); };
+  const bass = (t, f, d, g = 0.32) => { osc(t, 'sawtooth', f, 0, 0.005, d, g * 0.55); osc(t, 'sine', f / 2, 0, 0.005, d, g); };
+  const pluck = (t, f, g = 0.07, pan = 0) => { osc(t, 'triangle', f, 0, 0.003, 0.28, g, pan, 0.4); osc(t, 'sine', f * 2, 0, 0.003, 0.12, g * 0.3, -pan, 0.4); };
+  const riser = (t0, t1, g = 0.12) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), gg = ac.createGain(); s.buffer = nb; s.loop = true; fl.type = 'bandpass'; fl.Q.value = 2; fl.frequency.setValueAtTime(300, t0); fl.frequency.exponentialRampToValueAtTime(7000, t1); gg.gain.setValueAtTime(0.0001, t0); gg.gain.exponentialRampToValueAtTime(g, t1 - 0.02); gg.gain.linearRampToValueAtTime(0, t1); s.connect(fl); fl.connect(gg); gg.connect(bus); s.start(t0); s.stop(t1 + 0.05); };
+  const impact = (t, g = 1) => { kick(t, g); osc(t, 'sine', 62, 38, 0.003, 1.4, g * 0.55); noise(t, 'lowpass', 3000, 0.6, 0.001, 0.35, g * 0.35, 0, 0, 0.5); };
+  const whoosh = (t1, d = 1.3) => noise(t1 - d, 'bandpass', 500, 1.3, d * 0.85, d * 0.15, 0.16, 0, 5000, 0.3);
+  const HIJAZ = [164.8, 174.6, 207.7, 220, 246.9, 261.6, 293.7, 329.6]; // E Phrygian dominant
+  const B = BEAT, E = BEAT / 2, S = BEAT / 4;
+  const HBm = HB, NB = Math.round(DUR / B);
+  const roots = [82.4, 82.4, 87.3, 103.8], pat = [0, 2, 4, 5, 4, 2, 1, 0, 0, 3, 4, 6, 7, 6, 4, 3];
+  for (let b = 0; b < NB; b++) {
+    const t0 = b * B, intro = b < HBm[0], build = b >= HBm[0] && b < HBm[3], drop = b >= HBm[3] && b < HBm[10], outro = b >= HBm[10];
+    const roll = b >= HBm[9] && b < HBm[10], root = roots[Math.floor(b / 4) % 4];
+    if (build || drop) kick(t0, roll ? 0.7 : 0.92); else if (outro && b % 2 === 0) kick(t0, 0.75);
+    if (!intro) { hat(t0, 0.05); hat(t0 + E, 0.12, drop); }
+    if ((drop || outro || (build && b >= HBm[2])) && b % 2 === 1) clap(t0);
+    if (drop) { b % 2 === 0 ? doum(t0) : tak(t0, 0.22); tak(t0 + E, 0.16, -0.25); if (b % 4 === 3) for (let i = 0; i < 4; i++) tak(t0 + i * S, 0.1 + i * 0.03, -0.25); }
+    if (build || drop) { bass(t0 + E, root, E * 0.9, drop ? 0.3 : 0.24); if (drop) bass(t0, root, E * 0.9, 0.3); }
+    if (outro) bass(t0, root, B * 0.9, 0.2);
+    if (drop || (build && b >= HBm[1])) for (let i = 0; i < 4; i++) if (drop || i % 2 === 0) pluck(t0 + i * S, HIJAZ[pat[(b * 4 + i) % 16]] * 2, drop ? 0.06 : 0.045, i % 2 ? 0.35 : -0.35);
+    if (roll) for (let i = 0; i < 4; i++) tak(t0 + i * S, 0.12 + (b - HBm[9]) * 0.02, i % 2 ? 0.3 : -0.3);
+  }
+  [[0, homeT(0)], [homeT(2), homeT(3)], [homeT(9), homeT(10)]].forEach(([a, b]) => riser(a, b, 0.11));
+  for (let k = 1; k <= NW; k++) { impact(homeT(k), k === NW ? 1.2 : 0.85); whoosh(homeT(k), Math.min(1.1, 0.8 * stepIn(k))); }
+  // pads: intro and outro (Hijaz colour), they make the loop join breathe
+  const pad = (t, d, fs, g) => fs.forEach((f) => [-7, 7].forEach((dt) => { const o = ac.createOscillator(), fl = ac.createBiquadFilter(), gg = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = dt; fl.type = 'lowpass'; fl.frequency.value = 1200; gg.gain.setValueAtTime(0, t); gg.gain.linearRampToValueAtTime(g, t + 0.3); gg.gain.setValueAtTime(g, t + d - 0.3); gg.gain.linearRampToValueAtTime(0, t + d); o.connect(fl); fl.connect(gg); gg.connect(bus); const sg = ac.createGain(); sg.gain.value = 0.5; gg.connect(sg); sg.connect(revIn); o.start(t); o.stop(t + d + 0.05); }));
+  pad(0, homeT(0), [164.8, 207.7, 246.9], 0.014); pad(homeT(NW), DUR - homeT(NW), [164.8, 207.7, 246.9, 329.6], 0.012);
+  const buf = await ac.startRendering();
+  let peak = 0; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) peak = Math.max(peak, Math.abs(d[i])); }
+  const gn = 0.89 / (peak || 1), L = buf.getChannelData(0), R = buf.getChannelData(1), len = L.length, ab = new ArrayBuffer(44 + len * 4), v = new DataView(ab);
+  const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + len * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true); v.setUint32(24, SR, true); v.setUint32(28, SR * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); ws(36, 'data'); v.setUint32(40, len * 4, true);
+  for (let i = 0; i < len; i++) { v.setInt16(44 + i * 4, clamp(L[i] * gn, -1, 1) * 32767, true); v.setInt16(46 + i * 4, clamp(R[i] * gn, -1, 1) * 32767, true); }
+  let bin = ''; const u8 = new Uint8Array(ab); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+</script>
+</body>
+</html>
