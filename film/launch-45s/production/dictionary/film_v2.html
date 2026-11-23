@@ -516,6 +516,8 @@ window.ready = (async () => {
   await Promise.all(['700 250px Plex', '600 640px Plex', '500 40px Plex', '700 196px Sat', '500 40px Sat'].map((f) => document.fonts.load(f, 'قول تم اعتبره حصل Consider ٮ')));
   await document.fonts.ready;
   ['p1', 'p2', 'p3', 'cv', 'tm', 'end'].forEach((id) => show($(id), true));
+  // TikTok: lift the convergence stack and narrow the English line so "done" stays clear of the action rail
+  if (VARIANT === 'tiktok') { $('cvl1').style.top = '380px'; $('cvl2').style.top = '620px'; Object.assign($('cvl3').style, { top: '850px', fontSize: '108px' }); }
   measure();
   window.seek(0);
   return true;

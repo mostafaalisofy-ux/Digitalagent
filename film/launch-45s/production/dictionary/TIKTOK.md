@@ -12,6 +12,7 @@ Output: `handover/launch-film/dictionary/SayTamm_Launch_Dictionary_v2_tiktok_45s
 |---|---|
 | The pile of requests is already on screen in frame 0. The first four bubbles are in place, and the rest flood in faster | TikTok decides in the first second whether people keep scrolling. Frame 0 is also the default cover |
 | The platform bursts at 12 s and 19.6 s sit at x ≤ 886 | Keeps them clear of TikTok's right-hand action rail (like, comment, save, share), x > 930 and y 950–1760 on a 1080×1920 frame |
+| The convergence stack is lifted (tops at 380 / 620 / 850) and the English line is set at 108 px | Keeps "done" clear of the action rail while it is the word that survives the strike-through |
 | Everything else is identical: timing, voiceover, mix and master | The voiceover still lands word for word |
 
 **Safe-zone check** (top bar y < 160, right rail, caption block y > 1480):

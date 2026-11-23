@@ -47,14 +47,15 @@ if (arg('--beats') || arg('--frames')) {
 
 // --part k --parts n: render one slice of the frames (video only) so several workers can run in parallel
 const PART = arg('--part'), PARTS = Number(arg('--parts') || 1), FT = FPS * DUR;
-const F0 = PART === null ? 0 : Math.floor((Number(PART) * FT) / PARTS), F1 = PART === null ? FT : Math.floor(((Number(PART) + 1) * FT) / PARTS);
+let F0 = PART === null ? 0 : Math.floor((Number(PART) * FT) / PARTS), F1 = PART === null ? FT : Math.floor(((Number(PART) + 1) * FT) / PARTS);
+if (arg('--from')) { F0 = Number(arg('--from')); F1 = Number(arg('--to')); } // re-render one section only
 let WAV = null;
-if (PART === null) {
+if (PART === null && !arg('--from')) {
   const b64 = await page.evaluate((d) => window.renderAudio(d), DUR);
   WAV = path.join(OUT, `SayTamm_Launch_Dictionary_v2${VTAG}_Sound.wav`); fs.writeFileSync(WAV, Buffer.from(b64, 'base64'));
   if (arg('--audio-only')) { await done(); console.log('wrote', WAV); process.exit(0); }
 }
-const MP4 = PART === null ? path.join(OUT, `SayTamm_Launch_Dictionary_v2${VTAG}_45s_9x16_music.mp4`) : path.join(OUT, `_v2${VTAG}_part${PART}.mp4`);
+const MP4 = arg('--from') ? path.join(OUT, `_v2${VTAG}_seg${F0}.mp4`) : PART === null ? path.join(OUT, `SayTamm_Launch_Dictionary_v2${VTAG}_45s_9x16_music.mp4`) : path.join(OUT, `_v2${VTAG}_part${PART}.mp4`);
 const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS * SUB), '-c:v', 'mjpeg', '-i', '-', ...(WAV ? ['-i', WAV] : []),
   '-vf', `tmix=frames=${SUB},select='not(mod(n\\,${SUB}))',setpts=N/(${FPS}*TB)`, '-r', String(FPS),
   '-c:v', 'libx264', '-preset', 'slow', '-crf', '14', '-profile:v', 'high', '-tune', 'film', '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
