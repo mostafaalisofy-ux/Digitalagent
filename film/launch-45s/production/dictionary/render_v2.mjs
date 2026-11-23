@@ -22,7 +22,7 @@ const html = fs.readFileSync(path.join(DIR, 'film_v2.html'), 'utf8')
   .replaceAll('__SAT__', pathToFileURL(path.join(ROOT, 'site/public/fonts/satoshi')).href)
   .replaceAll('__PLEX__', pathToFileURL(path.join(ROOT, 'site/node_modules/@fontsource/ibm-plex-sans-arabic/files')).href)
   .replaceAll('__VB__', vb).replaceAll('__T__', ds[0]).replaceAll('__B__', ds[1]).replaceAll('__VH__', vb.split(' ')[3]);
-const TMP = path.join(OUT, '_film_v2.html'); fs.writeFileSync(TMP, html);
+const TMP = path.join(OUT, `_film_v2${process.argv.includes('--part') ? '_' + process.argv[process.argv.indexOf('--part') + 1] : ''}.html`); fs.writeFileSync(TMP, html);
 
 const require = createRequire(import.meta.url);
 let playwright;
@@ -43,18 +43,26 @@ if (arg('--beats') || arg('--frames')) {
   await done(); console.log('frames in', d); process.exit(0);
 }
 
-const b64 = await page.evaluate((d) => window.renderAudio(d), DUR);
-const WAV = path.join(OUT, 'SayTamm_Launch_Dictionary_v2_Sound.wav'); fs.writeFileSync(WAV, Buffer.from(b64, 'base64'));
-const MP4 = path.join(OUT, 'SayTamm_Launch_Dictionary_v2_45s_9x16_music.mp4');
-const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS * SUB), '-c:v', 'mjpeg', '-i', '-', '-i', WAV,
+// --part k --parts n: render one slice of the frames (video only) so several workers can run in parallel
+const PART = arg('--part'), PARTS = Number(arg('--parts') || 1), FT = FPS * DUR;
+const F0 = PART === null ? 0 : Math.floor((Number(PART) * FT) / PARTS), F1 = PART === null ? FT : Math.floor(((Number(PART) + 1) * FT) / PARTS);
+let WAV = null;
+if (PART === null) {
+  const b64 = await page.evaluate((d) => window.renderAudio(d), DUR);
+  WAV = path.join(OUT, 'SayTamm_Launch_Dictionary_v2_Sound.wav'); fs.writeFileSync(WAV, Buffer.from(b64, 'base64'));
+}
+const MP4 = PART === null ? path.join(OUT, 'SayTamm_Launch_Dictionary_v2_45s_9x16_music.mp4') : path.join(OUT, `_v2_part${PART}.mp4`);
+const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS * SUB), '-c:v', 'mjpeg', '-i', '-', ...(WAV ? ['-i', WAV] : []),
   '-vf', `tmix=frames=${SUB},select='not(mod(n\\,${SUB}))',setpts=N/(${FPS}*TB)`, '-r', String(FPS),
-  '-c:v', 'libx264', '-preset', 'slow', '-crf', '14', '-profile:v', 'high', '-tune', 'film', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-c:a', 'aac', '-b:a', '256k', '-shortest', MP4], { stdio: ['pipe', 'inherit', 'inherit'] });
+  '-c:v', 'libx264', '-preset', 'slow', '-crf', '14', '-profile:v', 'high', '-tune', 'film', '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
+  ...(WAV ? ['-c:a', 'aac', '-b:a', '256k', '-shortest'] : ['-an']), MP4], { stdio: ['pipe', 'inherit', 'inherit'] });
 const fin = new Promise((r, j) => ff.on('close', (c) => (c ? j(new Error('ffmpeg ' + c)) : r())));
-const N = FPS * DUR * SUB;
-for (let i = 0; i < N; i++) {
-  const f = Math.floor(i / SUB), k = i % SUB, t = Math.max(0, (f + (k - 1) / SUB) / FPS);
-  const buf = await at(t);
-  if (!ff.stdin.write(buf)) await new Promise((r) => ff.stdin.once('drain', r));
-  if (i % 900 === 0) console.log('frame', f, '/', FPS * DUR);
+for (let f = F0; f < F1; f++) {
+  for (let k = 0; k < SUB; k++) {
+    const t = Math.max(0, (f + (k - 1) / SUB) / FPS);
+    const buf = await at(t);
+    if (!ff.stdin.write(buf)) await new Promise((r) => ff.stdin.once('drain', r));
+  }
+  if ((f - F0) % 60 === 0) console.log('frame', f, `(${F0}–${F1})`);
 }
 ff.stdin.end(); await fin; await done(); console.log('wrote', MP4);
