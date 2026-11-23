@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>SayTamm: Infinite Tamm (45 s loop, 9:16)</title>
+<style>
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-600-normal.woff2); font-weight: 600; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #09090D; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// =====================================================================================
+//  INFINITE TAMM — one continuous zoom OUT through nested worlds, looping seamlessly.
+//  «تم» card ⊂ phone (Cairo café) ⊂ Cairo façade ⊂ Riyadh billboard ⊂ London tablet ⊂ the ت dot of «تم» …
+//  Every world holds the previous one in a frontal portal (measured to the pixel from the green screen).
+//  The camera is an exponential zoom around each portal's fixed point, so speed reads constant.
+// =====================================================================================
+const W = 1080, H = 1920, DUR = 45;
+const OB = '#09090D', WH = '#F5F3FA', MU = '#96939F', PU = '#6C35FF';
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, q) => a + (b - a) * q;
+const eo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x));
+const ss = (x) => x * x * (3 - 2 * x);
+const sio = (x) => 0.5 - 0.5 * Math.cos(Math.PI * clamp(x));
+const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+
+// ---------------- worlds (portal and frame measured in source pixels) ----------------
+// frame: the 9:16 rect that fills the screen when this world is "home"; portal: where the previous world lives
+const WORLDS = __WORLDS__;
+const IMG = {};
+
+// ---------------- the «تم» card (vector, crisp at any zoom) ----------------
+let CARD = null, SYMBOL = null;
+function buildCard() {
+  // find the two dots of «تم» by subtracting the dotless form, both set by the font
+  const o = document.createElement('canvas'); o.width = W; o.height = H; const c = o.getContext('2d');
+  c.font = '600 600px Plex'; c.direction = 'rtl'; c.textAlign = 'center';
+  const mt = c.measureText('تم'), base = 1010 + (mt.actualBoundingBoxAscent - mt.actualBoundingBoxDescent) / 2 - 140;
+  c.fillStyle = '#fff'; c.fillText('تم', 540, base); c.globalCompositeOperation = 'destination-out'; c.fillText('ٮم', 540, base);
+  const d = c.getImageData(0, 0, W, H).data; let x0 = W, y0 = H, x1 = 0, y1 = 0;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (d[(y * W + x) * 4 + 3] > 128) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+  const mid = (x0 + x1) / 2;
+  let rx0 = W, rx1 = 0; for (let y = y0; y <= y1; y++) for (let x = Math.ceil(mid); x <= x1; x++) if (d[(y * W + x) * 4 + 3] > 128) { rx0 = Math.min(rx0, x); rx1 = Math.max(rx1, x); }
+  CARD = { base, dots: { x0, y0, x1, y1 }, portal: { x: rx0, y: y0, w: rx1 - rx0 + 1, h: y1 - y0 + 1 }, left: { x: x0, y: y0, w: Math.floor(mid) - x0, h: y1 - y0 + 1 } };
+}
+// draw the card in card coordinates (caller sets the transform); "dress" fades the brand lines in/out
+function drawCard(c, dress) {
+  c.fillStyle = OB; c.fillRect(-2000, -2000, W + 4000, H + 4000);
+  const g = c.createRadialGradient(540, 820, 60, 540, 900, 1100); g.addColorStop(0, 'rgba(108,53,255,0.20)'); g.addColorStop(1, 'rgba(108,53,255,0)'); c.fillStyle = g; c.fillRect(-2000, -2000, W + 4000, H + 4000);
+  c.font = '600 600px Plex'; c.direction = 'rtl'; c.textAlign = 'center'; c.fillStyle = WH; c.fillText('ٮم', 540, CARD.base);
+  // left dot: purple (from the font); the right dot is the portal (drawn by the renderer)
+  c.save(); c.beginPath(); c.rect(CARD.left.x - 2, CARD.left.y - 2, CARD.left.w + 4, CARD.left.h + 4); c.clip(); c.fillStyle = PU; c.fillText('تم', 540, CARD.base); c.restore();
+  c.direction = 'ltr';
+  if (dress > 0) {
+    c.globalAlpha = dress;
+    const SH = 150, SW = SH * 600 / 721; c.drawImage(SYMBOL, 540 - SW / 2, 330, SW, SH);
+    c.textAlign = 'center'; c.fillStyle = WH; c.font = '700 74px Sat'; c.fillText('SayTamm', 540, 1360);
+    c.font = '500 40px Sat'; c.fillStyle = 'rgba(245,243,250,0.9)'; c.fillText('Say it. Tamm it.', 540, 1432);
+    c.font = '500 42px Plex'; c.direction = 'rtl'; c.fillStyle = MU; c.fillText('قول. تم.', 540, 1494); c.direction = 'ltr';
+    c.globalAlpha = 1;
+  }
+}
+
+// ---------------- geometry ----------------
+// level i (cyclic): 0 card, 1..N-1 image worlds. inner(i) = i-1 (card's inner = the last world)
+function frameOf(i) { return i === 0 ? { x: 0, y: 0, w: W, h: H } : WORLDS[i - 1].frame; }
+function portalOf(i) { return i === 0 ? CARD.portal : WORLDS[i - 1].portal; }
+const N = () => WORLDS.length + 1;
+// where the inner world's frame sits inside world i: a 9:16 rect covering the portal, centred on it
+function innerRect(i) { const p = portalOf(i), f = frameOf((i - 1 + N()) % N()), s = Math.max(p.w / f.w, p.h / f.h); const w = f.w * s, h = f.h * s; return { x: p.x + p.w / 2 - w / 2, y: p.y + p.h / 2 - h / 2, w, h, s }; }
+
+// view rect inside world k+1 at progress p (0: the inner frame fills the screen → 1: world k+1's own frame)
+function viewRect(i, p) {
+  const R = innerRect(i), C = frameOf(i), a = C.w / R.w;
+  const Rc = [R.x + R.w / 2, R.y + R.h / 2], Cc = [C.x + C.w / 2, C.y + C.h / 2];
+  const f = [(Cc[0] - a * Rc[0]) / (1 - a), (Cc[1] - a * Rc[1]) / (1 - a)], ap = Math.pow(a, p);
+  const cx = f[0] + ap * (Rc[0] - f[0]), cy = f[1] + ap * (Rc[1] - f[1]), w = R.w * ap, h = R.h * ap;
+  return { x: cx - w / 2, y: cy - h / 2, w, h };
+}
+
+// ---------------- rendering ----------------
+// draw world i so that world rect `view` fills the screen; recurse into the portal while it is visible
+function drawWorld(i, view, depth, p) {
+  const sx = W / view.w, sy = H / view.h;
+  ctx.save(); ctx.setTransform(sx, 0, 0, sy, -view.x * sx, -view.y * sy);
+  if (i === 0) drawCard(ctx, dressAt(T_NOW));
+  else ctx.drawImage(IMG[i], 0, 0);
+  ctx.restore();
+  if (depth > 6) return;
+  const P = portalOf(i), R = innerRect(i);
+  const scr = (r) => ({ x: (r.x - view.x) * sx, y: (r.y - view.y) * sy, w: r.w * sx, h: r.h * sy });
+  const Ps = scr(P); if (Ps.w < 2) return;
+  // the clip opens from the full inner frame to the portal as the camera pulls back (hides the bezel reveal jump)
+  const reveal = depth === 0 ? ss(clamp(p / 0.22)) : 1, Rs = scr(R);
+  const clipR = { x: lerp(Rs.x, Ps.x, reveal), y: lerp(Rs.y, Ps.y, reveal), w: lerp(Rs.w, Ps.w, reveal), h: lerp(Rs.h, Ps.h, reveal) };
+  const inner = (i - 1 + N()) % N(), fr = frameOf(inner);
+  // the inner world's view: its frame mapped onto R (screen space)
+  const k = fr.w / Rs.w, innerView = { x: fr.x - Rs.x * k, y: fr.y - Rs.y * k, w: W * k, h: H * k };
+  ctx.save(); ctx.beginPath();
+  const rad = i === 0 ? Math.min(clipR.w, clipR.h) * 0.22 : i === 1 ? Math.min(clipR.w, clipR.h) * 0.12 * reveal : 0;
+  ctx.roundRect(clipR.x, clipR.y, clipR.w, clipR.h, rad); ctx.clip();
+  drawWorld(inner, innerView, depth + 1, 1);
+  // a world seen through the ت dot is tinted purple when small: from afar it simply reads as the dot
+  if (i === 0) { ctx.fillStyle = PU; ctx.globalAlpha = 1 - ss(seg(clipR.w, 90, 420)); ctx.fillRect(clipR.x, clipR.y, clipR.w, clipR.h); ctx.globalAlpha = 1; }
+  // screens glow faintly; window glass gets a soft reflection
+  if (i !== 0 && Ps.w > 40) { const gl = ctx.createLinearGradient(clipR.x, clipR.y, clipR.x + clipR.w, clipR.y + clipR.h); gl.addColorStop(0, 'rgba(255,255,255,0.10)'); gl.addColorStop(0.45, 'rgba(255,255,255,0)'); ctx.fillStyle = gl; ctx.globalAlpha = reveal; ctx.fillRect(clipR.x, clipR.y, clipR.w, clipR.h); ctx.globalAlpha = 1; }
+  ctx.restore();
+}
+
+// ---------------- timeline ----------------
+// z: 0 = card home, 1 = café, 2 = façade, 3 = Riyadh, 4 = London, 5 = card again (loop)
+const KEYS = [[0, 0], [7.0, 1], [14.0, 2], [21.5, 3], [29.5, 4], [40.2, 5]];
+function zAt(t) {
+  if (t >= KEYS[KEYS.length - 1][0]) return 5;
+  for (let i = 0; i < KEYS.length - 1; i++) {
+    const [t0, z0] = KEYS[i], [t1] = KEYS[i + 1];
+    if (t < t1) {
+      const q = (t - t0) / (t1 - t0);
+      // keeps moving through each world (never a dead stop), eases in at the start and out at the end of the loop
+      const first = i === 0, last = i === KEYS.length - 2;
+      let e = 0.4 * q + 0.6 * sio(q);
+      if (first) e = q < 0.5 ? 0.5 * Math.pow(2 * q, 2) * (1 - 0.4) + 0.4 * q * q * 2 * 0.5 : e;
+      if (first) e = 0.4 * (q * q) + 0.6 * sio(q);
+      if (last) e = 0.4 * (1 - (1 - q) * (1 - q)) + 0.6 * sio(q);
+      return z0 + e;
+    }
+  }
+  return 5;
+}
+let T_NOW = 0;
+const dressAt = (t) => 1 - ss(seg(t, 0.4, 1.4)) + ss(seg(t, 41.0, 42.2));
+// captions: the phrase of each city, set in type (the voice says the same words)
+const CAPS = [
+  [5.4, 9.0, 'ar', 'اعتبره حصل.', 'القاهرة · Cairo'],
+  [19.8, 23.4, 'ar', 'قول تم.', 'الرياض · Riyadh'],
+  [27.6, 31.4, 'en', 'Consider it done.', 'London'],
+];
+function captions(t) {
+  for (const [a, b, lang, txt, place] of CAPS) {
+    if (t < a || t > b) continue;
+    const k = eo(seg(t, a, a + 0.6)) * (1 - ss(seg(t, b - 0.5, b)));
+    ctx.save(); ctx.globalAlpha = k; ctx.textAlign = 'center';
+    ctx.shadowColor = 'rgba(0,0,0,0.65)'; ctx.shadowBlur = 40;
+    ctx.font = lang === 'ar' ? '700 118px Plex' : '700 100px Sat'; ctx.direction = lang === 'ar' ? 'rtl' : 'ltr'; ctx.fillStyle = WH;
+    ctx.fillText(txt, 540, 1392 + 24 * (1 - k));
+    ctx.font = '500 34px Sat'; ctx.direction = 'ltr'; ctx.fillStyle = 'rgba(245,243,250,0.82)'; ctx.fillText(place, 540, 1452 + 24 * (1 - k));
+    ctx.restore();
+  }
+}
+// film finish: vignette + grain
+const GRAIN = document.createElement('canvas'); GRAIN.width = GRAIN.height = 360;
+{ const g = GRAIN.getContext('2d'), im = g.createImageData(360, 360); let s = 7; for (let i = 0; i < im.data.length; i += 4) { s = (s * 16807) % 2147483647; const v = 128 + (s / 2147483647 - 0.5) * 110; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } g.putImageData(im, 0, 0); }
+function finish(t) {
+  const vg = ctx.createRadialGradient(540, 900, 520, 540, 960, 1260); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.42)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+  const f = Math.floor(t * 30); ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = 0.12; ctx.translate(-Math.floor(hash(f) * 360), -Math.floor(hash(f + 3) * 360)); ctx.fillStyle = ctx.createPattern(GRAIN, 'repeat'); ctx.fillRect(0, 0, W + 360, H + 360); ctx.restore();
+}
+
+window.seek = (t) => {
+  T_NOW = ((t % DUR) + DUR) % DUR;
+  const z = zAt(T_NOW), k = Math.min(4, Math.floor(z)), p = z - k, outer = (k + 1) % N();
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H);
+  drawWorld(outer, viewRect(outer, p), 0, p);
+  captions(T_NOW);
+  finish(T_NOW);
+};
+
+window.ready = (async () => {
+  await Promise.all(['600 600px Plex', '700 118px Plex', '500 42px Plex', '700 74px Sat', '500 40px Sat'].map((f) => document.fonts.load(f, 'تم ٮم قول اعتبره حصل SayTamm')));
+  await document.fonts.ready;
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
+  for (let i = 0; i < WORLDS.length; i++) { const im = new Image(); im.src = WORLDS[i].src; await im.decode(); IMG[i + 1] = im; }
+  buildCard();
+  window.seek(0);
+  return true;
+})();
+
+// ================= sound: a tone that rises forever + one room per world =================
+window.renderAudio = async () => {
+  const SR = 48000, ac = new OfflineAudioContext(2, SR * DUR, SR);
+  const bus = ac.createDynamicsCompressor(); bus.threshold.value = -18; bus.ratio.value = 2.5; bus.connect(ac.destination);
+  const rev = ac.createConvolver(); { const len = SR * 3, ir = ac.createBuffer(2, len, SR); for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let s = 5 + ch; for (let i = 0; i < len; i++) { s = (s * 16807) % 2147483647; d[i] = (s / 1073741823.5 - 1) * Math.pow(1 - i / len, 3); } } rev.buffer = ir; }
+  const revG = ac.createGain(); revG.gain.value = 0.35; rev.connect(revG); revG.connect(bus);
+  // Shepard tone: 8 octave-spaced partials gliding up two octaves per loop (seamless at 45 s), bell-shaped over log-frequency
+  const OCT = 8, F0 = 32.7, RISE = 2;
+  for (let k = 0; k < OCT; k++) {
+    const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine';
+    const steps = 450;
+    for (let i = 0; i <= steps; i++) {
+      const t = (i / steps) * DUR, pos = (k + RISE * t / DUR) % OCT, f = F0 * Math.pow(2, pos);
+      const amp = Math.exp(-Math.pow((pos - OCT / 2) / 1.5, 2)) * 0.05;
+      o.frequency.linearRampToValueAtTime(f, t); g.gain.linearRampToValueAtTime(amp, t);
+    }
+    o.connect(g); g.connect(bus); const sg = ac.createGain(); sg.gain.value = 0.5; g.connect(sg); sg.connect(rev); o.start(0); o.stop(DUR);
+  }
+  // pulse at 80 BPM (60 beats per loop, so the loop is seamless): a soft, deep heartbeat
+  for (let b = 0; b < 60; b++) {
+    const t = b * 0.75, o = ac.createOscillator(), g = ac.createGain(); o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.25);
+    const level = 0.22 * (0.55 + 0.45 * ss(seg(t, 1, 8))) * (1 - 0.6 * ss(seg(t, 40, 44.5)));
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(level, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45); o.connect(g); g.connect(bus); o.start(t); o.stop(t + 0.5);
+  }
+  // per-world rooms, faded by where the camera is
+  const nb = (() => { const b = ac.createBuffer(1, SR * 2, SR), d = b.getChannelData(0); let s = 9; for (let i = 0; i < d.length; i++) { s = (s * 16807) % 2147483647; d[i] = s / 1073741823.5 - 1; } return b; })();
+  const room = (type, f, q, level, centreZ) => {
+    const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = nb; s.loop = true; fl.type = type; fl.frequency.value = f; fl.Q.value = q;
+    for (let i = 0; i <= 450; i++) { const t = (i / 450) * DUR, z = zAt(t), w = Math.exp(-Math.pow((z - centreZ) / 0.55, 2)); g.gain.linearRampToValueAtTime(level * w, t); }
+    s.connect(fl); fl.connect(g); g.connect(bus); s.start(0); s.stop(DUR);
+  };
+  room('bandpass', 700, 0.6, 0.05, 1);   // café room tone
+  room('lowpass', 420, 0.7, 0.07, 2);    // Cairo street at dusk, distant traffic
+  room('lowpass', 260, 0.8, 0.08, 3);    // Riyadh at night, low city hum
+  room('highpass', 2600, 0.4, 0.05, 4);  // London rain
+  // café cups, a few soft clinks while we are in the café
+  [5.2, 6.6, 8.1].forEach((t, i) => { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = 2600 + i * 310; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.02, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35); o.connect(g); g.connect(bus); g.connect(rev); o.start(t); o.stop(t + 0.4); });
+  // the publish tap as the camera leaves the card, and a soft swell as the dot closes over London
+  { const t = 0.9, o = ac.createOscillator(), g = ac.createGain(); o.frequency.setValueAtTime(900, t); o.frequency.exponentialRampToValueAtTime(1500, t + 0.05); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.08, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12); o.connect(g); g.connect(bus); g.connect(rev); o.start(t); o.stop(t + 0.15); }
+  [[110, 0.03], [164.8, 0.022], [220, 0.018]].forEach(([f, a]) => { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; g.gain.setValueAtTime(0, 36); g.gain.linearRampToValueAtTime(a, 40.2); g.gain.linearRampToValueAtTime(0, 44.8); o.connect(g); g.connect(bus); g.connect(rev); o.start(36); o.stop(45); });
+  const buf = await ac.startRendering();
+  let peak = 0; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) peak = Math.max(peak, Math.abs(d[i])); }
+  const gn = 0.89 / (peak || 1), L = buf.getChannelData(0), R = buf.getChannelData(1), len = L.length, ab = new ArrayBuffer(44 + len * 4), v = new DataView(ab);
+  const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + len * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true); v.setUint32(24, SR, true); v.setUint32(28, SR * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); ws(36, 'data'); v.setUint32(40, len * 4, true);
+  for (let i = 0; i < len; i++) { v.setInt16(44 + i * 4, clamp(L[i] * gn, -1, 1) * 32767, true); v.setInt16(46 + i * 4, clamp(R[i] * gn, -1, 1) * 32767, true); }
+  let bin = ''; const u8 = new Uint8Array(ab); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+</script>
+</body>
+</html>
