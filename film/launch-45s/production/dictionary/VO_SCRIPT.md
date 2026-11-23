@@ -18,21 +18,35 @@ The film is 45 s. Each line is timed to the moment its words appear on screen.
 
 | # | Time | Voice | Line (as sent) | On screen at that moment | Status |
 |---|---|---|---|---|---|
-| SA-01 | 4.45 | Saudi | `[confident] قول… تم.` | «قول» lands at 4.5, «تم.» at 5.0 | ✅ generated (1.88 s) |
-| SA-02 | 6.20 | Saudi | `[warmly] تقولها إذا تبي الشي يصير.` | The definition types in | ✅ generated (2.69 s) |
-| SA-03 | 9.00 | Saudi | `[casually] [confident] قول تم.` | The reply bubble «قول تم.» | pending |
-| EG-01 | 14.45 | Egyptian | `[playfully] اعتبره… حصل.` | «اعتبره» drops at 14.5, «حصل.» pops at 15.0 | pending |
-| EG-02 | 16.20 | Egyptian | `[relaxed] يعني ماتقلقش… خلاص، اتعمل.` | The definition types in | pending |
-| EG-03 | 20.45 | Egyptian | `[chuckles] حصل.` | «حصل» hops into the reply: the wink | pending |
-| EN-01 | 25.10 | English | `[crisp] Consider it done.` | Letters snap in; the full stop lands at 26.0 | pending |
-| EN-02 | 27.00 | English | `Treat it as finished.` | The definition types in | pending |
-| EN-03 | 28.50 | English | `[casually] Consider it done.` | The reply bubble | pending |
-| EN-04 | 33.00 | English | `Three ways to say it.` | The caption appears | pending |
-| SA-04 | 35.50 | Saudi | `[softly] والمعنى… واحد.` | The caption «والمعنى واحد.» | pending |
-| SA-05 | 36.00 | Saudi | `[deep voice] [confident] تم.` | «تم» opens big | pending |
-| EN-05 | 39.45 | English | `Say… Tamm.` | The name builds: Say (39.5) + Tamm (39.9) | pending |
-| EN-06 | 40.40 | English | `Say it. Tamm it.` | The tagline appears | pending |
-| SA-06 | 41.20 | Saudi | `[warmly] قول. تم.` | «قول. تم.» | pending |
+| SA-01 | 4.45 | Saudi | `[confident] قول… تم.` | «قول» lands at 4.5, «تم.» at 5.0 | ✅ generated |
+| SA-02 | 6.20 | Saudi | `[warmly] تقولها إذا تبي الشي يصير.` | The definition types in | ✅ generated |
+| SA-03 | 9.00 | Saudi | `[casually] [confident] قول تم.` | The reply bubble «قول تم.» | ✅ generated |
+| EG-01 | 14.45 | Egyptian | `[playfully] اعتبره… حصل.` | «اعتبره» drops at 14.5, «حصل.» pops at 15.0 | ✅ generated |
+| EG-02 | 16.20 | Egyptian | `[relaxed] يعني ماتقلقش… خلاص، اتعمل.` | The definition types in | ✅ generated |
+| EG-03 | 20.45 | Egyptian | `[chuckles] حصل.` | «حصل» hops into the reply: the wink | ✅ generated |
+| EN-01 | 25.10 | English | `[crisp] Consider it done.` | Letters snap in; the full stop lands at 26.0 | ✅ generated |
+| EN-02 | 27.00 | English | `Treat it as finished.` | The definition types in | ✅ generated |
+| EN-03 | 28.50 | English | `[casually] Consider it done.` | The reply bubble | ✅ generated |
+| EN-04 | 33.00 | English | `Three ways to say it.` | The caption appears | ✅ generated |
+| SA-04 | 35.50 | Saudi | `[softly] والمعنى… واحد.` | The caption «والمعنى واحد.» | ✅ generated |
+| SA-05 | 36.00 | Saudi | `[deep voice] [confident] تم.` | «تم» opens big | ✅ generated |
+| EN-05 | 39.45 | English | `Say… Tamm.` | The name builds: Say (39.5) + Tamm (39.9) | ✅ generated |
+| EN-06 | 40.40 | English | `Say it. Tamm it.` | The tagline appears | ✅ generated |
+| SA-06 | 41.20 | Saudi | `[warmly] قول. تم.` | «قول. تم.» | ✅ generated |
+
+## Final placement (as mixed)
+
+`mix_vo.py` holds the exact cue list. Each phrase is placed so its key word lands on the picture's hit:
+
+- **SA-01:** tightened 10% (atempo 1.10), so «تم» lands on the 5.0 slam.
+- **EG-01:** take B, tightened 20%, so «حصل» lands on the 15.0 pop.
+- **EG-03:** the chuckle first, so «حصل» lands on the 20.5 hop.
+- **EN-01:** "done" lands as the word snaps in at 25.75.
+- **SA-05:** «تم.» lands as the dots lift at 37.2.
+- **EN-05:** cut into "Say" (39.2) and "Tamm" (on the 39.9 hit).
+- **SA-06:** «قول. تم.» closes at 42.35.
+
+Measured in the speech band (1–4 kHz), the voice sits 17–40 dB over the music. The music ducks only 3–8 dB, so it keeps its energy. The master peaks at −1.5 dBFS.
 
 ## Mix plan
 
