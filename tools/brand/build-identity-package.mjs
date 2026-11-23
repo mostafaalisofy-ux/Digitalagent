@@ -365,5 +365,10 @@ const sd = D('_review'); for (let i = 0; i < n; i++) await tab.screenshot({ path
 
 await browser.close();
 fs.rmSync(TMP, { force: true });
+// 08 Patterns (separate generator, writes into this package)
+execFileSync('node', [path.join(ROOT, 'tools/brand/build-patterns.mjs')], { stdio: 'inherit' });
 fs.rmSync(ASSET, { recursive: true, force: true });
+fs.copyFileSync(path.join(ROOT, 'tools/brand/identity-package-README.md'), path.join(OUT, 'README.md'));
+fs.rmSync(path.join(OUT, '_review'), { recursive: true, force: true });
+fs.rmSync(path.join(ROOT, 'handover', '_pattern_review'), { recursive: true, force: true });
 console.log('done', n, 'guideline pages');
