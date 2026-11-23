@@ -31,3 +31,6 @@ Rebuild: `tools/brand/build_logo.py <master> <out_dir>`, then `tools/brand/raste
 - PNG resolution is capped by the master (about 600 px wide). **Use the SVG for anything larger.**
 - **No wordmark yet.** The lockups need the drawn "SayTamm" wordmark (D-008, OQ-05).
 - Colours: Black `#0A0A0D`, White `#FFFFFF`, Electric Purple `#6C35FF`.
+
+## Identity package (2026-11-23)
+`tools/brand/build-identity-package.mjs` builds the full delivery package from these vectors: 8 versions (adds Obsidian #09090D, Outline Purple) in SVG, vector PDF, PNG 256–4096 px, WebP and JPG; app icons and favicons; social profile pictures, covers, highlight covers and frames; stationery (business card with bleed, letterhead PDF + DOCX, envelope, e-mail signature); a PowerPoint template; mockups; and a 14-page guidelines PDF. The output goes to `handover/SayTamm_Brand_Identity_Package/` (not in Git, because it embeds Satoshi). Versions are fill changes of the same two paths only.
