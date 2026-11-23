@@ -92,6 +92,14 @@ Each case page: context, challenge, strategy, execution, outcome, how figures we
 - D-022: one client list, "Clients who trusted the SayTamm team".
 - Earlier: SayTamm and Steps KSA are separate companies (D-005); SayTamm has rights to use the case studies (D-009); no previous agency named publicly (OQ-33).
 
+## 8b. Social launch (14 days)
+
+- Files: `docs/launch/LAUNCH_CONTENT_REVIEW.md` (review), `docs/launch/content/posts_v2.json` (14 days, 140 captions, prompts), `docs/launch/content/captions_v2.py` (edit the copy here).
+- Campaign line (to confirm, OQ-55): "LESS TALK. MORE TAMM. / كلام أقل. تنفيذ أذكى." — launch only; the tagline never changes.
+- Arabic register (D-023): MSA on Facebook and LinkedIn; light conversational on Instagram, X, TikTok. X ≤ 280 characters.
+- TAMM: a recurring character (Smart Partner, Execution Mindset, Brand Signature); never replaces the team; design not yet approved (OQ-56).
+- Calendar: 01 The interruption · 02 Meet TAMM · 03 Agency clichés · 04 Think before you spend · 05 One problem, three routes · 06 Metrics that matter · 07 TAMM's diagnosis · 08 Boosting is not a strategy · 09 Built on experience · 10 From brief to execution · 11 Read the report backwards · 12 One connected system · 13 The team behind TAMM · 14 SayTamm is here.
+
 ## 9. Before launch (blocking)
 
 1. Legal review of the privacy notice + company legal name, CR, VAT, email and hosting providers.
