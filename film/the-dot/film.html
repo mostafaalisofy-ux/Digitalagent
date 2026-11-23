@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>SayTamm: The Dot (Day 14 launch film, 28 s)</title>
+<style>
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-600-normal.woff2); font-weight: 600; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #09090D; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// =====================================================================================
+//  THE DOT — SayTamm's Day 14 launch film.
+//  The market talks in ellipses ("…"): typing, "we'll get back to you", postponed meetings, 40-page reports.
+//  One dot ends the sentence. It closes every open loop, runs the system (objective → strategy → creative →
+//  media → measurement) and lands as the two dots of «تم». Less talk. More Tamm.
+// =====================================================================================
+const VARIANT = '__VARIANT__';                 // 'ar' | 'en'  (separate masters, never both scripts in one crowded frame)
+const AR = VARIANT !== 'en';
+const L = (ar, en) => (AR ? ar : en);
+const W = 1080, H = 1920, DUR = 28, BPM = 120, BEAT = 60 / BPM;
+window.DUR_S = DUR;
+const OB = '#09090D', GR = '#17171E', WH = '#F5F3FA', MU = '#96939F', PU = '#6C35FF';
+const FACE = AR ? 'Plex, Sat' : 'Sat, Plex';
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, q) => a + (b - a) * q;
+const ss = (x) => x * x * (3 - 2 * x);
+const eo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x));
+const ei3 = (x) => x * x * x;
+const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const spring = (t, t0, d = 0.5) => { const x = (t - t0) / d; if (x <= 0) return 0; if (x >= 1.6) return 1; const z = 0.5, w = 11, wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + z / Math.sqrt(1 - z * z) * Math.sin(wd * x)); };
+const rr = (c, x, y, w, h, r) => { c.beginPath(); c.roundRect(x, y, w, h, r); };
+function txt(c, s, x, y, font, color, align = 'center', rtl = AR) { c.font = font; c.fillStyle = color; c.textAlign = align; c.direction = rtl ? 'rtl' : 'ltr'; c.fillText(s, x, y); c.direction = 'ltr'; }
+let SYMBOL = null, CARD = null;
+
+// ---------------- the timeline (120 BPM; the hit at 6.75 s sits on a downbeat) ----------------
+const T_FREEZE = 5.6, T_DROP1 = 6.0, T_DROP2 = 6.3, T_HIT = 6.75;
+const T_CASCADE = 12.0, T_SUCK = 12.75, T_LESS = 13.25, T_SYS = 14.75;
+const STOPS_T = [14.75, 15.75, 16.75, 17.75, 18.75], T_PULL = 19.25, T_FLY = 20.25, T_TAMM = 21.75;
+const T_LOCK = 22.9, T_LINE = 24.2, T_CTA = 25.4;
+
+// ---------------- the talk: every item of noise, and what it becomes ----------------
+const POOL = AR
+  ? [['هنرجعلك', '…', 'رجعنالك.'], ['في جديد', '؟', 'نزل.'], ['خليها لبكرة', '…', 'خلصت النهارده.'], ['لسه بنراجع', '…', 'اتراجع.'], ['نتكلم بعدين', '…', 'اتعمل.'], ['وش صار', '؟', 'صار.'], ['نأجلها للأسبوع الجاي', '…', 'النهارده.'], ['ابعتلي تاني', '…', 'اتبعت.'], ['مستنيين الموافقة', '…', 'اتوافق.'], ['باقي شوي', '…', 'تم.']]
+  : [["Let's circle back", '…', 'Done.'], ['Any update', '?', 'Live.'], ['Pushing to next week', '…', 'Today.'], ['Still reviewing', '…', 'Approved.'], ["Let's take it offline", '…', 'Sorted.'], ['Quick sync', '?', 'Shipped.'], ['Per my last email', '…', 'Delivered.'], ['Can you resend', '?', 'Sent.'], ['Waiting on approval', '…', 'Approved.'], ['Following up', '…', 'Done.']];
+const ITEMS = [];
+const add = (o) => { ITEMS.push(Object.assign({ s: 1, rot: 0, side: 'in' }, o)); return ITEMS.length - 1; };
+// center typing bubble (it becomes THE dot)
+const CENTER = add({ type: 'typing', x: 540, y: 960, s: 2.1, spawn: -1, close: Infinity, hero: true });
+const mi = (k, x, y, spawn, s = 1, side = 'in') => add({ type: 'msg', p: POOL[k], x, y, spawn, s, side });
+const I1 = mi(0, 330, 560, -1);
+const I2 = mi(1, 770, 1390, -1, 1, 'out');
+const I3 = add({ type: 'meeting', x: 320, y: 1600, spawn: 0.75 });
+const I4 = add({ type: 'voice', x: 760, y: 330, spawn: -1, dur: '2:47', side: 'out' });
+const I5 = mi(2, 700, 770, 1.5, 0.92, 'out');
+const I6 = add({ type: 'spinner', x: 270, y: 1230, spawn: 1.85 });
+const I7 = add({ type: 'doc', x: 760, y: 1700, spawn: 2.15 });
+const I8 = mi(3, 330, 300, 2.45, 0.9);
+const I9 = add({ type: 'typing', x: 830, y: 1100, s: 0.9, spawn: 2.7, side: 'out' });
+const I10 = mi(4, 300, 880, 2.95, 0.85);
+mi(5, 800, 560, 3.15, 0.8, 'out');
+mi(6, 560, 180, 3.4, 0.78);
+mi(7, 820, 1240, 3.6, 0.8, 'out');
+add({ type: 'voice', x: 330, y: 1420, spawn: 3.8, dur: '1:58', s: 0.85 });
+mi(8, 560, 650, 4.0, 0.75);
+add({ type: 'typing', x: 210, y: 1050, s: 0.7, spawn: 4.15 });
+mi(9, 860, 900, 4.3, 0.72, 'out');
+mi(0, 470, 1820, 4.45, 0.8);
+add({ type: 'typing', x: 880, y: 220, s: 0.65, spawn: 4.6, side: 'out' });
+// the flood: faster and smaller, deeper in the frame
+for (let i = 0; i < 14; i++) {
+  const sp = 4.75 + i * 0.058, k = Math.floor(hash(i + 40) * POOL.length);
+  if (i % 4 === 3) add({ type: 'typing', x: 120 + hash(i + 9) * 840, y: 150 + hash(i + 19) * 1650, s: 0.5 + hash(i + 3) * 0.2, spawn: sp, side: i % 2 ? 'out' : 'in' });
+  else mi(k, 140 + hash(i + 7) * 800, 140 + hash(i + 17) * 1660, sp, 0.5 + hash(i + 29) * 0.25, i % 2 ? 'out' : 'in');
+}
+// the dot visits these, one per beat and faster; everything else closes in one cascade
+const SOLO = [[I1, 7.75], [I4, 8.75], [I5, 9.5], [I2, 10.0], [I7, 10.5], [I3, 11.0], [I6, 11.25], [I10, 11.5], [I8, 11.75]];
+SOLO.forEach(([i, t]) => (ITEMS[i].close = t));
+
+// ---------------- item geometry (after fonts load) ----------------
+const MSG_F = (s) => `600 ${Math.round(46 * s)}px ${FACE}`;
+function measureItems() {
+  const c = ctx;
+  for (const it of ITEMS) {
+    const s = it.s;
+    if (it.type === 'msg') {
+      c.font = MSG_F(1); c.direction = AR ? 'rtl' : 'ltr';
+      it.tw = c.measureText(it.p[0]).width; it.pw = it.p[1] === '…' ? 50 : c.measureText(it.p[1]).width;
+      it.dw = c.measureText(it.p[2]).width;
+      it.w = Math.max(it.tw + it.pw + 14, it.dw + 60) + 76; it.h = 104;
+    } else if (it.type === 'typing') { it.w = 150; it.h = 92; }
+    else if (it.type === 'voice') { it.w = 430; it.h = 104; }
+    else if (it.type === 'meeting') { it.w = 520; it.h = 176; }
+    else if (it.type === 'spinner') { it.w = 400; it.h = 150; }
+    else if (it.type === 'doc') { it.w = 470; it.h = 160; }
+    // the anchor: where the dot strikes (the ellipsis, the question mark, the chip, the stack)
+    let ax = 0, ay = 0;
+    if (it.type === 'msg') { const x0 = AR ? it.w / 2 - 38 - it.tw - 7 : -it.w / 2 + 38 + it.tw + 7; ax = AR ? x0 - it.pw / 2 : x0 + it.pw / 2; ay = it.p[1] === '…' ? 8 : -6; }
+    if (it.type === 'voice') { ax = it.w / 2 - 70; ay = 0; }
+    if (it.type === 'meeting') { ax = AR ? -it.w / 2 + 110 : it.w / 2 - 110; ay = 44; }
+    if (it.type === 'spinner') { ax = AR ? it.w / 2 - 75 : -it.w / 2 + 75; ay = 0; }
+    if (it.type === 'doc') { ax = AR ? -it.w / 2 + 70 : it.w / 2 - 70; ay = -20; }
+    it.ax = ax * s; it.ay = ay * s;
+  }
+}
+// float in Act 1 (frozen from T_FREEZE on)
+const ta = (t) => Math.min(t, T_FREEZE);
+function itemPos(it, t) {
+  const u = ta(t), k = ITEMS.indexOf(it);
+  return [it.x + Math.sin(u * 1.3 + k) * 6 * it.s, it.y + Math.cos(u * 1.1 + k * 1.7) * 9 * it.s];
+}
+const anchorOf = (it, t) => { const [x, y] = itemPos(it, t); return [x + it.ax, y + it.ay]; };
+function closeTime(it) {
+  if (it.close !== undefined && it.close !== Infinity) return it.close;
+  if (it.hero) return Infinity;
+  const [x, y] = itemPos(it, T_FREEZE + 1), [dx, dy] = DOT_AT_CASCADE, d = Math.hypot(x - dx, y - dy);
+  return T_CASCADE + d / 2600;          // the wave runs out from the dot
+}
+let DOT_AT_CASCADE = [540, 960];
+
+// ---------------- the dot ----------------
+const DOT_R = 22;
+const DOT_KEYS = [];    // [t, x, y] arrival points in Act 3
+function buildDotPath() {
+  DOT_KEYS.length = 0; DOT_KEYS.push([T_HIT + 0.4, 540, 960]);
+  for (const [i, t] of SOLO) { const [x, y] = anchorOf(ITEMS[i], t); DOT_KEYS.push([t, x, y]); }
+  DOT_AT_CASCADE = [DOT_KEYS[DOT_KEYS.length - 1][1], DOT_KEYS[DOT_KEYS.length - 1][2]];
+  DOT_KEYS.push([T_CASCADE + 0.25, DOT_AT_CASCADE[0], DOT_AT_CASCADE[1]]);
+  DOT_KEYS.push([T_SUCK - 0.05, 540, 960]);
+}
+function dotAct3(t) {
+  if (t <= DOT_KEYS[0][0]) return [540, 960, 0];
+  for (let i = 1; i < DOT_KEYS.length; i++) {
+    const [t1, x1, y1] = DOT_KEYS[i], [t0, x0, y0] = DOT_KEYS[i - 1];
+    if (t <= t1) {
+      const travel = Math.min(0.42, (t1 - t0) * 0.75), q = clamp((t - (t1 - travel)) / travel), e = eio(q);
+      return [lerp(x0, x1, e), lerp(y0, y1, e), Math.sin(Math.PI * q)];
+    }
+  }
+  return [540, 960, 0];
+}
+
+// ---------------- drawing the items ----------------
+function dots3(c, x, y, r, gap, phase, rtl, still) {
+  for (let k = 0; k < 3; k++) {
+    const b = still ? 0 : Math.max(0, Math.sin(phase * 7 - k * 0.9)) * r * 1.1;
+    c.beginPath(); c.arc(x + (rtl ? -k : k) * gap, y - b, r, 0, 7); c.fill();
+  }
+}
+function bubble(c, it, done, a) {
+  const w = it.w, h = it.h, r = 40;
+  if (done > 0) { c.fillStyle = `rgba(245,243,250,${0.95 * done})`; rr(c, -w / 2, -h / 2, w, h, r); c.fill(); }
+  if (done < 1) {
+    c.save(); c.globalAlpha *= 1 - done;
+    const g = c.createLinearGradient(0, -h / 2, 0, h / 2); g.addColorStop(0, it.side === 'out' ? 'rgba(60,58,76,0.92)' : 'rgba(36,35,46,0.92)'); g.addColorStop(1, it.side === 'out' ? 'rgba(46,44,60,0.92)' : 'rgba(26,25,34,0.92)');
+    c.fillStyle = g; rr(c, -w / 2, -h / 2, w, h, r); c.fill(); c.strokeStyle = 'rgba(255,255,255,0.12)'; c.lineWidth = 2; c.stroke(); c.restore();
+  }
+}
+function check(c, x, y, r, a = 1) {
+  c.save(); c.globalAlpha *= a; c.beginPath(); c.arc(x, y, r, 0, 7); c.fillStyle = PU; c.fill();
+  c.strokeStyle = WH; c.lineWidth = r * 0.28; c.lineCap = 'round'; c.lineJoin = 'round'; c.beginPath(); c.moveTo(x - r * 0.42, y + r * 0.02); c.lineTo(x - r * 0.1, y + r * 0.34); c.lineTo(x + r * 0.45, y - r * 0.3); c.stroke(); c.restore();
+}
+function drawItem(c, it, t) {
+  const tc = closeTime(it), done = it.hero ? 0 : ss(seg(t, tc, tc + 0.16));
+  const born = it.spawn < 0 ? 1 : spring(t, it.spawn, 0.38);
+  if (born <= 0.001) return;
+  let [x, y] = itemPos(it, t), sc = it.s * (0.55 + 0.45 * born), alpha = clamp(born * 1.6);
+  // freeze: everything unresolved dims; resolved items come back bright with a pop
+  const dim = t > T_FREEZE ? 1 - 0.66 * ss(seg(t, T_FREEZE, T_FREEZE + 0.25)) : 1;
+  alpha *= done > 0 ? lerp(dim, 1, done) : dim;
+  if (done > 0) sc *= 1 + 0.12 * Math.sin(Math.PI * clamp((t - tc) / 0.3));
+  // suction: into the dot
+  if (t > T_SUCK && !it.hero) {
+    const [x0, y0] = itemPos(it, t), d0 = Math.hypot(x0 - 540, y0 - 960), st = T_SUCK + (1 - d0 / 1200) * 0.15 + hash(ITEMS.indexOf(it)) * 0.18;
+    const q = ei3(clamp((t - st) / 0.42));
+    if (q >= 1) return;
+    x = lerp(x0, 540, q); y = lerp(y0, 960, q); sc *= 1 - q; alpha *= 1 - ss(seg(q, 0.7, 1));
+  }
+  if (it.hero) { if (t > T_HIT) { const q = seg(t, T_HIT, T_HIT + 0.32); sc *= 1 - eo(q) * 0.9; alpha *= 1 - q; if (q >= 1) return; } }
+  c.save(); c.translate(x, y); c.rotate(it.rot); c.scale(sc, sc); c.globalAlpha = alpha;
+  const u = ta(t), ph = u + ITEMS.indexOf(it) * 0.37, ink = done > 0.5 ? OB : WH;
+  if (it.type === 'msg') {
+    bubble(c, it, done);
+    const rx = AR ? it.w / 2 - 38 : -it.w / 2 + 38;
+    if (done < 1) {
+      c.save(); c.globalAlpha *= 1 - done; txt(c, it.p[0], rx, 16, MSG_F(1), WH, AR ? 'right' : 'left');
+      c.fillStyle = WH;
+      if (it.p[1] === '…') { const x0 = AR ? rx - it.tw - 14 : rx + it.tw + 14; dots3(c, AR ? x0 - 2 : x0 + 2, 8, 5.5, 17, 0, AR, true); }
+      else txt(c, it.p[1], AR ? rx - it.tw - 2 : rx + it.tw + 2, 16, MSG_F(1), WH, AR ? 'right' : 'left');
+      c.restore();
+    }
+    if (done > 0) { c.save(); c.globalAlpha *= done; txt(c, it.p[2], rx, 16, `700 ${46}px ${FACE}`, OB, AR ? 'right' : 'left'); check(c, AR ? -it.w / 2 + 6 : it.w / 2 - 6, -it.h / 2 + 6, 20, done); c.restore(); }
+  }
+  if (it.type === 'typing') {
+    bubble(c, it, done);
+    c.fillStyle = WH;
+    if (done < 1) { c.save(); c.globalAlpha *= 1 - done; const still = t > T_FREEZE; let drops = it.hero ? [seg(t, T_DROP1, T_DROP1 + 0.6), 0, seg(t, T_DROP2, T_DROP2 + 0.6)] : [0, 0, 0];
+      for (let k = 0; k < 3; k++) {
+        const b = still ? 0 : Math.max(0, Math.sin(ph * 7 - k * 0.9)) * 9, dq = drops[k];
+        if (dq >= 1) continue;
+        c.save(); c.globalAlpha *= 1 - ss(seg(dq, 0.55, 1)); c.beginPath(); c.arc((k - 1) * 30 + dq * (k - 1) * 30, -b + 900 * dq * dq, 10, 0, 7);
+        if (it.hero && k === 1 && t > T_HIT - 0.02) c.fillStyle = PU;
+        c.fill(); c.restore();
+      }
+      if (it.hero) txt(c, L('بيكتب…', 'typing…'), 0, -it.h / 2 - 24, `500 24px ${FACE}`, MU);
+      c.restore(); }
+    if (done > 0) { c.save(); c.globalAlpha *= done; txt(c, L('تم.', 'Done.'), 0, 15, `700 44px ${FACE}`, OB); check(c, it.w / 2 - 6, -it.h / 2 + 6, 18, done); c.restore(); }
+  }
+  if (it.type === 'voice') {
+    bubble(c, it, done);
+    const col = done > 0.5 ? OB : WH, play = it.w / 2 - 60, prog = done > 0 ? 1 : clamp(u / 9);
+    c.fillStyle = col; c.beginPath(); c.moveTo(-it.w / 2 + 46, -20); c.lineTo(-it.w / 2 + 46, 20); c.lineTo(-it.w / 2 + 78, 0); c.closePath(); c.fill();
+    const bars = done > 0.5 ? 5 : 26, bx0 = -it.w / 2 + 100, bw = (it.w - 210) / bars;
+    for (let k = 0; k < bars; k++) { const hh = 10 + hash(k * 3.1 + ITEMS.indexOf(it)) * 46; c.globalAlpha = (k / bars < prog ? 1 : 0.45) * alpha; c.fillRect(bx0 + k * bw, -hh / 2, Math.max(4, bw * 0.55), hh); }
+    c.globalAlpha = alpha; txt(c, done > 0.5 ? '0:03' : it.dur, play + 22, 14, `600 30px Sat`, col, 'center', false);
+    if (done > 0) check(c, it.w / 2 - 6, -it.h / 2 + 6, 20, done);
+  }
+  if (it.type === 'meeting') {
+    bubble(c, it, done);
+    const col = done > 0.5 ? OB : WH, ix = AR ? it.w / 2 - 70 : -it.w / 2 + 70;
+    c.strokeStyle = col; c.lineWidth = 4; rr(c, ix - 30, -52, 60, 56, 8); c.stroke(); c.fillStyle = col; c.fillRect(ix - 30, -52, 60, 14); c.fillRect(ix - 16, -62, 5, 16); c.fillRect(ix + 11, -62, 5, 16);
+    const tx = AR ? ix - 56 : ix + 56;
+    txt(c, L('اجتماع المتابعة', 'Weekly sync'), tx, -20, `700 40px ${FACE}`, col, AR ? 'right' : 'left');
+    txt(c, L('الخميس · 10:00', 'Thu · 10:00'), tx, 22, `500 28px ${FACE}`, done > 0.5 ? '#4A4756' : MU, AR ? 'right' : 'left');
+    // the chip: postponed, again and again → done
+    const cx = AR ? -it.w / 2 + 110 : it.w / 2 - 110, n = 1 + (u > 3.4) + (u > 4.6);
+    if (done < 0.5) {
+      rr(c, cx - 88, 22, 176, 48, 24); c.fillStyle = 'rgba(245,243,250,0.12)'; c.fill(); txt(c, L('اتأجل', 'Postponed'), cx, 56, `600 28px ${FACE}`, WH);
+      if (n > 1) { const q = spring(t, n === 2 ? 3.4 : 4.6, 0.3); c.save(); c.translate(cx + (AR ? -100 : 100), -30); c.scale(q, q); c.rotate(-0.15); rr(c, -44, -24, 88, 48, 12); c.strokeStyle = WH; c.lineWidth = 3; c.stroke(); txt(c, '×' + n, 0, 12, '700 30px Sat', WH, 'center', false); c.restore(); }
+    } else { rr(c, cx - 88, 22, 176, 48, 24); c.fillStyle = PU; c.fill(); txt(c, L('تم ✓', 'Done ✓'), cx, 56, `700 28px ${FACE}`, WH); }
+  }
+  if (it.type === 'spinner') {
+    bubble(c, it, done);
+    const col = done > 0.5 ? OB : WH, cx = AR ? it.w / 2 - 75 : -it.w / 2 + 75;
+    c.lineWidth = 8; c.lineCap = 'round'; c.strokeStyle = done > 0.5 ? 'rgba(9,9,13,0.15)' : 'rgba(245,243,250,0.15)'; c.beginPath(); c.arc(cx, 0, 34, 0, 7); c.stroke();
+    if (done < 0.5) { const a0 = u * 7; c.strokeStyle = WH; c.beginPath(); c.arc(cx, 0, 34, a0, a0 + 1.6); c.stroke(); }
+    else check(c, cx, 0, 34);
+    txt(c, done > 0.5 ? L('جاهز.', 'Ready.') : L('جاري التحميل…', 'Loading…'), AR ? cx - 60 : cx + 60, 14, `600 40px ${FACE}`, col, AR ? 'right' : 'left');
+  }
+  if (it.type === 'doc') {
+    const pages = done > 0.5 ? 0 : 5;
+    for (let k = pages; k > 0; k--) { c.fillStyle = `rgba(${k % 2 ? '60,58,76' : '46,44,60'},0.9)`; rr(c, -it.w / 2 + k * 9, -it.h / 2 - k * 9, it.w, it.h, 26); c.fill(); }
+    bubble(c, it, done);
+    const col = done > 0.5 ? OB : WH, ix = AR ? it.w / 2 - 62 : -it.w / 2 + 62;
+    rr(c, ix - 28, -40, 56, 72, 6); c.fillStyle = done > 0.5 ? OB : 'rgba(245,243,250,0.9)'; c.fill(); txt(c, 'PDF', ix, 8, '700 18px Sat', done > 0.5 ? WH : OB, 'center', false);
+    const tx = AR ? ix - 50 : ix + 50;
+    txt(c, 'Report_FINAL_v7.pdf', tx, -8, '600 32px Sat', col, AR ? 'right' : 'left', false);
+    txt(c, done > 0.5 ? L('صفحة واحدة. قرار واحد.', '1 page. 1 decision.') : L('40 صفحة', '40 pages'), tx, 36, `${done > 0.5 ? 700 : 500} 28px ${FACE}`, done > 0.5 ? OB : MU, AR ? 'right' : 'left');
+    if (done > 0) check(c, AR ? -it.w / 2 + 6 : it.w / 2 - 6, -it.h / 2 + 6, 20, done);
+  }
+  c.restore();
+  // the ellipsis falls away when the dot strikes
+  if (it.type === 'msg' && it.p[1] === '…' && t > tc && t < tc + 0.9 && t < T_SUCK) {
+    const [axp, ayp] = anchorOf(it, t), q = (t - tc) / 0.9;
+    c.save(); c.fillStyle = WH; c.globalAlpha = (1 - q) * 0.9;
+    [-1, 1].forEach((sgn) => { c.beginPath(); c.arc(axp + sgn * 17 * it.s + sgn * q * 40, ayp + 600 * q * q, 5.5 * it.s, 0, 7); c.fill(); });
+    c.restore();
+  }
+}
+
+// ---------------- the system (Act 5): one dot runs the whole chain ----------------
+const STOPS = [[540, 960], [800, 1500], [280, 2040], [800, 2580], [280, 3120]];
+const SYS = AR ? ['الهدف', 'الاستراتيجية', 'الإبداع', 'الإعلانات', 'القياس'] : ['Objective', 'Strategy', 'Creative', 'Media', 'Measurement'];
+function dotSys(t) {
+  for (let k = 1; k < STOPS.length; k++) {
+    if (t <= STOPS_T[k]) { const q = clamp((t - (STOPS_T[k] - 0.42)) / 0.42), e = eio(q); return [lerp(STOPS[k - 1][0], STOPS[k][0], e), lerp(STOPS[k - 1][1], STOPS[k][1], e), k - 1 + e]; }
+  }
+  return [STOPS[4][0], STOPS[4][1], 4];
+}
+function camSys(t) {
+  // follow the dot down the chain; at T_PULL pull back to show the whole connected system
+  const [, dy] = dotSys(t);
+  const follow = { s: 1, cx: 540, cy: dy };
+  const S = 0.5, all = { s: S, cx: 540, cy: (STOPS[0][1] + STOPS[4][1]) / 2 - 80 / S };
+  const q = eio(seg(t, T_PULL, T_PULL + 0.7));
+  return { s: lerp(follow.s, all.s, q), cx: lerp(follow.cx, all.cx, q), cy: lerp(follow.cy, all.cy, q) };
+}
+const toScreen = (cam, x, y) => [W / 2 + (x - cam.cx) * cam.s, 960 + (y - cam.cy) * cam.s];
+function drawSystem(t, alpha) {
+  const cam = camSys(t), [dx, dy, prog] = dotSys(t);
+  ctx.save(); ctx.globalAlpha = alpha;
+  ctx.translate(W / 2, 960); ctx.scale(cam.s, cam.s); ctx.translate(-cam.cx, -cam.cy);
+  // the path the dot has drawn
+  ctx.strokeStyle = PU; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(STOPS[0][0], STOPS[0][1]);
+  for (let k = 1; k <= Math.floor(prog); k++) ctx.lineTo(STOPS[k][0], STOPS[k][1]);
+  ctx.lineTo(dx, dy); ctx.stroke();
+  // the stops: a word and a small mark, each on its beat
+  STOPS.forEach(([x, y], k) => {
+    const t0 = STOPS_T[k]; if (t < t0 - 0.05) return;
+    const q = spring(t, t0, 0.42), right = x < 540, lx = right ? x + 70 : x - 70;
+    const sy = 960 + (y - cam.cy) * cam.s, vis = t < T_PULL ? clamp((sy - 420) / 220) : Math.max(clamp((sy - 420) / 220), seg(t, T_PULL, T_PULL + 0.5));
+    ctx.save(); ctx.globalAlpha *= clamp(q * 1.5) * vis;
+    txt(ctx, '0' + (k + 1), lx, y - 62, '700 28px Sat', MU, right ? 'left' : 'right', false);
+    ctx.save(); ctx.translate(lx, y + 30); ctx.scale(lerp(0.8, 1, q), lerp(0.8, 1, q)); txt(ctx, SYS[k], 0, 0, `700 ${k === 0 ? 96 : 86}px ${FACE}`, WH, right ? 'left' : 'right', AR); ctx.restore();
+    ctx.strokeStyle = WH; ctx.fillStyle = WH; ctx.lineWidth = 3; const m = seg(t, t0, t0 + 0.5), mo = eo(m);
+    if (k === 0) { [1, 2].forEach((j) => { ctx.globalAlpha = alpha * (0.8 - j * 0.25) * clamp(q * 1.5); ctx.beginPath(); ctx.arc(x, y, (30 + j * 26) * mo, 0, 7); ctx.stroke(); }); }
+    if (k === 1) { ctx.beginPath(); [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([a, b]) => { ctx.moveTo(x + a * 38, y + b * 38); ctx.lineTo(x + a * (38 + 40 * mo), y + b * (38 + 40 * mo)); }); ctx.stroke(); }
+    if (k === 2) { const R = 70 * mo, sp = (t - t0) * 1.4; ctx.beginPath(); ctx.arc(x + Math.cos(sp) * R, y + Math.sin(sp) * R, 14, 0, 7); ctx.stroke(); ctx.strokeRect(x + Math.cos(sp + 2.1) * R - 13, y + Math.sin(sp + 2.1) * R - 13, 26, 26); ctx.beginPath(); const tx = x + Math.cos(sp + 4.2) * R, ty = y + Math.sin(sp + 4.2) * R; ctx.moveTo(tx, ty - 15); ctx.lineTo(tx + 14, ty + 11); ctx.lineTo(tx - 14, ty + 11); ctx.closePath(); ctx.stroke(); }
+    if (k === 3) { const dir = x > 540 ? 1 : -1; for (let j = 0; j < 3; j++) { const r = 44 + j * 24, a = clamp((m * 1.6 - j * 0.25)); if (a <= 0) continue; ctx.globalAlpha = alpha * a * (1 - j * 0.2); ctx.beginPath(); ctx.arc(x, y, r, dir > 0 ? -0.7 : Math.PI - 0.7, dir > 0 ? 0.7 : Math.PI + 0.7); ctx.stroke(); } }
+    if (k === 4) { ctx.beginPath(); const pts = [[-60, 50], [-25, 20], [5, 34], [45, -24], [80, -60]]; pts.forEach(([a, b], j) => { const px = x + a * mo + (right ? 0 : 0), py = y + b * mo + 70; j ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }); ctx.stroke(); }
+    ctx.restore();
+  });
+  ctx.restore();
+  return toScreen(cam, dx, dy);
+}
+
+// ---------------- «تم» and the lockup ----------------
+function buildCard() {
+  const o = document.createElement('canvas'); o.width = W; o.height = H; const c = o.getContext('2d');
+  c.font = '600 560px Plex'; c.direction = 'rtl'; c.textAlign = 'center';
+  const mt = c.measureText('تم'), base = 900 + (mt.actualBoundingBoxAscent - mt.actualBoundingBoxDescent) / 2;
+  c.fillStyle = '#fff'; c.fillText('تم', 540, base); c.globalCompositeOperation = 'destination-out'; c.fillText('ٮم', 540, base);
+  const d = c.getImageData(0, 0, W, H).data; let x0 = W, y0 = H, x1 = 0, y1 = 0;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (d[(y * W + x) * 4 + 3] > 128) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+  const mid = (x0 + x1) / 2; let rx0 = W, rx1 = 0, lx0 = W, lx1 = 0;
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) if (d[(y * W + x) * 4 + 3] > 128) { if (x > mid) { rx0 = Math.min(rx0, x); rx1 = Math.max(rx1, x); } else { lx0 = Math.min(lx0, x); lx1 = Math.max(lx1, x); } }
+  CARD = { base, top: y0, bottom: y1, dl: [(lx0 + lx1) / 2, (y0 + y1) / 2], dr: [(rx0 + rx1) / 2, (y0 + y1) / 2], dsize: Math.min(rx1 - rx0, y1 - y0), mid: [(x0 + x1) / 2, (y0 + y1) / 2] };
+}
+function drawTamm(t, dotScreen) {
+  // «ٮم» rises in; the dot drops into place and becomes the two dots of ت
+  const qIn = eo(seg(t, T_FLY + 0.35, T_FLY + 1.05)), qSplit = seg(t, T_TAMM, T_TAMM + 0.14), qGlyph = seg(t, T_TAMM + 0.1, T_TAMM + 0.26);
+  const qOut = eio(seg(t, T_LOCK, T_LOCK + 0.6));
+  const push = 1 + 0.035 * seg(t, T_TAMM, T_LOCK);
+  ctx.save();
+  const k = push * lerp(1, 0.3, qOut); ctx.translate(540, lerp(870, 640, qOut)); ctx.scale(k, k); ctx.translate(-540, -870);
+  ctx.globalAlpha = 1 - ss(seg(qOut, 0.4, 1));
+  if (qIn > 0) {
+    ctx.save(); ctx.globalAlpha *= clamp(qIn * 1.4); ctx.translate(0, 60 * (1 - qIn));
+    ctx.font = '600 560px Plex'; ctx.direction = 'rtl'; ctx.textAlign = 'center';
+    if (qGlyph > 0) { ctx.save(); ctx.globalAlpha *= qGlyph; ctx.beginPath(); ctx.rect(0, CARD.top - 6, W, CARD.bottom - CARD.top + 12); ctx.clip(); ctx.fillStyle = PU; ctx.fillText('تم', 540, CARD.base); ctx.restore(); }
+    ctx.fillStyle = WH; ctx.fillText('ٮم', 540, CARD.base); ctx.direction = 'ltr';
+    ctx.restore();
+  }
+  // the dot(s)
+  if (qGlyph < 1 && t >= T_FLY) {
+    ctx.save(); ctx.globalAlpha *= 1 - qGlyph; ctx.fillStyle = PU;
+    if (t < T_TAMM) { const [x, y] = dotScreen; ctx.beginPath(); ctx.arc(x, y, DOT_R, 0, 7); ctx.fill(); }
+    else { const e = eo(qSplit), r = lerp(DOT_R, CARD.dsize * 0.5, e); [CARD.dl, CARD.dr].forEach(([x, y]) => { ctx.beginPath(); ctx.arc(lerp(CARD.mid[0], x, e), lerp(CARD.mid[1], y, e), r, 0, 7); ctx.fill(); }); }
+    ctx.restore();
+  }
+  ctx.restore();
+}
+function dotFly(t, from) {
+  // from the end of the chain to where the ت dots will sit (with a small lift before the drop)
+  const q = eio(seg(t, T_FLY, T_FLY + 0.75)), tgt = [CARD.mid[0], CARD.mid[1] - 150];
+  let x = lerp(from[0], tgt[0], q), y = lerp(from[1], tgt[1], q);
+  const d = seg(t, T_TAMM - 0.32, T_TAMM); y += 150 * ei3(d) - 30 * Math.sin(Math.PI * seg(t, T_TAMM - 0.7, T_TAMM - 0.32));
+  return [x, y];
+}
+function drawLockup(t) {
+  const qs = eo(seg(t, T_LOCK + 0.15, T_LOCK + 0.8));
+  if (qs <= 0) return;
+  ctx.save(); ctx.globalAlpha = qs; const SH = 250 * lerp(0.86, 1, qs), SW = SH * 600 / 721; ctx.drawImage(SYMBOL, 540 - SW / 2, 640 - SH / 2, SW, SH); ctx.restore();
+  const show = (t0, f) => { const q = spring(t, t0, 0.45); if (q <= 0) return; ctx.save(); ctx.globalAlpha = clamp(q * 1.6); ctx.translate(0, 26 * (1 - Math.min(1, q))); f(); ctx.restore(); };
+  show(T_LOCK + 0.5, () => {
+    if (AR) { txt(ctx, 'قول تم', 540, 1000, '700 118px Plex', WH); txt(ctx, 'SayTamm', 540, 1062, '500 40px Sat', MU, 'center', false); }
+    else txt(ctx, 'SayTamm', 540, 1010, '700 118px Sat', WH, 'center', false);
+  });
+  show(T_LOCK + 0.8, () => txt(ctx, L('وكالة تسويق رقمي وأداء', 'A digital marketing & performance agency'), 540, AR ? 1130 : 1085, `500 ${AR ? 44 : 38}px ${FACE}`, 'rgba(245,243,250,0.86)'));
+  show(T_LINE, () => {
+    const s = L('كلام أقل. تنفيذ أكتر', 'Less talk. More Tamm'), f = `700 ${AR ? 66 : 64}px ${FACE}`, y = 1265;
+    ctx.font = f; ctx.direction = AR ? 'rtl' : 'ltr'; const w = ctx.measureText(s).width; ctx.direction = 'ltr';
+    txt(ctx, s, 540 + (AR ? 12 : -12), y, f, WH);
+    // the full stop is the dot
+    ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(AR ? 540 + 12 - w / 2 - 20 : 540 - 12 + w / 2 + 20, y - 7, 10, 0, 7); ctx.fill();
+  });
+  show(T_CTA, () => {
+    txt(ctx, L('عندك هدف؟ ابدأ من هنا.', 'Have an objective? Start here.'), 540, 1372, `600 ${AR ? 50 : 46}px ${FACE}`, WH);
+    txt(ctx, 'info@saytamm.com', 540, 1440, '500 38px Sat', MU, 'center', false);
+  });
+  // diagonal hairlines (brand geometry), very quiet
+  ctx.save(); ctx.globalAlpha = 0.05 * qs; ctx.strokeStyle = WH; ctx.lineWidth = 2;
+  for (let k = -6; k < 10; k++) { ctx.beginPath(); ctx.moveTo(k * 160, 0); ctx.lineTo(k * 160 + 1920, 1920); ctx.stroke(); }
+  ctx.restore();
+}
+
+// ---------------- frame ----------------
+const GRAIN = document.createElement('canvas'); GRAIN.width = GRAIN.height = 360;
+{ const g = GRAIN.getContext('2d'), im = g.createImageData(360, 360); let s = 7; for (let i = 0; i < im.data.length; i += 4) { s = (s * 16807) % 2147483647; const v = 128 + (s / 2147483647 - 0.5) * 110; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } g.putImageData(im, 0, 0); }
+function background(t) {
+  ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H);
+  // the talk is warm-grey haze; the freeze kills it; the system and the reveal sit on a deep violet floor
+  const haze = (1 - seg(t, T_FREEZE, T_FREEZE + 0.2)) * (0.35 + 0.65 * seg(t, 0, T_FREEZE));
+  if (haze > 0) { const g = ctx.createRadialGradient(540, 960, 100, 540, 960, 1300); g.addColorStop(0, `rgba(58,54,70,${0.55 * haze})`); g.addColorStop(1, 'rgba(9,9,13,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
+  const vio = seg(t, T_HIT, T_HIT + 1.2) * (0.6 + 0.4 * seg(t, T_SYS, T_LOCK));
+  if (vio > 0) { const g = ctx.createRadialGradient(540, 900, 60, 540, 960, 1250); g.addColorStop(0, `rgba(108,53,255,${0.16 * vio})`); g.addColorStop(1, 'rgba(108,53,255,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
+}
+function finish(t) {
+  [[T_HIT, 0.12], [T_TAMM, 0.12]].forEach(([a, k]) => { const q = seg(t, a, a + 0.14); if (q > 0 && q < 1) { ctx.fillStyle = `rgba(245,243,250,${k * (1 - q)})`; ctx.fillRect(0, 0, W, H); } });
+  const vg = ctx.createRadialGradient(540, 900, 560, 540, 960, 1280); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.45)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+  const f = Math.floor(t * 30); ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = 0.1; ctx.translate(-Math.floor(hash(f) * 360), -Math.floor(hash(f + 3) * 360)); ctx.fillStyle = ctx.createPattern(GRAIN, 'repeat'); ctx.fillRect(0, 0, W + 360, H + 360); ctx.restore();
+}
+function bigLine(t, s, t0, t1, y, size) {
+  if (t < t0 || t > t1) return;
+  const q = spring(t, t0, 0.5), out = 1 - ss(seg(t, t1 - 0.3, t1));
+  ctx.save(); ctx.globalAlpha = clamp(q * 1.6) * out; ctx.translate(540, y - 40 * (1 - out)); const k = lerp(1.15, 1, Math.min(1, q)); ctx.scale(k, k);
+  txt(ctx, s, 0, 0, `700 ${size}px ${FACE}`, WH); ctx.restore();
+}
+let SYS_END = [280, 960];
+window.seek = (t) => {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  background(t);
+  // Acts 1–4: the talk, the dot, the closing, the suction
+  if (t < T_SYS + 0.2) {
+    ctx.save();
+    const shake = t < T_FREEZE ? 7 * seg(t, 2.6, T_FREEZE) ** 1.5 : 0, creep = 1 + 0.06 * seg(t, 0, T_FREEZE) - 0.06 * eio(seg(t, T_HIT, T_HIT + 1.2));
+    ctx.translate(540 + (Math.sin(t * 41) + Math.sin(t * 23)) * shake, 960 + (Math.cos(t * 37) + Math.sin(t * 29)) * shake); ctx.scale(creep, creep); ctx.translate(-540, -960);
+    const order = ITEMS.map((it, i) => i).sort((a, b) => ITEMS[a].s - ITEMS[b].s);
+    for (const i of order) if (!ITEMS[i].hero) drawItem(ctx, ITEMS[i], t);
+    drawItem(ctx, ITEMS[CENTER], t);
+    // the dot (Act 3/4)
+    if (t >= T_HIT && t < T_SYS + 0.2) {
+      const [x, y, mv] = dotAct3(t), gulp = t > T_SUCK ? 1 + 0.25 * Math.sin(Math.PI * seg(t, T_SUCK + 0.3, T_SUCK + 0.75)) : 1;
+      const grow = lerp(10 / DOT_R, 1, eo(seg(t, T_HIT, T_HIT + 0.35)));
+      ctx.fillStyle = PU; ctx.beginPath(); ctx.ellipse(x, y, DOT_R * grow * gulp * (1 + 0.25 * mv), DOT_R * grow * gulp * (1 - 0.15 * mv), 0, 0, 7); ctx.fill();
+      // cascade: a ring runs out from the dot and closes everything it touches
+      const cq = seg(t, T_CASCADE, T_CASCADE + 0.75); if (cq > 0 && cq < 1) { ctx.strokeStyle = `rgba(245,243,250,${0.5 * (1 - cq)})`; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(DOT_AT_CASCADE[0], DOT_AT_CASCADE[1], 40 + cq * 1950, 0, 7); ctx.stroke(); }
+    }
+    ctx.restore();
+    bigLine(t, L('كلام أقل.', 'Less talk.'), T_LESS, T_SYS, 640, 150);
+  }
+  // Act 5: the system
+  if (t >= T_SYS && t < T_FLY + 0.8) {
+    const a = 1 - ss(seg(t, T_FLY, T_FLY + 0.5));
+    const p = drawSystem(t, a);
+    if (t < T_FLY) SYS_END = p;
+    if (t < T_FLY) { ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(p[0], p[1], DOT_R, 0, 7); ctx.fill(); }
+    bigLine(t, L('عندك هدف؟', 'Have an objective?'), T_SYS + 0.1, T_PULL, 300, 92);
+    bigLine(t, L('منظومة واحدة.', 'One connected system.'), T_PULL + 0.35, T_FLY + 0.3, 300, AR ? 92 : 80);
+  }
+  // Act 6: «تم» and the lockup
+  if (t >= T_FLY) {
+    const end = camEnd(); const d = dotFly(t, end);
+    drawTamm(t, d);
+    drawLockup(t);
+  }
+  finish(t);
+};
+function camEnd() { const cam = camSys(T_FLY); return toScreen(cam, STOPS[4][0], STOPS[4][1]); }
+
+window.ready = (async () => {
+  const fonts = ['500 46px Plex', '600 46px Plex', '700 46px Plex', '500 46px Sat', '600 46px Sat', '700 46px Sat', '600 560px Plex'];
+  await Promise.all(fonts.map((f) => document.fonts.load(f, 'تم ٮم قول هنرجعلك Report SayTamm Per my last email … 0123456789')));
+  await document.fonts.ready;
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
+  measureItems(); buildDotPath(); buildCard();
+  window.seek(0);
+  return true;
+})();
+
+// ================= sound: noise → silence → one hit → a clean 120 BPM groove → the drop on «تم» =================
+window.renderAudio = async () => {
+  const SR = 48000, ac = new OfflineAudioContext(2, SR * DUR, SR);
+  const master = ac.createDynamicsCompressor(); master.threshold.value = -14; master.ratio.value = 3; master.attack.value = 0.004; master.release.value = 0.15;
+  const sat = ac.createWaveShaper(); { const cu = new Float32Array(2048); for (let i = 0; i < 2048; i++) { const x = i / 1023.5 - 1; cu[i] = Math.tanh(1.5 * x) / Math.tanh(1.5); } sat.curve = cu; sat.oversample = '4x'; }
+  master.connect(sat); sat.connect(ac.destination);
+  const talkBus = ac.createGain(); talkBus.connect(master);       // everything in Act 1: cut dead at the freeze
+  talkBus.gain.setValueAtTime(1, 0); talkBus.gain.setValueAtTime(1, T_FREEZE - 0.012); talkBus.gain.linearRampToValueAtTime(0, T_FREEZE);
+  const bus = ac.createGain(); bus.connect(master);
+  const rev = ac.createConvolver(); { const len = SR * 2.6, ir = ac.createBuffer(2, len, SR); for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let s = 5 + ch; for (let i = 0; i < len; i++) { s = (s * 16807) % 2147483647; d[i] = (s / 1073741823.5 - 1) * Math.pow(1 - i / len, 3); } } rev.buffer = ir; }
+  const revIn = ac.createGain(), revOut = ac.createGain(); revOut.gain.value = 0.32; revIn.connect(rev); rev.connect(revOut); revOut.connect(master);
+  const nb = (() => { const b = ac.createBuffer(1, SR, SR), d = b.getChannelData(0); let s = 3; for (let i = 0; i < d.length; i++) { s = (s * 16807) % 2147483647; d[i] = s / 1073741823.5 - 1; } return b; })();
+  const env = (g, t, a, pk, d) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+  const osc = (out, t, type, f0, f1, a, d, pk, pan = 0, send = 0) => { const o = ac.createOscillator(), g = ac.createGain(), p = ac.createStereoPanner(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + a + d * 0.6); env(g, t, a, pk, d); p.pan.value = pan; o.connect(g); g.connect(p); p.connect(out); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } o.start(t); o.stop(t + a + d + 0.05); };
+  const noise = (out, t, type, f, q, a, d, pk, pan = 0, f1, send = 0) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(), p = ac.createStereoPanner(); s.buffer = nb; s.loop = true; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + a + d); fl.Q.value = q; env(g, t, a, pk, d); p.pan.value = pan; s.connect(fl); fl.connect(g); g.connect(p); p.connect(out); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } s.start(t, (t * 0.37) % 0.8); s.stop(t + a + d + 0.05); };
+  const panOf = (it) => clamp((it.x - 540) / 600, -0.8, 0.8);
+  // ---- Act 1: the talk ----
+  for (const it of ITEMS) {
+    if (it.spawn < 0 || it.spawn >= T_FREEZE) continue; const t = it.spawn, p = panOf(it), v = 0.5 + 0.5 * it.s;
+    if (it.type === 'msg') { const f = 1400 + hash(t * 7) * 900; osc(talkBus, t, 'sine', f, 0, 0.002, 0.09, 0.09 * v, p, 0.2); osc(talkBus, t + 0.07, 'sine', f * 1.5, 0, 0.002, 0.12, 0.07 * v, p, 0.2); }
+    if (it.type === 'typing') for (let k = 0; k < 9; k++) noise(talkBus, t + k * 0.055 + hash(k + t) * 0.02, 'highpass', 3500, 0.8, 0.001, 0.018, 0.05 * v, p);
+    if (it.type === 'voice') osc(talkBus, t, 'triangle', 880, 660, 0.004, 0.12, 0.08, p, 0.2);
+    if (it.type === 'meeting') { osc(talkBus, t, 'sine', 988, 0, 0.003, 0.5, 0.08, p, 0.3); osc(talkBus, t + 0.12, 'sine', 740, 0, 0.003, 0.6, 0.07, p, 0.3); }
+    if (it.type === 'spinner') noise(talkBus, t, 'bandpass', 900, 2, 0.15, 0.4, 0.05, p, 2400);
+    if (it.type === 'doc') noise(talkBus, t, 'bandpass', 2500, 1, 0.02, 0.25, 0.06, p, 900);
+  }
+  [3.4, 4.6].forEach((t) => noise(talkBus, t, 'lowpass', 600, 1, 0.002, 0.08, 0.25, -0.3));   // the meeting gets stamped again
+  // phone buzzes, a clock that runs faster, a drone that tightens
+  [1.0, 2.3, 3.5, 4.3, 4.9, 5.25].forEach((t, i) => { const o = ac.createOscillator(), g = ac.createGain(), am = ac.createOscillator(), amg = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = 150; am.frequency.value = 28; amg.gain.value = 0.5; am.connect(amg); amg.connect(g.gain); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.045, t + 0.02); g.gain.setValueAtTime(0.045, t + 0.32); g.gain.linearRampToValueAtTime(0, t + 0.36); const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900; o.connect(lp); lp.connect(g); const p = ac.createStereoPanner(); p.pan.value = i % 2 ? 0.5 : -0.5; g.connect(p); p.connect(talkBus); o.start(t); o.stop(t + 0.4); am.start(t); am.stop(t + 0.4); });
+  let tk = 0.2, gap = 0.5; while (tk < T_FREEZE) { osc(talkBus, tk, 'square', 3200, 0, 0.001, 0.015, 0.035, 0.2); tk += gap; gap = Math.max(0.09, gap * 0.9); }
+  [55, 58.3, 82.4, 87.3].forEach((f, i) => { const o = ac.createOscillator(), g = ac.createGain(), lp = ac.createBiquadFilter(); o.type = 'sawtooth'; o.frequency.setValueAtTime(f, 0); o.frequency.linearRampToValueAtTime(f * 1.06, T_FREEZE); lp.type = 'lowpass'; lp.frequency.setValueAtTime(200, 0); lp.frequency.exponentialRampToValueAtTime(2200, T_FREEZE); g.gain.setValueAtTime(0, 0); g.gain.linearRampToValueAtTime(0.03 + i * 0.004, T_FREEZE); o.connect(lp); lp.connect(g); g.connect(talkBus); o.start(0); o.stop(T_FREEZE + 0.02); });
+  // ---- Act 2: silence, two dots fall, one hit ----
+  [T_DROP1, T_DROP2].forEach((t, i) => { osc(bus, t, 'sine', 2400 - i * 300, 900, 0.001, 0.12, 0.06, i ? 0.25 : -0.25, 0.4); osc(bus, t + 0.42, 'sine', 600, 300, 0.001, 0.05, 0.03, i ? 0.25 : -0.25); });
+  const hit = (t, g = 1) => { osc(bus, t, 'sine', 120, 34, 0.002, 2.2, 0.95 * g); osc(bus, t, 'sine', 62, 30, 0.004, 2.6, 0.5 * g); noise(bus, t, 'lowpass', 2400, 0.6, 0.001, 0.5, 0.35 * g, 0, 0, 0.9); osc(bus, t, 'triangle', 1318.5, 0, 0.002, 1.6, 0.05 * g, 0.2, 0.8); osc(bus, t, 'triangle', 1975.5, 0, 0.002, 1.4, 0.03 * g, -0.2, 0.8); };
+  hit(T_HIT, 1.0);
+  // ---- Act 3/5: the groove (from the hit on), each closure a clean tick up the Hijaz scale ----
+  const HIJAZ = [329.6, 349.2, 415.3, 440, 493.9, 523.3, 587.3, 659.3, 698.5, 830.6];
+  const kick = (t, g = 0.85) => { osc(bus, t, 'sine', 150, 45, 0.002, 0.28, g); noise(bus, t, 'lowpass', 1300, 0.7, 0.001, 0.02, g * 0.25); };
+  const hat = (t, g = 0.08) => noise(bus, t, 'highpass', 8500, 0.7, 0.001, 0.03, g, 0.25);
+  const clap = (t, g = 0.3) => { for (let i = 0; i < 3; i++) noise(bus, t + i * 0.01, 'bandpass', 1700, 0.9, 0.001, i === 2 ? 0.16 : 0.01, g, -0.1, 0, 0.3); };
+  const bass = (t, f, d, g = 0.3) => { osc(bus, t, 'sawtooth', f, 0, 0.005, d, g * 0.45); osc(bus, t, 'sine', f / 2, 0, 0.005, d, g); };
+  const tick = (t, f, p = 0) => { osc(bus, t, 'triangle', f, 0, 0.002, 0.22, 0.11, p, 0.35); osc(bus, t, 'sine', f * 2, 0, 0.002, 0.08, 0.05, -p, 0.35); noise(bus, t, 'bandpass', 3000, 2, 0.001, 0.02, 0.08, p); };
+  SOLO.forEach(([i, t], k) => tick(t, HIJAZ[k % HIJAZ.length], panOf(ITEMS[i])));
+  for (const it of ITEMS) { const tc = closeTime(it); if (tc >= T_CASCADE && tc < T_SUCK && !it.hero) tick(tc, HIJAZ[Math.floor(hash(ITEMS.indexOf(it)) * 6) + 3] * 2, panOf(it) * 0.6); }
+  const roots = [82.4, 82.4, 87.3, 103.8];
+  for (let b = 0; ; b++) {
+    const t = T_HIT + 1.0 + b * BEAT; if (t >= T_FLY + 1.2) break;
+    const lull = t >= T_SUCK && t < T_SYS, sys = t >= T_SYS, root = roots[Math.floor(b / 4) % 4];
+    if (!lull) kick(t, sys ? 0.9 : 0.75); else if (b % 2 === 0) kick(t, 0.5);
+    hat(t + BEAT / 2, sys ? 0.1 : 0.07); if (sys) hat(t, 0.04);
+    if ((sys || t > 9.5) && b % 2 === 1) clap(t, sys ? 0.3 : 0.22);
+    if (!lull) { bass(t + BEAT / 2, root, BEAT * 0.45, sys ? 0.3 : 0.22); if (sys) bass(t, root, BEAT * 0.45, 0.26); }
+  }
+  // the suction: a reverse swell that ends as the last item goes in
+  { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = nb; s.loop = true; fl.type = 'bandpass'; fl.Q.value = 1.5; fl.frequency.setValueAtTime(6000, T_SUCK); fl.frequency.exponentialRampToValueAtTime(300, T_SUCK + 0.75); g.gain.setValueAtTime(0.0001, T_SUCK); g.gain.exponentialRampToValueAtTime(0.16, T_SUCK + 0.7); g.gain.linearRampToValueAtTime(0, T_SUCK + 0.78); s.connect(fl); fl.connect(g); g.connect(bus); s.start(T_SUCK); s.stop(T_SUCK + 0.85); }
+  osc(bus, T_SUCK + 0.78, 'sine', 90, 40, 0.002, 0.5, 0.6);
+  // the system: each stop its own sound
+  const stopSfx = [
+    (t) => { osc(bus, t, 'sine', 659.3, 0, 0.002, 0.6, 0.1, 0, 0.5); osc(bus, t + 0.12, 'sine', 987.8, 0, 0.002, 0.5, 0.07, 0, 0.5); },
+    (t) => { osc(bus, t, 'square', 1318.5, 0, 0.001, 0.05, 0.04, 0.3); osc(bus, t + 0.06, 'square', 1975.5, 0, 0.001, 0.08, 0.04, -0.3); },
+    (t) => { [0, 2, 4, 7].forEach((n, i) => osc(bus, t + i * 0.045, 'triangle', HIJAZ[n], 0, 0.002, 0.3, 0.08, i % 2 ? 0.4 : -0.4, 0.4)); },
+    (t) => { noise(bus, t - 0.2, 'bandpass', 400, 1.2, 0.18, 0.4, 0.14, 0, 4000, 0.4); osc(bus, t, 'sine', 220, 0, 0.002, 0.5, 0.1, 0, 0.3); },
+    (t) => { [0, 2, 4, 5, 7].forEach((n, i) => osc(bus, t + i * 0.06, 'triangle', HIJAZ[n] * 2, 0, 0.002, 0.2, 0.06, 0, 0.4)); },
+  ];
+  STOPS_T.forEach((t, k) => stopSfx[k](t));
+  for (let k = 1; k < STOPS_T.length; k++) noise(bus, STOPS_T[k] - 0.42, 'bandpass', 700, 1.4, 0.36, 0.06, 0.08, 0, 3000);
+  // riser into «تم», a breath of silence, then the drop
+  { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = nb; s.loop = true; fl.type = 'bandpass'; fl.Q.value = 2; fl.frequency.setValueAtTime(300, T_PULL); fl.frequency.exponentialRampToValueAtTime(7000, T_TAMM - 0.25); g.gain.setValueAtTime(0.0001, T_PULL); g.gain.exponentialRampToValueAtTime(0.11, T_TAMM - 0.26); g.gain.linearRampToValueAtTime(0, T_TAMM - 0.24); s.connect(fl); fl.connect(g); g.connect(bus); s.start(T_PULL); s.stop(T_TAMM); }
+  hit(T_TAMM, 1.15);
+  // the reveal: a warm Hijaz pad, a slow pulse, a soft accent on the line and the call to action
+  const pad = (t, d, fs, g) => fs.forEach((f) => [-6, 6].forEach((dt) => { const o = ac.createOscillator(), fl = ac.createBiquadFilter(), gg = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = dt; fl.type = 'lowpass'; fl.frequency.value = 1400; gg.gain.setValueAtTime(0, t); gg.gain.linearRampToValueAtTime(g, t + 0.6); gg.gain.setValueAtTime(g, t + d - 1.2); gg.gain.linearRampToValueAtTime(0, t + d); o.connect(fl); fl.connect(gg); gg.connect(bus); const sg = ac.createGain(); sg.gain.value = 0.6; gg.connect(sg); sg.connect(revIn); o.start(t); o.stop(t + d + 0.05); }));
+  pad(T_TAMM, DUR - T_TAMM, [164.8, 207.7, 246.9, 329.6], 0.013);
+  for (let b = 0; ; b++) { const t = T_TAMM + 1.0 + b * BEAT * 2; if (t > DUR - 2.2) break; kick(t, 0.55); bass(t, 82.4, BEAT * 1.6, 0.18); }
+  [T_LOCK + 0.5, T_LINE, T_CTA].forEach((t, i) => { osc(bus, t, 'triangle', [659.3, 830.6, 987.8][i], 0, 0.002, 0.9, 0.06, 0, 0.6); });
+  const buf = await ac.startRendering();
+  let peak = 0; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) peak = Math.max(peak, Math.abs(d[i])); }
+  const gn = 0.89 / (peak || 1), Lc = buf.getChannelData(0), Rc = buf.getChannelData(1), len = Lc.length, ab = new ArrayBuffer(44 + len * 4), v = new DataView(ab);
+  const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + len * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true); v.setUint32(24, SR, true); v.setUint32(28, SR * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); ws(36, 'data'); v.setUint32(40, len * 4, true);
+  for (let i = 0; i < len; i++) { v.setInt16(44 + i * 4, clamp(Lc[i] * gn, -1, 1) * 32767, true); v.setInt16(46 + i * 4, clamp(Rc[i] * gn, -1, 1) * 32767, true); }
+  let bin = ''; const u8 = new Uint8Array(ab); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+</script>
+</body>
+</html>
