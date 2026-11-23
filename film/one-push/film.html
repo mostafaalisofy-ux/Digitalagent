@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>SayTamm: One Push (22 s, white)</title>
+<style>
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-600-normal.woff2); font-weight: 600; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #F6F5F9; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// =====================================================================================
+//  ONE PUSH — «زقّة واحدة». A chain-reaction machine on white.
+//  «قول.»: its full stop drops as a ball and sets the whole system in motion —
+//  strategy (dominoes) → creative (a press) → media (one card becomes four screens) → measurement (a gauge rings a bell)
+//  → the bell sends a second ball into a giant stamp, and the stamp lands «تم».
+// =====================================================================================
+const VARIANT = '__VARIANT__';
+const AR = VARIANT !== 'en';
+const L = (ar, en) => (AR ? ar : en);
+const W = 1080, H = 1920, DUR = 22, BPM = 120, BEAT = 0.5;
+window.DUR_S = DUR;
+const BG = '#F6F5F9', PAPER = '#FFFFFF', OB = '#17171E', INK = '#09090D', G1 = '#E6E4EC', G2 = '#CFCCD8', G3 = '#9C99A8', MU = '#77748A', PU = '#6C35FF';
+const FACE = AR ? 'Plex, Sat' : 'Sat, Plex';
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, q) => a + (b - a) * q;
+const ss = (x) => x * x * (3 - 2 * x);
+const eo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x));
+const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const spring = (t, t0, d = 0.5, z = 0.45) => { const x = (t - t0) / d; if (x <= 0) return 0; if (x >= 1.8) return 1; const w = 11, wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + z / Math.sqrt(1 - z * z) * Math.sin(wd * x)); };
+const rr = (c, x, y, w, h, r) => { c.beginPath(); c.roundRect(x, y, w, h, r); };
+function txt(c, s, x, y, font, color, align = 'center', rtl = AR) { c.font = font; c.fillStyle = color; c.textAlign = align; c.direction = rtl ? 'rtl' : 'ltr'; c.fillText(s, x, y); c.direction = 'ltr'; }
+let SYMBOL = null, MARK = null, CAM_S = 1;
+function shadow(c, on, k = 1) { if (on) { c.shadowColor = `rgba(30,24,60,${0.16 * k})`; c.shadowBlur = 30 * CAM_S; c.shadowOffsetY = 14 * CAM_S; } else { c.shadowColor = 'transparent'; c.shadowBlur = 0; c.shadowOffsetY = 0; } }
+
+// ---------------- timeline ----------------
+const T_WORD = 1.15, T_D1 = 4.5;
+const D_START = [T_D1, T_D1 + 0.17, T_D1 + 0.32, T_D1 + 0.45];
+const T_CARD = T_D1 + 0.58, T_CARD_FALL = T_CARD + 0.42, T_CARD_LAND = T_CARD_FALL + 0.62;
+const T_PRESS = 6.6, T_PRESS_HIT = 6.72, T_PRESS_UP = 7.05;
+const T_PUSH = 7.8, T_OFF = 8.1, T_SLOPE = 8.35, T_SLOPE_END = 9.0, T_SPLIT = 9.2;
+const LAND = [9.65, 9.9, 10.15, 10.4], T_BELL = 10.65;
+const T_B2 = 10.8, T_B2_FUNNEL = 12.25, T_PULL = 11.1, T_PULL_END = 12.0, T_WHIP = 12.45, T_CUT = 12.95;
+const T_STAMP = 13.5, T_LIFT = 14.1, T_TOLOCK = 15.6;
+const T_NAME = 16.4, T_POS = 16.7, T_TAG = 17.3, T_CTA = 18.8;
+
+// ---------------- the machine (world coordinates) ----------------
+const R = 24;                                     // ball radius
+const WORD_Y = 960;                               // baseline of «قول.»
+const RAMP = [[990, 1030], [110, 1270]];          // ramp surface (down-left)
+const WALL_X = 40, SHELF_Y = 1560;
+const DOM = [[230, 360], [380, 510], [530, 660], [680, 810]].map(([a, b]) => ({ x0: a, x1: b, h: 260 }));
+const DOM_W = AR ? ['الهدف', 'الجمهور', 'الرسالة', 'الخطة'] : ['Objective', 'Audience', 'Message', 'Plan'];
+const CARD0 = { x0: 830, x1: 950, h: 170 };       // the blank card standing at the end of the shelf
+const PLAT = { x0: 400, x1: 700, y: 2350 };       // press platform
+const SLOPE = [[760, 2470], [590, 2760]];
+const WEDGE = [540, 2930];
+const SCREENS = [150, 400, 680, 930].map((x) => ({ x, y: 3370, w: 196, h: 340 }));
+const GAUGE = { x: 540, y: 3990, r: 230 }, BELL = { x: 822, y: 3905 }, LEDGE = { x: 900, y: 3940 };
+const RAIL = [[905, 4020], [590, 4300]], FUNNEL = { x: 540, y: 4380 };
+let PERIOD = [0, 0];                              // where the full stop sits (measured)
+
+// ball 1: the full stop
+const G = 5200, ACC = 980;
+let B1 = null;
+function planBall1() {
+  const [px, py] = PERIOD;
+  const [[ax, ay], [bx, by]] = RAMP, dx = bx - ax, dy = by - ay, Lr = Math.hypot(dx, dy), ux = dx / Lr, uy = dy / Lr, nx = uy, ny = -ux;   // n points up
+  const nX = -Math.abs(nx) * Math.sign(ux) * -1, nY = -Math.abs(ny);
+  const n = [ny > 0 ? -nx : nx, ny > 0 ? -ny : ny];
+  // contact on the ramp below the period
+  const s0 = (px - ax) / ux, surf = [ax + ux * s0, ay + uy * s0], c0 = [surf[0] + n[0] * R, surf[1] + n[1] * R];
+  const tFall = Math.sqrt(2 * Math.max(10, c0[1] - py) / G);
+  const sEnd = Lr - 18, cEnd = [ax + ux * sEnd + n[0] * R, ay + uy * sEnd + n[1] * R];
+  const Lroll = sEnd - s0, tRoll = Math.sqrt(2 * Lroll / ACC), vEnd = ACC * tRoll;
+  const vx0 = ux * vEnd, vy0 = uy * vEnd;
+  const tWall = (cEnd[0] - (WALL_X + R)) / -vx0;
+  const pWall = [WALL_X + R, cEnd[1] + vy0 * tWall + 0.5 * G * tWall * tWall], vyW = vy0 + G * tWall, vx1 = -vx0 * 0.42;
+  const yLand = SHELF_Y - R, tDrop = (-vyW + Math.sqrt(vyW * vyW + 2 * G * (yLand - pWall[1]))) / G;
+  const pLand = [pWall[0] + vx1 * tDrop, yLand];
+  const xHit = DOM[0].x0 - R, tRollShelf = Math.max(0.12, (xHit - pLand[0]) / (vx1 * 0.9));
+  const total = tFall + tRoll + tWall + tDrop + tRollShelf;
+  const tDrop0 = T_D1 - total;
+  B1 = { px, py, c0, cEnd, ux, uy, tFall, tRoll, tWall, pWall, vx0, vy0, vyW, vx1, tDrop, pLand, xHit, tRollShelf, tDrop0, sEnd, s0 };
+}
+function ball1(t) {
+  const b = B1; let t0 = b.tDrop0;
+  if (t < t0) { // anticipation: the full stop jiggles, then hops
+    const q = seg(t, t0 - 0.55, t0), hop = Math.sin(Math.PI * seg(t, t0 - 0.3, t0)) * 26;
+    return { x: b.px, y: b.py - hop, sx: 1 + 0.18 * Math.sin(q * 30) * (1 - q) * (q > 0), sy: 1 };
+  }
+  let u = t - t0;
+  if (u < b.tFall) return { x: b.px, y: b.py + 0.5 * G * u * u, sx: 0.9, sy: 1.12 };
+  u -= b.tFall;
+  if (u < b.tRoll) { const s = 0.5 * ACC * u * u, k = s / (b.sEnd - b.s0); return { x: lerp(b.c0[0], b.cEnd[0], k), y: lerp(b.c0[1], b.cEnd[1], k), sx: u < 0.06 ? 1.18 : 1, sy: u < 0.06 ? 0.84 : 1 }; }
+  u -= b.tRoll;
+  if (u < b.tWall) return { x: b.cEnd[0] + b.vx0 * u, y: b.cEnd[1] + b.vy0 * u + 0.5 * G * u * u, sx: 1, sy: 1 };
+  u -= b.tWall;
+  if (u < b.tDrop) { const sq = u < 0.05 ? 1 : 0; return { x: b.pWall[0] + b.vx1 * u, y: b.pWall[1] + b.vyW * u + 0.5 * G * u * u, sx: sq ? 0.82 : 1, sy: sq ? 1.15 : 1 }; }
+  u -= b.tDrop;
+  if (u < b.tRollShelf) { const q = u / b.tRollShelf; return { x: lerp(b.pLand[0], b.xHit, q * (2 - q) * 0.5 + q * 0.5), y: SHELF_Y - R, sx: u < 0.05 ? 1.2 : 1, sy: u < 0.05 ? 0.82 : 1 }; }
+  u -= b.tRollShelf; const back = Math.sin(Math.PI * clamp(u / 0.35)) * 14;
+  return { x: b.xHit - back, y: SHELF_Y - R, sx: 1, sy: 1 };
+}
+// dominoes fall to the right, each pivoting on its bottom-right corner
+const D_END = [1.08, 1.1, 1.12, 1.5];
+const domAngle = (k, t) => D_END[k] * clamp((t - D_START[k]) / 0.55) ** 2;
+// the card: tipped by the last domino, rolls over the edge, drops onto the press
+function cardState(t) {
+  if (t < T_CARD) return { x: (CARD0.x0 + CARD0.x1) / 2, y: SHELF_Y - CARD0.h / 2, rot: 0, piv: true, a: 0 };
+  if (t < T_CARD_FALL) return { piv: true, a: (Math.PI / 2) * clamp((t - T_CARD) / (T_CARD_FALL - T_CARD)) ** 2 };
+  const lyingX = CARD0.x1 + CARD0.h / 2, lyingY = SHELF_Y - (CARD0.x1 - CARD0.x0) / 2;
+  const tx = (PLAT.x0 + PLAT.x1) / 2, ty = PLAT.y - (CARD0.x1 - CARD0.x0) / 2;
+  if (t < T_CARD_LAND) { const q = (t - T_CARD_FALL) / (T_CARD_LAND - T_CARD_FALL); return { x: lerp(lyingX, tx, eio(q)), y: lerp(lyingY, ty, q * q), rot: Math.PI / 2 + Math.sin(q * Math.PI) * 0.35, piv: false }; }
+  const bounce = Math.abs(Math.sin(Math.PI * clamp((t - T_CARD_LAND) / 0.22))) * 22 * (t < T_CARD_LAND + 0.22);
+  if (t < T_PUSH) return { x: tx, y: ty - bounce, rot: Math.PI / 2, piv: false };
+  // pushed off the right edge, then slides down the slope, then flies onto the wedge
+  if (t < T_OFF) { const q = eio((t - T_PUSH) / (T_OFF - T_PUSH)); return { x: lerp(tx, PLAT.x1 + 20, q), y: ty, rot: Math.PI / 2, piv: false }; }
+  const [[sx0, sy0], [sx1, sy1]] = SLOPE, ang = Math.atan2(sy1 - sy0, sx1 - sx0);
+  if (t < T_SLOPE) { const q = (t - T_OFF) / (T_SLOPE - T_OFF); return { x: lerp(PLAT.x1 + 20, sx0, q), y: lerp(ty, sy0 - 60, q * q), rot: lerp(Math.PI / 2, ang + Math.PI / 2 - Math.PI, q), piv: false }; }
+  if (t < T_SLOPE_END) { const q = ((t - T_SLOPE) / (T_SLOPE_END - T_SLOPE)) ** 1.6; return { x: lerp(sx0, sx1, q), y: lerp(sy0 - 60, sy1 - 60, q), rot: ang + Math.PI / 2 - Math.PI, piv: false }; }
+  if (t < T_SPLIT) { const q = (t - T_SLOPE_END) / (T_SPLIT - T_SLOPE_END); return { x: lerp(sx1, WEDGE[0], q), y: lerp(sy1 - 60, WEDGE[1] - 50, q), rot: lerp(ang - Math.PI / 2, -Math.PI / 2, q), piv: false }; }
+  return null;
+}
+// ball 2: waits on the ledge by the bell, knocked onto the rail, into the funnel
+function ball2(t) {
+  const [[ax, ay], [bx, by]] = RAIL, dx = bx - ax, dy = by - ay, Ln = Math.hypot(dx, dy), ux = dx / Ln, uy = dy / Ln, n = [uy, -ux];
+  const nn = n[1] > 0 ? [-n[0], -n[1]] : n;
+  if (t < T_B2) return { x: LEDGE.x, y: LEDGE.y - R, sx: 1, sy: 1 };
+  const c0 = [ax + nn[0] * R, ay + nn[1] * R], c1 = [bx + nn[0] * R, by + nn[1] * R];
+  if (t < T_B2 + 0.2) { const q = (t - T_B2) / 0.2; return { x: lerp(LEDGE.x, c0[0], q), y: lerp(LEDGE.y - R, c0[1], q) - Math.sin(Math.PI * q) * 30, sx: 1, sy: 1 }; }
+  if (t < T_B2_FUNNEL) { const q = ((t - T_B2 - 0.2) / (T_B2_FUNNEL - T_B2 - 0.2)) ** 1.7; return { x: lerp(c0[0], c1[0], q), y: lerp(c0[1], c1[1], q), sx: 1, sy: 1 }; }
+  const q = clamp((t - T_B2_FUNNEL) / 0.32); return { x: lerp(c1[0], FUNNEL.x, eio(q)), y: lerp(c1[1], FUNNEL.y + 100, q * q), sx: 1, sy: 1, s: 1 - 0.4 * q };
+}
+
+// ---------------- camera ----------------
+const CAMK = [[0, 540, 940, 1.15], [3.0, 540, 960, 1.15], [4.3, 520, 1330, 1.25], [4.6, 560, 1420, 1.4], [5.4, 690, 1480, 1.3], [6.3, 560, 2190, 1.35], [7.9, 560, 2200, 1.35], [8.9, 620, 2620, 1.25], [9.35, 540, 3220, 1.04], [9.8, 540, 3590, 1.0], [T_PULL, 540, 3590, 1.0], [T_PULL_END, 540, 2444, 0.38]];
+function cam(t) {
+  if (t >= T_WHIP) {
+    const q = seg(t, T_WHIP, T_CUT), e = q * q * (3 - 2 * q), s = 0.38 * Math.exp(Math.log(70 / 0.38) * e * e);
+    const sy0 = 960 + (FUNNEL.y + 120 - 2444) * 0.38, syq = lerp(sy0, 960, eio(clamp(q * 1.4)));
+    return { cx: 540, cy: FUNNEL.y + 120 - (syq - 960) / s, s, rot: 0 };
+  }
+  let k = 0; while (k < CAMK.length - 1 && t > CAMK[k + 1][0]) k++;
+  const a = CAMK[k], b = CAMK[Math.min(k + 1, CAMK.length - 1)], q = a === b ? 0 : eio(seg(t, a[0], b[0]));
+  const sh = (t > T_PRESS_HIT && t < T_PRESS_HIT + 0.3 ? (1 - (t - T_PRESS_HIT) / 0.3) * 10 : 0) + (t > D_START[0] && t < D_START[3] + 0.5 ? 2 : 0);
+  // a living camera: slow drift, the faintest roll, a jolt on impacts
+  return { cx: lerp(a[1], b[1], q) + Math.sin(t * 0.7) * 5 + Math.sin(t * 83) * sh, cy: lerp(a[2], b[2], q) + Math.cos(t * 0.53) * 6 + Math.cos(t * 71) * sh, s: lerp(a[3], b[3], q), rot: Math.sin(t * 0.41) * 0.004 };
+}
+
+// ---------------- drawing the machine ----------------
+function ballDraw(c, b, extra = 1) {
+  if (!b) return;
+  const r = R * (b.s || 1) * extra;
+  shadow(c, true, 1.2);
+  c.save(); c.translate(b.x, b.y); c.scale(b.sx, b.sy);
+  const g = c.createRadialGradient(-r * 0.35, -r * 0.4, r * 0.1, 0, 0, r); g.addColorStop(0, '#9B78FF'); g.addColorStop(0.55, PU); g.addColorStop(1, '#4A1FD0');
+  c.fillStyle = g; c.beginPath(); c.arc(0, 0, r, 0, 7); c.fill(); shadow(c, false);
+  c.fillStyle = 'rgba(255,255,255,0.75)'; c.beginPath(); c.ellipse(-r * 0.35, -r * 0.42, r * 0.22, r * 0.14, -0.6, 0, 7); c.fill();
+  c.restore();
+}
+function rail(c, a, b, w = 16) {
+  shadow(c, true, 0.8); c.strokeStyle = G2; c.lineWidth = w; c.lineCap = 'round'; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); shadow(c, false);
+  c.strokeStyle = 'rgba(255,255,255,0.8)'; c.lineWidth = 3; c.beginPath(); c.moveTo(a[0], a[1] - w * 0.3); c.lineTo(b[0], b[1] - w * 0.3); c.stroke();
+}
+function post(c, x, y0, y1) { c.fillStyle = G1; c.fillRect(x - 6, y0, 12, y1 - y0); c.fillStyle = G2; c.fillRect(x - 6, y0, 4, y1 - y0); }
+function drawCardBody(c, w, h, designed) {
+  shadow(c, true); c.fillStyle = PAPER; rr(c, -w / 2, -h / 2, w, h, 14); c.fill(); shadow(c, false);
+  c.strokeStyle = G2; c.lineWidth = 3; rr(c, -w / 2, -h / 2, w, h, 14); c.stroke();
+  if (designed > 0) {
+    c.save(); c.globalAlpha *= designed; rr(c, -w / 2, -h / 2, w, h, 14); c.clip();
+    c.fillStyle = OB; c.beginPath(); c.arc(-w * 0.18, -h * 0.05, Math.min(w, h) * 0.22, 0, 7); c.fill();
+    c.save(); c.translate(w * 0.2, 0); c.rotate(-Math.PI / 4); c.fillStyle = PU; c.fillRect(-w * 0.06, -h, w * 0.12, h * 2); c.restore();
+    c.fillStyle = G2; c.fillRect(-w * 0.38, h * 0.28, w * 0.42, h * 0.07); c.fillRect(-w * 0.38, h * 0.4 - 0, w * 0.26, h * 0.06);
+    c.restore();
+  }
+}
+function drawMachine(t) {
+  const c = ctx;
+  // --- hook words ---
+  const hq = spring(t, 0.1, 0.45), hout = 1 - ss(seg(t, 2.4, 2.9));
+  if (hq > 0 && hout > 0) { c.save(); c.globalAlpha = clamp(hq * 1.6) * hout; c.translate(540, 700); const k = lerp(0.9, 1, Math.min(1, hq)); c.scale(k, k); txt(c, L('عندك هدف؟', 'Have an objective?'), 0, 0, `600 ${AR ? 76 : 66}px ${FACE}`, MU); c.restore(); }
+  const wq = spring(t, T_WORD, 0.5);
+  if (wq > 0) {
+    c.save(); c.globalAlpha = clamp(wq * 1.6) * (1 - ss(seg(t, 3.7, 4.2)) + ss(seg(t, T_PULL, T_PULL + 0.5))); const k = lerp(1.25, 1, Math.min(1, wq)); c.translate(540, WORD_Y); c.scale(k, k); c.translate(-540, -WORD_Y);
+    txt(c, L('قول', 'Say it'), 540 + (AR ? 26 : -26), WORD_Y, `700 220px ${FACE}`, INK); c.restore();
+  }
+  // --- ramp, wall, shelf ---
+  [[300, 1170], [640, 1080], [930, 1050]].forEach(([x, y]) => post(c, x, y + 8, y + 340));
+  rail(c, RAMP[0], RAMP[1], 18);
+  shadow(c, true); c.fillStyle = OB; rr(c, WALL_X - 14, 1150, 14, SHELF_Y - 1150 + 30, 4); c.fill(); shadow(c, false);
+  shadow(c, true); c.fillStyle = G1; rr(c, 20, SHELF_Y, 950, 30, 6); c.fill(); shadow(c, false); c.fillStyle = G2; c.fillRect(20, SHELF_Y + 22, 950, 8);
+  // dominoes
+  DOM.forEach((d, k) => {
+    const a = domAngle(k, t);
+    c.save(); c.translate(d.x1, SHELF_Y); c.rotate(a); c.translate(-d.x1, -SHELF_Y);
+    shadow(c, true); const g = c.createLinearGradient(d.x0, 0, d.x1, 0); g.addColorStop(0, '#26252F'); g.addColorStop(1, OB); c.fillStyle = g; rr(c, d.x0, SHELF_Y - d.h, d.x1 - d.x0, d.h, 10); c.fill(); shadow(c, false);
+    c.fillStyle = 'rgba(255,255,255,0.08)'; rr(c, d.x0 + 6, SHELF_Y - d.h + 6, d.x1 - d.x0 - 12, 8, 4); c.fill();
+    c.save(); c.translate((d.x0 + d.x1) / 2, SHELF_Y - d.h * 0.62); txt(c, '0' + (k + 1), 0, -52, '700 22px Sat', G3, 'center', false); txt(c, DOM_W[k], 0, 10, `700 ${AR ? 30 : 21}px ${FACE}`, PAPER); c.restore();
+    c.restore();
+  });
+  // the card on the shelf / in flight / on the press
+  const cs = cardState(t), cw = CARD0.x1 - CARD0.x0, ch = CARD0.h, designed = ss(seg(t, T_PRESS_HIT, T_PRESS_HIT + 0.12));
+  if (cs) {
+    c.save();
+    if (cs.piv) { c.translate(CARD0.x1, SHELF_Y); c.rotate(cs.a); c.translate(-cw / 2, -ch / 2); drawCardBody(c, cw, ch, 0); }
+    else { c.translate(cs.x, cs.y); c.rotate(cs.rot); drawCardBody(c, cw, ch, designed); }
+    c.restore();
+  }
+  // --- chute + press ---
+  c.strokeStyle = G2; c.lineWidth = 6; c.lineCap = 'round'; c.beginPath(); c.moveTo(1010, 1700); c.lineTo(760, 2150); c.stroke(); c.beginPath(); c.moveTo(880, 1700); c.lineTo(660, 2090); c.stroke();
+  shadow(c, true); c.fillStyle = OB; rr(c, PLAT.x0, PLAT.y, PLAT.x1 - PLAT.x0, 70, 10); c.fill(); shadow(c, false);
+  post(c, PLAT.x0 + 40, PLAT.y + 70, PLAT.y + 260); post(c, PLAT.x1 - 40, PLAT.y + 70, PLAT.y + 260);
+  const pdown = t < T_PRESS ? 0 : t < T_PRESS_HIT ? ((t - T_PRESS) / (T_PRESS_HIT - T_PRESS)) ** 2 : t < T_PRESS_UP ? 1 : 1 - eo(seg(t, T_PRESS_UP, T_PRESS_UP + 0.5));
+  const headY = lerp(2060, PLAT.y - cw - 2, pdown);   // bottom of the press head
+  c.fillStyle = G2; c.fillRect(540 - 14, 1840, 28, headY - 90 - 1840 + 10);
+  shadow(c, true); c.fillStyle = OB; rr(c, 400, 1800, 300, 70, 12); c.fill(); rr(c, 420, headY - 90, 260, 90, 12); c.fill(); shadow(c, false);
+  c.fillStyle = PU; c.fillRect(430, headY - 12, 240, 6);
+  // piston that pushes the card off
+  const pp = t < T_PUSH ? 0 : t < T_OFF ? eio((t - T_PUSH) / (T_OFF - T_PUSH)) : 1 - eo(seg(t, T_OFF + 0.1, T_OFF + 0.6));
+  shadow(c, true); c.fillStyle = OB; rr(c, 200, PLAT.y - 110, 110, 90, 12); c.fill(); shadow(c, false);
+  c.fillStyle = G2; c.fillRect(310, PLAT.y - 75, 60 + pp * 310, 20); c.fillStyle = OB; rr(c, 360 + pp * 310, PLAT.y - 100, 22, 70, 6); c.fill();
+  rail(c, SLOPE[0], SLOPE[1], 16); post(c, 700, 2580, 2850);
+  // --- wedge + screens ---
+  shadow(c, true); c.fillStyle = OB; c.beginPath(); c.moveTo(WEDGE[0], WEDGE[1]); c.lineTo(WEDGE[0] + 90, WEDGE[1] + 110); c.lineTo(WEDGE[0] - 90, WEDGE[1] + 110); c.closePath(); c.fill(); shadow(c, false);
+  SCREENS.forEach((s, k) => {
+    const lit = ss(seg(t, LAND[k], LAND[k] + 0.12)), pop = 1 + 0.06 * Math.sin(Math.PI * seg(t, LAND[k], LAND[k] + 0.25));
+    c.save(); c.translate(s.x, s.y); c.scale(pop, pop);
+    shadow(c, true); c.fillStyle = OB; rr(c, -s.w / 2, -s.h / 2, s.w, s.h, 34); c.fill(); shadow(c, false);
+    c.fillStyle = lit > 0 ? `rgb(${lerp(36, 255, lit)},${lerp(35, 255, lit)},${lerp(46, 255, lit)})` : '#24232E'; rr(c, -s.w / 2 + 10, -s.h / 2 + 10, s.w - 20, s.h - 20, 26); c.fill();
+    c.fillStyle = 'rgba(255,255,255,0.25)'; rr(c, -18, -s.h / 2 + 18, 36, 7, 4); c.fill();
+    if (lit > 0) { c.save(); c.globalAlpha = lit; c.translate(0, -20); drawCardBody(c, s.w - 46, (s.w - 46) * 0.7, 1); c.restore(); c.fillStyle = G1; c.globalAlpha = lit; rr(c, -60, 90, 120, 12, 6); c.fill(); rr(c, -60, 112, 80, 12, 6); c.fill(); c.globalAlpha = 1; }
+    c.restore();
+    // broadcast arcs
+    for (let j = 0; j < 3; j++) { const q = seg(t, LAND[k] + 0.1 + j * 0.12, LAND[k] + 0.9 + j * 0.12); if (q <= 0 || q >= 1) continue; c.strokeStyle = `rgba(23,23,30,${0.35 * (1 - q)})`; c.lineWidth = 4; c.beginPath(); c.arc(s.x, s.y - s.h / 2 - 10, 30 + q * 90, Math.PI * 1.2, Math.PI * 1.8); c.stroke(); }
+  });
+  // the card splits into four, one per screen
+  if (t >= T_SPLIT) SCREENS.forEach((s, k) => {
+    const q = clamp((t - T_SPLIT) / (LAND[k] - T_SPLIT)); if (q >= 1) return;
+    const x = lerp(WEDGE[0], s.x, q), y = lerp(WEDGE[1] - 40, s.y, q) - Math.sin(Math.PI * q) * (220 + k * 30);
+    c.save(); c.translate(x, y); c.rotate((k - 1.5) * 0.6 * q * (1 - q) * 4); drawCardBody(c, 110, 78, 1); c.restore();
+  });
+  // --- gauge + bell ---
+  const steps = LAND.map((lt, k) => spring(t, lt, 0.45) * 0.25).reduce((a, b) => a + b, 0);
+  const over = Math.sin(Math.PI * seg(t, T_BELL - 0.12, T_BELL + 0.12)) * 0.05;
+  const f = clamp(steps + over, 0, 1.06), ang = Math.PI + f * Math.PI;
+  c.lineCap = 'round'; c.strokeStyle = G1; c.lineWidth = 26; c.beginPath(); c.arc(GAUGE.x, GAUGE.y, GAUGE.r, Math.PI, 2 * Math.PI); c.stroke();
+  c.strokeStyle = OB; c.lineWidth = 26; c.beginPath(); c.arc(GAUGE.x, GAUGE.y, GAUGE.r, Math.PI, Math.min(ang, 2 * Math.PI)); c.stroke();
+  for (let k = 0; k <= 8; k++) { const a = Math.PI + k * Math.PI / 8; c.strokeStyle = G2; c.lineWidth = 4; c.beginPath(); c.moveTo(GAUGE.x + Math.cos(a) * (GAUGE.r - 40), GAUGE.y + Math.sin(a) * (GAUGE.r - 40)); c.lineTo(GAUGE.x + Math.cos(a) * (GAUGE.r - 62), GAUGE.y + Math.sin(a) * (GAUGE.r - 62)); c.stroke(); }
+  shadow(c, true); c.strokeStyle = OB; c.lineWidth = 12; c.beginPath(); c.moveTo(GAUGE.x, GAUGE.y); c.lineTo(GAUGE.x + Math.cos(ang) * (GAUGE.r + 30), GAUGE.y + Math.sin(ang) * (GAUGE.r + 30)); c.stroke(); shadow(c, false);
+  c.fillStyle = OB; c.beginPath(); c.arc(GAUGE.x, GAUGE.y, 30, 0, 7); c.fill(); c.fillStyle = PU; c.beginPath(); c.arc(GAUGE.x, GAUGE.y, 10, 0, 7); c.fill();
+  // bell (pendulum after the hit)
+  const bt = t - T_BELL, swing = bt > 0 ? Math.sin(bt * 16) * Math.exp(-bt * 2.2) * 0.45 : 0;
+  c.fillStyle = G2; c.fillRect(BELL.x - 70, BELL.y - 150, 160, 12); c.fillRect(BELL.x - 4, BELL.y - 140, 8, 40);
+  c.save(); c.translate(BELL.x, BELL.y - 100); c.rotate(swing);
+  shadow(c, true); c.fillStyle = OB; c.beginPath(); c.moveTo(-14, 0); c.quadraticCurveTo(-26, 40, -46, 82); c.lineTo(46, 82); c.quadraticCurveTo(26, 40, 14, 0); c.closePath(); c.fill(); shadow(c, false);
+  c.fillStyle = OB; c.beginPath(); c.arc(0, 90, 12, 0, 7); c.fill(); c.restore();
+  // ledge, rail, funnel
+  shadow(c, true); c.fillStyle = G1; rr(c, LEDGE.x - 40, LEDGE.y, 120, 16, 6); c.fill(); shadow(c, false);
+  rail(c, RAIL[0], RAIL[1], 16);
+  shadow(c, true); c.fillStyle = OB; c.beginPath(); c.moveTo(FUNNEL.x - 130, FUNNEL.y); c.lineTo(FUNNEL.x + 130, FUNNEL.y); c.lineTo(FUNNEL.x + 28, FUNNEL.y + 110); c.lineTo(FUNNEL.x + 28, FUNNEL.y + 260); c.lineTo(FUNNEL.x - 28, FUNNEL.y + 260); c.lineTo(FUNNEL.x - 28, FUNNEL.y + 110); c.closePath(); c.fill(); shadow(c, false);
+  c.fillStyle = '#2C2B36'; c.beginPath(); c.ellipse(FUNNEL.x, FUNNEL.y, 130, 18, 0, 0, 7); c.fill();
+  // balls on top
+  if (t > T_WORD + 0.08) ballDraw(c, ball1(t), Math.min(1, spring(t, T_WORD + 0.08, 0.4)));
+  const b2 = ball2(t); if (t < T_B2_FUNNEL + 0.3) ballDraw(c, b2);
+}
+
+// ---------------- the stamp (top view) ----------------
+function buildMark() {
+  const o = document.createElement('canvas'); o.width = 760; o.height = 600; const c = o.getContext('2d');
+  c.strokeStyle = INK; c.lineWidth = 18; rr(c, 30, 30, 700, 540, 60); c.stroke(); c.lineWidth = 5; rr(c, 58, 58, 644, 484, 40); c.stroke();
+  c.font = '600 330px Plex'; c.direction = 'rtl'; c.textAlign = 'center';
+  const mt = c.measureText('تم'), base = 300 + (mt.actualBoundingBoxAscent - mt.actualBoundingBoxDescent) / 2;
+  c.fillStyle = PU; c.fillText('تم', 380, base); c.fillStyle = INK; c.fillText('ٮم', 380, base);
+  // ink texture: speckles and dry streaks
+  c.globalCompositeOperation = 'destination-out';
+  for (let i = 0; i < 4200; i++) { const x = hash(i * 1.3) * 760, y = hash(i * 2.7 + 5) * 600, r = 0.6 + hash(i * 3.1) * 2.2; c.globalAlpha = 0.2 + hash(i * 4.4) * 0.45; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill(); }
+  for (let i = 0; i < 24; i++) { const y = hash(i + 77) * 600; c.globalAlpha = 0.12; c.fillRect(0, y, 760, 1 + hash(i + 9) * 3); }
+  c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
+  MARK = o;
+}
+function drawStampScene(t) {
+  const c = ctx;
+  // paper on the desk
+  c.fillStyle = BG; c.fillRect(0, 0, W, H);
+  const shake = t > T_STAMP && t < T_STAMP + 0.35 ? (1 - (t - T_STAMP) / 0.35) * 14 : 0;
+  c.save(); c.translate(Math.sin(t * 90) * shake, Math.cos(t * 77) * shake);
+  shadow(c, true, 0.7); c.fillStyle = PAPER; c.save(); c.translate(540, 960); c.rotate(-0.02); rr(c, -430, -620, 860, 1240, 8); c.fill(); c.restore(); shadow(c, false);
+  // faint ruled lines on the paper
+  c.save(); c.translate(540, 960); c.rotate(-0.02); c.strokeStyle = 'rgba(120,116,140,0.10)'; c.lineWidth = 2; for (let y = -520; y < 560; y += 64) { c.beginPath(); c.moveTo(-370, y); c.lineTo(370, y); c.stroke(); } c.restore();
+  // the ink, revealed as the stamp lifts
+  if (t >= T_STAMP) {
+    const p = 1 + 0.03 * seg(t, T_STAMP, T_TOLOCK);
+    const qOut = eio(seg(t, T_TOLOCK, T_TOLOCK + 0.6));
+    c.save(); c.translate(540, lerp(960, 640, qOut)); c.rotate(lerp(-0.07, 0, qOut)); const k = p * lerp(1, 0.38, qOut); c.scale(k, k);
+    c.globalAlpha = 1 - ss(seg(qOut, 0.5, 1)); c.drawImage(MARK, -380, -300); c.restore();
+  }
+  c.restore();
+  // the stamp: it falls away from the camera (shrinks) onto the paper, then lifts back toward us
+  let z = null;
+  if (t < T_STAMP) z = lerp(0.12, 1, seg(t, T_CUT, T_STAMP) ** 2.2);
+  else if (t < T_LIFT) z = 1;
+  else if (t < T_LIFT + 0.6) z = lerp(1, 0.18, eio(seg(t, T_LIFT, T_LIFT + 0.6)));
+  if (z !== null) {
+    const s = 1 / z, lift = t > T_LIFT ? eio(seg(t, T_LIFT, T_LIFT + 0.6)) : 0;
+    // shadow on the paper sharpens as the stamp comes down
+    c.save(); c.globalAlpha = 0.25 * clamp(z * 1.2) * (1 - lift); c.fillStyle = '#3A3552'; c.filter = `blur(${Math.round(lerp(60, 8, z))}px)`; rr(c, 540 - 330 + (1 - z) * 60, 960 - 270 + (1 - z) * 90, 660, 540, 60); c.fill(); c.filter = 'none'; c.restore();
+    c.save(); c.translate(540 + lift * 380, 960 - lift * 600); c.rotate(-0.07 + lift * 0.4); c.scale(s, s);
+    const g = c.createLinearGradient(-340, -280, 340, 280); g.addColorStop(0, '#2A2934'); g.addColorStop(1, OB); c.fillStyle = g; rr(c, -340, -280, 680, 560, 70); c.fill();
+    c.strokeStyle = 'rgba(255,255,255,0.08)'; c.lineWidth = 4; rr(c, -326, -266, 652, 532, 60); c.stroke();
+    c.fillStyle = '#3A3946'; c.beginPath(); c.arc(0, 0, 170, 0, 7); c.fill(); c.fillStyle = '#4A4957'; c.beginPath(); c.arc(0, 0, 130, 0, 7); c.fill();
+    c.fillStyle = INK; c.beginPath(); c.arc(0, 0, 46, 0, 7); c.fill();
+    // the purple ball sits in the handle: it is the ink
+    const g2 = c.createRadialGradient(-10, -12, 3, 0, 0, 30); g2.addColorStop(0, '#9B78FF'); g2.addColorStop(1, PU); c.fillStyle = g2; c.beginPath(); c.arc(0, 0, 30, 0, 7); c.fill();
+    c.restore();
+  }
+}
+
+// ---------------- the lockup (white) ----------------
+function drawLockup(t) {
+  const qs = eo(seg(t, T_TOLOCK + 0.3, T_TOLOCK + 0.9));
+  if (qs <= 0) return;
+  ctx.save(); ctx.globalAlpha = qs; const SH = 250 * lerp(0.86, 1, qs), SW = SH * 600 / 721; ctx.drawImage(SYMBOL, 540 - SW / 2, 640 - SH / 2, SW, SH); ctx.restore();
+  const show = (t0, f) => { const q = spring(t, t0, 0.45); if (q <= 0) return; ctx.save(); ctx.globalAlpha = clamp(q * 1.6); ctx.translate(0, 26 * (1 - Math.min(1, q))); f(); ctx.restore(); };
+  show(T_NAME, () => { if (AR) { txt(ctx, 'قول تم', 540, 1000, '700 118px Plex', INK); txt(ctx, 'SayTamm', 540, 1062, '500 40px Sat', MU, 'center', false); } else txt(ctx, 'SayTamm', 540, 1010, '700 118px Sat', INK, 'center', false); });
+  show(T_POS, () => txt(ctx, L('وكالة تسويق رقمي وأداء', 'A digital marketing & performance agency'), 540, AR ? 1130 : 1085, `500 ${AR ? 44 : 38}px ${FACE}`, MU));
+  show(T_TAG, () => {
+    const s = L('قول. تم', 'Say it. Tamm it'), f = `700 ${AR ? 72 : 64}px ${FACE}`, y = 1265;
+    ctx.font = f; ctx.direction = AR ? 'rtl' : 'ltr'; const w = ctx.measureText(s).width; ctx.direction = 'ltr';
+    txt(ctx, s, 540 + (AR ? 12 : -12), y, f, INK);
+    ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(AR ? 540 + 12 - w / 2 - 20 : 540 - 12 + w / 2 + 20, y - 8, 11, 0, 7); ctx.fill();
+  });
+  show(T_CTA, () => { txt(ctx, L('عندك هدف؟ ابدأ من هنا.', 'Have an objective? Start here.'), 540, 1372, `600 ${AR ? 50 : 46}px ${FACE}`, INK); txt(ctx, 'info@saytamm.com', 540, 1440, '500 38px Sat', MU, 'center', false); });
+}
+
+// ---------------- station titles (screen space) ----------------
+const TITLES = [[3.9, 6.4, '01', L('الاستراتيجية', 'Strategy')], [6.4, 9.3, '02', L('الإبداع', 'Creative')], [9.3, 10.6, '03', L('الإعلانات', 'Media')], [10.6, 11.4, '04', L('القياس', 'Measurement')], [11.6, 12.6, '', L('منظومة واحدة.', 'One connected system.')]];
+function titles(t) {
+  for (const [a, b, n, s] of TITLES) {
+    if (t < a || t > b) continue;
+    const q = spring(t, a, 0.4), out = 1 - ss(seg(t, b - 0.2, b));
+    ctx.save(); ctx.globalAlpha = clamp(q * 1.6) * out; ctx.translate(0, -20 * (1 - Math.min(1, q)));
+    { ctx.font = `700 ${n ? 64 : (AR ? 76 : 66)}px ${FACE}`; ctx.direction = AR ? 'rtl' : 'ltr'; const pw = ctx.measureText(s).width + (n ? 190 : 110); ctx.direction = 'ltr';
+      shadow(ctx, true, 0.9); ctx.fillStyle = 'rgba(255,255,255,0.96)'; rr(ctx, 540 - pw / 2, 162, pw, 124, 62); ctx.fill(); shadow(ctx, false); }
+    if (n) {
+      ctx.font = `700 64px ${FACE}`; ctx.direction = AR ? 'rtl' : 'ltr'; const w = ctx.measureText(s).width; ctx.direction = 'ltr';
+      const x0 = 540 + (AR ? w / 2 : -w / 2);
+      txt(ctx, s, 540 + (AR ? -26 : 26), 247, `700 64px ${FACE}`, INK);
+      txt(ctx, n, AR ? 540 + w / 2 + 26 : 540 - w / 2 - 26, 246, '700 34px Sat', MU, 'center', false);
+      ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(AR ? 540 + w / 2 - 8 : 540 - w / 2 + 8, 226, 8, 0, 7); ctx.fill();
+    } else txt(ctx, s, 540, 250, `700 ${AR ? 76 : 66}px ${FACE}`, INK);
+    ctx.restore();
+  }
+}
+
+// ---------------- frame ----------------
+const GRAIN = document.createElement('canvas'); GRAIN.width = GRAIN.height = 360;
+{ const g = GRAIN.getContext('2d'), im = g.createImageData(360, 360); let s = 7; for (let i = 0; i < im.data.length; i += 4) { s = (s * 16807) % 2147483647; const v = 128 + (s / 2147483647 - 0.5) * 90; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } g.putImageData(im, 0, 0); }
+function finish(t) {
+  [[T_STAMP, 0.0]].forEach(() => {});
+  const vg = ctx.createRadialGradient(540, 900, 620, 540, 960, 1300); vg.addColorStop(0, 'rgba(60,50,110,0)'); vg.addColorStop(1, 'rgba(60,50,110,0.10)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+  const f = Math.floor(t * 30); ctx.save(); ctx.globalCompositeOperation = 'soft-light'; ctx.globalAlpha = 0.16; ctx.translate(-Math.floor(hash(f) * 360), -Math.floor(hash(f + 3) * 360)); ctx.fillStyle = ctx.createPattern(GRAIN, 'repeat'); ctx.fillRect(0, 0, W + 360, H + 360); ctx.restore();
+}
+window.seek = (t) => {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  if (t < T_CUT) {
+    ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
+    const C = cam(t); CAM_S = C.s;
+    ctx.save(); ctx.translate(540, 960); ctx.rotate(C.rot); ctx.scale(C.s, C.s); ctx.translate(-C.cx, -C.cy);
+    drawMachine(t);
+    ctx.restore();
+    titles(t);
+  } else {
+    CAM_S = 1;
+    if (t < T_TOLOCK + 0.7) drawStampScene(t); else { ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H); }
+    if (t >= T_TOLOCK + 0.6 && t < T_TOLOCK + 0.7) {} // crossfade handled by alpha inside both
+    drawLockup(t);
+  }
+  finish(t);
+};
+
+window.ready = (async () => {
+  const fonts = ['500 46px Plex', '600 46px Plex', '700 46px Plex', '500 46px Sat', '700 46px Sat', '600 330px Plex', '700 220px Plex', '700 220px Sat'];
+  await Promise.all(fonts.map((f) => document.fonts.load(f, 'تم ٮم قول عندك هدف Say it Objective 0123')));
+  await document.fonts.ready;
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
+  // the full stop of «قول.» / "Say it." becomes the ball
+  ctx.font = `700 220px ${FACE}`; ctx.direction = AR ? 'rtl' : 'ltr'; const w = ctx.measureText(L('قول', 'Say it')).width; ctx.direction = 'ltr';
+  const cx = 540 + (AR ? 26 : -26);
+  PERIOD = [AR ? cx - w / 2 - 34 : cx + w / 2 + 34, WORD_Y - R];
+  planBall1(); buildMark();
+  window.seek(0);
+  return true;
+})();
+
+// ================= sound: foley is the rhythm; a light marimba groove rides on it =================
+window.renderAudio = async () => {
+  const SR = 48000, ac = new OfflineAudioContext(2, SR * DUR, SR);
+  const master = ac.createDynamicsCompressor(); master.threshold.value = -14; master.ratio.value = 3; master.attack.value = 0.003; master.release.value = 0.15;
+  master.connect(ac.destination);
+  const bus = ac.createGain(); bus.connect(master);
+  const rev = ac.createConvolver(); { const len = SR * 1.8, ir = ac.createBuffer(2, len, SR); for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let s = 5 + ch; for (let i = 0; i < len; i++) { s = (s * 16807) % 2147483647; d[i] = (s / 1073741823.5 - 1) * Math.pow(1 - i / len, 3.4); } } rev.buffer = ir; }
+  const revIn = ac.createGain(), revOut = ac.createGain(); revOut.gain.value = 0.25; revIn.connect(rev); rev.connect(revOut); revOut.connect(master);
+  const nb = (() => { const b = ac.createBuffer(1, SR, SR), d = b.getChannelData(0); let s = 3; for (let i = 0; i < d.length; i++) { s = (s * 16807) % 2147483647; d[i] = s / 1073741823.5 - 1; } return b; })();
+  const env = (g, t, a, pk, d) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+  const osc = (t, type, f0, f1, a, d, pk, pan = 0, send = 0) => { const o = ac.createOscillator(), g = ac.createGain(), p = ac.createStereoPanner(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + a + d * 0.6); env(g, t, a, pk, d); p.pan.value = pan; o.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } o.start(t); o.stop(t + a + d + 0.05); };
+  const noise = (t, type, f, q, a, d, pk, pan = 0, f1, send = 0) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(), p = ac.createStereoPanner(); s.buffer = nb; s.loop = true; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + a + d); fl.Q.value = q; env(g, t, a, pk, d); p.pan.value = pan; s.connect(fl); fl.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } s.start(t, (t * 0.37) % 0.8); s.stop(t + a + d + 0.05); };
+  const panX = (x) => clamp((x - 540) / 600, -0.8, 0.8);
+  const roll = (t0, t1, f0, f1, g = 0.06, pan = 0) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), gg = ac.createGain(), p = ac.createStereoPanner(); s.buffer = nb; s.loop = true; fl.type = 'bandpass'; fl.Q.value = 3; fl.frequency.setValueAtTime(f0, t0); fl.frequency.exponentialRampToValueAtTime(f1, t1); gg.gain.setValueAtTime(0.0001, t0); gg.gain.exponentialRampToValueAtTime(g, t0 + 0.08); gg.gain.setValueAtTime(g, t1 - 0.05); gg.gain.linearRampToValueAtTime(0, t1); p.pan.value = pan; s.connect(fl); fl.connect(gg); gg.connect(p); p.connect(bus); s.start(t0); s.stop(t1 + 0.05); };
+  const clack = (t, f = 1400, g = 0.3, pan = 0) => { noise(t, 'bandpass', f * 1.8, 2.5, 0.001, 0.03, g, pan, 0, 0.2); osc(t, 'triangle', f, f * 0.8, 0.001, 0.06, g * 0.5, pan, 0.2); };
+  const thud = (t, g = 0.8, pan = 0) => { osc(t, 'sine', 140, 48, 0.002, 0.35, g, pan); noise(t, 'lowpass', 900, 0.7, 0.001, 0.08, g * 0.45, pan, 0, 0.3); };
+  const ding = (t, f, g = 0.12, pan = 0, d = 1.2) => { osc(t, 'sine', f, 0, 0.002, d, g, pan, 0.5); osc(t, 'sine', f * 2.76, 0, 0.002, d * 0.4, g * 0.35, pan, 0.5); osc(t, 'sine', f * 5.4, 0, 0.002, d * 0.15, g * 0.15, pan, 0.5); };
+  const whoosh = (t1, d = 0.4, g = 0.12) => noise(t1 - d, 'bandpass', 500, 1.2, d * 0.8, d * 0.2, g, 0, 4000, 0.3);
+  const HJ = [329.6, 349.2, 415.3, 440, 493.9, 523.3, 587.3, 659.3, 698.5, 830.6, 880, 987.8];
+  const b = B1, t0 = b.tDrop0;
+  // hook: two soft marimba notes; the word lands
+  ding(0.12, 659.3, 0.07, -0.2, 0.6); ding(T_WORD, 329.6, 0.08, 0, 0.8); thud(T_WORD, 0.35);
+  // the full stop: wobble, hop, drop, roll, wall, shelf
+  [t0 - 0.5, t0 - 0.4, t0 - 0.3].forEach((t, i) => osc(t, 'sine', 1800 + i * 200, 0, 0.001, 0.05, 0.04));
+  const tLand = t0 + b.tFall; clack(tLand, 1800, 0.25, panX(b.c0[0]));
+  roll(tLand, tLand + b.tRoll, 700, 2600, 0.07, panX(b.c0[0]));
+  const tWall = tLand + b.tRoll + b.tWall; clack(tWall, 900, 0.4, -0.7);
+  const tShelf = tWall + b.tDrop; clack(tShelf, 1200, 0.3, -0.5); roll(tShelf, T_D1, 1200, 900, 0.05, -0.3);
+  // dominoes: they are the beat
+  D_START.forEach((t, k) => clack(t, 1500 - k * 120, 0.42, panX(DOM[k].x0)));
+  clack(T_CARD, 2200, 0.3, 0.4); whoosh(T_CARD_LAND, 0.5, 0.1); thud(T_CARD_LAND, 0.55, 0);
+  // press
+  noise(T_PRESS - 0.3, 'highpass', 2000, 0.7, 0.25, 0.08, 0.08, 0, 6000); thud(T_PRESS_HIT, 1.0); noise(T_PRESS_HIT, 'lowpass', 300, 1, 0.001, 0.5, 0.3, 0, 0, 0.6);
+  [0, 2, 4].forEach((n, i) => ding(T_PRESS_HIT + 0.12 + i * 0.07, HJ[n + 4], 0.06, i - 1, 0.7));
+  noise(T_PRESS_UP, 'bandpass', 1200, 1, 0.3, 0.2, 0.05, 0, 400);
+  // piston, slide, split
+  noise(T_PUSH, 'bandpass', 800, 1.5, 0.05, 0.25, 0.08, -0.3, 1600); roll(T_SLOPE, T_SLOPE_END, 900, 2400, 0.06, 0.2);
+  noise(T_SPLIT, 'highpass', 3000, 0.8, 0.001, 0.18, 0.18, 0, 0, 0.4); clack(T_SPLIT, 2000, 0.35);
+  LAND.forEach((t, k) => { ding(t, HJ[7 + k] || 987.8, 0.1, panX(SCREENS[k].x), 0.8); osc(t, 'sine', 90, 50, 0.002, 0.15, 0.25); for (let j = 0; j < 3; j++) osc(t + j * 0.035, 'square', 2600, 0, 0.001, 0.012, 0.03, panX(SCREENS[k].x)); });
+  // the bell
+  ding(T_BELL, 1318.5, 0.2, 0.5, 2.4); ding(T_BELL + 0.003, 1975.5, 0.08, 0.5, 1.6); clack(T_BELL, 2400, 0.2, 0.5);
+  roll(T_B2 + 0.2, T_B2_FUNNEL, 700, 2200, 0.06, 0.3); whoosh(T_B2_FUNNEL + 0.3, 0.5, 0.14);
+  // whip into the funnel, a breath, then the stamp
+  noise(T_WHIP, 'bandpass', 300, 1.2, 0.45, 0.05, 0.18, 0, 6000);
+  noise(T_CUT, 'lowpass', 2000, 0.7, 0.4, 0.1, 0.05, 0, 400);
+  thud(T_STAMP, 1.25); osc(T_STAMP, 'sine', 60, 32, 0.004, 1.8, 0.6); noise(T_STAMP, 'lowpass', 2600, 0.6, 0.001, 0.4, 0.4, 0, 0, 0.8);
+  noise(T_LIFT, 'bandpass', 1500, 1, 0.05, 0.25, 0.06, 0.3, 600);
+  // music: marimba ostinato from the dominoes on, stops for the breath before the stamp, returns warm for the lockup
+  const kick = (t, g = 0.55) => { osc(t, 'sine', 150, 46, 0.002, 0.26, g); };
+  const shaker = (t, g = 0.05) => noise(t, 'highpass', 7000, 0.7, 0.004, 0.04, g, 0.3);
+  const mar = (t, f, g = 0.06, pan = 0) => { osc(t, 'sine', f, 0, 0.002, 0.28, g, pan, 0.25); osc(t, 'sine', f * 4, 0, 0.001, 0.05, g * 0.25, pan, 0.2); };
+  const pat = [0, 4, 7, 4, 2, 4, 7, 9, 0, 4, 7, 4, 3, 4, 7, 10];
+  for (let i = 0; ; i++) {
+    const t = 4.5 + i * BEAT / 2; if (t >= T_WHIP - 0.1) break;
+    const beat = i % 2 === 0, bar16 = i % 16;
+    if (beat) kick(t, 0.5); shaker(t + BEAT / 4, 0.045);
+    if (t > 6.6 && !beat) noise(t, 'bandpass', 1800, 0.8, 0.001, 0.08, 0.06, -0.2);
+    mar(t, HJ[pat[bar16] % HJ.length], t > 9.2 ? 0.065 : 0.05, i % 2 ? 0.3 : -0.3);
+    if (beat) osc(t, 'triangle', [82.4, 82.4, 87.3, 103.8][Math.floor(i / 8) % 4], 0, 0.005, 0.4, 0.16);
+  }
+  for (let i = 0; ; i++) { const t = T_STAMP + 0.5 + i * BEAT; if (t > DUR - 2) break; if (i % 2 === 0) kick(t, 0.4); mar(t, HJ[[0, 4, 7, 9][i % 4]], 0.05, i % 2 ? 0.3 : -0.3); }
+  [T_NAME, T_TAG, T_CTA].forEach((t, i) => ding(t, [659.3, 830.6, 987.8][i], 0.07, 0, 1.0));
+  const pad = (t, d, fs, g) => fs.forEach((f) => { const o = ac.createOscillator(), fl = ac.createBiquadFilter(), gg = ac.createGain(); o.type = 'triangle'; o.frequency.value = f; fl.type = 'lowpass'; fl.frequency.value = 2000; gg.gain.setValueAtTime(0, t); gg.gain.linearRampToValueAtTime(g, t + 0.6); gg.gain.setValueAtTime(g, t + d - 1.2); gg.gain.linearRampToValueAtTime(0, t + d); o.connect(fl); fl.connect(gg); gg.connect(bus); const sg = ac.createGain(); sg.gain.value = 0.5; gg.connect(sg); sg.connect(revIn); o.start(t); o.stop(t + d + 0.05); });
+  pad(T_STAMP, DUR - T_STAMP, [164.8, 207.7, 246.9, 329.6], 0.02);
+  const buf = await ac.startRendering();
+  let peak = 0; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) peak = Math.max(peak, Math.abs(d[i])); }
+  const gn = 0.89 / (peak || 1), Lc = buf.getChannelData(0), Rc = buf.getChannelData(1), len = Lc.length, ab = new ArrayBuffer(44 + len * 4), v = new DataView(ab);
+  const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + len * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true); v.setUint32(24, SR, true); v.setUint32(28, SR * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); ws(36, 'data'); v.setUint32(40, len * 4, true);
+  for (let i = 0; i < len; i++) { v.setInt16(44 + i * 4, clamp(Lc[i] * gn, -1, 1) * 32767, true); v.setInt16(46 + i * 4, clamp(Rc[i] * gn, -1, 1) * 32767, true); }
+  let bin = ''; const u8 = new Uint8Array(ab); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+</script>
+</body>
+</html>
