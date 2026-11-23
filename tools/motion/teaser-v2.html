@@ -1,0 +1,224 @@
+<!doctype html>
+<!-- SayTamm teaser v2 — "SAY → TAMM". Deterministic: window.render(t). Query: ?w=&h=&lang=en|ar
+     Ideas: talk as a waveform → the noise pulls taut into the 45° blade → SAY slashed into TAMM → disciplines as
+     diagonal ticker lanes merging into one → outline numbers filled by the blade → extruded 3D logo build → end card.
+     Logo paths injected from the approved production vector; only transformed, never redrawn or mirrored. -->
+<html><head><meta charset="utf-8"><style>
+@font-face{font-family:Satoshi;src:url(__SAT__/Satoshi-500.woff2);font-weight:500}
+@font-face{font-family:Satoshi;src:url(__SAT__/Satoshi-700.woff2);font-weight:700}
+@font-face{font-family:Plex;src:url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2);font-weight:500}
+@font-face{font-family:Plex;src:url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2);font-weight:700}
+*{margin:0;padding:0;box-sizing:border-box}html,body{overflow:hidden;background:#09090D}
+#stage{position:relative;overflow:hidden;background:#09090D;color:#F5F3FA;font-family:Satoshi,Plex,sans-serif}
+.ar #stage{font-family:Plex,Satoshi,sans-serif}
+.a{position:absolute}
+.c{position:absolute;left:0;right:0;text-align:center;font-weight:700;line-height:1;white-space:nowrap}
+.chip{position:absolute;font-weight:500;white-space:nowrap;color:#09090D;background:#F5F3FA;border-radius:999px;padding:.35em .9em}
+.lane{position:absolute;left:50%;top:50%;white-space:nowrap;font-weight:700;display:flex;align-items:center;width:max-content;direction:ltr}
+.lane span{display:inline-block}
+.stripes{background-image:repeating-linear-gradient(135deg,#6C35FF 0 var(--sw),#17171E var(--sw) calc(var(--sw)*2.2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.outline{color:transparent;-webkit-text-stroke:var(--st) #F5F3FA}
+#logo3d{position:absolute;left:50%;top:50%;transform-style:preserve-3d}
+#logo3d svg{position:absolute;left:0;top:0;overflow:visible}
+</style></head><body><div id="stage"><canvas id="cv"></canvas></div>
+<script>
+const Q = new URLSearchParams(location.search);
+const W = +Q.get('w') || 1920, H = +Q.get('h') || 1080, AR = (Q.get('lang') || 'en') === 'ar', V = H > W;
+const U = Math.min(W, H) / 1080, M = Math.max(W, H);
+document.documentElement.className = AR ? 'ar' : '';
+const S = document.getElementById('stage'); S.style.width = W + 'px'; S.style.height = H + 'px'; if (AR) S.dir = 'rtl';
+const cv = document.getElementById('cv'); cv.width = W; cv.height = H; cv.style.position = 'absolute'; const g = cv.getContext('2d');
+const LOGO = __LOGO__;
+const T = AR ? {
+  talk: 'الجميع يتكلم.', chips: ['محتوى أكثر', 'إعلانات أكثر', 'تقارير أكثر', 'اجتماعات أكثر', 'متابعون أكثر', 'لوحات بيانات', 'حملات أكثر', 'ترند جديد'],
+  less: 'نحن نقول أقل.', done: 'وننجز.', say: 'قول', tamm: 'تم',
+  lanes: ['الاستراتيجية', 'الإبداع', 'الإعلانات', 'الأداء'], one: 'فريق واحد · رقم واحد ·',
+  nums: ['المبيعات؟', 'العملاء المؤهلون؟', 'الإيرادات؟'], pick: ['اختر الرقم.', 'ونبني كل شيء حوله.'],
+  tag: 'قول. تم.', tag2: 'Say it. Tamm it.', end: ['كلام أقل.', 'تنفيذ أذكى.'], soon: 'قريباً', kind: 'وكالة تسويق رقمي وأداء',
+} : {
+  talk: 'Everyone is talking.', chips: ['More posts', 'More ads', 'More reports', 'More meetings', 'More followers', 'More dashboards', 'More campaigns', 'New trend'],
+  less: 'We say less.', done: 'And get it done.', say: 'SAY', tamm: 'TAMM',
+  lanes: ['STRATEGY', 'CREATIVE', 'MEDIA', 'PERFORMANCE'], one: 'ONE TEAM · ONE NUMBER ·',
+  nums: ['Sales?', 'Qualified leads?', 'Revenue?'], pick: ['Pick the number.', 'We build everything around it.'],
+  tag: 'Say it. Tamm it.', tag2: 'قول. تم.', end: ['Less talk.', 'More Tamm.'], soon: 'Coming soon', kind: 'Digital marketing & performance agency',
+};
+const cl = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x)), seg = (t, a, b) => cl((t - a) / (b - a));
+const eIO = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2, eO = (x) => 1 - Math.pow(1 - x, 3), eX = (x) => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x);
+const eB = (x) => { const c = 1.6; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const px = (n) => n + 'px';
+const el = (tag, cls, css = {}, html = '') => { const e = document.createElement(tag); if (cls) e.className = cls; Object.assign(e.style, css); e.innerHTML = html; S.appendChild(e); return e; };
+const show = (e, o) => { e.style.opacity = o; e.style.visibility = o <= 0.002 ? 'hidden' : 'visible'; };
+const FS = (n) => px(n * U);
+
+// ---------- S1/S2 text + chips ----------
+const TALK = el('div', 'c', { fontSize: FS(V ? 64 : 72), top: px(H * (V ? 0.2 : 0.16)), letterSpacing: AR ? 0 : '-.03em' }, T.talk);
+const CHIPS = T.chips.map((c) => el('div', 'chip', { fontSize: FS(V ? 30 : 26) }, c));
+const LESS = el('div', 'c', { fontSize: FS(V ? 104 : 128), top: px(H * (V ? 0.2 : 0.12)), letterSpacing: AR ? 0 : '-.045em' }, T.less);
+const DONE = el('div', 'c', { fontSize: FS(V ? 104 : 128), top: px(H * (V ? 0.72 : 0.76)), color: '#6C35FF', letterSpacing: AR ? 0 : '-.045em' }, T.done);
+// ---------- S3 SAY → TAMM ----------
+const bigSize = (V ? W * 0.42 : H * 0.62) * (AR ? 1.05 : 1);
+const SAYB = el('div', 'c stripes', { fontSize: px(bigSize), top: px(H / 2 - bigSize * (AR ? 0.62 : 0.5)), letterSpacing: AR ? 0 : '-.06em', lineHeight: AR ? 1.25 : 1 }, T.say);
+SAYB.style.setProperty('--sw', px(18 * U));
+const SAY = el('div', 'c stripes', { fontSize: px(bigSize), top: px(H / 2 - bigSize * (AR ? 0.62 : 0.5)), letterSpacing: AR ? 0 : '-.06em', lineHeight: AR ? 1.25 : 1 }, T.say);
+SAY.style.setProperty('--sw', px(18 * U));
+const TAMM = el('div', 'c', { fontSize: px(bigSize * (AR ? 1.1 : (V ? 0.74 : 0.86))), top: px(H / 2 - bigSize * (AR ? 0.66 : (V ? 0.37 : 0.43))), letterSpacing: AR ? 0 : '-.06em', lineHeight: AR ? 1.25 : 1 }, T.tamm);
+const CUT = el('div', 'a', { left: px(-M), top: px(H / 2), width: px(3 * M), height: px(26 * U), background: '#6C35FF', transformOrigin: '50% 50%' });
+// ---------- S4 lanes ----------
+const LANES = T.lanes.map((w, i) => {
+  const rep = Array.from({ length: 34 }, () => `<span>${w}</span><span style="display:inline-block;width:${0.9 * 46 * U}px;height:${0.25 * 46 * U}px;margin:0 ${0.6 * 46 * U}px;background:${i % 2 ? '#6C35FF' : '#96939F'};transform:skewX(-45deg)"></span>`).join('');
+  return el('div', 'lane', { fontSize: FS(V ? 58 : 66), height: px((V ? 120 : 140) * U), padding: `0 ${20 * U}px`, background: i % 2 ? '#17171E' : '#121218', letterSpacing: AR ? 0 : '.02em' }, rep);
+});
+const ONEL = el('div', 'lane', { fontSize: FS(V ? 70 : 84), height: px((V ? 150 : 180) * U), padding: `0 ${20 * U}px`, background: '#6C35FF', letterSpacing: AR ? 0 : '.02em' }, Array.from({ length: 22 }, () => `<span style="margin-${AR ? 'left' : 'right'}:${40 * U}px">${T.one}</span>`).join(''));
+// ---------- S5 numbers ----------
+const NUMS = T.nums.map((n) => { const e = el('div', 'c outline', { fontSize: FS(V ? (AR ? 120 : 112) : 190), top: px(H / 2 - (V ? 80 : 110) * U), letterSpacing: AR ? 0 : '-.05em', lineHeight: AR ? 1.3 : 1 }, n); e.style.setProperty('--st', px(2.5 * U)); return e; });
+const NUMF = T.nums.map((n) => el('div', 'c', { fontSize: FS(V ? (AR ? 120 : 112) : 190), top: px(H / 2 - (V ? 80 : 110) * U), letterSpacing: AR ? 0 : '-.05em', lineHeight: AR ? 1.3 : 1, color: '#F5F3FA' }, n));
+const NCUT = el('div', 'a', { left: px(-M), top: px(H / 2), width: px(3 * M), height: px(14 * U), background: '#6C35FF' });
+const PICK = el('div', 'c', { fontSize: FS(V ? 76 : 96), top: px(H / 2 - (V ? 110 : 100) * U), letterSpacing: AR ? 0 : '-.04em', lineHeight: 1.15, whiteSpace: V ? 'normal' : 'nowrap', padding: `0 ${60 * U}px` }, `${T.pick[0]}<br><span style="color:#6C35FF">${T.pick[1]}</span>`);
+// ---------- S6 3D logo ----------
+const LS = (V ? 380 : 440) * U, LW = LS * 600 / 721, DEPTH = 34, STEP = 2.2 * U;
+const L3 = el('div', '', { position: 'absolute', left: '0', top: '0', width: px(W), height: px(H), perspective: px(1800 * U), perspectiveOrigin: '50% 45%' });
+const LG = document.createElement('div'); LG.id = 'logo3d'; Object.assign(LG.style, { width: px(LW), height: px(LS), marginLeft: px(-LW / 2), marginTop: px(-LS / 2 - (V ? 160 : 80) * U) }); L3.appendChild(LG);
+const mk = (d, fill, z) => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', LOGO.vb); s.setAttribute('width', LW); s.setAttribute('height', LS); s.innerHTML = `<path fill="${fill}" fill-rule="evenodd" d="${d}"/>`; s.style.transform = `translateZ(${z}px)`; return s; };
+const TG = document.createElement('div'), BG = document.createElement('div');
+[TG, BG].forEach((x) => { x.style.position = 'absolute'; x.style.inset = '0'; x.style.transformStyle = 'preserve-3d'; LG.appendChild(x); });
+for (let i = DEPTH; i >= 0; i--) {
+  const k = i / DEPTH; // 0 = front
+  const tc = i === 0 ? '#FFFFFF' : `rgb(${Math.round(70 - 50 * k)},${Math.round(68 - 50 * k)},${Math.round(80 - 54 * k)})`;
+  const bc = i === 0 ? '#6C35FF' : `rgb(${Math.round(70 - 46 * k)},${Math.round(30 - 18 * k)},${Math.round(170 - 110 * k)})`;
+  TG.appendChild(mk(LOGO.t, tc, -i * STEP)); BG.appendChild(mk(LOGO.b, bc, -i * STEP));
+}
+const FLOOR = el('div', 'a', { left: '50%', top: px(H / 2 + LS / 2 - (V ? 140 : 60) * U), width: px(LW * 1.6), height: px(40 * U), marginLeft: px(-LW * 0.8), borderRadius: '50%', background: 'radial-gradient(closest-side,rgba(0,0,0,.65),transparent)' });
+S.appendChild(L3);
+const FL = el('div', 'a', { inset: 0, background: '#6C35FF' });
+const TAG = el('div', 'c', { fontSize: FS(V ? 92 : 104), top: px(H / 2 + LS / 2 - (V ? 90 : 10) * U), letterSpacing: AR ? 0 : '-.04em', lineHeight: 1.2 }, T.tag.replace(/(Tamm it\.|تم\.)$/, '<span style="color:#6C35FF">$1</span>'));
+const TAG2 = el('div', 'c', { fontSize: FS(36), fontWeight: 500, color: '#96939F', top: px(H / 2 + LS / 2 + (V ? 50 : 140) * U), fontFamily: AR ? 'Satoshi' : 'Plex' }, `<bdi>${T.tag2}</bdi>`);
+// ---------- S7 end ----------
+const END = T.end.map((l, i) => el('div', 'c', { fontSize: FS(V ? 128 : 170), top: px(H / 2 - (V ? 200 : 190) * U + i * (V ? 160 : 190) * U), letterSpacing: AR ? 0 : '-.05em', lineHeight: AR ? 1.3 : 1, color: i ? '#6C35FF' : '#F5F3FA' }, l));
+const KIND = el('div', 'c', { fontSize: FS(30), fontWeight: 500, color: '#96939F', letterSpacing: AR ? 0 : '.16em', top: px(H / 2 - (V ? 330 : 300) * U), textTransform: 'uppercase' }, T.kind);
+const SOON = el('div', 'c', { fontSize: FS(34), fontWeight: 700, letterSpacing: AR ? 0 : '.2em', top: px(H - (V ? 300 : 170) * U), textTransform: 'uppercase' }, `<span style="display:inline-block;width:${50 * U}px;height:${9 * U}px;background:#6C35FF;transform:skewX(-45deg);margin:0 ${24 * U}px;vertical-align:middle"></span>${T.soon}<span style="display:inline-block;width:${50 * U}px;height:${9 * U}px;background:#6C35FF;transform:skewX(-45deg);margin:0 ${24 * U}px;vertical-align:middle"></span>`);
+const MINI = el('div', 'a', { left: px(W / 2 - 24 * U), top: px((V ? 220 : 80) * U), width: px(48 * U), height: px(58 * U) }, `<svg viewBox="${LOGO.vb}" width="100%" height="100%"><path fill="#fff" d="${LOGO.t}"/><path fill="#6C35FF" d="${LOGO.b}"/></svg>`);
+const FADE = el('div', 'a', { inset: 0, background: '#09090D' });
+
+// ---------- canvas: talk waveform → taut blade ----------
+const NL = 5;
+function wave(t) {
+  g.clearRect(0, 0, W, H);
+  if (t > 6.2) return;
+  const amp = (V ? 140 : 170) * U * (0.25 + 0.75 * seg(t, 0.2, 3.4));
+  const pull = eIO(seg(t, 3.75, 4.75));         // lines pull taut
+  const rot = eIO(seg(t, 4.55, 5.25)) * -Math.PI / 4; // rotate to 45° (rising right)
+  const thick = 2 * U + eX(seg(t, 5.05, 5.4)) * 24 * U;
+  const freeze = t > 3.45 ? 3.45 : t; // the noise freezes, then is pulled
+  const cx = W / 2, cy = H / 2 + (V ? 0 : 20 * U);
+  const half = M * (0.75 - 0.61 * eIO(seg(t, 5.0, 5.55)));
+  const toPurple = seg(t, 4.9, 5.3);
+  const lines = 1 + Math.round((NL - 1) * seg(t, 1.0, 2.6));
+  const lineFade = 1 - seg(t, 5.9, 6.2);
+  for (let L = 0; L < lines; L++) {
+    g.save(); g.translate(cx, cy); g.rotate(rot);
+    g.beginPath();
+    for (let x = -half; x <= half; x += 6) {
+      const u = x / half;
+      const env = Math.pow(1 - Math.abs(u), 0.6);
+      let y = 0;
+      for (let k = 1; k <= 4; k++) y += Math.sin(u * (6 + k * 7 + L * 3) + freeze * (3 + k * 2.3) + L * 1.7) / k;
+      y += Math.sin(u * 61 + freeze * 17 + L) * 0.25;
+      y *= amp * env * (1 - pull) * (L === 0 ? 1 : 0.55);
+      if (x === -half) g.moveTo(x, y); else g.lineTo(x, y);
+    }
+    const a = (L === 0 ? 1 : 0.35) * lineFade * (L === 0 ? 1 : 1 - pull);
+    g.strokeStyle = L === 0 ? `rgba(${Math.round(245 - 137 * toPurple)},${Math.round(243 - 190 * toPurple)},${Math.round(250 + 5 * toPurple)},${a})` : `rgba(150,147,159,${a})`;
+    g.lineWidth = L === 0 ? thick : 1.5 * U; g.lineCap = 'butt'; g.stroke(); g.restore();
+  }
+}
+
+window.DURATION = 30;
+window.render = (t) => {
+  wave(t);
+  // S1 0–3.45: talk + chips riding the wave
+  show(TALK, eO(seg(t, 0.3, 0.8)) * (1 - seg(t, 3.3, 3.45)));
+  CHIPS.forEach((c, i) => {
+    const t0 = 0.9 + i * 0.27, life = 1.1;
+    const p = seg(t, t0, t0 + 0.18), q = seg(t, t0 + life, t0 + life + 0.2);
+    const on = t < 3.45 ? eB(p) * (1 - q) : 0;
+    const xx = W * (0.14 + ((i * 0.37) % 0.72)), yy = H / 2 + Math.sin(i * 2.1 + t * 3) * (V ? 220 : 150) * U;
+    c.style.left = px(xx); c.style.top = px(yy); c.style.transform = `translate(-50%,-50%) scale(${0.6 + 0.4 * on}) rotate(${(i % 2 ? -1 : 1) * 4}deg)`; show(c, on);
+  });
+  // S2 3.45–6.3
+  show(LESS, t > 3.9 && t < 6.35 ? eO(seg(t, 3.95, 4.3)) * (1 - seg(t, 6.05, 6.3)) : 0);
+  show(DONE, t > 5.3 && t < 6.35 ? eX(seg(t, 5.35, 5.6)) * (1 - seg(t, 6.05, 6.3)) : 0);
+  DONE.style.transform = `translateY(${(1 - eX(seg(t, 5.35, 5.7))) * 40 * U}px)`;
+  // S3 6.3–10.4: SAY (striped) → blade slash → TAMM
+  const s3 = t > 6.3 && t < 10.5;
+  const sayIn = eX(seg(t, 6.35, 6.9));
+  SAY.style.backgroundPosition = `${t * 120 * U}px 0`;
+  SAY.style.transform = `scale(${1.25 - 0.25 * sayIn})`;
+  const cutP = eX(seg(t, 8.05, 8.35));
+  // diagonal slash: SAY keeps only the part above-left of the cut line, TAMM is revealed below-right
+  const off = (1 - cutP) * M * 1.5;
+  CUT.style.transform = `rotate(-45deg) translateY(${0}px) translateX(${-off}px)`;
+  show(CUT, s3 && t > 8.0 && t < 9.0 ? 1 - seg(t, 8.6, 9.0) : 0);
+  // split along the 45° line through the screen centre; halves slide apart perpendicular to the cut
+  const sp = eIO(seg(t, 8.25, 9.0)) * M * 0.45;
+  [SAY, SAYB].forEach((e, k) => {
+    const r = e.getBoundingClientRect(); const cx = W / 2 - r.left, cy = H / 2 - r.top, B = 4 * M;
+    e.style.clipPath = k === 0 ? `polygon(${cx - B}px ${cy - B}px, ${cx + B}px ${cy - B}px, ${cx - B}px ${cy + B}px)` : `polygon(${cx + B}px ${cy - B}px, ${cx + B}px ${cy + B}px, ${cx - B}px ${cy + B}px)`;
+    const d = k === 0 ? -sp : sp;
+    e.style.translate = `${d * 0.7071}px ${d * 0.7071}px`;
+    show(e, s3 && t < 9.1 ? sayIn * (1 - seg(t, 8.8, 9.1)) : 0);
+  });
+  SAYB.style.backgroundPosition = SAY.style.backgroundPosition; SAYB.style.transform = SAY.style.transform;
+  const tIn = eX(seg(t, 8.3, 8.95));
+  TAMM.style.clipPath = 'none';
+  TAMM.style.transform = `scale(${0.82 + 0.18 * tIn})`; TAMM.style.opacity = tIn;
+  show(TAMM, s3 && t > 8.25 ? tIn * (1 - seg(t, 10.15, 10.45)) : 0);
+  // S4 10.5–15.6: diagonal lanes → merge into one
+  const s4 = t > 10.45 && t < 15.7;
+  const merge = eIO(seg(t, 13.3, 14.1));
+  const laneGap = (V ? 230 : 210) * U;
+  LANES.forEach((l, i) => {
+    const appear = eX(seg(t, 10.5 + i * 0.22, 10.95 + i * 0.22));
+    const off = (i - 1.5) * laneGap * (1 - merge);
+    const dir = i % 2 ? 1 : -1, speed = 260 * U;
+    const shift = dir * (t - 12.2) * speed;
+    l.style.transform = `translate(-50%,-50%) rotate(-45deg) translateY(${off}px) translateX(${shift + (1 - appear) * dir * -1400 * U}px)`;
+    show(l, s4 ? appear * (1 - seg(t, 13.9, 14.15)) : 0);
+  });
+  const oneIn = eX(seg(t, 13.95, 14.4));
+  ONEL.style.transform = `translate(-50%,-50%) rotate(-45deg) scaleY(${oneIn}) translateX(${-(t - 14.8) * 300 * U}px)`;
+  show(ONEL, s4 && t > 13.9 ? 1 - seg(t, 15.35, 15.65) : 0);
+  // S5 15.6–20.6: outline numbers slashed solid
+  NUMS.forEach((n, i) => {
+    const t0 = 15.75 + i * 1.05, t1 = t0 + 1.05;
+    const on = t >= t0 && t < t1 && t < 19.0;
+    show(n, on ? eO(seg(t, t0, t0 + 0.2)) : 0); n.style.transform = `scale(${1.08 - 0.08 * eX(seg(t, t0, t0 + 0.4))})`;
+    const fp = eX(seg(t, t0 + 0.45, t0 + 0.7));
+    NUMF[i].style.clipPath = `polygon(0 0, ${fp * 200}% 0, ${fp * 200 - 100}% 100%, 0 100%)`;
+    show(NUMF[i], on && t > t0 + 0.44 ? 1 : 0); NUMF[i].style.transform = n.style.transform;
+  });
+  const nc = [16.2, 17.25, 18.3].findIndex((x) => t > x && t < x + 0.35);
+  if (nc >= 0) { const p = seg(t, [16.2, 17.25, 18.3][nc], [16.2, 17.25, 18.3][nc] + 0.3); NCUT.style.transform = `rotate(-45deg) translateX(${(eX(p) - 0.5) * 2 * M}px)`; show(NCUT, 1 - p); } else show(NCUT, 0);
+  show(PICK, t > 19.05 && t < 20.7 ? eO(seg(t, 19.1, 19.45)) * (1 - seg(t, 20.4, 20.65)) : 0);
+  PICK.style.transform = `translateY(${(1 - eX(seg(t, 19.1, 19.6))) * 36 * U}px)`;
+  // S6 20.7–26.2: 3D logo
+  const s6 = t > 20.65 && t < 26.3;
+  const swing = eIO(seg(t, 20.8, 23.0));
+  const ry = -68 * (1 - swing), rx = 16 * (1 - swing);
+  const tIn3 = eX(seg(t, 20.75, 21.4));
+  TG.style.transform = `translateY(${(1 - tIn3) * -LS * 0.6}px)`; TG.style.opacity = tIn3;
+  const bIn = eX(seg(t, 23.15, 23.45));
+  BG.style.transform = `translate(${(1 - bIn) * -LW * 1.4}px, ${(1 - bIn) * LW * 1.4}px)`; BG.style.opacity = seg(t, 23.1, 23.2);
+  const settle = seg(t, 23.45, 23.85), shake = Math.sin(settle * Math.PI * 3) * (1 - settle) * 10 * U;
+  LG.style.transform = `translateY(${shake}px) rotateX(${rx}deg) rotateY(${ry}deg) scale(${1 + 0.04 * Math.sin(settle * Math.PI)})`;
+  show(L3, s6 ? 1 - seg(t, 25.9, 26.25) : 0); show(FLOOR, s6 ? 0.8 * (1 - seg(t, 25.9, 26.25)) : 0);
+  show(FL, t > 23.45 && t < 23.75 ? 0.5 * (1 - seg(t, 23.45, 23.75)) : 0);
+  show(TAG, s6 ? eO(seg(t, 24.0, 24.45)) * (1 - seg(t, 25.9, 26.2)) : 0); TAG.style.transform = `translateY(${(1 - eX(seg(t, 24.0, 24.5))) * 30 * U}px)`;
+  show(TAG2, s6 ? eO(seg(t, 24.5, 24.9)) * (1 - seg(t, 25.9, 26.2)) : 0);
+  // S7 26.2–30
+  END.forEach((e, i) => { const t0 = 26.35 + i * 0.4; const p = eX(seg(t, t0, t0 + 0.45)); e.style.clipPath = `polygon(0 0, ${p * 200}% 0, ${p * 200 - 100}% 100%, 0 100%)`; show(e, t > t0 ? 1 : 0); });
+  show(KIND, t > 27.3 ? eO(seg(t, 27.3, 27.8)) : 0); show(MINI, t > 26.3 ? eO(seg(t, 26.3, 26.8)) : 0);
+  show(SOON, t > 27.9 ? eO(seg(t, 27.9, 28.4)) : 0); SOON.style.transform = `translateY(${(1 - eX(seg(t, 27.9, 28.5))) * 20 * U}px)`;
+  show(FADE, seg(t, 29.35, 30));
+};
+window.render(0);
+</script></body></html>
