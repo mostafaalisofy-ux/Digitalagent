@@ -42,14 +42,16 @@ m = Image.new('L', (w, h), 0); mp = m.load()
 for y in range(h):
     for x in range(w):
         r, g, b = px[x, y]
-        if g > r + 35 and g > b + 35:
+        spill = g > r + 35 and g > b + 35
+        if not spill and sys.argv[7] == 'riyadh' and y > y1 + 6 and g > r + 10 and g > b + 6: spill = True  # dull reflection of the screen on the wet road
+        if spill:
             if x0 - 6 <= x <= x1 + 6 and y0 - 6 <= y <= y1 + 6: mp[x, y] = 255
             else:  # green spill elsewhere (reflections) becomes a soft violet light
                 L = g; px[x, y] = (min(255, int(r * 0.5 + L * 0.42)), min(255, int(b * 0.3 + L * 0.28)), min(255, int(b * 0.5 + L * 0.85)))
 m = m.filter(ImageFilter.MaxFilter(7))
 dark = Image.new('RGB', (w, h), (11, 11, 14))
 Image.composite(dark, im, m).save(sys.argv[2])
-`, src, keyed, String(det.x0), String(det.y0), String(det.x1), String(det.y1)]);
+`, src, keyed, String(det.x0), String(det.y0), String(det.x1), String(det.y1), name]);
     execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', keyed, '-vf', `scale=${det.w * 2}:${det.h * 2}:flags=lanczos,unsharp=5:5:0.6`, up]);
   }
   const S = 2, inset = 2; // shrink the portal a hair so no green fringe survives

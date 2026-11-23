@@ -235,15 +235,16 @@ const CAPS = [
   [homeT(3) - 0.05, homeT(3) + 2.1, 'ar', 'اعتبره حصل!', 1400, 120],
   [homeT(4) - 0.05, homeT(4) + 2.1, 'ar', 'قول تم!', 1400, 140],
   [homeT(5) - 0.05, homeT(5) + 2.1, 'en', 'Consider it done!', 330, 96],
-  [homeT(7) - 0.05, homeT(7) + 1.2, 'ar', 'تم!', 360, 150],
-  [homeT(9) - 0.05, homeT(9) + 1.2, 'ar', 'تم!', 360, 150],
+  [homeT(7) - 0.05, homeT(7) + 1.2, 'ar', 'تم!', 1640, 120, 1],
+  [homeT(9) - 0.05, homeT(9) + 1.2, 'ar', 'تم!', 1640, 120, 1],
 ];
 function captions(t) {
-  for (const [a, b, lang, s, y, size] of CAPS) {
+  for (const [a, b, lang, s, y, size, pill] of CAPS) {
     if (t < a || t > b) continue;
     const k = spring(t, a, 0.45), out = 1 - ss(seg(t, b - 0.3, b));
     ctx.save(); ctx.globalAlpha = clamp(k * 1.4) * out; ctx.translate(540, y); ctx.scale(lerp(1.25, 1, Math.min(1, k)), lerp(1.25, 1, Math.min(1, k)));
-    ctx.shadowColor = 'rgba(0,0,0,0.7)'; ctx.shadowBlur = 50; txt(ctx, s, 0, 0, `700 ${size}px ${lang === 'ar' ? 'Plex' : 'Sat'}`, WH, 'center', lang === 'ar' ? 'rtl' : 'ltr');
+    if (pill) { ctx.font = `700 ${size}px Plex`; const pw = ctx.measureText(s).width + 120; ctx.fillStyle = PU; rr(ctx, -pw / 2, -size * 0.95, pw, size * 1.45, size * 0.72); ctx.fill(); }
+    ctx.shadowColor = pill ? 'rgba(0,0,0,0)' : 'rgba(0,0,0,0.7)'; ctx.shadowBlur = 50; txt(ctx, s, 0, 0, `700 ${size}px ${lang === 'ar' ? 'Plex' : 'Sat'}`, WH, 'center', lang === 'ar' ? 'rtl' : 'ltr');
     ctx.restore();
   }
 }

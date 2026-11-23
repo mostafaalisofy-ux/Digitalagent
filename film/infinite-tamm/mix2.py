@@ -36,9 +36,9 @@ graph = ';'.join(chains + [''.join(f'[v{i}]' for i in range(n)) + f'amix=inputs=
     '[duck][vin]amix=inputs=2:normalize=0:duration=first,alimiter=limit=0.84:level=false,atrim=0:45[out]'])
 pre = os.path.join(D, 'InfiniteTamm_v2_premaster.wav'); master = os.path.join(D, 'InfiniteTamm_v2_master.wav')
 subprocess.run(['ffmpeg', '-y', '-v', 'error', *inputs, '-filter_complex', graph, '-map', '[out]', pre], check=True)
-m = subprocess.run(['ffmpeg', '-hide_banner', '-i', pre, '-af', 'loudnorm=I=-14:TP=-1:LRA=9:print_format=json', '-f', 'null', '-'], capture_output=True, text=True).stderr
+m = subprocess.run(['ffmpeg', '-hide_banner', '-i', pre, '-af', 'loudnorm=I=-14:TP=-1.6:LRA=9:print_format=json', '-f', 'null', '-'], capture_output=True, text=True).stderr
 js = json.loads(re.findall(r'\{[^{}]*\}', m)[-1])
-subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', pre, '-af', f"loudnorm=I=-14:TP=-1:LRA=9:measured_I={js['input_i']}:measured_TP={js['input_tp']}:measured_LRA={js['input_lra']}:measured_thresh={js['input_thresh']}:offset={js['target_offset']}:linear=true,aresample=48000", '-ar', '48000', master], check=True)
+subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', pre, '-af', f"loudnorm=I=-14:TP=-1.6:LRA=9:measured_I={js['input_i']}:measured_TP={js['input_tp']}:measured_LRA={js['input_lra']}:measured_thresh={js['input_thresh']}:offset={js['target_offset']}:linear=true,aresample=48000", '-ar', '48000', master], check=True)
 out = os.path.join(D, 'SayTamm_InfiniteTamm_v2_45s_9x16_LOOP.mp4')
 subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', FILM, '-i', master, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '320k', '-shortest', '-movflags', '+faststart', out], check=True)
 print('wrote', out)
