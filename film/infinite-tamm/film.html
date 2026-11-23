@@ -106,7 +106,7 @@ function drawWorld(i, view, depth, p) {
   // the inner world's view: its frame mapped onto R (screen space)
   const k = fr.w / Rs.w, innerView = { x: fr.x - Rs.x * k, y: fr.y - Rs.y * k, w: W * k, h: H * k };
   ctx.save(); ctx.beginPath();
-  const rad = i === 0 ? Math.min(clipR.w, clipR.h) * 0.22 : i === 1 ? Math.min(clipR.w, clipR.h) * 0.12 * reveal : 0;
+  const rad = (i === 0 ? 0.22 : i === 1 ? 0.12 : 0) * Math.min(clipR.w, clipR.h) * reveal;
   ctx.roundRect(clipR.x, clipR.y, clipR.w, clipR.h, rad); ctx.clip();
   drawWorld(inner, innerView, depth + 1, 1);
   // a world seen through the ت dot is tinted purple when small: from afar it simply reads as the dot
@@ -117,10 +117,11 @@ function drawWorld(i, view, depth, p) {
 }
 
 // ---------------- timeline ----------------
-// z: 0 = card home, 1 = café, 2 = façade, 3 = Riyadh, 4 = London, 5 = card again (loop)
-const KEYS = [[0, 0], [7.0, 1], [14.0, 2], [21.5, 3], [29.5, 4], [40.2, 5]];
+// z: 0 = card home, 1 = café, 2 = Cairo façade, 3 = Riyadh, 4 = card again (loop)
+const KEYS = [[0, 0], [8.0, 1], [16.0, 2], [25.0, 3], [40.2, 4]];
+const ZEND = KEYS[KEYS.length - 1][1];
 function zAt(t) {
-  if (t >= KEYS[KEYS.length - 1][0]) return 5;
+  if (t >= KEYS[KEYS.length - 1][0]) return ZEND;
   for (let i = 0; i < KEYS.length - 1; i++) {
     const [t0, z0] = KEYS[i], [t1] = KEYS[i + 1];
     if (t < t1) {
@@ -128,31 +129,30 @@ function zAt(t) {
       // keeps moving through each world (never a dead stop), eases in at the start and out at the end of the loop
       const first = i === 0, last = i === KEYS.length - 2;
       let e = 0.4 * q + 0.6 * sio(q);
-      if (first) e = q < 0.5 ? 0.5 * Math.pow(2 * q, 2) * (1 - 0.4) + 0.4 * q * q * 2 * 0.5 : e;
       if (first) e = 0.4 * (q * q) + 0.6 * sio(q);
       if (last) e = 0.4 * (1 - (1 - q) * (1 - q)) + 0.6 * sio(q);
       return z0 + e;
     }
   }
-  return 5;
+  return ZEND;
 }
 let T_NOW = 0;
 const dressAt = (t) => 1 - ss(seg(t, 0.4, 1.4)) + ss(seg(t, 41.0, 42.2));
 // captions: the phrase of each city, set in type (the voice says the same words)
 const CAPS = [
-  [5.4, 9.0, 'ar', 'اعتبره حصل.', 'القاهرة · Cairo'],
-  [19.8, 23.4, 'ar', 'قول تم.', 'الرياض · Riyadh'],
-  [27.6, 31.4, 'en', 'Consider it done.', 'London'],
+  [6.6, 10.2, 'ar', 'اعتبره حصل.', 'القاهرة · Cairo'],
+  [23.2, 27.0, 'ar', 'قول تم.', 'الرياض · Riyadh'],
+  [31.6, 35.4, 'en', 'Consider it done.', 'Everywhere · في كل مكان', 470],
 ];
 function captions(t) {
-  for (const [a, b, lang, txt, place] of CAPS) {
+  for (const [a, b, lang, txt, place, y = 1392] of CAPS) {
     if (t < a || t > b) continue;
     const k = eo(seg(t, a, a + 0.6)) * (1 - ss(seg(t, b - 0.5, b)));
     ctx.save(); ctx.globalAlpha = k; ctx.textAlign = 'center';
     ctx.shadowColor = 'rgba(0,0,0,0.65)'; ctx.shadowBlur = 40;
     ctx.font = lang === 'ar' ? '700 118px Plex' : '700 100px Sat'; ctx.direction = lang === 'ar' ? 'rtl' : 'ltr'; ctx.fillStyle = WH;
-    ctx.fillText(txt, 540, 1392 + 24 * (1 - k));
-    ctx.font = '500 34px Sat'; ctx.direction = 'ltr'; ctx.fillStyle = 'rgba(245,243,250,0.82)'; ctx.fillText(place, 540, 1452 + 24 * (1 - k));
+    ctx.fillText(txt, 540, y + 24 * (1 - k));
+    ctx.font = '500 34px Sat'; ctx.direction = 'ltr'; ctx.fillStyle = 'rgba(245,243,250,0.82)'; ctx.fillText(place, 540, y + 60 + 24 * (1 - k));
     ctx.restore();
   }
 }
@@ -166,7 +166,7 @@ function finish(t) {
 
 window.seek = (t) => {
   T_NOW = ((t % DUR) + DUR) % DUR;
-  const z = zAt(T_NOW), k = Math.min(4, Math.floor(z)), p = z - k, outer = (k + 1) % N();
+  const z = zAt(T_NOW), k = Math.min(ZEND - 1, Math.floor(z)), p = z - k, outer = (k + 1) % N();
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H);
   drawWorld(outer, viewRect(outer, p), 0, p);
   captions(T_NOW);
@@ -217,9 +217,9 @@ window.renderAudio = async () => {
   room('bandpass', 700, 0.6, 0.05, 1);   // café room tone
   room('lowpass', 420, 0.7, 0.07, 2);    // Cairo street at dusk, distant traffic
   room('lowpass', 260, 0.8, 0.08, 3);    // Riyadh at night, low city hum
-  room('highpass', 2600, 0.4, 0.05, 4);  // London rain
+  room('highpass', 5200, 0.3, 0.012, 3.6); // air as the world shrinks into the dot
   // café cups, a few soft clinks while we are in the café
-  [5.2, 6.6, 8.1].forEach((t, i) => { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = 2600 + i * 310; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.02, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35); o.connect(g); g.connect(bus); g.connect(rev); o.start(t); o.stop(t + 0.4); });
+  [6.4, 7.9, 9.3].forEach((t, i) => { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = 2600 + i * 310; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.02, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35); o.connect(g); g.connect(bus); g.connect(rev); o.start(t); o.stop(t + 0.4); });
   // the publish tap as the camera leaves the card, and a soft swell as the dot closes over London
   { const t = 0.9, o = ac.createOscillator(), g = ac.createGain(); o.frequency.setValueAtTime(900, t); o.frequency.exponentialRampToValueAtTime(1500, t + 0.05); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.08, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12); o.connect(g); g.connect(bus); g.connect(rev); o.start(t); o.stop(t + 0.15); }
   [[110, 0.03], [164.8, 0.022], [220, 0.018]].forEach(([f, a]) => { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; g.gain.setValueAtTime(0, 36); g.gain.linearRampToValueAtTime(a, 40.2); g.gain.linearRampToValueAtTime(0, 44.8); o.connect(g); g.connect(bus); g.connect(rev); o.start(36); o.stop(45); });

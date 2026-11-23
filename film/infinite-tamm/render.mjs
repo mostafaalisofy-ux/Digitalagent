@@ -23,8 +23,11 @@ const worlds = ORDER.map((name) => {
 import json, sys
 from PIL import Image
 im = Image.open(sys.argv[1]).convert('RGB'); w, h = im.size; px = im.load()
-pts = [(x, y) for y in range(h) for x in range(w) if px[x, y][1] > 190 and px[x, y][0] < 110 and px[x, y][2] < 110]
-xs = [p[0] for p in pts]; ys = [p[1] for p in pts]
+g = lambda x, y: px[x, y][1] > 190 and px[x, y][0] < 110 and px[x, y][2] < 110
+rows = [sum(1 for x in range(w) if g(x, y)) for y in range(h)]
+top = max(rows); ys = [y for y in range(h) if rows[y] > 0.5 * top]
+cols = [sum(1 for y in ys if g(x, y)) for x in range(w)]
+ctop = max(cols); xs = [x for x in range(w) if cols[x] > 0.5 * ctop]
 print(json.dumps({'w': w, 'h': h, 'x0': min(xs), 'y0': min(ys), 'x1': max(xs), 'y1': max(ys)}))
 `, src]).toString());
   if (!fs.existsSync(up) || fs.statSync(up).mtimeMs < fs.statSync(src).mtimeMs) {
@@ -34,20 +37,26 @@ print(json.dumps({'w': w, 'h': h, 'x0': min(xs), 'y0': min(ys), 'x1': max(xs), '
 import sys
 from PIL import Image, ImageFilter
 im = Image.open(sys.argv[1]).convert('RGB'); w, h = im.size; px = im.load()
+x0, y0, x1, y1 = [int(v) for v in sys.argv[3:7]]
 m = Image.new('L', (w, h), 0); mp = m.load()
 for y in range(h):
     for x in range(w):
         r, g, b = px[x, y]
-        if g > r + 35 and g > b + 35: mp[x, y] = 255
+        if g > r + 35 and g > b + 35:
+            if x0 - 6 <= x <= x1 + 6 and y0 - 6 <= y <= y1 + 6: mp[x, y] = 255
+            else:  # green spill elsewhere (reflections) becomes a soft violet light
+                L = g; px[x, y] = (min(255, int(r * 0.5 + L * 0.42)), min(255, int(b * 0.3 + L * 0.28)), min(255, int(b * 0.5 + L * 0.85)))
 m = m.filter(ImageFilter.MaxFilter(7))
 dark = Image.new('RGB', (w, h), (11, 11, 14))
 Image.composite(dark, im, m).save(sys.argv[2])
-`, src, keyed]);
+`, src, keyed, String(det.x0), String(det.y0), String(det.x1), String(det.y1)]);
     execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', keyed, '-vf', `scale=${det.w * 2}:${det.h * 2}:flags=lanczos,unsharp=5:5:0.6`, up]);
   }
   const S = 2, inset = 2; // shrink the portal a hair so no green fringe survives
   const portal = { x: (det.x0 + inset) * S, y: (det.y0 + inset) * S, w: (det.x1 - det.x0 + 1 - 2 * inset) * S, h: (det.y1 - det.y0 + 1 - 2 * inset) * S };
-  const fh = det.h * S, fw = fh * 9 / 16, cx = Math.min(det.w * S - fw / 2, Math.max(fw / 2, portal.x + portal.w / 2));
+  // frame offset per world (fraction of the frame width) to keep the landmark in shot: Riyadh shifts right to hold Kingdom Centre
+  const OFF = { riyadh: 0.27 };
+  const fh = det.h * S, fw = fh * 9 / 16, cx = Math.min(det.w * S - fw / 2, Math.max(fw / 2, portal.x + portal.w / 2 + (OFF[name] || 0) * fw));
   return { name, src: pathToFileURL(up).href, portal, frame: { x: cx - fw / 2, y: 0, w: fw, h: fh } };
 });
 
