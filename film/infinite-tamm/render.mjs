@@ -60,12 +60,13 @@ Image.composite(dark, im, m).save(sys.argv[2])
   return { name, src: pathToFileURL(up).href, portal, frame: { x: cx - fw / 2, y: 0, w: fw, h: fh } };
 });
 
-const html = fs.readFileSync(path.join(ROOT, 'film/infinite-tamm/film.html'), 'utf8')
+const SRC = arg('--html') || 'film.html', V2 = SRC !== 'film.html';
+const html = fs.readFileSync(path.join(ROOT, 'film/infinite-tamm', SRC), 'utf8')
   .replaceAll('__SAT__', pathToFileURL(path.join(ROOT, 'site/public/fonts/satoshi')).href)
   .replaceAll('__PLEX__', pathToFileURL(path.join(ROOT, 'site/node_modules/@fontsource/ibm-plex-sans-arabic/files')).href)
   .replaceAll('__SYMBOL__', pathToFileURL(path.join(ROOT, 'brand/production/logo/SayTamm_Symbol_Signature_White-Purple.svg')).href)
   .replace('__WORLDS__', JSON.stringify(worlds));
-const TAG = arg('--part') !== null ? `_${arg('--part')}` : arg('--from') ? `_s${arg('--from')}` : '';
+const TAG = (V2 ? '_v2' : '') + (arg('--part') !== null ? `_${arg('--part')}` : arg('--from') ? `_s${arg('--from')}` : '');
 const TMP = path.join(OUT, `_film${TAG}.html`); fs.writeFileSync(TMP, html);
 
 const require = createRequire(import.meta.url);
@@ -81,13 +82,13 @@ const at = async (t, o = {}) => { await page.evaluate((x) => window.seek(x), t);
 const done = async () => { if (errs.length) throw new Error(errs.join('\n')); await browser.close(); try { fs.rmSync(TMP); } catch {} };
 
 if (arg('--frames')) {
-  const d = path.join(OUT, '_frames'); fs.mkdirSync(d, { recursive: true });
+  const d = path.join(OUT, V2 ? '_frames2' : '_frames'); fs.mkdirSync(d, { recursive: true });
   for (const t of String(arg('--frames')).split(',').map(Number)) await at(t, { path: path.join(d, `t${t.toFixed(2).padStart(5, '0')}.jpg`), quality: 85 });
   await done(); console.log('frames in', d); process.exit(0);
 }
 if (arg('--audio-only')) {
   const b64 = await page.evaluate(() => window.renderAudio());
-  fs.writeFileSync(path.join(OUT, 'InfiniteTamm_Score.wav'), Buffer.from(b64, 'base64'));
+  fs.writeFileSync(path.join(OUT, V2 ? 'InfiniteTamm_v2_Score.wav' : 'InfiniteTamm_Score.wav'), Buffer.from(b64, 'base64'));
   await done(); console.log('wrote score'); process.exit(0);
 }
 const PART = arg('--part'), PARTS = Number(arg('--parts') || 1), FT = FPS * DUR;
