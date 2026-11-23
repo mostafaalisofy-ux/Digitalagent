@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>SayTamm: The Dictionary (45 s, 9:16)</title>
+<style>
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-600-normal.woff2); font-weight: 600; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  :root { --ob: #09090D; --gr: #17171E; --wh: #F5F3FA; --mu: #96939F; --pu: #6C35FF; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ob); color: var(--wh); }
+  .a { position: absolute; }
+  .L { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; }
+  .ar { font-family: Plex, Sat, sans-serif; direction: rtl; }
+  .en { font-family: Sat, Plex, sans-serif; direction: ltr; }
+  .ib { display: inline-block; }
+  #cam { position: absolute; inset: 0; transform-origin: 540px 960px; }
+  .bub { position: absolute; padding: 22px 34px 26px; border-radius: 40px; font: 500 44px/1.25 Plex, Sat, sans-serif; white-space: nowrap; background: var(--gr); border: 1.5px solid rgba(245,243,250,.1); }
+  .bub.en { font-family: Sat, Plex, sans-serif; }
+  .bub.me { background: var(--wh); color: var(--ob); border-color: var(--wh); }
+  .rule { position: absolute; left: 72px; width: 936px; height: 1.5px; background: rgba(245,243,250,.28); }
+  .meta { position: absolute; top: 238px; font: 700 30px/1 Sat, sans-serif; letter-spacing: .02em; }
+  .tag { position: absolute; top: 236px; right: 72px; font: 500 30px/1 Plex, Sat, sans-serif; color: var(--mu); }
+  .foot { position: absolute; top: 1506px; font: 500 22px/1 Sat, Plex, sans-serif; color: rgba(150,147,159,.8); letter-spacing: .04em; }
+  .ph { position: absolute; left: 0; right: 0; text-align: center; font: 500 40px/1 Sat, sans-serif; color: var(--mu); letter-spacing: .02em; }
+  .d1 { position: absolute; left: 60px; right: 60px; text-align: center; font: 500 54px/1.35 Plex, Sat, sans-serif; }
+  .d2 { position: absolute; left: 60px; right: 60px; text-align: center; font: 500 36px/1.35 Sat, Plex, sans-serif; color: var(--mu); }
+  .ul { position: absolute; height: 12px; background: var(--pu); transform-origin: 100% 50%; }
+  .phone { position: absolute; width: 330px; height: 560px; border-radius: 52px; border: 2px solid rgba(245,243,250,.3); background: #0D0D12; overflow: hidden; }
+  .post { position: absolute; left: 22px; top: 70px; width: 282px; height: 330px; border-radius: 22px; background: var(--gr); overflow: hidden; }
+  .badge { position: absolute; padding: 14px 26px 16px; border-radius: 40px; background: var(--wh); color: var(--ob); font: 600 36px/1 Plex, Sat, sans-serif; white-space: nowrap; display: flex; align-items: center; gap: 14px; }
+  .chk { width: 34px; height: 34px; border-radius: 50%; background: var(--pu); position: relative; }
+  .chk::after { content: ''; position: absolute; left: 10px; top: 6px; width: 9px; height: 16px; border: solid var(--wh); border-width: 0 4px 4px 0; transform: rotate(45deg); }
+  .chip { position: absolute; padding: 16px 24px 18px; border-radius: 18px; background: var(--gr); border: 1.5px solid rgba(245,243,250,.14); font: 600 36px/1 Plex, Sat, sans-serif; white-space: nowrap; }
+  .row { position: absolute; left: 230px; height: 64px; display: flex; align-items: center; gap: 28px; font: 500 44px/1 Sat, sans-serif; }
+  .box { width: 48px; height: 48px; border-radius: 10px; border: 2.5px solid rgba(245,243,250,.45); position: relative; overflow: hidden; }
+  .box i { position: absolute; inset: 0; background: var(--pu); }
+  .box i::after { content: ''; position: absolute; left: 15px; top: 7px; width: 11px; height: 22px; border: solid var(--wh); border-width: 0 5px 5px 0; transform: rotate(45deg); }
+  .bign { position: absolute; left: -30px; top: 1010px; font: 700 860px/0.8 Sat, sans-serif; letter-spacing: -.06em; color: transparent; -webkit-text-stroke: 2.5px rgba(245,243,250,.085); white-space: nowrap; }
+  #blade { position: absolute; width: 3400px; height: 96px; background: var(--pu); left: 0; top: 0; }
+  #grain { position: absolute; left: -200px; top: -200px; width: 1480px; height: 2320px; mix-blend-mode: overlay; opacity: .14; pointer-events: none; }
+  #vig { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 62% at 50% 48%, rgba(0,0,0,0) 55%, rgba(0,0,0,.5) 100%); pointer-events: none; }
+
+  /* ===== v2: premium layer ===== */
+  html, body { background: #07060B; }
+  #amb { position: absolute; inset: 0; overflow: hidden; }
+  #amb > div { position: absolute; border-radius: 50%; }
+  #amb1 { width: 1700px; height: 1700px; background: radial-gradient(closest-side, rgba(108,53,255,.26), rgba(108,53,255,0)); }
+  #amb2 { width: 1500px; height: 1500px; background: radial-gradient(closest-side, rgba(70,36,190,.22), rgba(70,36,190,0)); }
+  #amb3 { width: 1400px; height: 900px; background: radial-gradient(closest-side, rgba(245,243,250,.07), rgba(245,243,250,0)); }
+  .hw { background-image: linear-gradient(100deg, #E6DFFF 0%, #FFFFFF 38%, #FFFFFF 44%, #B9A3FF 50%, #FFFFFF 56%, #FFFFFF 62%, #E6DFFF 100%); background-size: 260% 100%; background-position: 100% 0; -webkit-background-clip: text; background-clip: text; color: transparent !important; filter: drop-shadow(0 26px 44px rgba(0,0,0,.55)); }
+  .hwp { background-image: linear-gradient(135deg, #8A5CFF, #6C35FF 55%, #5626E0); -webkit-background-clip: text; background-clip: text; color: transparent !important; }
+  .bub { background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.045)); border: 1px solid rgba(255,255,255,.16); box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 22px 50px rgba(0,0,0,.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+  .bub.me { background: linear-gradient(180deg, #FFFFFF, #E8E3F6); border-color: rgba(255,255,255,.9); box-shadow: 0 22px 50px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.4); }
+  .ul { background: linear-gradient(90deg, #5A27F0, #6C35FF 40%, #A68BFF); border-radius: 6px; box-shadow: 0 10px 30px rgba(108,53,255,.35); }
+  .phone { border: 0; background: linear-gradient(165deg, #2B2934 0%, #101015 38%, #0B0B0F 70%, #1C1B23 100%); box-shadow: inset 0 0 0 2px rgba(255,255,255,.14), inset 0 0 0 9px #050507, 0 50px 90px rgba(0,0,0,.65); }
+  .phone::before { content: ''; position: absolute; left: 50%; top: 20px; width: 96px; height: 26px; margin-left: -48px; border-radius: 14px; background: #000; z-index: 3; }
+  .phone::after { content: ''; position: absolute; inset: 0; border-radius: 52px; background: linear-gradient(118deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 34%); pointer-events: none; z-index: 4; }
+  .post { background: radial-gradient(120% 90% at 20% 10%, #2A2540, #15141C 70%); box-shadow: inset 0 0 0 1px rgba(255,255,255,.07); }
+  .badge { background: linear-gradient(180deg, #FFFFFF, #ECE7F8); box-shadow: 0 18px 40px rgba(0,0,0,.45); }
+  .chk { background: linear-gradient(135deg, #8A5CFF, #5A27F0); }
+  .chip { background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04)); border: 1px solid rgba(255,255,255,.16); box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 18px 40px rgba(0,0,0,.45); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .box { border-color: rgba(245,243,250,.35); background: rgba(255,255,255,.04); }
+  .box i { background: linear-gradient(135deg, #8A5CFF, #5A27F0); }
+  #blade { background: linear-gradient(180deg, #8A5CFF, #6C35FF 45%, #4F1FD8); box-shadow: 0 0 0 1px rgba(255,255,255,.15); }
+  .bign { -webkit-text-stroke: 2.5px rgba(200,185,255,.10); }
+  .sky { position: absolute; left: 0; width: 1080px; height: 660px; overflow: visible; }
+  .sky path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .sky .l { stroke: rgba(236,230,255,.62); stroke-width: 2.2; }
+  .sky .h { stroke: rgba(236,230,255,.30); stroke-width: 1.4; }
+  .sky .a { stroke: #8A5CFF; stroke-width: 2.6; }
+  .ic { position: absolute; width: 112px; height: 112px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.05)); border: 1px solid rgba(255,255,255,.18); box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 20px 44px rgba(0,0,0,.5); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .ic svg { width: 50px; height: 50px; fill: #F5F3FA; }
+  .fi { position: absolute; fill: #F5F3FA; }
+  .foot { display: none; }
+  .rule + .rule { display: none; }
+</style>
+</head>
+<body>
+<div id="amb"><div id="amb1"></div><div id="amb2"></div><div id="amb3"></div></div>
+<div id="cam">
+
+  <!-- ============ HOOK · the pile of requests ============ -->
+  <div class="L" id="hook"></div>
+
+  <!-- ============ 01 · قول تم (Saudi) ============ -->
+  <div class="L" id="p1">
+    <div class="bign" id="p1big">01</div>
+    <svg class="sky" id="sky1" viewBox="0 0 1080 660" style="top:1240px"></svg>
+    <div class="rule" id="p1rt" style="top:300px"></div><div class="rule" id="p1rb" style="top:1490px"></div>
+    <div class="meta en" id="p1n" style="left:72px">01</div>
+    <div class="tag" id="p1t"><bdi dir="rtl">بالسعودي</bdi> <span class="en" style="color:rgba(150,147,159,.7)">· Saudi Arabic</span></div>
+    <div class="foot en" style="left:72px">THE SAYTAMM DICTIONARY</div><div class="foot ar" style="right:72px">قاموس قول تم</div>
+    <div class="a" id="p1h" style="left:0;top:0;width:1080px;height:1920px;transform-origin:540px 560px">
+      <div class="a ar" style="left:0;right:0;top:420px;text-align:center;font:700 250px/1.2 Plex"><span class="ib hw" id="p1w1">قول</span> <span class="ib hw" id="p1w2">تم.</span></div>
+      <div class="ul" id="p1ul"></div>
+    </div>
+    <div class="ph" id="p1ph" style="top:830px">/ gūl tamm /</div>
+    <div class="d1 ar" id="p1d1" style="top:930px"></div>
+    <div class="d2" id="p1d2" style="top:1030px">Said when you want something to happen.</div>
+    <div class="bub ar" id="p1q" style="left:72px;top:560px">نبي الحملة تنزل الخميس.</div>
+    <div class="bub" id="p1dots" style="right:72px;top:720px;width:150px;height:84px"></div>
+    <div class="bub me ar" id="p1r" style="right:72px;top:720px;font-weight:700;font-size:52px">قول تم.</div>
+    <div class="chip ar" id="p1cal" style="left:96px;top:1010px">الخميس</div>
+    <div class="phone" id="p1ph1" style="left:540px;top:900px">
+      <div class="post"><div class="a" style="left:-60px;top:40px;width:260px;height:260px;border-radius:50%;background:rgba(245,243,250,.12)"></div><div class="a" style="left:150px;top:-40px;width:46px;height:420px;background:var(--pu);transform:rotate(45deg)"></div><div class="a" style="left:22px;top:250px;width:170px;height:14px;border-radius:7px;background:rgba(245,243,250,.7)"></div><div class="a" style="left:22px;top:276px;width:110px;height:14px;border-radius:7px;background:rgba(245,243,250,.35)"></div></div>
+      <div class="a" style="left:22px;top:430px;width:282px;height:10px;border-radius:5px;background:rgba(245,243,250,.12)"></div>
+      <div class="a" id="p1bar" style="left:22px;top:430px;width:0;height:10px;border-radius:5px;background:var(--wh)"></div>
+    </div>
+    <div id="p1chips"></div>
+    <div class="badge ar" id="p1ok" style="left:430px;top:1340px"><span>نزلت</span><span class="chk"></span></div>
+  </div>
+
+  <!-- ============ 02 · اعتبره حصل (Egyptian) ============ -->
+  <div class="L" id="p2">
+    <div class="bign" id="p2big">02</div>
+    <svg class="sky" id="sky2" viewBox="0 0 1080 660" style="top:1240px"></svg>
+    <div class="rule" style="top:300px"></div><div class="rule" style="top:1490px"></div>
+    <div class="meta en" style="left:72px">02</div>
+    <div class="tag"><bdi dir="rtl">بالمصري</bdi> <span class="en" style="color:rgba(150,147,159,.7)">· Egyptian Arabic</span></div>
+    <div class="foot en" style="left:72px">THE SAYTAMM DICTIONARY</div><div class="foot ar" style="right:72px">قاموس قول تم</div>
+    <div class="a" id="p2h" style="left:0;top:0;width:1080px;height:1920px;transform-origin:540px 560px">
+      <div class="a ar" style="left:0;right:0;top:330px;text-align:center;font:700 220px/1.2 Plex"><span class="ib hw" id="p2w1">اعتبره</span></div>
+      <div class="a ar" style="left:0;right:0;top:560px;text-align:center;font:700 220px/1.2 Plex"><span class="ib hw" id="p2w2">حصل.</span></div>
+      <div class="ul" id="p2ul"></div>
+    </div>
+    <div class="ph" id="p2ph" style="top:900px">/ eʿtebro ḥaṣal /</div>
+    <div class="d1 ar" id="p2d1" style="top:990px"></div>
+    <div class="d2" id="p2d2" style="top:1090px">Meaning: relax. It already happened.</div>
+    <div class="bub ar" id="p2q" style="left:72px;top:560px">عايزين البوست ينزل النهارده.</div>
+    <div class="bub me ar" id="p2r" style="right:72px;top:720px;font-weight:700;font-size:52px"><span id="p2rt"></span><span class="ib" id="p2rh" style="margin-right:16px">حصل.</span></div>
+    <div class="chip" id="p2clk" style="left:110px;top:1010px;width:132px;height:132px;border-radius:50%;padding:0">
+      <div class="a" style="left:63px;top:22px;width:5px;height:44px;border-radius:3px;background:var(--wh);transform-origin:2.5px 44px" id="p2hand"></div>
+      <div class="a" style="left:58px;top:58px;width:15px;height:15px;border-radius:50%;background:var(--wh)"></div>
+    </div>
+    <div class="phone" id="p2ph1" style="left:540px;top:900px">
+      <div class="post" id="p2post"><div class="a" style="left:40px;top:60px;width:200px;height:200px;border-radius:30px;border:3px solid rgba(245,243,250,.5);transform:rotate(12deg)"></div><div class="a" style="left:110px;top:120px;width:90px;height:90px;border-radius:50%;background:rgba(245,243,250,.85)"></div><div class="a" style="left:22px;top:276px;width:150px;height:14px;border-radius:7px;background:rgba(245,243,250,.35)"></div></div>
+      <div class="a ar" id="p2stamp" style="left:52px;top:150px;padding:10px 26px 16px;border:5px solid var(--pu);border-radius:18px;color:var(--pu);font:700 74px/1 Plex;transform-origin:50% 50%">حصل</div>
+    </div>
+    <div id="p2chips"></div>
+    <div class="badge ar" id="p2ok" style="left:430px;top:1340px"><span>اتنشر</span><span class="chk"></span></div>
+  </div>
+
+  <!-- ============ 03 · Consider it done (English) ============ -->
+  <div class="L" id="p3">
+    <div class="bign" id="p3big">03</div>
+    <svg class="sky" id="sky3" viewBox="0 0 1080 660" style="top:1240px"></svg>
+    <div class="a" id="p3grid" style="left:72px;top:300px;width:936px;height:1190px"></div>
+    <div class="rule" style="top:300px"></div><div class="rule" style="top:1490px"></div>
+    <div class="meta en" style="left:72px">03</div>
+    <div class="tag en" style="color:var(--mu)">English</div>
+    <div class="foot en" style="left:72px">THE SAYTAMM DICTIONARY</div><div class="foot ar" style="right:72px">قاموس قول تم</div>
+    <div class="a" id="p3h" style="left:0;top:0;width:1080px;height:1920px;transform-origin:540px 560px">
+      <div class="a en" id="p3l1" style="left:96px;top:380px;font:700 196px/1 Sat;letter-spacing:-.035em;white-space:nowrap"></div>
+      <div class="a en" id="p3l2" style="left:96px;top:580px;font:700 196px/1 Sat;letter-spacing:-.035em;white-space:nowrap"></div>
+      <div class="a" id="p3dot" style="width:40px;height:40px;background:var(--pu)"></div>
+    </div>
+    <div class="ph" id="p3ph" style="top:860px">/ kənˈsɪdər ɪt dʌn /</div>
+    <div class="d1 en" id="p3d1" style="top:950px;font-family:Sat;font-weight:700;font-size:58px">Treat it as finished.</div>
+    <div class="d2 ar" id="p3d2" style="top:1050px;font-family:Plex">يعني: اعتبرها خلصت.</div>
+    <div class="bub en" id="p3q" style="left:72px;top:560px">Can we have it by Friday?</div>
+    <div class="bub me en" id="p3r" style="right:72px;top:720px;font-weight:700;font-size:48px">Consider it done.</div>
+    <div id="p3rows"></div>
+  </div>
+
+  <!-- ============ convergence ============ -->
+  <div class="L" id="cv">
+    <svg class="sky" id="skyP" viewBox="0 0 3240 660" style="top:1560px;height:220px"></svg>
+    <div class="a en" id="cvcap1" style="left:0;right:0;top:300px;text-align:center;font:500 40px/1 Sat;color:var(--mu)">Three ways to say it.</div>
+    <div class="a ar" id="cvcap2" style="left:0;right:0;top:300px;text-align:center;font:500 44px/1 Plex;color:var(--mu)">والمعنى واحد.</div>
+    <div class="a ar" id="cvl1" style="left:0;right:0;top:440px;text-align:center;font:700 150px/1.2 Plex"><span class="ib hw" id="cva1">قول</span> <span class="ib hw" id="cvb1">تم</span></div>
+    <div class="a ar" id="cvl2" style="left:0;right:0;top:700px;text-align:center;font:700 150px/1.2 Plex"><span class="ib hw" id="cva2">اعتبره</span> <span class="ib hw" id="cvb2">حصل</span></div>
+    <div class="a en" id="cvl3" style="left:0;right:0;top:1000px;text-align:center;font:700 132px/1.1 Sat;letter-spacing:-.03em"><span class="ib hw" id="cva3">Consider it</span> <span class="ib hw" id="cvb3">done</span></div>
+    <div class="a" id="cvs1" style="height:10px;background:var(--pu);transform-origin:100% 50%"></div>
+    <div class="a" id="cvs2" style="height:10px;background:var(--pu);transform-origin:100% 50%"></div>
+    <div class="a" id="cvs3" style="height:10px;background:var(--pu);transform-origin:0 50%"></div>
+  </div>
+
+  <!-- ============ «تم» and the symbol ============ -->
+  <div class="L" id="tm">
+    <div id="tam" class="a" style="left:0;top:0;width:1080px;height:1920px">
+      <div class="a ar" id="tamP" class="hwp" style="left:0;right:0;top:440px;text-align:center;font-weight:600;font-size:640px;line-height:1.4;color:var(--pu)">تم</div>
+      <div class="a ar hw" id="tamW" style="left:0;right:0;top:440px;text-align:center;font-weight:600;font-size:640px;line-height:1.4;color:var(--wh)">ٮم</div>
+    </div>
+  </div>
+  <div class="L" id="end">
+    <svg class="sky" id="skyE" viewBox="0 0 3240 660" style="top:1620px;height:220px;opacity:.38"></svg>
+    <svg class="a" id="symT" style="left:372px;top:520px" width="336" height="404" viewBox="__VB__"><path fill="#FFFFFF" fill-rule="evenodd" d="__T__"/></svg>
+    <svg class="a" id="symB" style="left:372px;top:520px" width="336" height="404" viewBox="__VB__"><path fill="#6C35FF" fill-rule="evenodd" d="__B__"/></svg>
+    <div class="a en" id="e1" style="left:0;right:0;top:1030px;text-align:center;font:700 104px/1 Sat;letter-spacing:-.02em"><span class="ib hw" id="e1a">Say</span><span class="ib hw" id="e1b">Tamm</span></div>
+    <div class="a en" id="e3" style="left:0;right:0;top:1182px;text-align:center;font:500 46px/1 Sat">Say it. Tamm it.</div>
+    <div class="a ar" id="e4" style="left:0;right:0;top:1252px;text-align:center;font:500 50px/1.3 Plex;color:var(--mu)">قول. تم.</div>
+  </div>
+  <div class="a" id="dA" style="border-radius:22%;background:var(--pu)"></div>
+  <div class="a" id="dB" style="border-radius:22%;background:var(--pu)"></div>
+
+  <!-- signature transition: the 45° blade -->
+  <div id="blade"></div>
+</div>
+<canvas id="grain" width="370" height="580"></canvas>
+<div id="vig"></div>
+
+<script>
+__LANDMARKS__
+const ICONS = __ICONS__;
+const $ = (id) => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, q) => a + (b - a) * q;
+const eo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x));
+const eio = (x) => (x < 0.5 ? 16 * x ** 5 : 1 - Math.pow(-2 * x + 2, 5) / 2);
+const ss = (x) => x * x * (3 - 2 * x);
+const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+// motion personalities
+function spr(t, t0, z, w) { const x = t - t0; if (x <= 0) return 0; if (z >= 1) return 1 - (1 + w * x) * Math.exp(-w * x); const wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + z / Math.sqrt(1 - z * z) * Math.sin(wd * x)); }
+const heavy = (t, t0) => spr(t, t0, 1, 26);     // Saudi: lands with weight, no bounce
+const bouncy = (t, t0) => spr(t, t0, 0.32, 17); // Egyptian: springy, playful
+const precise = (t, t0, d = 0.16) => eo(seg(t, t0, t0 + d)); // English: snaps on the grid
+const soft = (t, t0) => spr(t, t0, 0.8, 11);
+const show = (e, on) => { e.style.display = on ? '' : 'none'; };
+const tf = (e, s) => { e.style.transform = s; };
+const op = (e, o) => { e.style.opacity = o; };
+const typeIn = (t, t0, txt, cps) => txt.slice(0, Math.max(0, Math.min(txt.length, Math.floor((t - t0) * cps)))); // reveals char by char
+
+// ------------------------------------------------------------------ build DOM content
+const PILE = [
+  ['ar', 'نبي هوية جديدة.'], ['en', 'Launch by Monday?'], ['ar', 'عايزين حملة رمضان.'], ['ar', 'الإعلان لازم ينزل بكرة.'],
+  ['en', 'New website in two weeks?'], ['ar', 'نبي محتوى للعيد.'], ['ar', 'محتاجين نوصل لجمهور جديد.'], ['en', 'Can we fix the funnel?'],
+  ['ar', 'نبي الموقع يطلع أول في قوقل.'], ['en', 'Rebrand before Q3?'], ['ar', 'عايزين نزود المبيعات.'], ['ar', 'نبي فيديو للإطلاق.'],
+  ['en', 'Media plan by Friday?'], ['ar', 'عايزين نفتح سوق جديد.'], ['ar', 'متى نقدر نبدأ؟'], ['en', 'ASAP?'],
+];
+const PILE_T = [0.1, 0.45, 0.8, 1.1, 1.35, 1.6, 1.8, 1.98, 2.14, 2.28, 2.4, 2.52, 2.62, 2.72, 2.8, 2.88];
+const PILE_XY = [[80, 300], [560, 380], [140, 520], [470, 640], [60, 760], [520, 880], [110, 1000], [600, 1110], [70, 1230], [560, 1340], [150, 1440], [430, 300], [620, 560], [40, 640], [700, 820], [380, 1020]];
+$('hook').innerHTML = PILE.map(([l, txt], i) => `<div class="bub ${l === 'en' ? 'en' : 'ar'}" id="pb${i}" style="left:${PILE_XY[i][0]}px;top:${PILE_XY[i][1]}px">${txt}</div>`).join('') +
+  `<div class="a" id="hcaret" style="left:536px;top:1360px;width:6px;height:90px;background:var(--wh)"></div>`;
+const ROWS = ['Brief', 'Strategy', 'Creative', 'Media', 'Build', 'Launch'];
+$('p3rows').innerHTML = ROWS.map((r, i) => `<div class="row en" id="rw${i}" style="top:${880 + i * 96}px"><div class="box"><i id="rk${i}"></i></div><span>${r}</span></div>`).join('');
+$('p3grid').innerHTML = Array.from({ length: 13 }, (_, i) => `<div class="a" style="left:${i * 78}px;top:0;width:1px;height:1190px;background:rgba(245,243,250,.05)"></div>`).join('');
+$('p1dots').innerHTML = [0, 1, 2].map((i) => `<div class="a" id="td${i}" style="left:${36 + i * 30}px;top:34px;width:16px;height:16px;border-radius:50%;background:var(--mu)"></div>`).join('');
+// English headword, letter by letter on the grid
+$('p3l1').innerHTML = 'Consider'.split('').map((ch, i) => `<span class="ib hw" id="c1_${i}">${ch}</span>`).join('');
+$('p3l2').innerHTML = ['it', ' ', 'done'].map((w, i) => `<span class="ib hw" id="c2_${i}">${w}</span>`).join('');
+
+// grain (static noise; position changes per frame)
+{ const g = $('grain').getContext('2d'), img = g.createImageData(370, 580); let s = 7; const r = () => { s = (s * 16807) % 2147483647; return s / 2147483647; }; for (let i = 0; i < img.data.length; i += 4) { const v = 128 + (r() - 0.5) * 200; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255; } g.putImageData(img, 0, 0); $('grain').style.imageRendering = 'pixelated'; }
+
+// ------------------------------------------------------------------ v2: skylines, platform icons, ambient light
+const svgIcon = (n, cls = '', style = '') => `<svg class="${cls}" style="${style}" viewBox="0 0 24 24"><path d="${ICONS[n]}"/></svg>`;
+function buildSky(id, sets) {
+  const svg = $(id); let html = '';
+  sets.forEach((set, gi) => { html += `<g transform="translate(${gi * 1080},0)">` + set.map(([d, k]) => `<path class="${k}" d="${d}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1"/>`).join('') + '</g>'; });
+  svg.innerHTML = html; svg._p = [...svg.querySelectorAll('path')];
+}
+buildSky('sky1', [LANDMARKS.SA]); buildSky('sky2', [LANDMARKS.EG]); buildSky('sky3', [LANDMARKS.EN]);
+buildSky('skyP', [LANDMARKS.SA, LANDMARKS.EG, LANDMARKS.EN]); buildSky('skyE', [LANDMARKS.SA, LANDMARKS.EG, LANDMARKS.EN]);
+// draw the line art on, path by path, then let it breathe with a slow parallax
+function drawSky(id, t, t0, dur, op = 1, drift = 10) {
+  const svg = $(id), P = svg._p, N = P.length;
+  for (let i = 0; i < N; i++) { const s0 = t0 + (i / N) * dur, k = eo(seg(t, s0, s0 + 0.8)); P[i].style.strokeDashoffset = 1 - k; }
+  svg.style.opacity = op; svg.style.translate = `${-(t - t0) * drift}px 0`;
+}
+// platform icons floating in depth behind the pile of requests
+const FI = [['instagram', 110, 360, 130, 0.9], ['tiktok', 820, 300, 112, 0.7], ['snapchat', 880, 880, 140, 1], ['x', 80, 1140, 92, 0.6], ['youtube', 700, 1420, 124, 0.85],
+  ['facebook', 300, 1600, 100, 0.7], ['whatsapp', 900, 1640, 112, 0.8], ['google', 470, 190, 84, 0.5], ['meta', 170, 860, 104, 0.65], ['threads', 620, 1030, 92, 0.55]];
+$('hook').insertAdjacentHTML('afterbegin', FI.map(([n, x, y, sz], i) => svgIcon(n, 'fi', `left:${x}px;top:${y}px;width:${sz}px;height:${sz}px`).replace('<svg ', `<svg id="fi${i}" `)).join(''));
+// launch bursts: the post goes out across the platforms
+const CH1 = [['snapchat', 860, 930], ['tiktok', 950, 1110], ['instagram', 870, 1290], ['x', 200, 1230], ['youtube', 250, 1395]];
+const CH2 = [['facebook', 870, 930], ['instagram', 950, 1110], ['tiktok', 870, 1290], ['whatsapp', 300, 890], ['youtube', 190, 1300]];
+$('p1chips').innerHTML = CH1.map(([n], i) => `<div class="ic" id="ca${i}">${svgIcon(n)}</div>`).join('');
+$('p2chips').innerHTML = CH2.map(([n], i) => `<div class="ic" id="cb${i}">${svgIcon(n)}</div>`).join('');
+function chips(list, pre, t, t0, fn, from = [540, 1180]) {
+  list.forEach(([, x, y], i) => {
+    const e = $(pre + i), ti = t0 + i * 0.07, k = fn(t, ti), on = t >= ti; show(e, on); if (!on) return;
+    const fl = 6 * Math.sin((t - ti) * 2.2 + i);
+    tf(e, `translate(${lerp(from[0], x, k) - 56}px, ${lerp(from[1], y, k) - 56 + fl}px) scale(${lerp(0.25, 1, Math.min(1.15, k))})`); op(e, clamp(k * 2));
+  });
+}
+function sheen(id, t, t0) { const e = $(id); if (e) e.style.backgroundPosition = `${lerp(100, 0, eo(seg(t, t0 + 0.05, t0 + 1.2)))}% 0`; }
+function ambient(t) {
+  tf($('amb1'), `translate(${-550 + 320 * Math.sin(t * 0.13)}px, ${-450 + 420 * Math.sin(t * 0.09 + 1)}px)`);
+  tf($('amb2'), `translate(${300 + 220 * Math.cos(t * 0.11)}px, ${900 + 260 * Math.sin(t * 0.15)}px)`);
+  tf($('amb3'), `translate(-160px, ${-420 + 40 * Math.sin(t * 0.3)}px)`);
+}
+
+// ------------------------------------------------------------------ geometry measured once fonts are ready
+let G = {};
+const DOTL = { x: 683, y: 702, w: 80, h: 78 }, DOTR = { x: 778, y: 702, w: 81, h: 78 }; // ت dots at 640 px (measured from the font render)
+function measure() {
+  const r = (id) => $(id).getBoundingClientRect();
+  const w2 = r('p1w2'); G.ul1 = { x: w2.left, y: w2.bottom - 30, w: w2.width };
+  const h2 = r('p2w2'); G.ul2 = { x: h2.left, y: h2.bottom - 24, w: h2.width };
+  const l2 = r('c2_2'); G.dot3 = { x: l2.right + 10, y: l2.bottom - 60 };
+  ['cva1', 'cva2', 'cva3', 'cvb1', 'cvb2', 'cvb3'].forEach((id) => { G[id] = r(id); });
+  const sc = 404 / __VH__, bb = (id) => $(id).querySelector('path').getBBox();
+  const T = bb('symT'), B = bb('symB');
+  G.T = { x: 372 + T.x * sc, y: 520 + T.y * sc, w: T.width * sc, h: T.height * sc }; G.B = { x: 372 + B.x * sc, y: 520 + B.y * sc, w: B.width * sc, h: B.height * sc };
+}
+
+// ------------------------------------------------------------------ the blade transition (45°, top-left → bottom-right sweep)
+// reveals `next` in the region x + y < c behind the blade; returns the progress
+function blade(t, t0, next, prev) {
+  const q = eio(seg(t, t0, t0 + 0.42)), c = lerp(-200, 3200, q), b = $('blade');
+  const on = t >= t0 && t < t0 + 0.42;
+  show(b, on);
+  if (on) { b.style.transform = `translate(${c / 2 - 1700}px, ${c / 2 - 48}px) rotate(-45deg)`; b.style.transformOrigin = '1700px 48px'; }
+  if (next) next.style.clipPath = t < t0 ? 'polygon(0 0,0 0,0 0)' : q >= 1 ? 'none' : `polygon(-3000px -3000px, ${c + 3000}px -3000px, -3000px ${c + 3000}px)`;
+  if (next && t >= t0) { const k = eo(seg(t, t0, t0 + 0.9)); next.style.transform = `scale(${lerp(1.08, 1, k)})`; next.style.transformOrigin = '540px 900px'; }
+  if (prev && t >= t0 && t < t0 + 0.42) { prev.style.transform = `scale(${lerp(1, 0.94, q)})`; prev.style.transformOrigin = '540px 900px'; prev.style.opacity = 1 - 0.6 * q; }
+  if (prev && t >= t0 + 0.42) show(prev, false);
+  return q;
+}
+
+// ------------------------------------------------------------------ camera: never still; small push on every hit
+const HITS = [3.5, 4.5, 5.0, 9.0, 12.0, 13.5, 14.5, 15.0, 19.5, 21.5, 23.5, 26.0, 28.5, 31.0, 31.5, 34.0, 36.0, 38.35, 39.9];
+function camera(t) {
+  let k = 0; for (const h of HITS) if (t >= h) k += 0.022 * Math.exp(-(t - h) * 7) * (1 - Math.exp(-(t - h) * 60));
+  const ex = 0.05 * (ss(seg(t, 8.0, 13.4)) * (t < 13.5) + ss(seg(t, 18.0, 23.4)) * (t >= 13.5 && t < 23.5) + ss(seg(t, 28.0, 31.4)) * (t >= 23.5 && t < 31.5));
+  const drift = 1 + 0.012 * Math.sin(t * 0.45) + ex, rot = 0.35 * Math.sin(t * 0.31);
+  tf($('cam'), `perspective(2200px) rotateX(${0.9 * Math.sin(t * 0.37)}deg) rotateY(${1.3 * Math.sin(t * 0.29 + 1)}deg) scale(${drift + k}) rotate(${rot}deg)`);
+}
+
+// ------------------------------------------------------------------ sections
+function sHook(t) {
+  const on = t < 4.0; show($('hook'), on); if (!on) return;
+  const push = 1 + 0.08 * ss(seg(t, 0, 3));
+  tf($('hook'), `scale(${push})`); $('hook').style.transformOrigin = '540px 900px';
+  PILE.forEach((_, i) => {
+    const e = $('pb' + i), t0 = PILE_T[i], k = spr(t, t0, 0.55, 18), from = i % 2 ? 1 : -1;
+    show(e, t >= t0);
+    const rot = (hash(i) - 0.5) * 10, frz = t >= 3.0, depth = 0.78 + 0.55 * hash(i + 5), par = (depth - 1) * 120 * t;
+    tf(e, `translate(${from * 160 * (1 - k)}px, ${30 * (1 - k) - par}px) rotate(${rot * k}deg) scale(${(0.6 + 0.4 * k) * depth})`);
+    e.style.zIndex = Math.round(depth * 100);
+    op(e, frz ? 0.28 : clamp(k * 1.5) * (depth < 0.9 ? 0.7 : 1));
+    e.style.filter = frz ? 'blur(3px)' : depth < 0.9 ? 'blur(1.6px)' : 'none';
+  });
+  FI.forEach(([, , , , depth], i) => {
+    const e = $('fi' + i), t0 = PILE_T[i] - 0.05, k = spr(t, t0, 0.6, 12), frz = t >= 3.0;
+    show(e, t >= t0); tf(e, `translateY(${-24 * depth * t}px) rotate(${(hash(i + 20) - 0.5) * 16}deg) scale(${k})`);
+    op(e, (0.08 + 0.17 * depth) * (frz ? 0.5 : 1)); e.style.filter = `blur(${((1 - depth) * 7 + (frz ? 3 : 0)).toFixed(1)}px)`;
+  });
+  const c = $('hcaret'); show(c, t >= 3.0); op(c, Math.cos((t - 3.0) * Math.PI * 4) > 0 ? 1 : 0.1);
+}
+
+function pageMeta(p, t, t0) {
+  { const b = $(p + 'big'); if (b) { const k = eo(seg(t, t0, t0 + 1.2)); op(b, k); tf(b, `translate(${-120 * (1 - k) + (t - t0) * 6}px, ${-(t - t0) * 14}px)`); } }
+  // rules draw in, meta rises
+  [...$(p).querySelectorAll('.rule')].forEach((r, i) => { r.style.transformOrigin = i ? '0 50%' : '100% 50%'; tf(r, `scaleX(${eo(seg(t, t0 + 0.05 * i, t0 + 0.5))})`); });
+  [...$(p).querySelectorAll('.meta,.tag,.foot')].forEach((e, i) => { const k = eo(seg(t, t0 + 0.1 + 0.05 * i, t0 + 0.6)); op(e, k); e.style.translate = `0 ${16 * (1 - k)}px`; });
+}
+// headword group shrinks to the top for the example (same motion family as the entry)
+function toExample(t, t0, el, fn) { const k = fn(t, t0); tf($(el), `translateY(${-210 * k}px) scale(${1 - 0.56 * k})`); return k; }
+function defsOut(ids, t, t0) { ids.forEach((id, i) => { const k = eo(seg(t, t0 + i * 0.04, t0 + 0.3 + i * 0.04)); op($(id), 1 - k); $(id).style.translate = `0 ${-40 * k}px`; }); }
+
+function sSaudi(t) {
+  const on = t >= 3.5 && t < 14.0; show($('p1'), on); if (!on) return;
+  blade(t, 3.5, $('p1'), null);
+  pageMeta('p1', t, 3.75);
+  drawSky('sky1', t, 3.8, 2.6, t < 7.8 ? 1 : lerp(1, 0.5, seg(t, 7.8, 8.4)));
+  sheen('p1w1', t, 4.5); sheen('p1w2', t, 5.0);
+  chips(CH1, 'ca', t, 12.05, heavy);
+  // the headword: two heavy hits
+  [['p1w1', 4.5], ['p1w2', 5.0]].forEach(([id, t0]) => { const k = heavy(t, t0); op($(id), t >= t0 ? 1 : 0); tf($(id), `scale(${lerp(1.6, 1, k)})`); $(id).style.filter = `blur(${10 * (1 - k)}px)`; });
+  const ul = $('p1ul'), uk = heavy(t, 5.5); Object.assign(ul.style, { left: G.ul1.x + 'px', top: G.ul1.y + 'px', width: G.ul1.w + 'px' }); tf(ul, `scaleX(${uk})`);
+  op($('p1ph'), eo(seg(t, 5.75, 6.1)));
+  $('p1d1').innerHTML = typeIn(t, 6.2, 'تقولها إذا تبي الشي يصير.', 28) || '&nbsp;';
+  op($('p1d2'), eo(seg(t, 7.0, 7.4))); $('p1d2').style.translate = `0 ${14 * (1 - eo(seg(t, 7.0, 7.4)))}px`;
+  // → example
+  if (t >= 7.8) { toExample(t, 7.8, 'p1h', heavy); defsOut(['p1ph', 'p1d1', 'p1d2'], t, 7.8); } else tf($('p1h'), 'none');
+  const q = $('p1q'), qk = heavy(t, 8.25); show(q, t >= 8.25); tf(q, `translateX(${-80 * (1 - qk)}px)`); op(q, qk);
+  const dots = $('p1dots'); show(dots, t >= 8.6 && t < 9.0); [0, 1, 2].forEach((i) => tf($('td' + i), `translateY(${-8 * Math.max(0, Math.sin((t - 8.6) * 14 - i * 0.9))}px)`));
+  const r = $('p1r'), rk = heavy(t, 9.0); show(r, t >= 9.0); tf(r, `scale(${lerp(1.4, 1, rk)})`); r.style.transformOrigin = '100% 50%';
+  // the action: the campaign goes out on Thursday
+  const ph = $('p1ph1'), pk = heavy(t, 9.5); show(ph, t >= 9.5); tf(ph, `translate(${-165}px, ${300 * (1 - pk)}px)`); op(ph, pk);
+  const cal = $('p1cal'), ck = heavy(t, 9.75); show(cal, t >= 9.75); tf(cal, `perspective(600px) rotateX(${90 * (1 - ck)}deg)`);
+  const steps = [10.0, 10.5, 11.0, 11.5].filter((s) => t >= s).length; const last = [10.0, 10.5, 11.0, 11.5][steps - 1] || 10;
+  $('p1bar').style.width = 282 * ((Math.max(0, steps - 1) + (steps ? heavy(t, last) : 0)) / 4) + 'px';
+  const ok = $('p1ok'), okk = heavy(t, 12.0); show(ok, t >= 12.0); tf(ok, `translate(-50%, 0) scale(${lerp(1.5, 1, okk)})`); ok.style.left = '540px';
+  if (t >= 12.0) cal.innerHTML = 'الخميس <span style="color:var(--pu)">✓</span>';
+  else cal.textContent = 'الخميس';
+}
+
+function sEgypt(t) {
+  const on = t >= 13.5 && t < 24.0; show($('p2'), on); if (!on) return;
+  blade(t, 13.5, $('p2'), $('p1'));
+  pageMeta('p2', t, 13.75);
+  drawSky('sky2', t, 13.8, 2.6, t < 17.6 ? 1 : lerp(1, 0.5, seg(t, 17.6, 18.2)));
+  sheen('p2w1', t, 14.5); sheen('p2w2', t, 15.0);
+  chips(CH2, 'cb', t, 19.6, bouncy);
+  // «اعتبره» drops in and squashes; «حصل.» pops with overshoot and a wobble
+  { const k = bouncy(t, 14.5), e = $('p2w1'); op(e, t >= 14.5 ? 1 : 0); const sq = Math.max(0, Math.sin(clamp((t - 14.6) / 0.25) * Math.PI)) * 0.14;
+    tf(e, `translateY(${-500 * (1 - Math.min(1, k))}px) scale(${1 + sq}, ${1 - sq})`); e.style.transformOrigin = '50% 100%'; }
+  { const k = bouncy(t, 15.0), e = $('p2w2'); op(e, t >= 15.0 ? 1 : 0); tf(e, `scale(${k}) rotate(${8 * (1 - k)}deg)`); }
+  const ul = $('p2ul'), uk = bouncy(t, 15.5); Object.assign(ul.style, { left: G.ul2.x + 'px', top: G.ul2.y + 'px', width: G.ul2.w + 'px' }); tf(ul, `scaleX(${uk})`);
+  op($('p2ph'), eo(seg(t, 15.75, 16.1)));
+  $('p2d1').innerHTML = typeIn(t, 16.2, 'يعني ماتقلقش… خلاص اتعمل.', 26) || '&nbsp;';
+  op($('p2d2'), eo(seg(t, 17.0, 17.4)));
+  if (t >= 17.6) { toExample(t, 17.6, 'p2h', bouncy); defsOut(['p2ph', 'p2d1', 'p2d2'], t, 17.6); } else tf($('p2h'), 'none');
+  const q = $('p2q'), qk = bouncy(t, 18.0); show(q, t >= 18.0); tf(q, `translateX(${-90 * (1 - qk)}px) rotate(${-3 * (1 - qk)}deg)`); op(q, clamp(qk * 2));
+  // the gag: the reply is still being typed… and the post is already out
+  const r = $('p2r'); show(r, t >= 18.62); const rk = bouncy(t, 18.62); tf(r, `scale(${lerp(0.6, 1, rk)})`); r.style.transformOrigin = '100% 50%';
+  $('p2rt').textContent = typeIn(t, 18.4, 'اعتبره…', 4.5);
+  const rh = $('p2rh'); show(rh, t >= 20.5); const hk = bouncy(t, 20.5); tf(rh, `translateY(${-26 * Math.sin(Math.PI * clamp((t - 20.5) / 0.3))}px) rotate(${-10 * (1 - hk)}deg)`);
+  const ph = $('p2ph1'), pk = bouncy(t, 19.0); show(ph, t >= 19.0); tf(ph, `translate(${-165}px, ${300 * (1 - Math.min(1.1, pk))}px) rotate(${4 * (1 - pk)}deg)`);
+  const clk = $('p2clk'), ck = bouncy(t, 19.0); show(clk, t >= 19.0); tf(clk, `scale(${ck})`);
+  tf($('p2hand'), `rotate(${720 * eio(seg(t, 19.05, 19.55)) + 30}deg)`);
+  const ok = $('p2ok'), okk = bouncy(t, 19.55); show(ok, t >= 19.55); ok.style.left = '540px'; tf(ok, `translate(-50%, 0) scale(${okk})`);
+  const st = $('p2stamp'), sk = heavy(t, 21.5); show(st, t >= 21.5); tf(st, `rotate(-12deg) scale(${lerp(2.2, 1, sk)})`); op(st, clamp((t - 21.5) * 8));
+  tf($('p2post'), `rotate(${t >= 22.0 ? 3 * Math.sin((t - 22) * 18) * Math.exp(-(t - 22) * 4) : 0}deg)`);
+}
+
+function sEnglish(t) {
+  const on = t >= 23.5 && t < 32.0; show($('p3'), on); if (!on) return;
+  blade(t, 23.5, $('p3'), $('p2'));
+  pageMeta('p3', t, 23.75);
+  drawSky('sky3', t, 23.8, 2.4, t < 27.8 ? 1 : lerp(1, 0.5, seg(t, 27.8, 28.4)));
+  for (let i = 0; i < 8; i++) sheen('c1_' + i, t, 24.5 + i * 0.0625); sheen('c2_0', t, 25.5); sheen('c2_2', t, 25.75);
+  op($('p3grid'), 0.9 * eo(seg(t, 23.8, 24.4)));
+  'Consider'.split('').forEach((_, i) => { const t0 = 24.5 + i * 0.0625, k = precise(t, t0, 0.12), e = $('c1_' + i); op(e, t >= t0 ? 1 : 0); tf(e, `translateY(${78 * (1 - k)}px)`); e.style.clipPath = 'inset(-20% -5% 0 -5%)'; });
+  [[0, 25.5], [2, 25.75]].forEach(([i, t0]) => { const k = precise(t, t0, 0.12), e = $('c2_' + i); op(e, t >= t0 ? 1 : 0); tf(e, `translateY(${78 * (1 - k)}px)`); });
+  const d = $('p3dot'), dk = precise(t, 26.0, 0.1); show(d, t >= 26.0); Object.assign(d.style, { left: G.dot3.x + 'px', top: G.dot3.y + 'px' }); tf(d, `translateY(${-300 * (1 - dk)}px)`);
+  op($('p3ph'), precise(t, 26.5, 0.25));
+  const d1 = $('p3d1'); d1.textContent = typeIn(t, 27.0, 'Treat it as finished.', 40) || ' ';
+  op($('p3d2'), precise(t, 27.4, 0.25));
+  if (t >= 27.8) { toExample(t, 27.8, 'p3h', (a, b) => precise(a, b, 0.3)); defsOut(['p3ph', 'p3d1', 'p3d2'], t, 27.8); } else tf($('p3h'), 'none');
+  const q = $('p3q'), qk = precise(t, 28.0, 0.2); show(q, t >= 28.0); tf(q, `translateX(${-60 * (1 - qk)}px)`); op(q, qk);
+  const r = $('p3r'), rk = precise(t, 28.5, 0.2); show(r, t >= 28.5); tf(r, `translateX(${60 * (1 - rk)}px)`); op(r, rk);
+  ROWS.forEach((_, i) => {
+    const t0 = 28.75 + i * 0.0625, k = precise(t, t0, 0.18), row = $('rw' + i); op(row, k); tf(row, `translateX(${40 * (1 - k)}px)`);
+    const tk = 29.25 + i * 0.25, kk = precise(t, tk, 0.08); tf($('rk' + i), `scale(${kk})`);
+  });
+}
+
+function sConverge(t) {
+  const on = t >= 31.5 && t < 35.9; show($('cv'), on); if (!on) return;
+  blade(t, 31.5, $('cv'), $('p3'));
+  drawSky('skyP', t, 31.7, 2.2, 1, 6);
+  [['cva1', 32.0], ['cvb1', 32.0], ['cva2', 32.25], ['cvb2', 32.25], ['cva3', 32.5], ['cvb3', 32.5]].forEach(([id, t0]) => sheen(id, t, t0));
+  // each line enters with its own personality
+  { const k = heavy(t, 32.0), e = $('cvl1'); op(e, t >= 32.0 ? 1 : 0); tf(e, `scale(${lerp(1.4, 1, k)})`); }
+  { const k = bouncy(t, 32.25), e = $('cvl2'); op(e, t >= 32.25 ? 1 : 0); tf(e, `translateX(${520 * (1 - k)}px) rotate(${-6 * (1 - k)}deg)`); }
+  { const k = precise(t, 32.5, 0.18), e = $('cvl3'); op(e, t >= 32.5 ? 1 : 0); tf(e, `translateX(${-200 * (1 - k)}px)`); }
+  const c1 = $('cvcap1'), c2 = $('cvcap2'); op(c1, eo(seg(t, 33.0, 33.3)) * (1 - eo(seg(t, 35.3, 35.5)))); op(c2, eo(seg(t, 35.5, 35.8)));
+  // strike the "saying" words, keep the "done" words
+  [['cvs1', 'cva1', 34.0], ['cvs2', 'cva2', 34.25], ['cvs3', 'cva3', 34.5]].forEach(([s, w, t0]) => {
+    const r = G[w], k = eo(seg(t, t0, t0 + 0.2)), e = $(s);
+    Object.assign(e.style, { left: r.left - 10 + 'px', top: r.top + r.height * 0.55 + 'px', width: r.width + 20 + 'px' }); tf(e, `scaleX(${k})`); show(e, t < 35.0);
+    op($(w), 1 - 0.75 * k * (t < 35 ? 1 : 0)); if (t >= 35.0) op($(w), 1 - eo(seg(t, 35.0, 35.25)));
+  });
+  // the three "done" words travel to the centre and collapse into one «تم»
+  [['cvb1', 0], ['cvb2', 1], ['cvb3', 2]].forEach(([id, i]) => {
+    const r = G[id], k = eio(seg(t, 35.0 + i * 0.08, 35.85)), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const tx = (540 - cx) * k, ty = (960 - cy) * k, s = lerp(1, i === 0 ? 1.7 : 0.4, k);
+    tf($(id), `translate(${tx}px, ${ty}px) scale(${s})`); op($(id), i === 0 ? 1 : 1 - seg(k, 0.6, 1));
+  });
+}
+
+function sTam(t) {
+  const on = t >= 35.9 && t < 39.0; show($('tm'), on);
+  const dA = $('dA'), dB = $('dB');
+  if (on) {
+    const r = 1500 * eo(seg(t, 35.9, 36.5));
+    $('tam').style.clipPath = `circle(${r}px at 540px 960px)`;
+    $('tam').style.transformOrigin = '540px 960px';
+    tf($('tam'), `scale(${lerp(0.92, 1, heavy(t, 35.95))}) translateY(${-14 * seg(t, 36.5, 37.2)}px)`);
+    $('tamP').style.visibility = t < 37.2 ? 'visible' : 'hidden'; sheen('tamW', t, 35.95);
+    const sink = eio(seg(t, 37.5, 38.4)); tf($('tamW'), `translateY(${160 * sink}px)`); op($('tamW'), 1 - sink);
+  }
+  // the two dots become the two pulses and reveal the original symbol along its own geometry
+  const travel = t >= 37.2 && t < 40.0; show(dA, travel); show(dB, travel);
+  if (travel) {
+    const lift = eio(seg(t, 37.2, 37.6)), go = eio(seg(t, 37.6, 38.35)), baseY = -14, sz = lerp(80, 24, go);
+    const aS = [DOTR.x + DOTR.w / 2, DOTR.y + DOTR.h / 2 + baseY - 50 * lift], bS = [DOTL.x + DOTL.w / 2, DOTL.y + DOTL.h / 2 + baseY - 50 * lift];
+    const T = G.T, B = G.B, ty = T.y + 0.11 * T.h, rq = eio(seg(t, 38.35, 39.4));
+    const a = t < 38.35 ? [lerp(aS[0], T.x, go), lerp(aS[1], ty, go)] : [lerp(T.x, T.x + T.w, rq), ty];
+    const b = t < 38.35 ? [lerp(bS[0], B.x + B.w, go), lerp(bS[1], B.y, go)] : [lerp(B.x + B.w, B.x, rq), lerp(B.y, B.y + B.h, rq)];
+    const fade = 1 - eio(seg(t, 39.4, 39.8));
+    [[dA, a], [dB, b]].forEach(([d, [x, y]]) => { const s = sz * fade; Object.assign(d.style, { width: s + 'px', height: s + 'px', left: x - s / 2 + 'px', top: y - s / 2 + 'px' }); });
+  }
+}
+
+function sEnd(t) {
+  const on = t >= 38.35; show($('end'), on); if (!on) return;
+  const rq = eio(seg(t, 38.35, 39.4)), W = 336, H = 404, T = G.T, B = G.B;
+  const qT = t >= 39.4 ? 100 : (lerp(T.x, T.x + T.w, rq) - 372) / W * 100;
+  const bx = lerp(B.x + B.w, B.x, rq) - 372, by = lerp(B.y, B.y + B.h, rq) - 520, qB = t >= 39.4 ? 100 : ((W - bx) + by) / (W + H) * 100;
+  $('symT').style.webkitMaskImage = $('symT').style.maskImage = `linear-gradient(90deg, #000 ${qT}%, transparent ${qT + 0.01}%)`;
+  $('symB').style.webkitMaskImage = $('symB').style.maskImage = `linear-gradient(225deg, #000 ${qB}%, transparent ${qB + 0.01}%)`;
+  // the name builds itself: Say + Tamm
+  const a = $('e1a'), b = $('e1b'), ak = heavy(t, 39.5), bk = heavy(t, 39.9);
+  op(a, t >= 39.5 ? 1 : 0); tf(a, `translateX(${118 * (1 - bk) * (t >= 39.9 ? 1 : 1)}px) translateY(${30 * (1 - ak)}px)`);
+  op(b, t >= 39.9 ? 1 : 0); tf(b, `translateX(${60 * (1 - bk)}px)`);
+  sheen('e1a', t, 39.5); sheen('e1b', t, 39.9);
+  drawSky('skyE', t, 40.6, 2.4, 0.38, 4);
+  [['e3', 40.4], ['e4', 40.8]].forEach(([id, t0]) => { const k = eo(seg(t, t0, t0 + 0.6)); op($(id), k); $(id).style.translate = `0 ${14 * (1 - k)}px`; });
+}
+
+window.seek = (t) => {
+  camera(t); ambient(t);
+  sHook(t); sSaudi(t); sEgypt(t); sEnglish(t); sConverge(t); sTam(t); sEnd(t);
+  if (t < 3.5) show($('blade'), false);
+  const f = Math.floor(t * 30); $('grain').style.transform = `translate(${Math.floor(hash(f) * 180)}px, ${Math.floor(hash(f + 3) * 180)}px) scale(4)`; $('grain').style.transformOrigin = '0 0';
+};
+
+window.ready = (async () => {
+  await Promise.all(['700 250px Plex', '600 640px Plex', '500 40px Plex', '700 196px Sat', '500 40px Sat'].map((f) => document.fonts.load(f, 'قول تم اعتبره حصل Consider ٮ')));
+  await document.fonts.ready;
+  ['p1', 'p2', 'p3', 'cv', 'tm', 'end'].forEach((id) => show($(id), true));
+  measure();
+  window.seek(0);
+  return true;
+})();
+
+// ================================================================== sound: three rhythms that become one
+window.renderAudio = async (DUR) => {
+  const SR = 48000, ac = new OfflineAudioContext(2, Math.ceil(DUR * SR), SR);
+  const bus = ac.createDynamicsCompressor(); bus.threshold.value = -16; bus.ratio.value = 2.5; bus.attack.value = 0.006; bus.release.value = 0.18;
+  // master: gentle tape-style saturation + a little air and weight
+  const sat = ac.createWaveShaper(); { const c = new Float32Array(2048); for (let i = 0; i < 2048; i++) { const x = i / 1023.5 - 1; c[i] = Math.tanh(1.4 * x) / Math.tanh(1.4); } sat.curve = c; sat.oversample = '4x'; }
+  const lo = ac.createBiquadFilter(); lo.type = 'lowshelf'; lo.frequency.value = 90; lo.gain.value = 1.5;
+  const hi = ac.createBiquadFilter(); hi.type = 'highshelf'; hi.frequency.value = 9000; hi.gain.value = 2;
+  bus.connect(sat); sat.connect(lo); lo.connect(hi); hi.connect(ac.destination);
+  // a room: synthesized stereo impulse response, band-limited
+  const rev = ac.createConvolver(); { const len = Math.floor(SR * 2.4), ir = ac.createBuffer(2, len, SR); for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let s = 11 + ch * 7; for (let i = 0; i < len; i++) { s = (s * 16807) % 2147483647; d[i] = (s / 1073741823.5 - 1) * Math.pow(1 - i / len, 3.4); } } rev.buffer = ir; }
+  const revIn = ac.createGain(), revHP = ac.createBiquadFilter(), revLP = ac.createBiquadFilter(), revOut = ac.createGain();
+  revHP.type = 'highpass'; revHP.frequency.value = 240; revLP.type = 'lowpass'; revLP.frequency.value = 6500; revOut.gain.value = 0.34;
+  revIn.connect(revHP); revHP.connect(rev); rev.connect(revLP); revLP.connect(revOut); revOut.connect(bus);
+  let SEND = 0; const sendTo = (node) => { if (SEND > 0) { const g = ac.createGain(); g.gain.value = SEND; node.connect(g); g.connect(revIn); } };
+  const nb = (() => { const b = ac.createBuffer(1, SR, SR), d = b.getChannelData(0); let s = 3; for (let i = 0; i < d.length; i++) { s = (s * 16807) % 2147483647; d[i] = s / 1073741823.5 - 1; } return b; })();
+  const env = (g, t, a, peak, d) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+  const osc = (t, type, f0, f1, a, d, peak, pan = 0) => { const o = ac.createOscillator(), g = ac.createGain(), p = ac.createStereoPanner(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + a + d * 0.6); env(g, t, a, peak, d); p.pan.value = pan; o.connect(g); g.connect(p); p.connect(bus); sendTo(p); o.start(t); o.stop(t + a + d + 0.05); };
+  const noise = (t, type, f, q, a, d, peak, pan = 0, f1) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(), p = ac.createStereoPanner(); s.buffer = nb; s.loop = true; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + a + d); fl.Q.value = q; env(g, t, a, peak, d); p.pan.value = pan; s.connect(fl); fl.connect(g); g.connect(p); p.connect(bus); sendTo(p); s.start(t, (t * 0.37) % 0.8); s.stop(t + a + d + 0.05); };
+  const kick = (t, g = 0.9) => { osc(t, 'sine', 140, 42, 0.002, 0.32, g); noise(t, 'lowpass', 900, 0.7, 0.001, 0.03, g * 0.25); };
+  const doum = (t, g = 0.75) => { osc(t, 'sine', 105, 62, 0.003, 0.42, g); noise(t, 'lowpass', 500, 0.8, 0.002, 0.06, g * 0.3); };
+  const tak = (t, g = 0.35, pan = 0.2) => { SEND = 0.28; noise(t, 'bandpass', 2600, 1.4, 0.001, 0.07, g, pan); osc(t, 'triangle', 780, 640, 0.001, 0.05, g * 0.35, pan); SEND = 0; };
+  const clap = (t, g = 0.32, pan = -0.15) => { SEND = 0.38; for (let i = 0; i < 3; i++) noise(t + i * 0.011, 'bandpass', 1500, 0.9, 0.001, i === 2 ? 0.16 : 0.012, g, pan); SEND = 0; };
+  const hat = (t, g = 0.1) => noise(t, 'highpass', 8500, 0.7, 0.001, 0.035, g, 0.3);
+  const ping = (t, f, g = 0.12, pan = 0) => { SEND = 0.45; osc(t, 'sine', f, 0, 0.003, 0.28, g, pan); osc(t, 'sine', f * 2.01, 0, 0.003, 0.12, g * 0.3, pan); SEND = 0; };
+  const pop = (t, g = 0.12, f0 = 520, pan = 0) => { SEND = 0.25; osc(t, 'sine', f0, f0 * 1.9, 0.002, 0.06, g, pan); SEND = 0; };
+  const shimmer = (t, g = 0.025, pan = 0) => { SEND = 0.75; osc(t, 'sine', 2637, 0, 0.01, 1.4, g, pan); osc(t + 0.02, 'sine', 3951, 0, 0.01, 1.1, g * 0.6, -pan); SEND = 0; };
+  const pad = (t, fs, dur, g) => { fs.forEach((f) => [-6, 6].forEach((dt) => { const o = ac.createOscillator(), fl = ac.createBiquadFilter(), gg = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = dt; fl.type = 'lowpass'; fl.frequency.setValueAtTime(500, t); fl.frequency.linearRampToValueAtTime(1600, t + dur * 0.7); gg.gain.setValueAtTime(0, t); gg.gain.linearRampToValueAtTime(g, t + 0.8); gg.gain.setValueAtTime(g, t + dur - 0.8); gg.gain.linearRampToValueAtTime(0, t + dur); o.connect(fl); fl.connect(gg); gg.connect(bus); const sg = ac.createGain(); sg.gain.value = 0.6; gg.connect(sg); sg.connect(revIn); o.start(t); o.stop(t + dur + 0.05); })); };
+  const ink = (t) => noise(t, 'bandpass', 3200, 0.8, 0.4, 1.4, 0.012, 0, 5200);
+  const tick = (t, g = 0.06) => noise(t, 'highpass', 3500, 0.7, 0.001, 0.015, g, 0.1);
+  const whoosh = (t, g = 0.22) => noise(t, 'bandpass', 400, 1.2, 0.18, 0.22, g, 0, 3800);
+  const stamp = (t) => { osc(t, 'sine', 90, 50, 0.002, 0.25, 0.8); noise(t, 'lowpass', 1800, 0.6, 0.001, 0.09, 0.45); };
+  const bass = (t, f, d, g = 0.32, type = 'triangle') => { osc(t, type, f, 0, 0.01, d, g); osc(t, 'sine', f / 2, 0, 0.01, d, g * 0.8); };
+  const hit = (t, g = 1) => { kick(t, g); osc(t, 'sine', 55, 40, 0.003, 1.6, g * 0.55); noise(t, 'lowpass', 2400, 0.6, 0.001, 0.25, g * 0.35); };
+  const B = 0.5, E = 0.25; // 120 BPM
+
+  // HOOK: notifications pile up, faster and higher; silence at 3.0; the blade at 3.5
+  PILE_T.forEach((t0, i) => { ping(t0, 660 * Math.pow(2, (i % 7) / 12 + Math.floor(i / 7) * 0.25), 0.1 + i * 0.004, (i % 2 ? 0.4 : -0.4)); pop(t0, 0.05); });
+  for (let i = 0; i < 6; i++) tick(3.0 + i * 0.125, 0.03);
+  whoosh(3.32, 0.3); hit(3.5, 0.9);
+
+  // 01 SAUDI (3.75–13.5): deep doum + handclaps, heavy and steady
+  for (let bar = 0; bar < 5; bar++) {
+    const t0 = 4.0 + bar * 2;
+    if (t0 + 2 > 13.5) break;
+    [0, 3, 8, 11].forEach((e) => doum(t0 + e * E, 0.7));
+    [2, 4, 6, 7, 10, 12, 14, 15].forEach((e, i) => clap(t0 + e * E, i % 2 ? 0.22 : 0.3));
+    bass(t0, 55, 0.9); bass(t0 + 1.5, 49, 0.4); bass(t0 + 1.75, 55, 0.25);
+  }
+  hit(4.5, 0.8); hit(5.0, 1);
+  [...'تقولها إذا تبي الشي يصير.'].forEach((_, i) => tick(6.2 + i / 28, 0.03));
+  pop(8.25, 0.1); [8.6, 8.75, 8.9].forEach((x) => tick(x, 0.03)); hit(9.0, 0.7); whoosh(9.4, 0.12);
+  [10.0, 10.5, 11.0, 11.5].forEach((x, i) => osc(x, 'sine', 440 * Math.pow(2, i * 4 / 12), 0, 0.003, 0.15, 0.08));
+  osc(12.0, 'sine', 880, 0, 0.003, 0.5, 0.12); osc(12.0, 'sine', 1320, 0, 0.003, 0.4, 0.06); hit(12.0, 0.5);
+  whoosh(13.32, 0.3); hit(13.5, 0.85);
+
+  // 02 EGYPT (13.75–23.5): maqsoum (D T . T D . T .), a bouncing bass
+  for (let bar = 0; bar < 5; bar++) {
+    const t0 = 14.0 + bar * 2;
+    if (t0 + 2 > 23.5) break;
+    for (let h = 0; h < 2; h++) { const b0 = t0 + h * 1; doum(b0, 0.7); tak(b0 + 0.125, 0.3); tak(b0 + 0.375, 0.32, -0.2); doum(b0 + 0.5, 0.55); tak(b0 + 0.75, 0.3); }
+    [[0, 55], [0.375, 82.4], [0.75, 73.4], [1.0, 55], [1.375, 65.4], [1.75, 49]].forEach(([o, f]) => bass(t0 + o, f, 0.22, 0.3, 'square'));
+  }
+  hit(14.5, 0.6); osc(14.7, 'sine', 300, 120, 0.002, 0.12, 0.25); // the squash
+  osc(15.0, 'sine', 520, 1040, 0.002, 0.12, 0.2); hit(15.0, 0.7); // the pop
+  [...'يعني ماتقلقش… خلاص اتعمل.'].forEach((_, i) => tick(16.2 + i / 26, 0.03));
+  pop(18.0, 0.1); [...'اعتبره…'].forEach((_, i) => tick(18.6 + i / 4.5, 0.05));
+  noise(19.05, 'bandpass', 1200, 2, 0.01, 0.45, 0.12, 0, 6000); // the clock spins
+  osc(19.55, 'sine', 990, 0, 0.003, 0.4, 0.14); osc(19.6, 'sine', 1485, 0, 0.003, 0.35, 0.08); // published (already)
+  osc(20.5, 'sine', 600, 1300, 0.002, 0.1, 0.2); // the wink
+  stamp(21.5);
+  whoosh(23.32, 0.3); hit(23.5, 0.85);
+
+  // 03 ENGLISH (23.75–31.5): four on the floor, crisp hats, a click per letter
+  for (let b = 0; b < 15; b++) { const t0 = 24.0 + b * B; if (t0 >= 31.5) break; kick(t0, 0.75); hat(t0 + E, 0.09); if (b % 2) clap(t0, 0.24, 0); }
+  for (let i = 0; i < 8; i++) tick(24.5 + i * 0.0625, 0.08); tick(25.5, 0.08); tick(25.75, 0.08);
+  hit(26.0, 0.9);
+  for (let i = 0; i < 6; i++) { tick(28.75 + i * 0.0625, 0.05); osc(29.25 + i * 0.25, 'sine', 660 * Math.pow(2, [0, 2, 4, 7, 9, 12][i] / 12), 0, 0.002, 0.12, 0.09); }
+  [[24, 55], [26, 65.4], [28, 49], [30, 55]].forEach(([t0, f]) => { for (let k = 0; k < 4; k++) bass(t0 + k * 0.5, f, 0.18, 0.26, 'sawtooth'); });
+  osc(31.0, 'sine', 1320, 0, 0.003, 0.4, 0.1);
+  whoosh(31.32, 0.3); hit(31.5, 0.9);
+
+  // CONVERGENCE (32–36): all three rhythms at once → one groove
+  for (let b = 0; b < 8; b++) { const t0 = 32.0 + b * B; kick(t0, 0.7); hat(t0 + E, 0.08); }
+  for (let h = 0; h < 4; h++) { const b0 = 32.0 + h; doum(b0, 0.5); tak(b0 + 0.125, 0.22); tak(b0 + 0.375, 0.22, -0.2); tak(b0 + 0.75, 0.22); clap(b0 + 0.5, 0.22); }
+  [[32, 55, 1.0], [33, 82.4, 1.0], [34, 73.4, 1.0], [35, 65.4, 1.0]].forEach(([t0, f, d]) => bass(t0, f, d, 0.3, 'sawtooth'));
+  [34.0, 34.25, 34.5].forEach((x, i) => { noise(x, 'bandpass', 3000, 1, 0.003, 0.12, 0.18); osc(x, 'sine', 220 * Math.pow(2, i * 5 / 12), 0, 0.003, 0.2, 0.08); });
+  // pads under «تم»
+  [[110, 0.05], [164.8, 0.04], [220, 0.035], [277.2, 0.025]].forEach(([f, g]) => osc(36.0, 'sine', f, 0, 0.6, 3.2, g));
+  hit(36.0, 1.1);
+  osc(37.2, 'sine', 880, 0, 0.003, 0.3, 0.08); osc(37.25, 'sine', 1320, 0, 0.003, 0.3, 0.06); // the dots lift
+  whoosh(37.6, 0.12); osc(38.35, 'sine', 440, 880, 0.01, 0.9, 0.08);
+  hit(39.5, 0.6); hit(39.9, 1.1); bass(39.9, 55, 2.6, 0.4, 'sine');
+  [[220, 0.04], [329.6, 0.03], [440, 0.02], [554.4, 0.015]].forEach(([f, g]) => osc(40.0, 'sine', f, 0, 0.3, 3.0, g));
+
+  // v2 polish: line-art draw-ons, sheen sparkles on the headwords, platform bursts, a pad bed under the convergence
+  [3.8, 13.8, 23.8, 31.7].forEach(ink);
+  [[5.1, 0.3], [15.1, -0.3], [26.1, 0.3], [36.1, 0], [39.95, -0.2]].forEach(([x, p]) => shimmer(x, 0.022, p));
+  CH1.forEach((_, i) => pop(12.05 + i * 0.07, 0.07, 600 + i * 90, i % 2 ? 0.5 : -0.5));
+  CH2.forEach((_, i) => pop(19.6 + i * 0.07, 0.06, 700 + i * 80, i % 2 ? -0.5 : 0.5));
+  pad(31.7, [110, 164.8, 220, 261.6], 4.3, 0.012);
+  const buf = await ac.startRendering();
+  let peak = 0; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) peak = Math.max(peak, Math.abs(d[i])); }
+  const gn = 0.89 / (peak || 1), L = buf.getChannelData(0), R = buf.getChannelData(1), len = L.length, ab = new ArrayBuffer(44 + len * 4), v = new DataView(ab);
+  const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + len * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true); v.setUint32(24, SR, true); v.setUint32(28, SR * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); ws(36, 'data'); v.setUint32(40, len * 4, true);
+  for (let i = 0; i < len; i++) { v.setInt16(44 + i * 4, clamp(L[i] * gn, -1, 1) * 32767, true); v.setInt16(46 + i * 4, clamp(R[i] * gn, -1, 1) * 32767, true); }
+  let bin = ''; const u8 = new Uint8Array(ab); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+</script>
+</body>
+</html>

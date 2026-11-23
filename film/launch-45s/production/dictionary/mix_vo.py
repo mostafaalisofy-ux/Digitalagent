@@ -5,8 +5,12 @@ Each take is levelled (speech RMS), optionally time-tightened (atempo) or cut to
 placed so its key word lands on the picture's hit, then mixed over the music, which is
 ducked under the voice with a sidechain compressor. Writes the VO film plus VO and music stems.
 
-Usage (repo root): python3 film/launch-45s/production/dictionary/mix_vo.py
+Usage (repo root): python3 film/launch-45s/production/dictionary/mix_vo.py [--v2]
+--v2: the premium cut. Broadcast VO chain (de-ess, mud cut, compression) and two-pass loudness mastering
+to the social-platform standard (-14 LUFS integrated, -1 dBTP true peak).
 """
+import json
+import re
 import math
 import os
 import struct
@@ -16,8 +20,10 @@ import sys
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../..'))
 D = os.path.join(ROOT, 'handover/launch-film/dictionary')
 VO = os.path.join(D, 'vo')
-FILM = os.path.join(D, 'SayTamm_Launch_Dictionary_45s_9x16.mp4')
-MUSIC = os.path.join(D, 'SayTamm_Launch_Dictionary_Sound.wav')
+V2 = '--v2' in sys.argv
+TAG = 'Dictionary_v2' if V2 else 'Dictionary'
+FILM = os.path.join(D, 'SayTamm_Launch_Dictionary_v2_45s_9x16_music.mp4' if V2 else 'SayTamm_Launch_Dictionary_45s_9x16.mp4')
+MUSIC = os.path.join(D, 'SayTamm_Launch_Dictionary_v2_Sound.wav' if V2 else 'SayTamm_Launch_Dictionary_Sound.wav')
 
 # (file, place_at_seconds, options)  — place_at is where the clip's first sample goes on the timeline
 #   tempo: atempo factor (tightens the pause in a phrase); seg: (start, end) cut inside the take
@@ -67,7 +73,8 @@ def main():
             ch += f',atrim={a}:{b},asetpts=PTS-STARTPTS,afade=t=out:st={b - a - 0.04}:d=0.04'
         if 'tempo' in opt:
             ch += f",atempo={opt['tempo']}"
-        ch += f',volume={gain:.2f}dB,highpass=f=80,equalizer=f=3000:t=q:w=1.0:g=2.5,adelay={int(at * 1000)}|{int(at * 1000)}[v{i}]'
+        vchain = ',highpass=f=90,equalizer=f=220:t=q:w=1.2:g=-2,deesser=i=0.35:m=0.5:f=0.5,acompressor=threshold=-24dB:ratio=3:attack=4:release=90:makeup=2,equalizer=f=3200:t=q:w=1.0:g=2.5,equalizer=f=11000:t=q:w=1.0:g=1.2' if V2 else ',highpass=f=80,equalizer=f=3000:t=q:w=1.0:g=2.5'
+        ch += f',volume={gain:.2f}dB{vchain},adelay={int(at * 1000)}|{int(at * 1000)}[v{i}]'
         chains.append(ch)
     n = len(cues)
     vo_mix = ''.join(f'[v{i}]' for i in range(n)) + f'amix=inputs={n}:normalize=0:duration=longest,'
@@ -78,14 +85,23 @@ def main():
         '[mus][vo_key]sidechaincompress=threshold=0.05:ratio=3:attack=10:release=320:makeup=1[duck]',
         '[duck]asplit=2[duck_mix][duck_stem]',
         '[duck_mix][vo_mixin]amix=inputs=2:normalize=0:duration=first,alimiter=limit=0.84:attack=3:release=60:level=false,atrim=0:45[out]'])
-    out_wav = os.path.join(D, 'SayTamm_Launch_Dictionary_Mix_VO.wav')
+    out_wav = os.path.join(D, f'SayTamm_Launch_{TAG}_Mix_VO{"_premaster" if V2 else ""}.wav')
     subprocess.run(['ffmpeg', '-y', '-v', 'error', *inputs, '-filter_complex', graph,
                     '-map', '[out]', out_wav,
-                    '-map', '[vo_stem]', '-t', '45', os.path.join(D, 'SayTamm_Launch_Dictionary_Stem_VO.wav'),
-                    '-map', '[duck_stem]', '-t', '45', os.path.join(D, 'SayTamm_Launch_Dictionary_Stem_Music_Ducked.wav')], check=True)
-    out_mp4 = os.path.join(D, 'SayTamm_Launch_Dictionary_45s_9x16_VO.mp4')
+                    '-map', '[vo_stem]', '-t', '45', os.path.join(D, f'SayTamm_Launch_{TAG}_Stem_VO.wav'),
+                    '-map', '[duck_stem]', '-t', '45', os.path.join(D, f'SayTamm_Launch_{TAG}_Stem_Music_Ducked.wav')], check=True)
+    if V2:
+        # two-pass loudness mastering: measure, then normalise linearly to -14 LUFS / -1 dBTP
+        m = subprocess.run(['ffmpeg', '-hide_banner', '-i', out_wav, '-af', 'loudnorm=I=-14:TP=-1:LRA=9:print_format=json', '-f', 'null', '-'], capture_output=True, text=True).stderr
+        js = json.loads(re.findall(r'\{[^{}]*\}', m)[-1])
+        master = os.path.join(D, f'SayTamm_Launch_{TAG}_Mix_VO_master.wav')
+        ln = (f"loudnorm=I=-14:TP=-1:LRA=9:measured_I={js['input_i']}:measured_TP={js['input_tp']}:measured_LRA={js['input_lra']}"
+              f":measured_thresh={js['input_thresh']}:offset={js['target_offset']}:linear=true,aresample=48000")
+        subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', out_wav, '-af', ln, '-ar', '48000', master], check=True)
+        out_wav = master
+    out_mp4 = os.path.join(D, f'SayTamm_Launch_{TAG}_45s_9x16{"_PREMIUM" if V2 else "_VO"}.mp4')
     subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', FILM, '-i', out_wav, '-map', '0:v', '-map', '1:a', '-c:v', 'copy',
-                    '-c:a', 'aac', '-b:a', '256k', '-shortest', '-movflags', '+faststart', out_mp4], check=True)
+                    '-c:a', 'aac', '-b:a', '320k' if V2 else '256k', '-shortest', '-movflags', '+faststart', out_mp4], check=True)
     print('wrote', out_mp4)
 
 

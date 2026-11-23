@@ -58,3 +58,51 @@ Each entry has the same structure:
 - **People and voices:** no AI people and no voices. The dialects live in the writing and the motion, never in an imitated voice.
 - **Palette:** purple is used as the accent (underlines, strikes, ticks, the blade, the dots). Everything else is obsidian, graphite and soft white.
 - **Wordmark:** «SayTamm» is typeset in Satoshi because no approved wordmark exists yet (OQ-05).
+
+## v2: premium cut
+
+```bash
+node film/launch-45s/production/dictionary/render_v2.mjs
+```
+
+```bash
+python3 film/launch-45s/production/dictionary/mix_vo.py --v2
+```
+
+The first command renders the picture and music; the second mixes the voiceover in and masters it.
+
+Output: `handover/launch-film/dictionary/SayTamm_Launch_Dictionary_v2_45s_9x16_PREMIUM.mp4`, plus the master WAV, VO stem and ducked music stem.
+
+**Picture**
+
+- **Light:** deep violet ambient light drifts behind obsidian, replacing flat black.
+- **Type:** headwords have a gradient fill with a light sheen that sweeps across each one as it lands.
+- **Surfaces:** frosted-glass bubbles, cards and chips, a refined phone, and gradient purple.
+- **Camera:** a light 3D drift.
+- **Transitions:** the new page settles in as the blade passes, and the old one recedes.
+- **Frames:** near-lossless (JPEG q100), then H.264 High at crf 14.
+
+**Landmarks**
+
+Original fine-line engravings, drawn on in motion, in `assets/landmarks.js`:
+
+| Entry | What is drawn |
+|---|---|
+| 01 Riyadh | Kingdom Centre with its sky bridge, Al Faisaliah, the crenellated mud-brick walls and watchtower of Diriyah, palms |
+| 02 Giza | The three pyramids with stone courses, the Sphinx, a palm |
+| 03 London | Big Ben, the Palace of Westminster, the London Eye |
+| Convergence | The three skylines join on one horizon |
+| End card | The same horizon, faint |
+
+**Platforms**
+
+- **Opening:** platform icons float in depth behind the pile of requests.
+- **Launches:** when the campaign or post goes out, five platform chips burst from the phone.
+- **Icons:** they come from simple-icons, used unaltered and monochrome; see `assets/PLATFORM_ICONS_NOTE.md`.
+
+**Sound**
+
+- **Music:** a synthesised room (convolution reverb), tape-style saturation, air and weight EQ, a pad bed under the convergence, sheen sparkles, burst pops and draw-on ink.
+- **VO chain:** high-pass, mud cut, de-esser, 3:1 compression, presence and air.
+- **Mastering:** two passes to **−14 LUFS integrated, −1 dBTP true peak**.
+- **Measured:** −13.9 LUFS, −1.0 dBTP, LRA 5.3 LU. In the speech band (1–4 kHz) the voice sits 14–35 dB over the music, and the music ducks only 3–8 dB.
