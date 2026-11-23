@@ -51,3 +51,28 @@ node tools/motion/render-showreel.mjs
 `--beats` renders one review frame per beat. Without it, the script renders at 60 fps with 3 sub-frames per frame, blended with ffmpeg `tmix` for motion blur, plus a Web Audio soundtrack rendered offline to WAV. Output: `handover/motion/SayTamm_Showreel_20s.mp4`.
 
 **Through-line object: the Blade.** It is the purple 45° mark: the site's eyebrow rule, which becomes the logo's blade. Stages: it slashes the hook → it lands as the hero eyebrow → it becomes the "Explore our work" underline → the active filter chip → a drag handle linking the four disciplines → the selected form chip → the text caret → the submit button → the line the whole UI folds into → the logo's blade. The UI is rebuilt from real site copy and work images; `seek(t)` is stateless.
+
+## Showreel 2 — 30 s, 120 BPM, "The Caret" (English)
+
+```bash
+node tools/motion/render-showreel2.mjs --beats
+```
+
+```bash
+node tools/motion/render-showreel2.mjs
+```
+
+Same pipeline as the first showreel: one review frame per beat with `--beats`, otherwise 60 fps × 3 tmix sub-frames plus an offline Web Audio track. Output: `handover/motion/SayTamm_Showreel_2_The_Caret_30s.mp4` and `SayTamm_Showreel_2_Sound.wav`.
+
+**Through-line object: the Caret.** It is the purple text cursor of the brief form. It deletes the hook, types the brief, becomes a full-frame wipe for each discipline, a sweep that turns CREATIVE's letters into windows onto real work, the scan line that reveals the client wall, and finally tilts to 45° and match-cuts into the logo's blade.
+
+| Time | Idea |
+|---|---|
+| 0–4 s | "Your brief gets lost / in handovers." The caret deletes "gets lost in handovers"; "Your brief" shrinks into the form input |
+| 4–9 s | The brief form: select all, type "More qualified leads.", click four discipline chips. "One brief. Four disciplines." |
+| 9–17.5 s | STRATEGY, CREATIVE (letters as windows on a strip of real work), MEDIA (real channels), PERFORMANCE: each one wiped in by the caret |
+| 17–22 s | 28 real project covers stack, fan into a grid with a 00→28 counter, a click on one card, a camera dive, a collapse back into the caret |
+| 22–26 s | The caret lies flat as a scan line and reveals production-approved client logos row by row on the beat |
+| 26–30 s | The caret tilts to 45°, match-cuts into the real blade vector, the T unfolds, the blade slides home → "SayTamm" · "Say it. Tamm it. · قول. تم." |
+
+Uses only approved facts (28 projects, 23 brands) and production-visible logos (`permission: 'pending'` entries are excluded). The end card's "SayTamm" is set in type, not a wordmark (OQ-05 is still open).
