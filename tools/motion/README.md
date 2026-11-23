@@ -37,3 +37,17 @@ Outputs `handover/motion/SayTamm_Teaser_v2_*` (EN/AR × 16:9/9:16; with sound, s
 | 15.6–20.6 s | Outline questions (Sales? Qualified leads? Revenue?) filled solid by each blade slash → "Pick the number. We build everything around it." |
 | 20.6–26.2 s | Extruded 3D logo: the camera swings from a side view to the front; the blade slides along its axis into place with the impact |
 | 26.2–30 s | "Less talk. More Tamm." cut in on the diagonal → "Coming soon" |
+
+## Showreel — 20 s, 120 BPM, "The Blade"
+
+```bash
+node tools/motion/render-showreel.mjs --beats
+```
+
+```bash
+node tools/motion/render-showreel.mjs
+```
+
+`--beats` renders one review frame per beat. Without it, the script renders at 60 fps with 3 sub-frames per frame, blended with ffmpeg `tmix` for motion blur, plus a Web Audio soundtrack rendered offline to WAV. Output: `handover/motion/SayTamm_Showreel_20s.mp4`.
+
+**Through-line object: the Blade.** It is the purple 45° mark: the site's eyebrow rule, which becomes the logo's blade. Stages: it slashes the hook → it lands as the hero eyebrow → it becomes the "Explore our work" underline → the active filter chip → a drag handle linking the four disciplines → the selected form chip → the text caret → the submit button → the line the whole UI folds into → the logo's blade. The UI is rebuilt from real site copy and work images; `seek(t)` is stateless.
