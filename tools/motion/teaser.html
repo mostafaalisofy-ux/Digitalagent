@@ -1,0 +1,181 @@
+<!doctype html>
+<!-- SayTamm teaser — "From noise to Tamm". Deterministic: window.render(t) draws the frame at time t (seconds).
+     Query: ?w=1920&h=1080&lang=en|ar. Logo paths are injected from the approved production SVG (never redrawn). -->
+<html><head><meta charset="utf-8"><style>
+@font-face{font-family:Satoshi;src:url(__SAT__/Satoshi-500.woff2);font-weight:500}
+@font-face{font-family:Satoshi;src:url(__SAT__/Satoshi-700.woff2);font-weight:700}
+@font-face{font-family:Plex;src:url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2);font-weight:500}
+@font-face{font-family:Plex;src:url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2);font-weight:700}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{overflow:hidden;background:#09090D}
+#stage{position:relative;overflow:hidden;background:#09090D;color:#F5F3FA;font-family:Satoshi,Plex,sans-serif}
+.ar #stage{font-family:Plex,Satoshi,sans-serif}
+.abs{position:absolute}
+.word{position:absolute;white-space:nowrap;font-weight:500;color:#6e6b78;will-change:transform,opacity}
+.big{position:absolute;left:0;right:0;text-align:center;font-weight:700;letter-spacing:-.045em;line-height:1}
+.ar .big{letter-spacing:0;line-height:1.25}
+.line{display:block;overflow:hidden}.line>span{display:inline-block}
+.blade{position:absolute;background:#6C35FF;transform-origin:0 50%}
+.node{position:absolute;display:flex;align-items:center;gap:.5em;font-weight:700;white-space:nowrap}
+.node i{display:block;background:#6C35FF;transform:skewX(-45deg)}
+.band{position:absolute;top:-50%;height:200%}
+</style></head><body><div id="stage"></div>
+<script>
+const Q = new URLSearchParams(location.search);
+const W = +Q.get('w') || 1920, H = +Q.get('h') || 1080, LANG = Q.get('lang') || 'en';
+const AR = LANG === 'ar', V = H > W; // vertical
+const U = Math.min(W, H) / 1080;    // type unit
+document.documentElement.className = AR ? 'ar' : '';
+const S = document.getElementById('stage'); S.style.width = W + 'px'; S.style.height = H + 'px';
+if (AR) S.dir = 'rtl';
+const LOGO = __LOGO__; // {vb, t, b} from SayTamm_Symbol_Signature_White-Purple.svg
+
+const TX = AR ? {
+  noise: ['محتوى أكثر.', 'إعلانات أكثر.', 'تقارير أكثر.', 'اجتماعات أكثر.', 'متابعون أكثر.', 'حملات أكثر.', 'لوحات بيانات أكثر.', 'منشورات أكثر.', 'ضجيج أكثر.'],
+  l1: ['ليست كل حركة', 'تقدّماً.'],
+  q0: 'لذلك نبدأ بسؤال واحد:', q1: 'ما الذي يجب أن يتحرك؟',
+  nums: ['المبيعات.', 'العملاء المؤهلون.', 'الإيرادات.'],
+  disc: ['الاستراتيجية', 'الإبداع', 'الإعلانات', 'الأداء'], one: ['فريق واحد.', 'رقم واحد.'],
+  tag1: 'قول. تم.', tag2: 'Say it. Tamm it.', kind: 'وكالة تسويق رقمي وأداء.', end: ['كلام أقل.', 'تنفيذ أذكى.'], url: 'saytamm.com',
+} : {
+  noise: ['More posts.', 'More ads.', 'More reports.', 'More meetings.', 'More followers.', 'More campaigns.', 'More dashboards.', 'More content.', 'More noise.'],
+  l1: ['Not all movement', 'means progress.'],
+  q0: 'So we start with one question:', q1: 'What should move?',
+  nums: ['Sales.', 'Qualified leads.', 'Revenue.'],
+  disc: ['Strategy', 'Creative', 'Media', 'Performance'], one: ['One team.', 'One number.'],
+  tag1: 'Say it. Tamm it.', tag2: 'قول. تم.', kind: 'A digital marketing & performance agency.', end: ['Less talk.', 'More Tamm.'], url: 'saytamm.com',
+};
+
+// ---------- helpers ----------
+const cl = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const seg = (t, a, b) => cl((t - a) / (b - a));
+const eIO = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const eO = (x) => 1 - Math.pow(1 - x, 3);
+const eX = (x) => x === 1 ? 1 : 1 - Math.pow(2, -10 * x); // expo out
+const el = (tag, cls, css = {}, html = '') => { const e = document.createElement(tag); if (cls) e.className = cls; Object.assign(e.style, css); e.innerHTML = html; S.appendChild(e); return e; };
+let seed = 9; const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+const px = (n) => n + 'px';
+
+// ---------- S1: noise ----------
+const NOISE = [];
+for (let i = 0; i < 22; i++) {
+  const txt = TX.noise[i % TX.noise.length];
+  const size = (V ? 46 : 44) * U * (0.75 + rnd() * 1.5);
+  const e = el('div', 'word', { fontSize: px(size), left: px(W * (0.06 + rnd() * (V ? 0.5 : 0.62))), top: px(H * (0.08 + rnd() * 0.8)) }, txt);
+  NOISE.push({ e, t0: 0.25 + i * 0.12 + rnd() * 0.05, hi: i % 7 === 3 });
+}
+// ---------- S2 ----------
+const L1 = el('div', 'big', { fontSize: px((V ? 128 : 156) * U), top: px(H / 2 - (V ? 150 : 150) * U) },
+  TX.l1.map((l) => `<span class="line"><span>${l}</span></span>`).join(''));
+const L1spans = L1.querySelectorAll('.line>span');
+const B2 = el('div', 'blade', { height: px(16 * U), width: px((V ? 520 : 760) * U), transform: 'skewX(-45deg) scaleX(0)' });
+// ---------- S3 ----------
+const Q0 = el('div', 'big', { fontSize: px(40 * U), fontWeight: 500, color: '#96939F', letterSpacing: '0', top: px(H / 2 - 190 * U) }, TX.q0);
+const Q1 = el('div', 'big', { fontSize: px((V ? 96 : 164) * U), top: px(H / 2 - 110 * U) }, TX.q1);
+const NUMBOX = el('div', 'abs', { left: '50%', top: px(H / 2 + (V ? 140 : 90) * U), transform: 'translateX(-50%)', background: '#6C35FF', padding: `${14 * U}px ${34 * U}px`, fontSize: px(72 * U), fontWeight: 700, letterSpacing: AR ? '0' : '-.03em', whiteSpace: 'nowrap', clipPath: 'inset(0 100% 0 0)' });
+// ---------- S4: disciplines on the 45° line ----------
+const DL = el('div', 'abs', { left: '0', top: '0', width: px(W), height: px(H) });
+const span = V ? 0.62 : 0.56; // length of the diagonal as share of height
+const P0 = { x: W / 2 - H * span / 2, y: H / 2 + H * span / 2 }, P1 = { x: W / 2 + H * span / 2, y: H / 2 - H * span / 2 };
+if (V) { P0.x = W * 0.16; P1.x = W * 0.16 + H * span * 0.55; P0.y = H * 0.72; P1.y = P0.y - (P1.x - P0.x); }
+const LEN = Math.hypot(P1.x - P0.x, P1.y - P0.y);
+const LINE = el('div', 'abs', { left: px(P0.x), top: px(P0.y), height: px(9 * U), width: px(LEN), background: '#6C35FF', transformOrigin: '0 50%', transform: `rotate(-45deg) scaleX(0)` });
+const LINEbg = el('div', 'abs', { left: px(P0.x), top: px(P0.y), height: px(2 * U), width: px(LEN), background: 'rgba(245,243,250,.12)', transformOrigin: '0 50%', transform: `rotate(-45deg) scaleX(0)` });
+const NODES = TX.disc.map((d, i) => {
+  const f = i / 3, x = P0.x + (P1.x - P0.x) * f, y = P0.y + (P1.y - P0.y) * f;
+  const n = el('div', 'node', { left: px(x), top: px(y), fontSize: px((V ? 58 : 64) * U), letterSpacing: AR ? '0' : '-.03em' }, `<i style="width:${34 * U}px;height:${12 * U}px"></i><span>${d}</span>`);
+  n.style.transform = 'translate(0,-50%)';
+  if (AR) { n.style.direction = 'rtl'; n.style.flexDirection = 'row'; }
+  return n;
+});
+const ONE = el('div', 'big', { fontSize: px((V ? 120 : 150) * U), top: px(H / 2 - (V ? 140 : 150) * U) }, TX.one.map((l, i) => `<span class="line"><span${i ? ' style="color:#6C35FF"' : ''}>${l}</span></span>`).join(''));
+const ONEs = ONE.querySelectorAll('.line>span');
+// ---------- S5: Tamm Slash sweep ----------
+const BANDS = []; const BW = [0.22, 0.12, 0.05, 0.18, 0.3, 0.14];
+let bx = 0; BW.forEach((w, i) => {
+  const b = el('div', 'band', { width: px(w * W), background: i === 2 ? '#6C35FF' : (i % 2 ? '#17171E' : '#121218'), left: px(bx), transform: 'skewX(-45deg) translateX(0)' });
+  BANDS.push({ b, x: bx }); bx += w * W;
+});
+const TOTAL = bx;
+// ---------- S6: logo ----------
+const LS = (V ? 300 : 360) * U, LW = LS * 600 / 721;
+const LOG = el('div', 'abs', { left: px(W / 2 - LW / 2), top: px(H / 2 - LS / 2 - (V ? 120 : 70) * U), width: px(LW), height: px(LS) },
+  `<svg viewBox="${LOGO.vb}" width="100%" height="100%" style="overflow:visible"><g id="gT"><path fill="#FFFFFF" fill-rule="evenodd" d="${LOGO.t}"/></g><g id="gB"><path fill="#6C35FF" fill-rule="evenodd" d="${LOGO.b}"/></g></svg>`);
+const gT = LOG.querySelector('#gT'), gB = LOG.querySelector('#gB');
+const TAG1 = el('div', 'big', { fontSize: px((V ? 88 : 96) * U), top: px(H / 2 + LS / 2 - (V ? 50 : 10) * U) }, TX.tag1.replace(/(Tamm it\.|تم\.)$/, '<span style="color:#6C35FF">$1</span>'));
+const TAG2 = el('div', 'big', { fontSize: px(40 * U), fontWeight: 500, color: '#96939F', letterSpacing: '0', top: px(H / 2 + LS / 2 + (V ? 60 : 100) * U), fontFamily: AR ? 'Satoshi' : 'Plex' }, `<bdi>${TX.tag2}</bdi>`);
+const FLASH = el('div', 'abs', { inset: '0', background: '#6C35FF', opacity: 0, mixBlendMode: 'screen' });
+// ---------- S7: end card ----------
+const KIND = el('div', 'big', { fontSize: px(42 * U), fontWeight: 500, color: '#CFCCD7', letterSpacing: '0', top: px(H / 2 - (V ? 10 : 20) * U) }, TX.kind);
+const END = el('div', 'big', { fontSize: px((V ? 120 : 150) * U), top: px(H / 2 + (V ? 80 : 70) * U) }, TX.end.map((l, i) => `<span class="line"><span${i ? ' style="color:#6C35FF"' : ''}>${l}</span></span>`).join(V ? '' : ' ').replace(/class="line"/g, V ? 'class="line"' : 'class="line" style="display:inline-block"'));
+const ENDs = END.querySelectorAll('.line>span');
+const URL_ = el('div', 'big', { fontSize: px(34 * U), fontWeight: 500, color: '#96939F', letterSpacing: '.18em', top: px(H - (V ? 260 : 150) * U), fontFamily: 'Satoshi' }, TX.url.toUpperCase());
+const FADE = el('div', 'abs', { inset: '0', background: '#09090D', opacity: 0 });
+
+const show = (e, o) => { e.style.opacity = o; e.style.visibility = o <= 0.001 ? 'hidden' : 'visible'; };
+const rise = (spans, t, t0, step = 0.12, dur = 0.55) => spans.forEach((s, i) => { const p = eX(seg(t, t0 + i * step, t0 + i * step + dur)); s.style.transform = `translateY(${(1 - p) * 110}%)`; });
+
+window.DURATION = 24;
+window.render = (t) => {
+  // S1 noise 0–3.05 (hard cut)
+  NOISE.forEach(({ e, t0, hi }, i) => {
+    const on = t >= t0 && t < 3.05;
+    const p = eO(seg(t, t0, t0 + 0.25));
+    show(e, on ? p * (hi ? 1 : 0.85) : 0);
+    e.style.color = hi && t > t0 + 0.1 ? '#CFCCD7' : '#6e6b78';
+    const jit = on ? Math.sin(t * 40 + i) * 2 * U * seg(t, 1.6, 3.0) : 0;
+    e.style.transform = `translate(${jit}px, ${(1 - p) * 14 * U}px) scale(${1 + seg(t, 1.8, 3.05) * 0.06})`;
+  });
+  // S2 3.35–6.0
+  const s2 = t >= 3.35 && t < 6.05;
+  show(L1, s2 ? 1 - seg(t, 5.75, 6.0) : 0); rise(L1spans, t, 3.4, 0.28, 0.6);
+  const bp = eX(seg(t, 4.55, 5.05));
+  const r = L1spans[1].getBoundingClientRect();
+  B2.style.left = px(AR ? r.left + r.width - (V ? 520 : 760) * U * 0.98 : r.left + r.width * 0.02); B2.style.top = px(r.bottom + 6 * U); B2.style.width = px(r.width * 0.96);
+  B2.style.transformOrigin = AR ? '100% 50%' : '0 50%';
+  B2.style.transform = `skewX(-45deg) scaleX(${bp})`; show(B2, s2 ? 1 - seg(t, 5.75, 6.0) : 0);
+  if (AR) B2.style.left = px(r.left + r.width * 0.02);
+  // S3 6.05–9.55
+  const s3 = t >= 6.05 && t < 9.6;
+  show(Q0, s3 ? eO(seg(t, 6.1, 6.5)) * (1 - seg(t, 9.3, 9.55)) : 0);
+  show(Q1, s3 ? eO(seg(t, 6.55, 6.95)) * (1 - seg(t, 9.3, 9.55)) : 0);
+  Q1.style.transform = `translateY(${(1 - eX(seg(t, 6.55, 7.1))) * 40 * U}px)`;
+  const nI = t < 8.05 ? 0 : t < 8.55 ? 1 : 2;
+  NUMBOX.textContent = TX.nums[nI];
+  const nOpen = eX(seg(t, 7.45, 7.75));
+  NUMBOX.style.clipPath = AR ? `inset(0 0 0 ${(1 - nOpen) * 100}%)` : `inset(0 ${(1 - nOpen) * 100}% 0 0)`;
+  show(NUMBOX, s3 && t > 7.4 ? 1 - seg(t, 9.3, 9.55) : 0);
+  NUMBOX.style.transform = `translateX(-50%) scale(${1 + (t > 8.05 && t < 8.12 || t > 8.55 && t < 8.62 ? 0.04 : 0)})`;
+  // S4 9.6–14.2
+  const s4 = t >= 9.6 && t < 14.25;
+  const lp = eIO(seg(t, 9.75, 11.9));
+  LINE.style.transform = `rotate(-45deg) scaleX(${lp})`; LINEbg.style.transform = `rotate(-45deg) scaleX(${eO(seg(t, 9.6, 10.2))})`;
+  const out4 = seg(t, 12.45, 12.8);
+  show(LINE, s4 ? 1 - out4 : 0); show(LINEbg, s4 ? 1 - out4 : 0);
+  NODES.forEach((n, i) => { const t0 = 9.85 + i * 0.62; const p = eX(seg(t, t0, t0 + 0.5)); show(n, s4 ? p * (1 - out4) : 0); n.style.transform = `translate(${(1 - p) * -30 * U + 26 * U}px,-50%)`; });
+  show(ONE, s4 && t > 12.7 ? 1 - seg(t, 13.95, 14.2) : 0); rise(ONEs, t, 12.75, 0.32, 0.55);
+  // S5 14.2–15.75 sweep
+  const sw = seg(t, 14.15, 15.75);
+  BANDS.forEach(({ b, x }, i) => { const k = eIO(cl(sw * 1.25 - i * 0.04)); b.style.transform = `skewX(-45deg) translateX(${(-TOTAL - H - x) + k * (2 * TOTAL + 2 * H) + (AR ? 0 : 0)}px)`; show(b, t > 14.1 && t < 15.8 ? 1 : 0); });
+  // S6 logo 15.6–20.2
+  const s6 = t >= 15.55 && t < 20.3;
+  const tp = eX(seg(t, 15.75, 16.35));
+  gT.setAttribute('transform', `translate(0 ${(1 - tp) * -140})`); gT.style.opacity = tp;
+  const bpp = eX(seg(t, 16.75, 17.05));
+  gB.setAttribute('transform', `translate(${(1 - bpp) * -420} ${(1 - bpp) * 420})`); gB.style.opacity = seg(t, 16.72, 16.8);
+  const settle = seg(t, 17.05, 17.4);
+  const shrink = eIO(seg(t, 19.9, 20.6));
+  const LSs = 1 - shrink * 0.55;
+  LOG.style.transform = `translateY(${-shrink * (V ? H * 0.22 : H * 0.27)}px) scale(${LSs * (1 + Math.sin(settle * Math.PI) * 0.025)})`;
+  show(LOG, t >= 15.6 && t < 23.8 ? 1 : 0);
+  show(FLASH, t > 17.02 && t < 17.3 ? 0.35 * (1 - seg(t, 17.02, 17.3)) : 0);
+  show(TAG1, s6 ? eO(seg(t, 17.75, 18.2)) * (1 - seg(t, 19.7, 20.0)) : 0); TAG1.style.transform = `translateY(${(1 - eX(seg(t, 17.75, 18.3))) * 30 * U}px)`;
+  show(TAG2, s6 ? eO(seg(t, 18.35, 18.8)) * (1 - seg(t, 19.7, 20.0)) : 0);
+  // S7 20.3–24
+  show(KIND, t > 20.5 ? eO(seg(t, 20.55, 21.0)) : 0);
+  show(END, t > 21.2 ? 1 : 0); rise(ENDs, t, 21.25, 0.35, 0.6);
+  show(URL_, t > 22.3 ? eO(seg(t, 22.35, 22.8)) : 0);
+  show(FADE, seg(t, 23.35, 24));
+};
+window.render(0);
+</script></body></html>
