@@ -24,7 +24,7 @@ const html = fs.readFileSync(path.join(ROOT, 'film/roas/film2.html'), 'utf8')
   .replace('__SEQ__', pathToFileURL(path.join(OUT, 'seq')).href)
   .replace('__SEQN__', JSON.stringify(Object.fromEntries(fs.readdirSync(path.join(OUT, 'seq')).map((d) => [d, fs.readdirSync(path.join(OUT, 'seq', d)).length]))))
   .replaceAll('__VARIANT__', VAR);
-const TAG = `_${VAR}` + (arg('--part') !== null ? `_${arg('--part')}` : arg('--frames') ? '_f' : arg('--audio-only') ? '_a' : '');
+const TAG = `_${VAR}` + (arg('--part') !== null ? `_${arg('--part')}${arg('--parts') === '4' ? '' : 'of' + arg('--parts')}` : arg('--frames') ? '_f' : arg('--audio-only') ? '_a' : '');
 const TMP = path.join(OUT, `_film2${TAG}.html`); fs.writeFileSync(TMP, html);
 const require = createRequire(import.meta.url);
 let playwright;
@@ -65,4 +65,8 @@ for (let f = F0; f < F1; f++) {
   for (let k = 0; k < SUB; k++) { const buf = await at(Math.max(0, (f + (k - (SUB - 1) / 2) / SUB) / FPS)); if (!ff.stdin.write(buf)) await new Promise((r) => ff.stdin.once('drain', r)); }
   if ((f - F0) % 120 === 0) console.log('frame', f, `(${F0}–${F1})`);
 }
-ff.stdin.end(); await fin; await done(); console.log('wrote', MP4);
+ff.stdin.end(); await fin; await done();
+// guard: under heavy load a slice has come out short; fail loudly so the slice is rendered again
+const got = Number(execFileSync('ffprobe', ['-v', 'error', '-count_packets', '-select_streams', 'v', '-show_entries', 'stream=nb_read_packets', '-of', 'csv=p=0', MP4]).toString().trim());
+if (got !== F1 - F0) { console.error(`SHORT ${MP4}: ${got} of ${F1 - F0} frames`); process.exit(3); }
+console.log('wrote', MP4, got, 'frames');

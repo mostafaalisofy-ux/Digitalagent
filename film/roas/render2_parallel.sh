@@ -8,7 +8,12 @@ node $R --variant ar --audio-only
 for V in ar en; do
   [[ "$WHICH" == both || "$WHICH" == "$V" ]] || continue
   pids=(); for k in 0 1 2 3; do node $R --variant $V --part $k --parts 4 > "$OUT/_p_${V}_$k.log" 2>&1 & pids+=($!); done
-  for p in "${pids[@]}"; do wait "$p"; done
+  for k in 0 1 2 3; do
+    # a slice that comes out short (exit 3) is rendered again on its own, up to twice
+    wait "${pids[$k]}" && continue
+    for try in 1 2; do echo "RETRY $V part $k"; node $R --variant $V --part $k --parts 4 > "$OUT/_p_${V}_$k.log" 2>&1 && continue 2; done
+    echo "FAILED $V part $k"; exit 1
+  done
   printf "file '_part2_${V}_0.mp4'\nfile '_part2_${V}_1.mp4'\nfile '_part2_${V}_2.mp4'\nfile '_part2_${V}_3.mp4'\n" > "$OUT/_parts_$V.txt"
   ffmpeg -y -v error -f concat -safe 0 -i "$OUT/_parts_$V.txt" -c copy "$OUT/Ratio2_${V}_picture.mp4"
   rm -f "$OUT"/_part2_${V}_*.mp4 "$OUT/_parts_$V.txt" "$OUT"/_p_${V}_*.log
