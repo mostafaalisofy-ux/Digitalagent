@@ -167,6 +167,23 @@ python3 film/roas/mix3.py
 
 Make the two pictures first, as `handover/launch-film/roas/Ratio3_{ar,en}_picture.mp4`: trim 0–36.5 s, `setpts=(PTS-STARTPTS)/1.35,framerate=fps=60`, then concat with 36.5–42.5 s at normal speed.
 
+## v4: English only, centred layout (33 s)
+
+**Master:** `SayTamm_TheRatio_v4_EN_33s_9x16.mp4`, 1080×1920 at 60 fps. The same fast cut as v3 (1.35× before the lockup), with the type moved out of the bottom of the frame:
+
+- **The fraction line** sits in the middle of the frame (y 1060 to 1160) and still steps down with each service. At the payoff it falls to the bottom to make room for "We count returns".
+- **The spend side** under the line is a translucent shade, so the footage stays visible.
+- **Section titles** are centred and larger. "E-commerce" sits at the top, clear of the tracked phone.
+- **"We count returns"** is set smaller, so it sits inside the frame.
+
+```bash
+bash film/roas/render4_parallel.sh
+```
+
+```bash
+python3 film/roas/mix4.py
+```
+
 ## Before publishing
 
 - **Platform logos:** check each brand's guidelines (Meta, Google, TikTok, Snap, X, YouTube, Shopify, Salla, Zid). Do not imply partner status the agency does not hold.
