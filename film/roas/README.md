@@ -146,6 +146,27 @@ v2 keeps the v1 choreography (the fraction line, the five services, the payoff a
 
 **Avoided on purpose:** a clip that shows the Saudi flag (flags are restricted in ads), a Dubai clip with the UAE flag in frame, and a Cairo clip with other brands' billboards.
 
+## v3: fast cut (33 s)
+
+**Masters:** `SayTamm_TheRatio_v3_Fast_AR_33s_9x16.mp4` and `SayTamm_TheRatio_v3_Fast_EN_33s_9x16.mp4`, 1080×1920 at 60 fps.
+
+v3 keeps the v2 scenes and the same voice takes, and makes the film faster:
+
+- **Speed:** everything before the lockup (0–36.5 s of v2) plays 1.35× faster. The lockup (logo, tagline, call to action) stays at normal speed so the voice has room to finish.
+- **Picture:** retimed from the v2 picture in ffmpeg with frame blending (`framerate`, which skips blending across cuts).
+- **Music:** rendered again with every event and envelope on the faster clock, so the tempo rises to about 162 BPM and the pitch stays.
+- **Voices:** the same takes, re-pinned to the new times.
+
+```bash
+node film/roas/render2.mjs --variant ar --audio-only --speed 1.35 --hold 36.5
+```
+
+```bash
+python3 film/roas/mix3.py
+```
+
+Make the two pictures first, as `handover/launch-film/roas/Ratio3_{ar,en}_picture.mp4`: trim 0–36.5 s, `setpts=(PTS-STARTPTS)/1.35,framerate=fps=60`, then concat with 36.5–42.5 s at normal speed.
+
 ## Before publishing
 
 - **Platform logos:** check each brand's guidelines (Meta, Google, TikTok, Snap, X, YouTube, Shopify, Salla, Zid). Do not imply partner status the agency does not hold.

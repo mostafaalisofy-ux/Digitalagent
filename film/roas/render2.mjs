@@ -46,8 +46,23 @@ if (arg('--frames')) {
   await done(); console.log('frames in', d); process.exit(0);
 }
 if (arg('--audio-only')) {
+  // --speed S --hold H (fast cut): everything before H plays S times faster, the lockup after H at normal speed.
+  // Event times and envelopes are remapped through the same clock, so the tempo rises and the pitch stays.
+  if (arg('--speed')) await page.evaluate(([S, H]) => {
+    const W = (t) => (t < H ? t / S : H / S + (t - H)), Wd = (t, d) => W(t + d) - W(t);
+    const P = AudioParam.prototype;
+    for (const m of ['setValueAtTime', 'linearRampToValueAtTime', 'exponentialRampToValueAtTime']) { const o = P[m]; P[m] = function (v, t) { return o.call(this, v, W(t)); }; }
+    { const o = P.setTargetAtTime; P.setTargetAtTime = function (v, t, c) { return o.call(this, v, W(t), Wd(t, c)); }; }
+    { const o = P.setValueCurveAtTime; P.setValueCurveAtTime = function (c, t, d) { return o.call(this, c, W(t), Wd(t, d)); }; }
+    for (const proto of [AudioScheduledSourceNode.prototype, AudioBufferSourceNode.prototype]) {
+      if (Object.prototype.hasOwnProperty.call(proto, 'start')) { const o = proto.start; proto.start = function (w = 0, ...r) { return o.call(this, W(w), ...r); }; }
+      if (Object.prototype.hasOwnProperty.call(proto, 'stop')) { const o = proto.stop; proto.stop = function (w = 0) { return o.call(this, W(w)); }; }
+    }
+    const O = window.OfflineAudioContext;
+    window.OfflineAudioContext = class extends O { constructor(c, len, sr) { super(c, Math.ceil(W(len / sr) * sr), sr); } };
+  }, [Number(arg('--speed')), Number(arg('--hold'))]);
   const b64 = await page.evaluate(() => window.renderAudio());
-  fs.writeFileSync(path.join(OUT, 'Ratio2_Score.wav'), Buffer.from(b64, 'base64'));
+  fs.writeFileSync(path.join(OUT, arg('--speed') ? 'Ratio3_Score.wav' : 'Ratio2_Score.wav'), Buffer.from(b64, 'base64'));
   await done(); console.log('wrote score'); process.exit(0);
 }
 const DUR = await page.evaluate(() => window.DUR_S), FT = Math.round(FPS * DUR);
