@@ -1,0 +1,613 @@
+<title>فيديوهات إطلاق قول تم</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one RTL column of sections; each idea is a card whose storyboard is a row of 9:16 frames, drawn as sketches, never as finished art. */
+:root {
+  --bg: #09090D; --surface: #111117; --surface-2: #17171E; --fg: #F5F3FA; --muted: #A19EAB; --line: rgba(245,243,250,0.12);
+  --accent: #6C35FF; --accent-ink: #A88BFF; --ok: #49C08A; --gate: #E3A846; --stop: #E07A6E;
+  --frame-bg: #121218; --frame-fg: #F5F3FA; --sk: rgba(245,243,250,0.42); --sk-fill: rgba(245,243,250,0.07);
+  --font: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+  --bg: #F5F3FA; --surface: #FFFFFF; --surface-2: #ECEAF3; --fg: #0B0B10; --muted: #5C5967; --line: rgba(9,9,13,0.12);
+  --accent: #6C35FF; --accent-ink: #5226DB; --ok: #1F8A5A; --gate: #A86A0B; --stop: #B5463A; color-scheme: light; } }
+:root[data-theme="light"] { --bg: #F5F3FA; --surface: #FFFFFF; --surface-2: #ECEAF3; --fg: #0B0B10; --muted: #5C5967; --line: rgba(9,9,13,0.12);
+  --accent: #6C35FF; --accent-ink: #5226DB; --ok: #1F8A5A; --gate: #A86A0B; --stop: #B5463A; color-scheme: light; }
+:root[data-theme="dark"] { --bg: #09090D; --surface: #111117; --surface-2: #17171E; --fg: #F5F3FA; --muted: #A19EAB; --line: rgba(245,243,250,0.12);
+  --accent: #6C35FF; --accent-ink: #A88BFF; --ok: #49C08A; --gate: #E3A846; --stop: #E07A6E; color-scheme: dark; }
+
+body { background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 16px; line-height: 1.75; }
+.page { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 80px; display: flex; flex-direction: column; gap: 72px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.3; }
+h1 { font-size: clamp(34px, 5vw, 54px); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: clamp(26px, 3.2vw, 34px); font-weight: 700; }
+h3 { font-size: 22px; font-weight: 700; }
+p { margin: 0; }
+.eyebrow { font-family: var(--font); font-size: 14px; font-weight: 600; color: var(--muted); display: flex; gap: 10px; align-items: center; }
+.eyebrow::before { content: ""; width: 22px; height: 3px; background: var(--accent); border-radius: 2px; }
+.lead { font-size: 18px; color: var(--muted); max-width: 68ch; }
+.muted { color: var(--muted); }
+.hi { color: var(--accent-ink); }
+section { display: flex; flex-direction: column; gap: 24px; }
+.sec-head { display: flex; flex-direction: column; gap: 10px; }
+
+/* header */
+.top { display: flex; flex-direction: column; gap: 18px; padding-top: 8px; }
+.top .meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { font-size: 13px; padding: 3px 12px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.pill.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 45%, transparent); }
+.pill.gate { color: var(--gate); border-color: color-mix(in srgb, var(--gate) 45%, transparent); }
+.pill.acc { color: var(--accent-ink); border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+
+/* summary */
+.thesis { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.thesis > div { background: var(--surface); padding: 20px 22px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.thesis b { font-size: 17px; }
+.thesis span { color: var(--muted); font-size: 15px; }
+
+/* tables */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 640px; }
+th, td { text-align: right; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--font); font-weight: 600; font-size: 13px; color: var(--muted); background: var(--surface-2); }
+tr:last-child td { border-bottom: 0; }
+td.code { font-family: var(--mono); color: var(--accent-ink); white-space: nowrap; }
+
+/* inventory */
+.inv { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.inv div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.inv b { font-size: 15px; }
+.inv small { color: var(--muted); font-size: 13px; }
+.gaps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.gaps div { padding: 14px 16px; border-inline-start: 3px solid var(--gate); background: var(--surface); border-radius: 0 10px 10px 0; min-width: 0; }
+.gaps b { display: block; margin-bottom: 2px; }
+.gaps span { color: var(--muted); font-size: 15px; }
+
+/* arc */
+.arc { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.arc div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px; position: relative; }
+.arc .when { font-family: var(--mono); font-size: 12px; color: var(--accent-ink); letter-spacing: 0.06em; }
+.arc b { font-size: 17px; }
+.arc span { color: var(--muted); font-size: 14.5px; }
+@media (max-width: 820px) { .arc { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 460px) { .arc { grid-template-columns: 1fr; } }
+.big-idea { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 14px; }
+.big-idea .line { font-size: clamp(26px, 3.6vw, 40px); font-weight: 700; line-height: 1.35; }
+
+/* index */
+.index { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px; }
+.index a { display: flex; gap: 12px; align-items: baseline; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--fg); text-decoration: none; min-width: 0; }
+.index a:hover, .index a:focus-visible { border-color: var(--accent); outline: none; }
+.index .c { font-family: var(--mono); font-size: 12.5px; color: var(--accent-ink); }
+.index .g { margin-inline-start: auto; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.group-title { display: flex; align-items: baseline; gap: 12px; margin-top: 18px; }
+.group-title h3 { font-size: 20px; }
+.group-title span { color: var(--muted); font-size: 15px; }
+
+/* idea cards */
+.idea { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 18px; scroll-margin-top: 16px; }
+.idea-head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; }
+.idea-head .c { font-family: var(--mono); font-size: 13px; color: var(--accent-ink); }
+.idea-head h3 { font-size: 26px; }
+.idea-head .en { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.idea .pitch { font-size: 17px; max-width: 75ch; }
+.cols { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 22px; }
+@media (max-width: 860px) { .cols { grid-template-columns: 1fr; } }
+.why { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.why li { padding-inline-start: 18px; position: relative; color: var(--fg); font-size: 15.5px; }
+.why li::before { content: ""; position: absolute; inset-inline-start: 0; top: 0.75em; width: 7px; height: 7px; border-radius: 2px; background: var(--accent); }
+.facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 16px; margin: 0; font-size: 15px; }
+.facts dt { color: var(--muted); font-size: 13.5px; padding-top: 1px; }
+.facts dd { margin: 0; }
+.subhead { font-family: var(--font); font-size: 13.5px; font-weight: 600; color: var(--muted); }
+.extra { font-size: 15px; background: var(--surface-2); border-radius: 10px; padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
+.extra b { font-size: 14px; color: var(--muted); font-weight: 500; }
+
+/* storyboard */
+.board { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 14px 12px; }
+@media (max-width: 460px) { .board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.fr { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.shot { position: relative; aspect-ratio: 9 / 16; max-width: 100%; background: var(--frame-bg); border-radius: 10px; overflow: hidden; border: 1px solid rgba(245,243,250,0.08); }
+.shot svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.shot .s { fill: none; stroke: var(--sk); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.shot .f { fill: var(--sk-fill); stroke: var(--sk); stroke-width: 1.2; }
+.shot .a { fill: var(--accent); }
+.shot .as { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; }
+.shot .os { position: absolute; inset-inline: 8px; bottom: 10px; color: var(--frame-fg); font-size: 11.5px; line-height: 1.45; font-weight: 600; text-align: center; text-shadow: 0 1px 6px rgba(0,0,0,0.6); }
+.shot.t-center .os { top: 50%; bottom: auto; transform: translateY(-50%); font-size: 14px; font-weight: 700; }
+.shot.t-top .os { top: 12px; bottom: auto; }
+.shot .no { position: absolute; top: 6px; inset-inline-start: 8px; font-family: var(--mono); font-size: 10px; color: rgba(245,243,250,0.55); }
+.cap { display: flex; flex-direction: column; gap: 3px; font-size: 13.5px; line-height: 1.6; }
+.cap .t { font-family: var(--mono); font-size: 11.5px; color: var(--accent-ink); direction: ltr; text-align: right; }
+.cap .snd { color: var(--muted); font-size: 12.5px; }
+
+/* calendar */
+.weeks { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.week { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.week h3 { font-size: 18px; }
+.week .goal { color: var(--muted); font-size: 14.5px; }
+.week ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.week li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 8px; font-size: 14.5px; }
+.week li .d { font-family: var(--mono); font-size: 12px; color: var(--muted); direction: ltr; text-align: right; padding-top: 3px; }
+.tag { font-family: var(--mono); font-size: 11.5px; color: var(--accent-ink); }
+.old { font-size: 12px; color: var(--muted); border: 1px dashed var(--line); border-radius: 6px; padding: 0 6px; }
+
+/* plan */
+.steps { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.step { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 20px; padding: 18px 20px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.step:last-child { border-bottom: 0; }
+.step .w { font-family: var(--mono); font-size: 12.5px; color: var(--accent-ink); }
+.step .w b { display: block; font-family: var(--font); font-size: 17px; color: var(--fg); margin-top: 2px; }
+.step ul { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 15px; }
+.step .who { color: var(--muted); font-size: 13px; }
+@media (max-width: 640px) { .step { grid-template-columns: 1fr; gap: 8px; } }
+.decide { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
+.decide label { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; cursor: pointer; }
+.decide input { width: 18px; height: 18px; accent-color: var(--accent); margin-top: 4px; }
+.decide b { display: block; font-size: 15.5px; }
+.decide span { color: var(--muted); font-size: 14px; }
+.decide input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.guard { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+.guard div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; font-size: 15px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.guard b { font-size: 15.5px; }
+.guard span { color: var(--muted); }
+.foot { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 20px; }
+a { color: var(--accent-ink); }
+@media (prefers-reduced-motion: no-preference) { .index a { transition: border-color 0.15s; } }
+</style>
+
+<div class="page" dir="rtl" lang="ar">
+
+<header class="top">
+  <div class="eyebrow">خطة إطلاق قول تم · فيديوهات السوشيال · مسودة للنقاش</div>
+  <h1>فيديوهات إطلاق قول تم</h1>
+  <p class="lead">الخطة دي بتنقل الإطلاق من أفلام موشن لوحدها، لسلاسل فيها ناس الفريق الحقيقيين، وأرقام ليها مصدر، وجمهور بيشارك بجملته. فيها 12 فكرة، لكل فكرة استوري بورد، وجدول 30 يوم، وخطة تنفيذ، والقرارات المحتاجة منك.</p>
+  <div class="meta">
+    <span class="pill">12 فكرة: 4 لحظات كبيرة · 6 سلاسل · 2 إثبات</span>
+    <span class="pill">قبل الإطلاق بـ 3 أيام ← يوم 30</span>
+    <span class="pill acc">كل الأفكار 9:16 أولاً</span>
+    <span class="pill gate">مفيش حاجة بتتنشر من غير موافقتك</span>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><div class="eyebrow">الخلاصة</div><h2>5 قرارات بتغيّر شكل الإطلاق</h2></div>
+  <div class="thesis">
+    <div><b>وشوش حقيقية بدل مشاهد مولّدة</b><span>عندنا 30 شخص في الفريق. ده أقوى أصل عندنا، ولسه ما ظهرش في أي فيديو.</span></div>
+    <div><b>سلاسل بدل أفلام منفصلة</b><span>6 سلاسل بتتكرر كل أسبوع، فالجمهور يتعود يستناها، والإنتاج يبقى بقوالب ثابتة.</span></div>
+    <div><b>الجمهور بيقول… وإحنا بنتمّ</b><span>الجمهور يكتب مشكلته في جملة، والفريق يرد بخطة. ده بيترجم «قول. تم.» لتجربة يعيشها الجمهور.</span></div>
+    <div><b>نبدأ بأرقامنا إحنا</b><span>أرقام العملا متوقفة لحد الموافقات (OQ-32). فهنختبر على إعلانات إطلاقنا وننشر نتايجنا الحقيقية.</span></div>
+    <div><b>نقيس الطلبات مش الإعجابات</b><span>لكل سلسلة مقياس واحد أساسي، ومراجعة كل خميس، وقرار بعد 3 حلقات: نكمّل أو نعدّل أو نوقف.</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow">اللي في إيدينا</div><h2>13 فيلم جاهز تقريباً… ومعظمهم موشن</h2>
+  <p class="lead">الأفلام دي مش هتترمي. هتشتغل كمنشورات مساندة وإعلانات وتثبيت على البروفايل، بس مش هي اللي هتشيل الإطلاق.</p></div>
+  <div class="inv">
+    <div><b>The Dot</b><small>عربي + إنجليزي · 28 ث · فيلم البراند</small><span class="pill ok">مراجعة نهائية</span></div>
+    <div><b>One Push</b><small>عربي + إنجليزي · 22 ث</small><span class="pill ok">مراجعة نهائية</span></div>
+    <div><b>Infinite Tamm</b><small>لوب 24 ث</small><span class="pill ok">مراجعة نهائية</span></div>
+    <div><b>Dictionary</b><small>45 ث · نسخة تيك توك</small><span class="pill ok">مراجعة نهائية</span></div>
+    <div><b>The Ratio v5</b><small>عربي لأصحاب المتاجر · 33 ث</small><span class="pill gate">فويس: ElevenLabs مدفوع + مراجعة لغوية</span></div>
+    <div><b>فيلم الخدمات</b><small>إنجليزي · 16:9 + 9:16</small><span class="pill gate">خط Satoshi + فويس</span></div>
+    <div><b>تم بيعرّفكم بينا</b><small>إنجليزي + «قول تم» خليجي · 63 ث</small><span class="pill gate">مرجع شخصية تم + فويس</span></div>
+    <div><b>Showreel v2</b><small>56 ث · آراء عملا</small><span class="pill gate">مراجعة حقوق الآراء</span></div>
+    <div><b>الإيصال</b><small>إنجليزي 52 ث · عربي لأصحاب المتاجر 69 ث</small><span class="pill gate">أرقام العملا: OQ-32</span></div>
+  </div>
+  <p class="muted" style="font-size:14.5px">«مراجعة نهائية» معناها مراجعة لغوية وبراند قبل النشر. أي فيلم فيه فويس ElevenLabs محتاج اشتراك مدفوع للاستخدام التجاري ومراجعة من متحدث أصلي، وأي فيلم إنجليزي فيه خط Satoshi بيفضل داخلي لحد ترخيص الخط.</p>
+  <div class="gaps">
+    <div><b>مفيش ولا وش حقيقي</b><span>صاحب القرار بيشتري من ناس. الأفلام كلها شكل وحركة، مفيهاش الفريق.</span></div>
+    <div><b>مفيش مشاركة</b><span>كل الفيديوهات بتتكلم، ومفيش ولا واحد بيطلب من الجمهور يقول حاجة.</span></div>
+    <div><b>الإثبات متوقف</b><span>أقوى أفلامنا (الإيصال) مستني موافقات العملا، فمحتاجين إثبات ما يستناش حد.</span></div>
+    <div><b>مفيش إيقاع أسبوعي</b><span>أفلام منفصلة ما بتبنيش عادة مشاهدة، والسلاسل بتبنيها.</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow">الفكرة اللي بتربط كل حاجة</div></div>
+  <div class="big-idea">
+    <div class="line">إنت <span class="hi">قولها</span>… وإحنا نتمّها.</div>
+    <p class="lead">التاجلاين الثابت «قول. تم.» بيتحول لنظام: كل سلسلة فيها حد بيقول (الجمهور، الفريق، أو السوق في معمل الإعلان)، وحد بيتمّ (خطة، أو رقم، أو قرار). جملة الحملة «كلام أقل. تنفيذ أذكى.» مستنية تأكيدك (D-023)، والخطة مش متوقفة عليها.</p>
+  </div>
+  <div class="arc">
+    <div><span class="when">D-3 → D-1</span><b>قبل الإطلاق</b><span>3 تيزر «قولها»: جمل حقيقية من أصحاب متاجر، والجمهور يكتب جملته في الكومنتس.</span></div>
+    <div><span class="when">D0</span><b>يوم الإطلاق</b><span>فيلم «التتابع» بالـ 30 شخص، وبالليل لايف «اسأل الـ30».</span></div>
+    <div><span class="when">D1 → D14</span><b>نتعرّف ونفيد</b><span>وجوه تم، قاموس الفلوس، قبل ما تدفع، وأول حلقات قولها ومعمل الإعلان.</span></div>
+    <div><span class="when">D15 → D30</span><b>نثبت ونحوّل</b><span>الإيصالات (بعد الموافقة)، والسكتشات، ويوم 30 «إيصال إطلاقنا» بأرقامنا الحقيقية.</span></div>
+  </div>
+</section>
+
+<section id="ideas">
+  <div class="sec-head"><div class="eyebrow">الأفكار</div><h2>12 فكرة، وكل واحدة باستوري بورد</h2>
+  <p class="lead">الاستوري بورد هنا رسم تخطيطي يوضح الكادر والحركة. أي رقم بين [ ] بيتملي وقتها برقم حقيقي ليه مصدر، وأي رقم مكتوب عليه «مثال توضيحي» حساب افتراضي واضح للجمهور.</p></div>
+  <div class="index" id="index"></div>
+  <div id="cards" style="display:flex;flex-direction:column;gap:20px"></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow">الجدول</div><h2>أول 30 يوم</h2>
+  <p class="lead">الكثافة 5 لـ 7 فيديوهات في الأسبوع، أغلبها قوالب ثابتة بتتصور في يوم واحد. الأفلام الجاهزة متعلّمة بـ <span class="old">جاهز</span>. المواعيد بالظبط بتتحدد من تحليلات الحسابات، مش بالتخمين.</p></div>
+  <div class="weeks">
+    <div class="week"><h3>قبل الإطلاق</h3><p class="goal">نزرع السؤال، ونجمع جمل الجمهور.</p><ul>
+      <li><span class="d">D-3</span><span><span class="tag">V01</span> تيزر 1: «الإعلانات شغالة… والطلبات لأ.»</span></li>
+      <li><span class="d">D-2</span><span><span class="tag">V01</span> تيزر 2: «التقرير طويل… ومفيهوش قرار.»</span></li>
+      <li><span class="d">D-1</span><span><span class="tag">V01</span> تيزر 3: «كل وكالة بتقولّي نفس الكلام.» + إعلان ميعاد اللايف</span></li>
+    </ul></div>
+    <div class="week"><h3>الأسبوع 1</h3><p class="goal">نعرّف بالناس، ونفيد بسرعة.</p><ul>
+      <li><span class="d">D0</span><span><span class="tag">V02</span> التتابع · <span class="tag">V03</span> لايف بالليل · تثبيت فيلم الخدمات على لينكدإن <span class="old">جاهز</span></span></li>
+      <li><span class="d">D1</span><span><span class="tag">V06</span> وجوه تم 1/30 · <span class="tag">V05</span> قاموس الفلوس: ROAS مش ربح</span></li>
+      <li><span class="d">D2</span><span><span class="tag">V03</span> كليب من اللايف · The Dot <span class="old">جاهز</span></span></li>
+      <li><span class="d">D3</span><span><span class="tag">V08</span> قبل ما تدفع: 5 أسئلة</span></li>
+      <li><span class="d">D4</span><span><span class="tag">V04</span> قولها 1 (من كومنتات التيزر) · <span class="tag">V06</span> 2/30</span></li>
+      <li><span class="d">D5</span><span><span class="tag">V05</span> قاموس: تكلفة الطلب · One Push <span class="old">جاهز</span></span></li>
+      <li><span class="d">D6</span><span><span class="tag">V03</span> كليب لايف · <span class="tag">V06</span> 3/30</span></li>
+    </ul></div>
+    <div class="week"><h3>الأسبوع 2</h3><p class="goal">نفتح المعمل، ونخلّي الجمهور يشارك.</p><ul>
+      <li><span class="d">D7</span><span><span class="tag">V07</span> معمل الإعلان 1: التصويت (A ولا B؟)</span></li>
+      <li><span class="d">D8</span><span><span class="tag">V08</span> زرار Boost مش استراتيجية · <span class="tag">V06</span> 4/30</span></li>
+      <li><span class="d">D9</span><span><span class="tag">V05</span> قاموس: متوسط قيمة الطلب</span></li>
+      <li><span class="d">D10</span><span><span class="tag">V09</span> سكتش: لو التقرير بيتكلم · <span class="tag">V06</span> 5/30</span></li>
+      <li><span class="d">D11</span><span><span class="tag">V07</span> معمل الإعلان 1: النتيجة الحقيقية</span></li>
+      <li><span class="d">D12</span><span><span class="tag">V04</span> قولها 2 · <span class="tag">V06</span> 6/30</span></li>
+      <li><span class="d">D13</span><span><span class="tag">V05</span> قاموس: معدل التحويل · Infinite Tamm <span class="old">جاهز</span></span></li>
+    </ul></div>
+    <div class="week"><h3>الأسبوع 3</h3><p class="goal">نوري طريقة تفكيرنا، ونبدأ الإثبات.</p><ul>
+      <li><span class="d">D14</span><span><span class="tag">V07</span> معمل الإعلان 2: التصويت · <span class="tag">V06</span> 7/30</span></li>
+      <li><span class="d">D15</span><span><span class="tag">V08</span> اقرا التقرير من الآخر</span></li>
+      <li><span class="d">D16</span><span><span class="tag">V10</span> الإيصال (لو اتوافق عليه) أو <span class="tag">V12</span> تم وسط الدوشة (لو المرجع اتعتمد)</span></li>
+      <li><span class="d">D17</span><span><span class="tag">V05</span> قاموس: عميل جديد ولا راجع؟ · <span class="tag">V06</span> 8/30</span></li>
+      <li><span class="d">D18</span><span><span class="tag">V07</span> معمل الإعلان 2: النتيجة</span></li>
+      <li><span class="d">D19</span><span><span class="tag">V04</span> قولها 3 · <span class="tag">V09</span> سكتش 2</span></li>
+      <li><span class="d">D20</span><span><span class="tag">V06</span> 9/30 · The Ratio v5 <span class="old">جاهز</span></span></li>
+    </ul></div>
+    <div class="week"><h3>الأسبوع 4</h3><p class="goal">نحوّل، ونقفل بأرقامنا.</p><ul>
+      <li><span class="d">D21</span><span><span class="tag">V07</span> معمل الإعلان 3: التصويت · <span class="tag">V05</span> قاموس: زرار Boost</span></li>
+      <li><span class="d">D22</span><span><span class="tag">V08</span> ليه مش بنوعد بأرقام · <span class="tag">V06</span> 10/30</span></li>
+      <li><span class="d">D23</span><span><span class="tag">V10</span> إيصال الأسبوع (حالة معتمدة)</span></li>
+      <li><span class="d">D25</span><span><span class="tag">V07</span> معمل الإعلان 3: النتيجة · <span class="tag">V04</span> قولها 4</span></li>
+      <li><span class="d">D27</span><span><span class="tag">V08</span> قصة قول تم (2021 · 15+ سنة · 200+ براند في سجل المؤسس)</span></li>
+      <li><span class="d">D30</span><span><span class="tag">V11</span> إيصال إطلاقنا: أرقامنا الحقيقية</span></li>
+    </ul></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow">خطة العمل</div><h2>مين بيعمل إيه، وإمتى</h2>
+  <p class="lead">الأدوار من الـ Playbook: صاحب القرار، الاستراتيجية والكتابة، الإخراج الإبداعي، إنتاج الموشن، المونتير، النشر والمجتمع. الإنتاج متجمّع في يومين تصوير قبل الإطلاق، وبعدها ساعتين تصوير كل أسبوع.</p></div>
+  <div class="steps">
+    <div class="step"><div class="w">أسبوع −2<b>القرارات والتجهيز</b></div><div><ul>
+      <li>القرارات اللي تحت (التاريخ، مين يظهر، نشر أرقامنا، الـ CTA، اللهجة).</li>
+      <li>سكريبتات نهائية لـ V01 و V02 و V08 (5 حلقات) و V09 (سكتشين)، وقايمة لقطات يوم التصوير.</li>
+      <li>نماذج موافقة على التصوير والنشر لكل حد في الفريق، ونموذج إذن لأي تعليق هنعرضه.</li>
+      <li>تجهيز معمل الإعلان: الحساب، البكسل والتتبّع، تصميم الاختبار، ميزانية صغيرة ثابتة، وتعريف «الاستفسار المؤهل».</li>
+      <li>قوالب المونتاج: اللوور ثيرد، الإند كارد، شاشة البنود، شاشة A/B، الإيصال.</li>
+      <li class="who">صاحب القرار · الاستراتيجية · الإخراج · إنتاج الموشن</li></ul></div></div>
+    <div class="step"><div class="w">أسبوع −1<b>يومين تصوير ومونتاج</b></div><div><ul>
+      <li>يوم تصوير أ: «التتابع» (30 شخص، لقطتين لكل واحد) + «وجوه تم» (10 دقايق لكل واحد = 30 بورتريه في يوم واحد).</li>
+      <li>يوم تصوير ب: المؤسس (5 حلقات «قبل ما تدفع» ورا بعض) + السكتشين + 2 حلقة «قولها» بأسئلة من رسايل حقيقية وصلت قبل كده.</li>
+      <li>الموشن: 3 تيزر + أول 4 حلقات «قاموس الفلوس».</li>
+      <li>مونتاج «التتابع» بنسخه: 9:16، و16:9، و15 ث للإعلانات.</li>
+      <li>جدولة أسبوع الإطلاق كله، وكيت الفريق للمشاركة (كابشن جاهز لكل واحد).</li>
+      <li class="who">الإخراج · المونتير · إنتاج الموشن · النشر</li></ul></div></div>
+    <div class="step"><div class="w">D-3 → D0<b>التيزر والإطلاق</b></div><div><ul>
+      <li>نشر التيزر، وجمع الجمل من الكومنتس والرسايل في شيت واحد (الجملة، المنصة، الإذن).</li>
+      <li>D0: نشر «التتابع» على كل المنصات في نفس الساعة، والفريق كله يشاركه من حساباته.</li>
+      <li>D0 بالليل: لايف «اسأل الـ30» (المؤسس + 3 متخصصين + حد بيدير الأسئلة).</li>
+      <li class="who">النشر والمجتمع · صاحب القرار</li></ul></div></div>
+    <div class="step"><div class="w">D1 → D30<b>الإيقاع الأسبوعي</b></div><div><ul>
+      <li>الأحد: تصويت معمل الإعلان + إطلاق الاختبار.</li>
+      <li>الاتنين: ساعتين تصوير (حلقة «قولها» + 3 «وجوه تم» لو ناقص + المؤسس).</li>
+      <li>التلات والأربع: مونتاج وموشن («قاموس الفلوس» حلقتين).</li>
+      <li>الخميس: مراجعة الأرقام 30 دقيقة، وقرار لكل سلسلة.</li>
+      <li>الخميس أو الجمعة: نتيجة معمل الإعلان من حسابنا.</li>
+      <li class="who">الكل، والمراجعة مع صاحب القرار</li></ul></div></div>
+    <div class="step"><div class="w">D30<b>القفلة والدرس</b></div><div><ul>
+      <li>«إيصال إطلاقنا» بالأرقام الحقيقية: اللي صرفناه، واللي رجع، واللي نجح، واللي ما نجحش.</li>
+      <li>مراجعة كاملة، وخطة الشهر التاني بناءً على اللي اشتغل.</li>
+      <li class="who">صاحب القرار · الاستراتيجية</li></ul></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow">محتاج منك</div><h2>9 قرارات قبل ما نبدأ</h2><p class="lead">علّم على اللي اتحسم. العلامات بتتحفظ في المتصفح بتاعك بس.</p></div>
+  <div class="decide" id="decide"></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow">القياس</div><h2>مقياس واحد أساسي لكل سلسلة</h2>
+  <p class="lead">مفيش أرقام مستهدفة متخترعة. هناخد خط أساس قبل D0، وبعد 3 حلقات نقارن كل سلسلة بمتوسط حسابنا على نفس المقياس.</p></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>الكود</th><th>الفكرة</th><th>المقياس الأساسي</th><th>مقياس تاني</th><th>القرار بعد 3 حلقات</th></tr></thead>
+    <tbody>
+      <tr><td class="code">V01</td><td>تيزر قولها</td><td>عدد الجمل في الكومنتس</td><td>نسبة المشاهدة للآخر</td><td>—</td></tr>
+      <tr><td class="code">V02</td><td>التتابع</td><td>المشاركات</td><td>زيارات البروفايل · مشاركات الفريق</td><td>—</td></tr>
+      <tr><td class="code">V03</td><td>اسأل الـ30</td><td>عدد الأسئلة في اللايف</td><td>حفظ الكليبات</td><td>نكرره شهرياً؟</td></tr>
+      <tr><td class="code">V04</td><td>قولها</td><td>أسئلة جديدة + رسايل</td><td>استفسارات مؤهلة</td><td>نكمّل / نعدّل / نوقف</td></tr>
+      <tr><td class="code">V05</td><td>قاموس الفلوس</td><td>الحفظ</td><td>المشاركات</td><td>نكمّل / نعدّل / نوقف</td></tr>
+      <tr><td class="code">V06</td><td>وجوه تم</td><td>المشاهدة للآخر</td><td>متابعين جدد</td><td>نكمّل / نعدّل / نوقف</td></tr>
+      <tr><td class="code">V07</td><td>معمل الإعلان</td><td>أصوات التصويت</td><td>كومنتس · حفظ</td><td>نكمّل / نعدّل / نوقف</td></tr>
+      <tr><td class="code">V08</td><td>قبل ما تدفع</td><td>الحفظ</td><td>كومنتس لينكدإن · استفسارات</td><td>نكمّل / نعدّل / نوقف</td></tr>
+      <tr><td class="code">V09</td><td>السكتشات</td><td>المشاركات</td><td>الوصول</td><td>نعمل تالت؟</td></tr>
+      <tr><td class="code">V10</td><td>الإيصال</td><td>ضغطات الـ CTA</td><td>استفسارات مؤهلة</td><td>—</td></tr>
+      <tr><td class="code">V11</td><td>إيصال إطلاقنا</td><td>استفسارات مؤهلة</td><td>اجتماعات</td><td>—</td></tr>
+      <tr><td class="code">V12</td><td>تم وسط الدوشة</td><td>المشاهدة للآخر</td><td>المشاركات</td><td>—</td></tr>
+    </tbody></table></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow">الضوابط</div><h2>اللي مش هنعمله مهما حصل</h2></div>
+  <div class="guard">
+    <div><b>أرقام العملا</b><span>مفيش رقم عميل بيتنشر قبل ملف المنصة الأصلي وموافقة العميل (OQ-32). والـ ROAS عمره ما يتقال عليه «ربح».</span></div>
+    <div><b>الأمثلة الافتراضية</b><span>أي حساب في «قاموس الفلوس» مكتوب عليه «مثال توضيحي» طول الفيديو.</span></div>
+    <div><b>الناس</b><span>محدش بيظهر من غير موافقة مكتوبة. أصحاب التعليقات بإذنهم، وأساميهم مخفية. ومفيش أشخاص مولّدة بالذكاء الاصطناعي.</span></div>
+    <div><b>الادعاءات</b><span>مفيش «الأولى» ولا «الأسرع» ولا نتايج مضمونة ولا مكاتب ولا جوايز. والأرقام المسموحة: 2021، 30 شخص، 15+ سنة، 200+ براند، 20+ مجال، 5 أسواق.</span></div>
+    <div><b>الأسماء</b><span>مفيش اسم وكالة سابقة، والجهات الحكومية مخفية، وجملة الإسناد المعتمدة على أي شغل للفريق.</span></div>
+    <div><b>البراند</b><span>الشعار من الملف الرسمي بس، والبنفسجي 10% أو أقل، ومفيش نيون ولا جزيئات.</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow">خطة الـ 14 يوم الحالية</div><h2>إيه اللي بيفضل وإيه اللي بيتغيّر</h2>
+  <p class="lead">الكاروسيلات والكابشنز في كتاب المحتوى بيفضلوا زي ما هما. اللي بيتغيّر هو الفيديو.</p></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>اليوم</th><th>في الخطة الحالية</th><th>في الخطة الجديدة</th></tr></thead>
+    <tbody>
+      <tr><td class="code">01</td><td>The interruption · فيلم موشن مولّد</td><td>بيتحوّل لـ 3 تيزر «قولها» (V01): أرخص، وبيجمع جمل الجمهور.</td></tr>
+      <tr><td class="code">02</td><td>Meet TAMM · أنيميشن الشخصية</td><td>فيلم «تم بيعرّفكم بينا» الجاهز، بعد اعتماد مرجع الشخصية.</td></tr>
+      <tr><td class="code">03 · 06 · 12</td><td>كاروسيلات</td><td>بتفضل. كاروسيل يوم 6 بيغذّي «قاموس الفلوس».</td></tr>
+      <tr><td class="code">04 · 08 · 11</td><td>نصايح المؤسس</td><td>بتتجمع في سلسلة «قبل ما تدفع» (V08) ومعاها حلقتين جداد.</td></tr>
+      <tr><td class="code">05</td><td>One problem, three routes · موشن</td><td>One Push و Infinite Tamm الجاهزين.</td></tr>
+      <tr><td class="code">07</td><td>TAMM’s diagnosis</td><td>بيبقى أول حلقة «قولها» (V04) بمتخصص حقيقي، بنفس السؤال: الزيارات موجودة والطلبات لأ.</td></tr>
+      <tr><td class="code">09</td><td>Built on experience</td><td>حلقة «قصة قول تم» في سلسلة المؤسس.</td></tr>
+      <tr><td class="code">10</td><td>From brief to execution · موشن</td><td>«التتابع» (V02) بيوري نفس الرحلة بناس حقيقية.</td></tr>
+      <tr><td class="code">13</td><td>The team behind TAMM</td><td>«وجوه تم» (V06) و«التتابع».</td></tr>
+      <tr><td class="code">14</td><td>SayTamm is here · فيلم الإطلاق</td><td>«التتابع» يوم D0، و The Dot في الأسبوع الأول.</td></tr>
+    </tbody></table></div>
+</section>
+
+<p class="foot">مسودة للنقاش · 24 نوفمبر 2026 · مفيش حاجة هتتنفذ أو تتنشر قبل موافقتك. الأرقام بين [ ] بتتملي برقم حقيقي ليه مصدر وقت التنفيذ.</p>
+</div>
+
+<script>
+// ---------- storyboard sketches (viewBox 90 x 160). People are drawn as plain silhouettes; the logo is never drawn, only marked. ----------
+const head = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" class="f"/>`;
+const bust = (x, y, r) => `${head(x, y, r)}<path d="M${x - r * 1.9} ${y + r * 4}c${r * 0.3}-${r * 1.6} ${r}-${r * 2.3} ${r * 1.9}-${r * 2.3}s${r * 1.6} ${r * 0.7} ${r * 1.9} ${r * 2.3}" class="s"/>`;
+const SK = {
+  face: () => bust(45, 62, 15) + `<circle cx="45" cy="104" r="1.6" class="a"/>`,
+  board: () => `<rect x="8" y="24" width="50" height="38" rx="2" class="s"/><path d="M15 36h24M15 46h16" class="s"/>` + bust(64, 80, 10) + `<path d="M56 92 40 58" class="s"/>`,
+  desk: () => bust(34, 66, 11) + `<path d="M48 104h34M56 104l6-24h22" class="s"/><path d="M10 112h76" class="s"/>`,
+  camera: () => `<rect x="44" y="56" width="32" height="22" rx="3" class="s"/><circle cx="60" cy="67" r="6" class="s"/><path d="M60 78v40M50 124l10-6 10 6" class="s"/>` + bust(24, 62, 10),
+  screen: () => `<rect x="10" y="40" width="70" height="46" rx="3" class="s"/><path d="M18 74v-8M28 74v-14M38 74v-10M48 74v-20M58 74v-12" class="s"/><path d="M45 86v10M34 98h22" class="s"/>` + bust(45, 124, 7),
+  faces: () => { let s = ''; for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++) s += bust(20 + c * 25, 28 + r * 30, 6); return s; },
+  group: () => { let s = ''; [0, 1].forEach((r) => { for (let c = 0; c < 6; c++) s += bust(10 + c * 14 + r * 7, 64 + r * 22, 4.2); }); return s; },
+  phone: () => `<rect x="10" y="40" width="70" height="20" rx="8" class="f"/><rect x="18" y="66" width="62" height="16" rx="7" class="f"/><circle cx="16" cy="50" r="4" class="s"/>`,
+  prompt: () => `<rect x="8" y="70" width="74" height="20" rx="10" class="s"/><path d="M74 75v10" class="as"/>`,
+  type: () => ``,
+  receipt: () => `<path d="M20 22h50v100l-5 4-5-4-5 4-5-4-5 4-5-4-5 4-5-4-5 4-5-4z" class="f"/><path d="M27 34h22M27 44h36M27 54h30M27 64h36" class="s"/><circle cx="58" cy="104" r="8" class="as"/>`,
+  hands: () => `<rect x="30" y="56" width="30" height="40" rx="3" class="f"/><path d="M12 112c6-10 14-14 22-16M78 112c-6-10-14-14-22-16" class="s"/>`,
+  split: () => `<path d="M45 18v124" class="s"/><rect x="8" y="34" width="32" height="52" rx="3" class="f"/><rect x="50" y="34" width="32" height="52" rx="3" class="f"/><text x="24" y="104" text-anchor="middle" font-size="12" fill="currentColor" style="fill:var(--sk)">A</text><text x="66" y="104" text-anchor="middle" font-size="12" style="fill:var(--sk)">B</text>`,
+  logo: () => `<rect x="26" y="40" width="38" height="38" rx="4" class="s" stroke-dasharray="3 3"/><text x="45" y="62" text-anchor="middle" font-size="6.5" style="fill:var(--sk)">الشعار الرسمي</text>`,
+  tamm: () => `<rect x="30" y="44" width="30" height="46" rx="12" class="f"/><circle cx="40" cy="60" r="2" class="a"/><circle cx="50" cy="60" r="2" class="a"/><path d="M34 90l-4 18M56 90l4 18" class="s"/><text x="45" y="124" text-anchor="middle" font-size="6.5" style="fill:var(--sk)">شخصية تم (المرجع المعتمد)</text>`,
+  chaos: () => `<rect x="30" y="56" width="30" height="40" rx="12" class="f"/><rect x="6" y="20" width="30" height="10" rx="4" class="f"/><rect x="50" y="26" width="34" height="10" rx="4" class="f"/><rect x="10" y="38" width="24" height="10" rx="4" class="f"/><rect x="60" y="44" width="24" height="10" rx="4" class="f"/><circle cx="82" cy="27" r="2.4" class="a"/>`,
+  list: () => `<rect x="30" y="56" width="30" height="40" rx="12" class="f"/><rect x="14" y="20" width="62" height="28" rx="4" class="s"/><path d="M20 28h4M20 35h4M20 42h4" class="as"/><path d="M28 28h30M28 35h40M28 42h24" class="s"/>`,
+  live: () => `<rect x="8" y="12" width="24" height="10" rx="5" class="a"/>` + bust(27, 48, 7) + bust(63, 48, 7) + bust(27, 90, 7) + bust(63, 90, 7) + `<rect x="10" y="124" width="56" height="8" rx="4" class="f"/>`,
+  check: () => bust(45, 36, 10) + `<rect x="10" y="78" width="70" height="44" rx="6" class="f"/><path d="M17 90l3 3 5-6" class="as"/><path d="M30 90h40M17 102h53M17 112h40" class="s"/>`,
+  report: () => `<rect x="30" y="74" width="34" height="40" rx="2" class="f"/><rect x="34" y="70" width="34" height="40" rx="2" class="f"/>` + bust(30, 44, 10),
+  sign: () => bust(26, 56, 10) + bust(64, 56, 10) + `<rect x="52" y="78" width="24" height="16" rx="2" class="f"/>`,
+};
+const CENTER_K = new Set(['type', 'logo']), TOP_K = new Set(['phone', 'prompt', 'split', 'live', 'check', 'list', 'chaos', 'receipt', 'screen', 'board']);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// ---------- the ideas ----------
+const G = { hero: 'لحظات كبيرة', series: 'سلاسل', proof: 'إثبات' };
+const V = [
+{ c: 'V01', g: 'hero', ar: 'قولها', en: 'Say It · teasers', chips: ['3 تيزر × 6–8 ث', 'D-3 → D-1', 'كل المنصات', 'موشن داخلي'], gate: ['ok', 'جاهز للتنفيذ بعد تحديد تاريخ الإطلاق'],
+  pitch: 'شاشة سودا، وجملة واحدة بتتكتب كأن صاحب متجر هو اللي بيكتبها. الجملة دي مشكلة كل صاحب متجر سمعناها كتير. بعدها كلمة واحدة: «قولها.» وتاريخ الإطلاق. الكابشن بيطلب من الجمهور يكتب جملته، وأكتر الجمل تكراراً هي اللي هنرد عليها في سلسلة «قولها».',
+  why: ['بيزرع عادة المشاركة قبل ما البراند يتكلم عن نفسه.', 'بيجمع مادة حقيقية لأول حلقات «قولها» ولأسئلة اللايف.', 'تكلفته يوم موشن واحد بالمحرّك اللي عملنا بيه الإيصال.'],
+  facts: [['الجمهور', 'أصحاب المتاجر وصنّاع القرار في السعودية والخليج ومصر'], ['الهدف', 'فضول + أول مشاركة'], ['الإنتاج', 'محرّك الموشن الداخلي، IBM Plex Sans Arabic فقط'], ['النسخ', 'عربي محادثة خفيف + نسخة إنجليزي للينكدإن وX']],
+  extra: ['الجمل التلاتة', '1 · «الإعلانات شغالة… والطلبات لأ.»  2 · «التقرير طويل… ومفيهوش قرار.»  3 · «كل وكالة بتقولّي نفس الكلام.»'],
+  frames: [
+    { k: 'type', t: '0–1s', os: '|', d: 'شاشة سودا، ومؤشر كتابة بيرمش.', s: 'تكّة خفيفة مع كل رمشة.' },
+    { k: 'prompt', t: '1–3.5s', os: 'الإعلانات شغالة… والطلبات لأ.', d: 'الجملة بتتكتب حرف حرف جوه خانة كتابة.', s: 'صوت كيبورد حقيقي.' },
+    { k: 'prompt', t: '3.5–4.5s', os: 'الإعلانات شغالة… والطلبات لأ.', d: 'الجملة بتبهت للرمادي، والمؤشر بيقف.', s: 'صمت.' },
+    { k: 'type', t: '4.5–6s', os: 'قولها.', d: 'كلمة واحدة كبيرة في النص.', s: 'ضربة bass واحدة.' },
+    { k: 'logo', t: '6–8s', os: '[تاريخ الإطلاق]', d: 'التاريخ + الشعار من الملف الرسمي.', s: 'نغمة الختام.' },
+  ] },
+{ c: 'V02', g: 'hero', ar: 'التتابع', en: 'The Relay · launch film', chips: ['45–60 ث', 'D0', '9:16 + 16:9 + 15 ث للإعلانات', 'تصوير حقيقي'], gate: ['gate', 'محتاج موافقة الفريق على الظهور'],
+  pitch: 'الـ 30 شخص في الفريق بيقولوا جملة واحدة متصلة، كل واحد كلمة أو اتنين من مكان شغله. الكاميرا بتنتقل بينهم على حركة إيد أو قلم أو لابتوب بيتقفل، والجملة نفسها هي رحلة الشغل: من الهدف للخطة للفكرة للتصوير للإطلاق للقياس. في الآخر الكل في كادر واحد بيقولوا «تم».',
+  why: ['أول مرة الجمهور يشوف الناس اللي ورا البراند، وده اللي العميل طلبه: حاجات هيومان أكتر.', 'بيوري فكرة «التفكير المتصل» (Strategy → Creative → Media → Performance) بناس مش برسومات.', 'كل واحد من الـ 30 هيشاركه من حسابه، يعني وصول طبيعي في يوم الإطلاق.'],
+  facts: [['الجمهور', 'الكل، وأولهم صناع القرار على لينكدإن'], ['الهدف', 'وصول + ثقة + زيارات للبروفايل'], ['الإنتاج', 'يوم تصوير أ: كاميرا + جيمبال + مايك لاسلكي، لقطتين لكل شخص'], ['حقيقة معتمدة', '30 شخص في الفريق']],
+  extra: ['الجملة كاملة (مسودة)', '«إنت بتقول الهدف… وإحنا: نفهم السوق، نرسم الخطة، نكتب الفكرة، نصمّم، نصوّر، نمنتج، نطلق، نتابع كل ريال، نقرا الأرقام، نعدّل… لحد ما نقول: تم.» كل واحد بلهجته الطبيعية. اللي مش حابب يظهر بوشه يظهر بإيديه.'],
+  frames: [
+    { k: 'board', t: '0–2s', os: 'إنت بتقول الهدف…', d: 'المؤسس قدام سبورة فاضية، بيبص للكاميرا.', s: 'صوته الطبيعي وصوت المكان.' },
+    { k: 'board', t: '2–4s', os: 'نفهم السوق', d: 'استراتيجي بيرسم على السبورة. القطع على حركة الإيد.', s: 'أول نبضة في المزيكا.' },
+    { k: 'desk', t: '4–6s', os: 'نكتب الفكرة', d: 'كاتب محتوى على اللابتوب، لقطة جانبية.', s: 'كيبورد على النبضة.' },
+    { k: 'desk', t: '6–8s', os: 'نصمّم', d: 'مصمم على تابلت، القلم بيكمّل نفس اتجاه الحركة.', s: '' },
+    { k: 'camera', t: '8–10s', os: 'نصوّر', d: 'مصوّر بيلفّ الكاميرا ناحيتنا.', s: 'صوت شتر.' },
+    { k: 'screen', t: '10–12s', os: 'نطلق… ونتابع كل ريال', d: 'ميديا باير قدام شاشة، البيانات مغبّشة.', s: '' },
+    { k: 'faces', t: '12–20s', os: 'نقرا · نعدّل · نقيس · …', d: 'مونتاج سريع: 15 وش، كل واحد كلمة (نص ثانية).', s: 'الإيقاع بيسرع مع كل قطع.' },
+    { k: 'group', t: '20–24s', os: 'تم.', d: 'لقطة واسعة: الفريق كله بيقول «تم» في نفس اللحظة.', s: 'المزيكا بتقف. «تم» بأصواتهم.' },
+    { k: 'type', t: '24–28s', os: '30 شخص. هدف واحد.', d: 'نص على خلفية سودا.', s: 'صمت قصير.' },
+    { k: 'logo', t: '28–32s', os: 'قول. تم.', d: 'الشعار الرسمي + saytamm.com', s: 'نغمة الختام + «قول… تم» خليجي.' },
+  ] },
+{ c: 'V03', g: 'hero', ar: 'اسأل الـ30', en: 'Ask the 30 · launch live', chips: ['لايف 45–60 دقيقة', 'D0 بالليل', 'إنستغرام + تيك توك', '6–8 كليبات بعده'], gate: ['gate', 'محتاج حد يدير الأسئلة + بروفة'],
+  pitch: 'لايف يوم الإطلاق: المؤسس ومعاه 3 متخصصين (أداء، كرييتف، محتوى) بيردوا على أسئلة الجمهور اللي اتجمعت من كومنتات التيزر واللي بتيجي في اللايف. كل إجابة دقيقتين بالكتير. بعد اللايف كل إجابة بتتقص لفيديو 30–45 ثانية بترجمة على الشاشة.',
+  why: ['أصدق طريقة تثبت إن «كلام أقل» مش شعار: أسئلة حقيقية وإجابات مباشرة.', 'مادة لأسبوعين من الكليبات من ساعة واحدة.', 'بيحوّل التيزر لوعد اتنفّذ في نفس اليوم.'],
+  facts: [['الجمهور', 'أصحاب المتاجر والمسوّقين'], ['الهدف', 'تفاعل + استفسارات'], ['الإنتاج', 'موبايلين + إضاءة + مايك، ومشرف للأسئلة'], ['الضوابط', 'مفيش وعود بنتايج، ولا أسامي عملا']],
+  frames: [
+    { k: 'live', t: '00:00', os: 'اسأل الـ30', d: 'المؤسس + 3 متخصصين في كادر واحد.', s: 'ترحيب قصير من غير مقدمات.' },
+    { k: 'phone', t: '02:00', os: 'سؤال من الكومنتس', d: 'السؤال بيظهر على الشاشة.', s: 'المؤسس بيقراه بصوت عالي.' },
+    { k: 'face', t: '03:00', os: '[الاسم] · أداء', d: 'المتخصص بيرد في دقيقتين بالكتير.', s: '' },
+    { k: 'type', t: '45:00', os: 'ابعت جملتك… هنرد عليها في «قولها»', d: 'القفلة: دعوة للسلسلة.', s: '' },
+    { k: 'faces', t: 'بعد اللايف', os: '6–8 كليبات', d: 'كل إجابة فيديو 30–45 ث بترجمة.', s: '' },
+  ] },
+{ c: 'V11', g: 'hero', ar: 'إيصال إطلاقنا', en: 'Our launch receipt · day 30', chips: ['40–45 ث', 'D30', 'كل المنصات + لينكدإن أولاً', 'المؤسس + موشن'], gate: ['gate', 'قرارك بنشر أرقام حملتنا'],
+  pitch: 'بعد 30 يوم بنعمل لنفسنا الإيصال اللي بنعمله لعملائنا: صرفنا كام على إعلانات الإطلاق، ورجعلنا كام استفسار مؤهل واجتماع، وإيه اللي نجح وإيه اللي ما نجحش. «قبل ما نطلب منك تثق في أرقامنا… دي أرقامنا إحنا.»',
+  why: ['جمهور الفلوس بيحترم الشفافية أكتر من أي ادعاء.', 'مش مستني موافقة أي عميل: دي بياناتنا.', 'بيقفل الشهر بقصة، وبيفتح الشهر التاني.'],
+  facts: [['الجمهور', 'صناع القرار'], ['الهدف', 'ثقة + استفسارات'], ['الإنتاج', 'المؤسس على الكاميرا + قالب الإيصال'], ['شرط', 'التتبّع وتعريف «الاستفسار المؤهل» جاهزين قبل D0']],
+  frames: [
+    { k: 'type', t: '0–3s', os: '30 يوم من الإطلاق.', d: 'نص على أسود.', s: 'تكّة طابعة.' },
+    { k: 'face', t: '3–6s', os: 'قبل ما نطلب منك تثق في أرقامنا… دي أرقامنا إحنا.', d: 'المؤسس، كادر عين.', s: 'صوته.' },
+    { k: 'receipt', t: '6–12s', os: 'صرفنا على الإعلانات: [الرقم الحقيقي]', d: 'الإيصال بيتطبع.', s: 'طابعة.' },
+    { k: 'receipt', t: '12–18s', os: 'رجعلنا: [استفسارات مؤهلة] · [اجتماعات]', d: 'الأرقام بتعدّ.', s: '' },
+    { k: 'check', t: '18–24s', os: 'اللي نجح: [سبب] · [سبب]', d: 'المؤسس + بنود.', s: '' },
+    { k: 'check', t: '24–29s', os: 'اللي ما نجحش: [سبب حقيقي]', d: 'لازم يبقى فيه حاجة حقيقية هنا.', s: '' },
+    { k: 'receipt', t: '29–33s', os: 'تم ✓', d: 'الختم.', s: 'ختم.' },
+    { k: 'logo', t: '33–38s', os: 'عندك هدف؟ ابدأ من هنا.', d: 'الشعار + الموقع.', s: 'نغمة الختام.' },
+  ] },
+{ c: 'V04', g: 'series', ar: 'قولها', en: 'Say It · weekly', chips: ['30–40 ث', 'أسبوعي من D4', 'إنستغرام + تيك توك + سناب', 'متخصص على الكاميرا'], gate: ['ok', 'جاهز بعد أول جمل من التيزر'],
+  pitch: 'كل حلقة بتبدأ بجملة حقيقية من الجمهور (كومنت أو رسالة، بإذن صاحبها واسمه مخفي). متخصص من الفريق بيبص للكاميرا ويقول أول حاجة هيبص عليها، وبعدين 3 خطوات تظهر كبنود على الشاشة. القفلة: «قولها في الكومنتس».',
+  why: ['ده «قول. تم.» نفسه: الجمهور بيقول، والفريق بيتمّ.', 'كل حلقة بتجيب أسئلة الحلقة اللي بعدها.', 'بيوري طريقة تفكير الفريق من غير ما نوعد بنتايج.'],
+  facts: [['الجمهور', 'أصحاب المتاجر'], ['الهدف', 'أسئلة + رسايل + استفسارات'], ['الإنتاج', 'ساعتين تصوير في الأسبوع، قالب ثابت'], ['الضوابط', 'نصايح عامة، مش ضمانات']],
+  extra: ['أول 4 حلقات (من الأسئلة المتوقعة)', 'الزيارات كتير والطلبات قليلة · الإعلان غالي فجأة · بنزوّد الميزانية ومفيش فرق · مش عارف أقيس إيه'],
+  frames: [
+    { k: 'phone', t: '0–2s', os: '«الزيارات كتير… والطلبات قليلة»', d: 'التعليق الحقيقي، والاسم مخفي.', s: 'صوت إشعار.' },
+    { k: 'face', t: '2–5s', os: 'خليني أقولك أول حاجة هبص عليها', d: 'متخصص بيبص للكاميرا. كادر ثابت وإضاءة نضيفة.', s: 'صوته الطبيعي.' },
+    { k: 'check', t: '5–12s', os: '1 · صفحة المنتج بتفتح بسرعة؟', d: 'الوش فوق، والبند بيتعلّم عليه.', s: 'تكّة مع العلامة.' },
+    { k: 'check', t: '12–19s', os: '2 · السعر والشحن واضحين قبل الدفع؟', d: '', s: '' },
+    { k: 'check', t: '19–26s', os: '3 · الإعلان بيوعد بنفس اللي الصفحة بتقوله؟', d: '', s: '' },
+    { k: 'face', t: '26–32s', os: 'ابدأ بالتلاتة دول… قبل ما تزوّد الميزانية', d: 'الخلاصة في جملة.', s: '' },
+    { k: 'logo', t: '32–35s', os: 'قولها في الكومنتس.', d: 'الشعار + «قول. تم.»', s: 'نغمة السلسلة.' },
+  ] },
+{ c: 'V05', g: 'series', ar: 'قاموس الفلوس', en: 'Money Dictionary · twice a week', chips: ['15–20 ث', 'مرتين في الأسبوع', 'كل المنصات', 'موشن داخلي'], gate: ['ok', 'جاهز للتنفيذ'],
+  pitch: 'كل حلقة مصطلح واحد بيتترجم لفلوس، بنفس لغة الإيصال: ROAS، تكلفة الطلب، متوسط قيمة الطلب، معدل التحويل، عميل جديد ولا راجع، زرار Boost. الأرقام كلها مثال توضيحي مكتوب عليه كده طول الفيديو.',
+  why: ['الجمهور اللي يهمه الفلوس بيحفظ المحتوى اللي بيعلّمه يحسب.', 'بيعلّم الفرق بين الـ ROAS والربح، وده قلب أمانتنا في الأرقام.', 'أسرع إنتاج عندنا: نص + قالب الإيصال.'],
+  facts: [['الجمهور', 'أصحاب المتاجر'], ['الهدف', 'حفظ + مشاركات'], ['الإنتاج', 'محرّك الموشن، عربي وإنجليزي'], ['الحلقات', '8 حلقات لأول شهر']],
+  extra: ['حساب الحلقة الأولى (مثال توضيحي)', 'مبيعات 40,000 − تكلفة البضاعة 20,000 − شحن وعمولات 6,000 − إعلانات 10,000 = 4,000 بس. الـ ROAS هنا ‎4×‎، والفلوس اللي فاضلة أقل بكتير من اللي الرقم بيوحي بيه.'],
+  frames: [
+    { k: 'type', t: '0–1.5s', os: 'ROAS ‎4×‎ … حلو؟', d: 'الرقم كبير في النص.', s: 'نقرة.' },
+    { k: 'receipt', t: '1.5–4s', os: 'صرفت 10,000 · بعت 40,000', d: 'إيصال بيتطبع والأرقام بتعدّ.', s: 'طابعة.' },
+    { k: 'receipt', t: '4–8s', os: 'البضاعة −20,000 · شحن وعمولات −6,000 · إعلانات −10,000', d: 'سطور جديدة بتنزل.', s: '' },
+    { k: 'receipt', t: '8–11s', os: 'اللي فاضل: 4,000', d: 'الرقم الأخير بالبنفسجي.', s: 'ختم.' },
+    { k: 'type', t: '11–14s', os: 'ROAS بيقيس المبيعات… مش الربح.', d: '', s: '' },
+    { k: 'type', t: '14–17s', os: 'اعرف هامشك قبل ما تحتفل بالرقم.', d: '', s: '' },
+    { k: 'logo', t: '17–19s', os: 'قول. تم.', d: 'إند كارد. «مثال توضيحي» ثابت في الركن طول الفيديو.', s: '' },
+  ] },
+{ c: 'V06', g: 'series', ar: 'وجوه تم', en: 'Meet the 30 · three a week', chips: ['12–18 ث', '3 في الأسبوع', 'إنستغرام + تيك توك + لينكدإن', 'بورتريه'], gate: ['gate', 'موافقة كل شخص'],
+  pitch: '30 بورتريه قصير بكادر واحد ثابت لكل الحلقات. كل واحد بيرد على سؤالين بسرعة: «أول رقم بتبص عليه الصبح؟» و«نصيحة في جملة؟». العدّاد «1 من 30» بيخلّي السلسلة تتجمع.',
+  why: ['بيعرّف الجمهور بالناس اللي هيتعامل معاهم فعلاً.', 'سؤال «الرقم» بيربط كل شخص بلغة الفلوس.', '30 حلقة من يوم تصوير واحد.'],
+  facts: [['الجمهور', 'الكل'], ['الهدف', 'مشاهدة للآخر + متابعة'], ['الإنتاج', 'يوم تصوير أ، 10 دقايق لكل شخص'], ['حقيقة معتمدة', '30 شخص في الفريق']],
+  frames: [
+    { k: 'face', t: '0–1s', os: '[الاسم] · [الدور]', d: 'كادر موحّد لكل الحلقات.', s: 'نغمة السلسلة.' },
+    { k: 'face', t: '1–6s', os: 'أول رقم بتبص عليه الصبح؟', d: 'السؤال مكتوب، والإجابة بصوته.', s: '' },
+    { k: 'face', t: '6–11s', os: '[إجابته بكلامه]', d: 'إجابة طبيعية مش محفوظة.', s: '' },
+    { k: 'face', t: '11–15s', os: 'نصيحة في جملة؟', d: '', s: '' },
+    { k: 'type', t: '15–17s', os: '1 من 30', d: 'العدّاد + الشعار صغير.', s: '' },
+  ] },
+{ c: 'V07', g: 'series', ar: 'معمل الإعلان', en: 'Ad Lab · we test on ourselves', chips: ['حلقتين في الأسبوع: تصويت + نتيجة', '25–35 ث', 'إنستغرام ستوري + ريلز + لينكدإن', 'حسابنا الإعلاني'], gate: ['gate', 'قرارك + ميزانية اختبار صغيرة'],
+  pitch: 'كل أسبوع بنشغّل نسختين من إعلان إطلاقنا (A و B). أول الأسبوع بنسأل الجمهور: مين هيكسب؟ وآخر الأسبوع بنوري النتيجة الحقيقية من حسابنا الإعلاني، والسبب، والدرس.',
+  why: ['أرقام حقيقية من غير ما نستنى موافقة أي عميل.', 'الجمهور بيشارك في التوقّع، فبيرجع يشوف النتيجة.', 'بيوري إننا بنقيس، مش بنخمّن.'],
+  facts: [['الجمهور', 'المسوّقين وأصحاب المتاجر'], ['الهدف', 'تصويت + حفظ'], ['الإنتاج', 'ميديا باير على الكاميرا + تسجيل شاشة'], ['أمانة', 'النتيجة بتتنشر مهما كانت']],
+  frames: [
+    { k: 'split', t: '0–2s', os: 'A ولا B؟', d: 'النسختين جنب بعض (إعلانات قول تم نفسها).', s: 'نقرتين.' },
+    { k: 'phone', t: '2–5s', os: 'إنتم اخترتم: [نتيجة التصويت]', d: 'نتيجة الاستطلاع الحقيقية.', s: '' },
+    { k: 'face', t: '5–9s', os: 'والسوق قال…', d: 'الميديا باير بيبص للكاميرا.', s: 'وقفة.' },
+    { k: 'screen', t: '9–16s', os: '[الرقم الحقيقي من حسابنا]', d: 'تسجيل شاشة من حسابنا، وأي بيانات حساسة متغطية.', s: '' },
+    { k: 'check', t: '16–24s', os: 'ليه كسبت؟ [سبب 1] · [سبب 2]', d: 'سببين بس.', s: '' },
+    { k: 'type', t: '24–29s', os: 'تجربة واحدة مش قاعدة. بس بداية.', d: '', s: '' },
+    { k: 'logo', t: '29–32s', os: 'الأسبوع الجاي: تجربة جديدة', d: '', s: '' },
+  ] },
+{ c: 'V08', g: 'series', ar: 'قبل ما تدفع', en: 'Before You Pay · founder', chips: ['30–40 ث', 'أسبوعي', 'لينكدإن + إنستغرام + تيك توك', 'المؤسس'], gate: ['ok', 'جاهز للتصوير'],
+  pitch: 'المؤسس بيتكلم مباشرة بهيكل الـ Playbook: هوك، الغلطة الشائعة، الفكرة، المطلوب، قفلة. الحلقة الأولى «5 أسئلة تسألها لأي وكالة قبل ما تمضي»، وآخرها «واسألنا إحنا كمان».',
+  why: ['صاحب القرار بيثق في صاحب قرار زيه.', 'بيحط معيار يخلّي المقارنة في صالحنا من غير ما نهاجم حد.', 'بيجمع نصايح أيام 4 و8 و11 في سلسلة واحدة.'],
+  facts: [['الجمهور', 'صناع القرار'], ['الهدف', 'حفظ + استفسارات'], ['الإنتاج', 'يوم تصوير ب: 5 حلقات ورا بعض'], ['حقايق معتمدة', 'اتأسست 2021 · 15+ سنة خبرة للمؤسس · 200+ براند في سجله']],
+  extra: ['الحلقات الخمسة', '5 أسئلة قبل ما تمضي · زرار Boost مش استراتيجية · اقرا التقرير من الآخر · ليه مش بنوعد بأرقام · قصة قول تم'],
+  frames: [
+    { k: 'face', t: '0–2s', os: 'قبل ما تدفع لأي وكالة… اسألها 5 أسئلة', d: 'المؤسس، كادر عين، 9:16.', s: 'صوته.' },
+    { k: 'face', t: '2–6s', os: 'أغلب الناس بتسأل عن السعر بس', d: 'الغلطة الشائعة.', s: '' },
+    { k: 'check', t: '6–10s', os: '1 · مين المسؤول عن حسابي بالاسم؟', d: '', s: 'تكّة.' },
+    { k: 'check', t: '10–14s', os: '2 · هتقيسوا إيه… وإزاي؟', d: '', s: 'تكّة.' },
+    { k: 'check', t: '14–18s', os: '3 · إيه اللي مش هتعملوه؟', d: '', s: 'تكّة.' },
+    { k: 'check', t: '18–22s', os: '4 · التقرير بيخلص بقرار؟', d: '', s: 'تكّة.' },
+    { k: 'check', t: '22–26s', os: '5 · لو ما اشتغلتش… هنعرف ليه؟', d: '', s: 'تكّة.' },
+    { k: 'face', t: '26–30s', os: 'احفظ الفيديو… واسألنا إحنا كمان', d: 'القفلة بابتسامة.', s: '' },
+    { k: 'logo', t: '30–32s', os: 'قول. تم.', d: '', s: '' },
+  ] },
+{ c: 'V09', g: 'series', ar: 'لو التقرير بيتكلم', en: 'POV sketches · two episodes', chips: ['20–25 ث', 'D10 و D19', 'تيك توك + سناب + ريلز', 'تمثيل من الفريق'], gate: ['gate', 'موافقة المشاركين'],
+  pitch: 'سكتش كوميدي قصير. زميل بيمثّل صاحب متجر ماسك تقرير ورق تقيل، وزميل تاني لابس لافتة ورق مكتوب عليها «التقرير» بيتكلم بحماس عن الأرقام اللي مش مهمة. صاحب المتجر يسأل «طب الطلبات؟» والتقرير يتهرب. القفلة جملة يوم 11: «التقرير اللي مفيهوش قرار… ناقصه أهم حتة.»',
+  why: ['الضحك أسرع طريق للمشاركة على تيك توك وسناب.', 'كل صاحب متجر عاش الموقف ده.', 'بيقول رسالتنا من غير ما يمدح نفسنا.'],
+  facts: [['الجمهور', 'أصحاب المتاجر'], ['الهدف', 'مشاركات + وصول'], ['الإنتاج', 'يوم تصوير ب، لافتة ورق وتقرير مطبوع'], ['الحلقة 2', '«الوكالة قالتلك: محتاجين ميزانية أكبر»']],
+  frames: [
+    { k: 'report', t: '0–2s', os: 'POV: وصلك تقرير الوكالة الشهري', d: 'صاحب متجر ماسك تقرير تقيل.', s: 'صوت ورق.' },
+    { k: 'sign', t: '2–6s', os: '«الـ Impressions طارت!»', d: 'زميل لابس لافتة «التقرير» بيتكلم بحماس.', s: '' },
+    { k: 'sign', t: '6–9s', os: '«طب… الطلبات؟»', d: 'صاحب المتجر بهدوء.', s: '' },
+    { k: 'sign', t: '9–13s', os: '«…والـ Reach كمان طار!»', d: 'التقرير بيتهرب.', s: '' },
+    { k: 'face', t: '13–16s', os: '', d: 'صاحب المتجر بيبص للكاميرا. صمت.', s: 'صمت.' },
+    { k: 'type', t: '16–20s', os: 'التقرير اللي مفيهوش قرار… ناقصه أهم حتة.', d: '', s: '' },
+    { k: 'logo', t: '20–22s', os: 'قول. تم.', d: '', s: '' },
+  ] },
+{ c: 'V10', g: 'proof', ar: 'الإيصال + إيصال الأسبوع', en: 'The Receipt · gated', chips: ['الفيلمين جاهزين: 52 ث + 69 ث', 'إيصال الأسبوع 15–20 ث', 'كل المنصات + إعلانات'], gate: ['gate', 'OQ-32: ملفات المنصات + موافقة العملا'],
+  pitch: 'الفيلمين الجاهزين (الإنجليزي والعربي لأصحاب المتاجر) بينزلوا أول ما الموافقات تيجي. بعدها «إيصال الأسبوع»: كل حالة معتمدة في إيصال واحد قصير، بنفس القالب ومعاه مصدر الرقم.',
+  why: ['أقوى إثبات عندنا، ومبني على لغة الفلوس.', 'القالب جاهز، يعني كل حالة جديدة بتتعمل في يوم.', 'مصدر الرقم ظاهر على كل إيصال، وده بيبني ثقة.'],
+  facts: [['الجمهور', 'أصحاب المتاجر وصنّاع القرار'], ['الهدف', 'ضغطات CTA + استفسارات'], ['الإنتاج', 'جاهز / قالب'], ['الإسناد', 'جملة «مشاريع قادها أعضاء من فريق قول تم…» على كل إيصال']],
+  frames: [
+    { k: 'hands', t: '0–2s', os: 'إيصال رقم [0X]', d: 'لقطة إيدين حقيقية من غير وشوش.', s: 'طابعة.' },
+    { k: 'receipt', t: '2–5s', os: '[العميل] · [السوق]', d: '', s: '' },
+    { k: 'receipt', t: '5–9s', os: '[المصروف] ← [اللي رجع]', d: 'الأرقام بتعدّ، والبار بالمقياس الحقيقي.', s: '' },
+    { k: 'receipt', t: '9–12s', os: '[مصدر الرقم]', d: 'سطر المصدر ظاهر دايماً.', s: '' },
+    { k: 'receipt', t: '12–14s', os: 'تم ✓', d: 'الختم.', s: 'ختم.' },
+    { k: 'logo', t: '14–17s', os: 'عندك متجر؟ ابدأ من هنا.', d: '+ جملة الإسناد.', s: '' },
+  ] },
+{ c: 'V12', g: 'proof', ar: 'تم وسط الدوشة', en: 'Tamm vs. the noise · optional', chips: ['15–18 ث', 'D16 لو اتعتمد', 'إنستغرام + تيك توك', 'أنيميشن الشخصية'], gate: ['stop', 'متوقف على اعتماد مرجع شخصية تم'],
+  pitch: 'كوميديا من غير كلام: تم قاعد وحواليه إشعارات بتتراكم (جروبات، تابات، رسالة «عاجل» الساعة 11 بالليل). بيلمّهم واحد واحد في ليستة واحدة، كل بند جنبه صاحب وخطوة جاية، وبيدوس «تم». رسالة الملكية والوضوح من الـ Playbook.',
+  why: ['بيحافظ على الشخصية حاضرة من غير ما تاخد مكان الناس.', 'بيوري فكرة «كل مهمة ليها صاحب».', 'قصير وبيتفهم من غير صوت.'],
+  facts: [['الجمهور', 'المسوّقين والفرق'], ['الهدف', 'مشاهدة للآخر + مشاركات'], ['الإنتاج', 'صورة لفيديو من المرجع المعتمد + نص بالمحرّك'], ['الضوابط', 'شخصية بس، مفيش ناس مولّدة']],
+  frames: [
+    { k: 'chaos', t: '0–2s', os: '', d: 'تم وحواليه إشعارات بتتراكم.', s: 'إشعارات ورا بعض.' },
+    { k: 'chaos', t: '2–5s', os: '«عاجل!!»  11:00 م', d: 'إشعار عاجل بالليل.', s: 'إشعار أعلى.' },
+    { k: 'list', t: '5–9s', os: '', d: 'تم بيلمّ الإشعارات في ليستة واحدة.', s: 'الإيقاع بيهدى.' },
+    { k: 'list', t: '9–12s', os: 'كل مهمة ليها صاحب… وخطوة جاية.', d: 'كل بند جنبه صاحب وميعاد.', s: '' },
+    { k: 'tamm', t: '12–14s', os: 'تم ✓', d: 'زرار واحد. هدوء.', s: 'صمت + تكّة.' },
+    { k: 'logo', t: '14–16s', os: 'قول. تم.', d: '', s: '' },
+  ] },
+];
+const ORDER = ['hero', 'series', 'proof'];
+const SUB = { hero: 'بتتعمل مرة واحدة وبتشيل لحظة', series: 'بتتكرر كل أسبوع بقالب ثابت', proof: 'متوقفة على موافقات' };
+const gateCls = { ok: 'ok', gate: 'gate', stop: 'gate' };
+
+const idx = document.getElementById('index'), cards = document.getElementById('cards');
+ORDER.forEach((g) => {
+  const list = V.filter((v) => v.g === g);
+  const h = document.createElement('div'); h.className = 'group-title'; h.innerHTML = `<h3>${G[g]}</h3><span>${SUB[g]}</span>`; cards.appendChild(h);
+  list.forEach((v) => {
+    const a = document.createElement('a'); a.href = '#' + v.c.toLowerCase(); a.innerHTML = `<span class="c">${v.c}</span><span>${esc(v.ar)}</span><span class="g">${G[v.g]}</span>`; idx.appendChild(a);
+    const el = document.createElement('article'); el.className = 'idea'; el.id = v.c.toLowerCase();
+    const frames = v.frames.map((f, i) => {
+      const pos = CENTER_K.has(f.k) ? 't-center' : TOP_K.has(f.k) ? 't-top' : '';
+      return `<div class="fr"><div class="shot ${pos}"><svg viewBox="0 0 90 160" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${SK[f.k]()}</svg><span class="no">${String(i + 1).padStart(2, '0')}</span>${f.os ? `<div class="os">${esc(f.os)}</div>` : ''}</div>
+        <div class="cap"><span class="t">${esc(f.t)}</span><span>${esc(f.d)}</span>${f.s ? `<span class="snd">صوت: ${esc(f.s)}</span>` : ''}</div></div>`;
+    }).join('');
+    el.innerHTML = `<div class="idea-head"><span class="c">${v.c}</span><h3>${esc(v.ar)}</h3><span class="en">${esc(v.en)}</span></div>
+      <div class="chips">${v.chips.map((c) => `<span class="pill">${esc(c)}</span>`).join('')}<span class="pill ${gateCls[v.gate[0]]}">${esc(v.gate[1])}</span></div>
+      <p class="pitch">${esc(v.pitch)}</p>
+      <div class="cols"><div style="display:flex;flex-direction:column;gap:10px;min-width:0"><span class="subhead">ليه هتشتغل</span><ul class="why">${v.why.map((w) => `<li>${esc(w)}</li>`).join('')}</ul></div>
+      <dl class="facts">${v.facts.map(([k, d]) => `<dt>${esc(k)}</dt><dd>${esc(d)}</dd>`).join('')}</dl></div>
+      ${v.extra ? `<div class="extra"><b>${esc(v.extra[0])}</b><span>${esc(v.extra[1])}</span></div>` : ''}
+      <span class="subhead">الاستوري بورد · ${v.frames.length} كادر</span><div class="board">${frames}</div>`;
+    cards.appendChild(el);
+  });
+});
+
+// ---------- decisions (ticks remembered in this browser only) ----------
+const D = [
+  ['تاريخ الإطلاق', 'كل حاجة بتتحسب منه، والتيزر بيبدأ قبله بـ 3 أيام.'],
+  ['مين من الفريق يظهر', 'قايمة بالموافقين، ونماذج موافقة مكتوبة. اللي مش حابب يظهر بإيديه بس.'],
+  ['نشر أرقام حملتنا', 'معمل الإعلان وإيصال إطلاقنا مبنيين على إننا ننشر أرقامنا الحقيقية مهما كانت.'],
+  ['ميزانية معمل الإعلان', 'مبلغ صغير ثابت كل أسبوع. الرقم قرارك.'],
+  ['الـ CTA', '«ابعت جملتك» بس، ولا كمان عرض زي جلسة تشخيص؟ لو فيه عرض، شروطه قرارك.'],
+  ['اللهجة لكل منصة', 'محادثة خفيفة لإنستغرام وتيك توك، فصحى للينكدإن وفيسبوك، وهل نعمل نسخ خليجي لسناب والسعودية؟'],
+  ['جملة الحملة (D-023)', '«كلام أقل. تنفيذ أذكى.» الخطة شغالة من غيرها، بس محتاجين نعرف نستخدمها ولا لأ.'],
+  ['مرجع شخصية تم', 'من غيره V12 وفيلم التعريف متوقفين.'],
+  ['موافقات العملا (OQ-32)', 'ملفات المنصات الأصلية وموافقة كل عميل قبل الإيصالات.'],
+];
+const box = document.getElementById('decide'); let saved = {}; try { saved = JSON.parse(localStorage.getItem('st-decide') || '{}'); } catch (e) {}
+D.forEach(([b, s], i) => { const id = 'dec-' + i; const l = document.createElement('label'); l.htmlFor = id;
+  l.innerHTML = `<input type="checkbox" id="${id}" ${saved[id] ? 'checked' : ''}><div><b>${esc(b)}</b><span>${esc(s)}</span></div>`; box.appendChild(l);
+  l.querySelector('input').addEventListener('change', (e) => { saved[id] = e.target.checked; try { localStorage.setItem('st-decide', JSON.stringify(saved)); } catch (err) {} }); });
+</script>
