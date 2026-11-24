@@ -1,0 +1,302 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- SayTamm showreel v2: a goal is typed, then nine services, each with its own sample, then clients in their own words.
+     Samples are shown at or below their own pixel size (never upscaled); the motion and type carry the scale. -->
+<style>
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  html, body { margin: 0; background: #09090D; } canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+const W = 1080, H = 1920, B = 0.5;   // 120 BPM
+const T_ENTER = 4.0, CH0 = 6.0, CHL = 4.0, Q0 = 42.0, QL = 2.0, OUT0 = 50.0, LOCK = 52.6, DUR = 56.0; window.DUR_S = DUR;
+const PU = '#6C35FF', OB = '#09090D', GR = '#17171E', WH = '#F5F3FA', MU = 'rgba(245,243,250,0.62)', LN = 'rgba(245,243,250,0.16)', MONO = '"JetBrains Mono", "DejaVu Sans Mono", monospace';
+const cv = document.getElementById('c'), ctx = cv.getContext('2d'), SEQ = '__SEQ__', NIIMEE_N = __NN__, ICONS = __ICONS__, PATHS = {}; let SYMBOL;
+ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), seg = (t, a, b) => clamp((t - a) / (b - a)), lerp = (a, b, q) => a + (b - a) * q;
+const ss = (x) => x * x * (3 - 2 * x), eo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x));
+const spring = (t, t0, d = 0.5, z = 0.55) => { const x = (t - t0) / d; if (x <= 0) return 0; if (x >= 1.8) return 1; const w = 11, wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + z / Math.sqrt(1 - z * z) * Math.sin(wd * x)); };
+const rr = (x, y, w, h, r) => { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); };
+function txt(s, x, y, font, color, align = 'left', rtl = false) { ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align; ctx.direction = rtl ? 'rtl' : 'ltr'; ctx.fillText(s, x, y); ctx.direction = 'ltr'; }
+const tw = (s, font) => { ctx.font = font; return ctx.measureText(s).width; };
+function wrap(s, font, maxW) { const ws = s.split(' '), out = []; let cur = ''; ws.forEach((w) => { const t = cur ? cur + ' ' + w : w; if (tw(t, font) > maxW && cur) { out.push(cur); cur = w; } else cur = t; }); if (cur) out.push(cur); return out; }
+// ---------- images: never drawn larger than their own pixels ----------
+const CACHE = new Map(); let MISS = [];
+function img(url) { let im = CACHE.get(url); if (im && im.complete && im.naturalWidth) return im; if (!im) { im = new Image(); im.src = url; CACHE.set(url, im); if (CACHE.size > 300) CACHE.delete(CACHE.keys().next().value); } MISS.push(im); return null; }
+const pic = (id) => img(`${SEQ}/img/${id}`), niimee = (t) => img(`${SEQ}/niimee/${String(Math.min(NIIMEE_N, Math.max(1, Math.floor(t * 30) + 1))).padStart(4, '0')}.jpg`);
+async function loadMissing() { await Promise.all([...new Set(MISS)].map((im) => (im.complete ? null : new Promise((r) => { im.addEventListener('load', r, { once: true }); im.addEventListener('error', r, { once: true }); })))); }
+// a sample card: width w (capped at the image's own width), top-left x,y; returns its height
+function card(im, x, y, w, { r = 22, a = 1, rot = 0, border = false, shadow = true } = {}) {
+  if (!im) return w * 1.25; w = Math.min(w, im.naturalWidth); const h = w * im.naturalHeight / im.naturalWidth; if (a <= 0) return h;
+  ctx.save(); ctx.globalAlpha *= a; ctx.translate(x + w / 2, y + h / 2); ctx.rotate(rot); ctx.translate(-w / 2, -h / 2);
+  if (shadow) { ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 44; ctx.shadowOffsetY = 16; rr(0, 0, w, h, r); ctx.fillStyle = OB; ctx.fill(); ctx.restore(); }
+  ctx.save(); rr(0, 0, w, h, r); ctx.clip(); ctx.drawImage(im, 0, 0, w, h); ctx.restore();
+  rr(0, 0, w, h, r); ctx.strokeStyle = border ? PU : 'rgba(245,243,250,0.12)'; ctx.lineWidth = border ? 5 : 2; ctx.stroke(); ctx.restore(); return h;
+}
+const enter = (lt, d) => { const q = spring(lt, d, 0.5); return { q, a: clamp(q * 1.8), dy: 50 * (1 - Math.min(1, q)) }; };
+function chip(s, x, y, { a = 1, fill = 'rgba(245,243,250,0.07)', color = WH, font = '600 30px Sat', rtl = false } = {}) { if (a <= 0) return 0; const w = tw(s, font) + 48; ctx.save(); ctx.globalAlpha *= a; rr(x, y, w, 60, 30); ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke(); txt(s, x + w / 2, y + 41, font, color, 'center', rtl); ctx.restore(); return w; }
+function tile(name, x, y, s, a = 1) {
+  const C = { google: ['#FFFFFF', '#4285F4'], meta: ['#FFFFFF', '#0467DF'], tiktok: ['#000000', '#FFFFFF'], snapchat: ['#FFFC00', '#000000'], youtube: ['#FFFFFF', '#FF0000'], instagram: ['ig', '#FFFFFF'], x: ['#000000', '#FFFFFF'] }[name];
+  if (a <= 0 || !PATHS[name]) return; ctx.save(); ctx.globalAlpha *= a; ctx.translate(x, y); ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 20; ctx.shadowOffsetY = 6;
+  if (C[0] === 'ig') { const g = ctx.createLinearGradient(-s / 2, s / 2, s / 2, -s / 2); g.addColorStop(0, '#FEDA75'); g.addColorStop(0.35, '#FA7E1E'); g.addColorStop(0.65, '#D62976'); g.addColorStop(1, '#4F5BD5'); ctx.fillStyle = g; } else ctx.fillStyle = C[0];
+  rr(-s / 2, -s / 2, s, s, s * 0.24); ctx.fill(); ctx.shadowColor = 'transparent'; const k = s * 0.56 / 24; ctx.translate(-12 * k, -12 * k); ctx.scale(k, k); ctx.fillStyle = C[1]; ctx.fill(PATHS[name]); ctx.restore();
+}
+function grid(a = 0.04) { ctx.strokeStyle = `rgba(245,243,250,${a})`; ctx.lineWidth = 1; for (let x = 60; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); } for (let y = 60; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); } }
+function check(x, y, q) { ctx.save(); rr(x, y, 52, 52, 14); ctx.fillStyle = q > 0 ? PU : 'rgba(245,243,250,0.06)'; ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke();
+  if (q > 0) { ctx.strokeStyle = WH; ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.beginPath(); const p = eo(q); ctx.moveTo(x + 14, y + 27); ctx.lineTo(x + 14 + 9 * Math.min(1, p * 2), y + 27 + 9 * Math.min(1, p * 2)); if (p > 0.5) ctx.lineTo(x + 23 + 16 * (p - 0.5) * 2, y + 36 - 18 * (p - 0.5) * 2); ctx.stroke(); } ctx.restore(); }
+
+// ---------- intro: a goal is typed ----------
+const GOALS = [['Launch our new model in Saudi Arabia.', 0.5, 1.7, 1.85], ['Build a brand people remember.', 2.05, 2.85, 3.0], ['Turn visits into sales.', 3.15, 3.7, 99]];
+function promptBar(t, y, typed, { a = 1, cursor = true } = {}) {
+  ctx.save(); ctx.globalAlpha = a; rr(70, y, 940, 130, 65); ctx.fillStyle = 'rgba(23,23,30,0.95)'; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.22)'; ctx.lineWidth = 2; ctx.stroke();
+  txt('say ›', 120, y + 80, `700 38px ${MONO}`, PU); const f = '600 44px Sat'; txt(typed, 250, y + 81, f, WH); if (cursor && t % 0.8 < 0.45) { ctx.fillStyle = WH; ctx.fillRect(254 + tw(typed, f), y + 40, 4, 54); } ctx.restore();
+}
+function intro(t) {
+  if (t >= CH0) return; const out = 1 - ss(seg(t, CH0 - 0.4, CH0)); ctx.save(); ctx.globalAlpha = out; grid(0.035 * seg(t, 0, 0.6));
+  if (t < T_ENTER + 0.4) {
+    const g = GOALS.find(([, a, , d]) => t < d) || GOALS[2], [s, a, b, d] = g, del = t > b + 0.08 && d < 99 ? seg(t, d - 0.12, d) : 0;
+    const n = Math.floor(clamp((t - a) / (b - a)) * s.length * (1 - del)); const up = eo(seg(t, T_ENTER, T_ENTER + 0.4));
+    ctx.save(); ctx.globalAlpha *= 1 - seg(t, T_ENTER - 0.1, T_ENTER + 0.1); txt("What's your goal?", 540, 760, '500 40px Sat', MU, 'center'); ctx.restore();
+    promptBar(t, 840 - 260 * up, t < a ? '' : s.slice(0, n), { a: seg(t, 0.1, 0.4) * (1 - up) });
+    if (t >= T_ENTER - 0.05 && t < T_ENTER + 0.15) { ctx.fillStyle = `rgba(245,243,250,${0.5 * (1 - seg(t, T_ENTER, T_ENTER + 0.15))})`; ctx.fillRect(0, 0, W, H); }
+  }
+  // the answer: the symbol, the name, the promise
+  if (t >= T_ENTER) {
+    const q = spring(t, T_ENTER + 0.05, 0.5), SH = 250, SW = SH * 600 / 721, rv = eo(seg(t, T_ENTER, T_ENTER + 0.5));
+    ctx.save(); ctx.globalAlpha = clamp(q * 1.6); ctx.beginPath(); ctx.rect(540 - SW / 2 - 10, 560 - SH / 2 - 10, (SW + 20) * rv, SH + 20); ctx.clip(); ctx.drawImage(SYMBOL, 540 - SW / 2, 560 - SH / 2, SW, SH); ctx.restore();
+    const q2 = spring(t, T_ENTER + 0.25, 0.5); ctx.save(); ctx.globalAlpha = clamp(q2 * 1.6); txt('tamm ›', 540, 780, `700 36px ${MONO}`, PU, 'center'); txt('SayTamm', 540, 900, '700 128px Sat', WH, 'center'); txt('Showreel 2026', 540, 970, `500 36px ${MONO}`, MU, 'center'); ctx.restore();
+    const q3 = spring(t, T_ENTER + 1.0, 0.45), q4 = spring(t, T_ENTER + 1.3, 0.45);
+    ctx.save(); ctx.globalAlpha = clamp(q3 * 1.6); txt('Nine services.', 540, 1250, '700 96px Sat', WH, 'center'); ctx.restore();
+    ctx.save(); ctx.globalAlpha = clamp(q4 * 1.6); txt('One objective.', 540, 1360, '700 96px Sat', PU, 'center'); ctx.restore();
+  }
+  ctx.restore();
+}
+
+// ---------- the nine services (from the profile), each with its sample ----------
+const CH = [
+  { n: '01', d: 'Strategy & Consulting', title: 'Digital Marketing Strategy', desc: 'A written plan that ties every channel and every riyal to a business objective.', stage: stStrategy },
+  { n: '02', d: 'Creative & Content', title: 'Branding & Identity', desc: 'Positioning first, design second: Arabic and English developed together.', stage: stBrand },
+  { n: '02', d: 'Creative & Content', title: 'Social Media Marketing', desc: 'Platform-native content and community management, measured by what it moves.', stage: stSocial },
+  { n: '02', d: 'Creative & Content', title: 'Content Marketing', desc: 'Content that earns attention and moves buyers toward a decision.', stage: stContent },
+  { n: '02', d: 'Creative & Content', title: 'Media Production', desc: 'Photography, video and motion, produced for the feed it will run in.', stage: stProduction },
+  { n: '03', d: 'Media & Performance', title: 'Performance Marketing', desc: 'Paid search and paid social, tested and scaled against revenue, not reach.', stage: stPerformance },
+  { n: '04', d: 'Digital & Technology', title: 'SEO', desc: 'Be found by buyers who are already searching, in Arabic and English.', stage: stSEO },
+  { n: '04', d: 'Digital & Technology', title: 'Website Development & CRO', desc: 'Fast, bilingual websites built to turn visits into enquiries and sales.', stage: stWeb },
+  { n: '04', d: 'Digital & Technology', title: 'Analytics & Growth', desc: 'Tracking you can trust, and reports that end with the next decision.', stage: stAnalytics },
+];
+function header(c, lt) {
+  const e = enter(lt, 0.0), f = (s) => { let z = 96; while (tw(s, `700 ${z}px Sat`) > 940 && z > 60) z -= 2; return `700 ${z}px Sat`; };
+  ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy);
+  txt(c.n, 70, 205, `700 34px ${MONO}`, PU); txt('· ' + c.d, 70 + tw(c.n + ' ', `700 34px ${MONO}`), 205, `500 34px ${MONO}`, MU);
+  txt(c.title, 66, 318, f(c.title), WH);
+  const e2 = enter(lt, 0.15); ctx.globalAlpha *= clamp(e2.q * 1.6) / Math.max(0.001, e.a) * e.a; wrap(c.desc, '500 36px Sat', 900).forEach((l, i) => txt(l, 70, 392 + i * 48, '500 36px Sat', MU));
+  ctx.restore();
+}
+function rail(t) {
+  const v = seg(t, CH0 - 0.3, CH0) * (1 - seg(t, Q0 - 0.3, Q0)); if (v <= 0) return; ctx.save(); ctx.globalAlpha = v;
+  const k = Math.floor((t - CH0) / CHL), sw = (940 - 8 * 10) / 9;
+  for (let i = 0; i < 9; i++) { const x = 70 + i * (sw + 10); ctx.fillStyle = 'rgba(245,243,250,0.14)'; ctx.fillRect(x, 1812, sw, 6); const p = i < k ? 1 : i > k ? 0 : seg(t, CH0 + k * CHL, CH0 + (k + 1) * CHL); ctx.fillStyle = i < k ? 'rgba(245,243,250,0.55)' : PU; ctx.fillRect(x, 1812, sw * p, 6); }
+  txt('/plan services', 70, 1780, `500 28px ${MONO}`, MU); txt(`${String(clamp(k + 1, 1, 9)).padStart(2, '0')} / 09`, 1010, 1780, `600 28px ${MONO}`, WH, 'right');
+  ctx.restore();
+}
+function services(t) {
+  CH.forEach((c, i) => {
+    const a = CH0 + i * CHL, b = a + CHL; if (t < a - 0.01 || t >= b) return; const lt = t - a;
+    const out = ss(seg(t, b - 0.35, b)); ctx.save(); ctx.globalAlpha = 1 - out; ctx.translate(-90 * out, 0);
+    header(c, lt); c.stage(lt); ctx.restore();
+  });
+}
+function stStrategy(lt) {
+  const items = ['Objective', 'Audience', 'Offer', 'Channels', 'The number each one must deliver'];
+  items.forEach((s, i) => { const e = enter(lt, 0.3 + i * 0.22), y = 560 + i * 132; if (e.q <= 0) return;
+    if (i) { const l = eo(seg(lt, 0.25 + i * 0.22, 0.5 + i * 0.22)); ctx.fillStyle = PU; ctx.fillRect(538, y - 40, 4, 40 * l); }
+    ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy); const w = 860, x = 110; rr(x, y, w, 92, 46); ctx.fillStyle = i === 4 ? PU : GR; ctx.fill(); ctx.strokeStyle = i === 0 ? PU : LN; ctx.lineWidth = i === 0 ? 4 : 2; ctx.stroke();
+    txt(String(i + 1).padStart(2, '0'), x + 44, y + 60, `700 28px ${MONO}`, i === 4 ? WH : PU); txt(s, x + 110, y + 61, '700 38px Sat', WH); ctx.restore(); });
+  const mk = ['Saudi Arabia', 'UAE', 'Kuwait', 'Oman', 'Egypt']; let x = 70; mk.forEach((s, i) => { const e = enter(lt, 1.6 + i * 0.1); ctx.save(); ctx.translate(0, e.dy); x += chip(s, x, 1290, { a: e.a }) + 14; ctx.restore(); });
+  const e = enter(lt, 2.2); ctx.save(); ctx.globalAlpha *= e.a; txt('// market & competitor research in each market', 70, 1430, `500 30px ${MONO}`, MU); ctx.restore();
+}
+function stBrand(lt) {
+  const e1 = enter(lt, 0.3), e2 = enter(lt, 0.55), e3 = enter(lt, 0.8), e4 = enter(lt, 1.05);
+  ctx.save(); ctx.translate(0, e1.dy); card(pic('clean_manual.jpg'), 70, 540, 560, { a: e1.a }); ctx.restore();
+  ctx.save(); ctx.translate(0, e2.dy); card(pic('alia_logo.jpg'), 560, 880, 450, { a: e2.a, rot: 0.025 }); ctx.restore();
+  ctx.save(); ctx.translate(0, e3.dy); card(pic('clean_icons.jpg'), 70, 1000, 440, { a: e3.a, rot: -0.02 }); ctx.restore();
+  ctx.save(); ctx.translate(0, e4.dy); card(pic('alia_bag.jpg'), 560, 1180, 450, { a: e4.a, rot: 0.015 }); ctx.restore();
+  ['#2E7B76', '#B7835E', '#1B1B1F', '#F2EEE3', PU].forEach((c, i) => { const e = enter(lt, 1.6 + i * 0.08); ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy); ctx.fillStyle = c; ctx.beginPath(); ctx.arc(110 + i * 92, 1530, 34, 0, 7); ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke(); ctx.restore(); });
+  let x = 70; ['Logo', 'Palette', 'Type', 'Brand manual'].forEach((s, i) => { const e = enter(lt, 2.0 + i * 0.1); ctx.save(); ctx.translate(0, e.dy); x += chip(s, x, 1610, { a: e.a }) + 14; ctx.restore(); });
+}
+function stSocial(lt) {
+  const e = enter(lt, 0.3), px = 80, py = 560, pw = 400, ph = 830;
+  ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy);
+  ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 50; rr(px, py, pw, ph, 52); ctx.fillStyle = '#0E0E13'; ctx.fill(); ctx.restore(); rr(px, py, pw, ph, 52); ctx.strokeStyle = 'rgba(245,243,250,0.25)'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.save(); rr(px + 14, py + 14, pw - 28, ph - 28, 40); ctx.clip(); ctx.fillStyle = '#111'; ctx.fillRect(px, py, pw, ph);
+  let y = py + 70 - 520 * ss(seg(lt, 0.8, 3.6)); ['chery_a.jpg', 'chery_b.jpg', 'chery_c.jpg'].forEach((id) => { ctx.fillStyle = 'rgba(245,243,250,0.85)'; ctx.beginPath(); ctx.arc(px + 44, y + 22, 14, 0, 7); ctx.fill(); ctx.fillRect(px + 68, y + 14, 120, 14); y += 46; const h = card(pic(id), px + 14, y, pw - 28, { r: 0, shadow: false }); y += h + 10;
+    ['♥', '◯', '➤'].forEach((s, k) => txt(s, px + 36 + k * 50, y + 34, '600 30px Sat', WH)); y += 60; });
+  ctx.restore(); ctx.fillStyle = '#0E0E13'; rr(px + pw / 2 - 60, py + 22, 120, 30, 15); ctx.fill(); ctx.restore();
+  const e2 = enter(lt, 0.6), e3 = enter(lt, 0.9);
+  ctx.save(); ctx.translate(0, e2.dy); card(pic('hive_a.jpg'), 540, 590, 440, { a: e2.a, rot: 0.03 }); ctx.restore();
+  ctx.save(); ctx.translate(0, e3.dy); card(pic('hive_b.jpg'), 600, 1060, 380, { a: e3.a, rot: -0.03 }); ctx.restore();
+  ['instagram', 'tiktok', 'snapchat', 'x', 'youtube'].forEach((n, i) => { const q = spring(lt, 1.5 + i * 0.1, 0.4); tile(n, 130 + i * 205, 1620, 92 * lerp(0.6, 1, Math.min(1, q)), clamp(q * 1.6)); });
+}
+function stContent(lt) {
+  const e1 = enter(lt, 0.3), e2 = enter(lt, 0.6), e3 = enter(lt, 0.75);
+  ctx.save(); ctx.translate(0, e1.dy); const h = card(pic('zahid_a.jpg'), 70, 540, 940, { a: e1.a }); ctx.restore();
+  const q = enter(lt, 1.3); ctx.save(); ctx.globalAlpha *= q.a; ctx.translate(0, q.dy); const s = '“Al Zahid in every home”', f = '600 36px Sat', w = tw(s, f) + 60; rr(100, 540 + h - 110, w, 76, 38); ctx.fillStyle = 'rgba(9,9,13,0.82)'; ctx.fill(); ctx.fillStyle = PU; ctx.fillRect(100, 540 + h - 110, 8, 76); txt(s, 130, 540 + h - 60, f, WH); ctx.restore();
+  ctx.save(); ctx.translate(0, e2.dy); card(pic('zahid_b.jpg'), 70, 1300, 460, { a: e2.a }); ctx.restore();
+  ctx.save(); ctx.translate(0, e3.dy); card(pic('zahid_c.jpg'), 550, 1300, 460, { a: e3.a }); ctx.restore();
+  let x = 70; ['Bilingual', 'One message per piece', 'Seasonal'].forEach((s, i) => { const e = enter(lt, 1.7 + i * 0.12); ctx.save(); ctx.translate(0, e.dy); x += chip(s, x, 1680, { a: e.a }) + 14; ctx.restore(); });
+}
+function stProduction(lt) {
+  const e = enter(lt, 0.3); ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy);
+  const im = niimee(2.0 + lt * 1.0); if (im) { ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 50; rr(70, 560, 576, 720, 24); ctx.fillStyle = OB; ctx.fill(); ctx.restore(); ctx.save(); rr(70, 560, 576, 720, 24); ctx.clip(); ctx.drawImage(im, 70, 560, 576, 720); ctx.restore(); }
+  ctx.fillStyle = '#E5484D'; ctx.beginPath(); ctx.arc(112, 604, 11, 0, 7); ctx.fill(); txt('REC  00:' + String(Math.floor(2 + lt)).padStart(2, '0'), 132, 614, `600 26px ${MONO}`, OB); ctx.restore();
+  const e2 = enter(lt, 0.6), e3 = enter(lt, 0.85);
+  ctx.save(); ctx.translate(0, e2.dy); card(pic('beauty_b.jpg'), 680, 560, 330, { a: e2.a, rot: 0.02 }); ctx.restore();
+  ctx.save(); ctx.translate(0, e3.dy); card(pic('beauty_c.jpg'), 680, 1080, 330, { a: e3.a, rot: -0.02 }); ctx.restore();
+  ['Motion & animated social', 'Short-form video', 'Product photography'].forEach((s, i) => { const q = enter(lt, 1.4 + i * 0.12); ctx.save(); ctx.translate(0, q.dy); chip(s, 70, 1330 + i * 80, { a: q.a }); ctx.restore(); });
+}
+function stPerformance(lt) {
+  ['niimee_b.jpg', 'niimee_c.jpg'].forEach((id, i) => { const e = enter(lt, 0.3 + i * 0.2), x = 70 + i * 500, y = 560; ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy);
+    const win = i === 1 && lt > 2.2, pulse = win ? 1 + 0.02 * Math.sin((lt - 2.2) * 9) * (1 - seg(lt, 2.2, 3.2)) : 1;
+    ctx.translate(x + 220, y + 290); ctx.scale(pulse, pulse); ctx.translate(-(x + 220), -(y + 290));
+    rr(x, y, 440, 580, 26); ctx.fillStyle = GR; ctx.fill(); ctx.strokeStyle = win ? PU : LN; ctx.lineWidth = win ? 5 : 2; ctx.stroke();
+    ctx.fillStyle = 'rgba(245,243,250,0.8)'; ctx.beginPath(); ctx.arc(x + 40, y + 40, 16, 0, 7); ctx.fill(); txt('niimee', x + 68, y + 38, '700 26px Sat', WH); txt('Sponsored', x + 68, y + 64, '500 22px Sat', MU);
+    card(pic(id), x + 10, y + 86, 420, { r: 14, shadow: false });
+    rr(x + 10, y + 516, 420, 52, 12); ctx.fillStyle = 'rgba(245,243,250,0.08)'; ctx.fill(); txt('Shop now', x + 30, y + 551, '600 26px Sat', WH); txt('›', x + 410, y + 552, '700 30px Sat', WH, 'right');
+    ctx.fillStyle = i ? PU : WH; ctx.beginPath(); ctx.arc(x + 400, y + 40, 26, 0, 7); ctx.fill(); txt(i ? 'B' : 'A', x + 400, y + 50, '700 28px Sat', i ? WH : OB, 'center'); ctx.restore(); });
+  const s = enter(lt, 2.3); chip('Test → learn → scale', 70, 1180, { a: s.a, fill: PU });
+  ['google', 'meta', 'snapchat', 'tiktok', 'youtube'].forEach((n, i) => { const q = spring(lt, 1.2 + i * 0.1, 0.4); tile(n, 130 + i * 205, 1370, 100 * lerp(0.6, 1, Math.min(1, q)), clamp(q * 1.6)); });
+  const e = enter(lt, 1.8); ctx.save(); ctx.globalAlpha *= e.a; txt('// optimised against sales, leads and revenue', 70, 1530, `500 30px ${MONO}`, MU); txt('// creative tested before budgets scale', 70, 1580, `500 30px ${MONO}`, MU); ctx.restore();
+}
+function stSEO(lt) {
+  const e = enter(lt, 0.3); ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy);
+  rr(70, 560, 940, 120, 60); ctx.fillStyle = GR; ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke();
+  ctx.strokeStyle = WH; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(140, 614, 20, 0, 7); ctx.moveTo(155, 629); ctx.lineTo(170, 644); ctx.stroke();
+  const en = 'ready-built gaming pc', ar = 'جهاز قيمنق جاهز'; if (lt < 1.75) { const n = Math.floor(clamp((lt - 0.5) / 0.9) * en.length); txt(en.slice(0, n), 200, 634, '600 42px Sat', WH); }
+  else { const n = Math.floor(clamp((lt - 1.85) / 0.7) * ar.length); txt(ar.slice(0, n), 960, 634, '600 44px Plex', WH, 'right', true); }
+  ctx.restore();
+  // results: skeleton rows; the highlighted one climbs to the top
+  const rise = eo(seg(lt, 2.3, 3.0)); [0, 1, 2].forEach((k) => { const ee = enter(lt, 0.6 + k * 0.12); if (ee.q <= 0) return; const slot = k === 2 ? lerp(2, 0, rise) : k + rise; const y = 760 + slot * 200, hl = k === 2;
+    ctx.save(); ctx.globalAlpha *= ee.a; rr(70, y, 940, 170, 20); ctx.fillStyle = hl ? 'rgba(108,53,255,0.16)' : GR; ctx.fill(); ctx.strokeStyle = hl ? PU : LN; ctx.lineWidth = hl ? 4 : 2; ctx.stroke();
+    ctx.fillStyle = hl ? WH : 'rgba(245,243,250,0.35)'; rr(110, y + 38, hl ? 520 : 440, 26, 13); ctx.fill(); ctx.fillStyle = 'rgba(245,243,250,0.18)'; rr(110, y + 86, 760, 16, 8); ctx.fill(); rr(110, y + 118, 560, 16, 8); ctx.fill();
+    if (hl) chip('Your page', 820, y + 22, { a: 1, fill: PU, font: '600 26px Sat' }); ctx.restore(); });
+  let x = 70; ['price', 'best', 'near me'].forEach((s, i) => { const q = enter(lt, 1.5 + i * 0.1); ctx.save(); ctx.translate(0, q.dy); x += chip(s, x, 1420, { a: q.a }) + 14; ctx.restore(); });
+  let xr = 1010; ['سعر', 'أفضل', 'قريب مني'].forEach((s, i) => { const q = enter(lt, 1.8 + i * 0.1), w = tw(s, '600 30px Plex') + 48; xr -= w; ctx.save(); ctx.translate(0, q.dy); chip(s, xr, 1500, { a: q.a, font: '600 30px Plex', rtl: true }); ctx.restore(); xr -= 14; });
+  const q = enter(lt, 2.2); ctx.save(); ctx.globalAlpha *= q.a; txt('// keyword research focused on buying intent', 70, 1640, `500 30px ${MONO}`, MU); ctx.restore();
+}
+function phone(x, y, w, h, id, scroll, a) {
+  ctx.save(); ctx.globalAlpha *= a; ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 50; rr(x, y, w, h, 50); ctx.fillStyle = '#0E0E13'; ctx.fill(); ctx.restore(); rr(x, y, w, h, 50); ctx.strokeStyle = 'rgba(245,243,250,0.25)'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.save(); rr(x + 12, y + 12, w - 24, h - 24, 40); ctx.clip(); const im = pic(id); if (im) { const sw = w - 24, sh = sw * im.naturalHeight / im.naturalWidth; ctx.drawImage(im, x + 12, y + 12 - scroll * Math.max(0, sh - (h - 24)), sw, sh); } ctx.restore();
+  ctx.fillStyle = '#0E0E13'; rr(x + w / 2 - 55, y + 20, 110, 28, 14); ctx.fill(); ctx.restore();
+}
+function stWeb(lt) {
+  const e1 = enter(lt, 0.3), e2 = enter(lt, 0.5), sc = ss(seg(lt, 1.0, 3.6));
+  ctx.save(); ctx.translate(0, e1.dy); phone(80, 590, 430, 900, 'site_en.png', sc, e1.a); ctx.restore();
+  ctx.save(); ctx.translate(0, e2.dy); phone(570, 590, 430, 900, 'site_ar.png', sc, e2.a); ctx.restore();
+  const q = enter(lt, 0.9); ctx.save(); ctx.globalAlpha *= q.a; txt('EN · left to right', 295, 560, `600 28px ${MONO}`, MU, 'center'); txt('AR · right to left', 785, 560, `600 28px ${MONO}`, MU, 'center'); ctx.restore();
+  let x = 70; ['Bilingual', 'Fast', 'Built to convert'].forEach((s, i) => { const k = enter(lt, 1.6 + i * 0.12); ctx.save(); ctx.translate(0, k.dy); x += chip(s, x, 1560, { a: k.a, fill: i === 2 ? PU : 'rgba(245,243,250,0.07)' }) + 14; ctx.restore(); });
+  const k = enter(lt, 2.0); ctx.save(); ctx.globalAlpha *= k.a; txt('// saytamm.com, built by the team', 70, 1690, `500 30px ${MONO}`, MU); ctx.restore();
+}
+function stAnalytics(lt) {
+  const rows = ['A measurement plan: the number each channel answers to', 'Tracking set-up and checks', 'Website and ad-platform conversions', 'Platform results vs. total business results', 'Reviews that end with the next budget decision'];
+  const e = enter(lt, 0.25); ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy); rr(70, 560, 940, 700, 30); ctx.fillStyle = GR; ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke(); txt('measurement.plan', 110, 625, `600 30px ${MONO}`, MU); ctx.restore();
+  rows.forEach((s, i) => { const y = 670 + i * 116, q = enter(lt, 0.5 + i * 0.25); if (q.q <= 0) return; ctx.save(); ctx.globalAlpha *= q.a; ctx.translate(0, q.dy); check(110, y, seg(lt, 0.8 + i * 0.25, 1.1 + i * 0.25));
+    wrap(s, '600 32px Sat', 780).slice(0, 2).forEach((l, j) => txt(l, 190, y + 36 + j * 38, '600 32px Sat', WH)); ctx.restore(); });
+  // the loop: measure → learn → plan
+  const lq = enter(lt, 1.9); if (lq.q > 0) { ctx.save(); ctx.globalAlpha *= lq.a; const cx = 540, cy = 1490, R = 150, sp = (lt * 1.2) % (Math.PI * 2);
+    ctx.strokeStyle = 'rgba(245,243,250,0.3)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.stroke(); ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(cx + Math.cos(sp) * R, cy + Math.sin(sp) * R, 12, 0, 7); ctx.fill();
+    [['Measure', -Math.PI / 2], ['Learn', Math.PI / 6], ['Plan', Math.PI * 5 / 6]].forEach(([s, a]) => { const x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R, w = tw(s, '700 30px Sat') + 44; rr(x - w / 2, y - 30, w, 60, 30); ctx.fillStyle = OB; ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke(); txt(s, x, y + 11, '700 30px Sat', WH, 'center'); }); ctx.restore(); }
+}
+
+// ---------- clients, in their own words (verbatim excerpts from published reviews) ----------
+const QUOTES = [
+  { q: '…Within a few months, our brand was visible across all platforms, and we started getting serious inquiries.', who: 'DC Block Factory', what: 'Building materials', img: 'dcblock.jpg' },
+  { q: '…delivered high-quality content that reflects our identity perfectly. We’ve seen real engagement growth.', who: 'Altopiano', what: 'Hospitality', img: 'altopiano.jpg' },
+  { q: '…The team is proactive, creative, and truly understands business needs.', who: 'Bitumat', what: 'Industrial', img: 'bitumat.jpg' },
+  { q: '…We’ve seen stronger brand presence, better audience targeting, and a steady flow of high-quality leads.', who: 'Alqimma', what: 'Industrial equipment', img: 'alqimma.jpg' },
+];
+function quotes(t) {
+  if (t < Q0 - 0.3 || t >= OUT0) return; const v = seg(t, Q0 - 0.3, Q0) * (1 - seg(t, OUT0 - 0.3, OUT0)); ctx.save(); ctx.globalAlpha = v;
+  txt('/tamm', 70, 205, `700 34px ${MONO}`, PU); txt('In their words.', 66, 318, '700 96px Sat', WH); txt('Clients on the team’s work', 70, 392, '500 36px Sat', MU);
+  QUOTES.forEach((c, i) => { const a = Q0 + i * QL, b = a + QL; if (t < a || t >= b) return; const lt = t - a, out = ss(seg(t, b - 0.3, b)), e = enter(lt, 0.05);
+    ctx.save(); ctx.globalAlpha *= e.a * (1 - out); ctx.translate(-90 * out, e.dy);
+    card(pic(c.img), 70, 480, 400, { rot: -0.02 });
+    txt(c.who, 510, 560, '700 46px Sat', WH); txt(c.what, 510, 606, `500 30px ${MONO}`, MU);
+    txt('“', 60, 1210, '700 220px Sat', PU); const lines = wrap(c.q, '600 58px Sat', 920); lines.forEach((l, j) => txt(l, 70, 1240 + j * 76, '600 58px Sat', WH));
+    ctx.restore(); });
+  // progress dots
+  QUOTES.forEach((c, i) => { ctx.fillStyle = t >= Q0 + i * QL ? WH : 'rgba(245,243,250,0.2)'; ctx.beginPath(); ctx.arc(80 + i * 34, 1800, 8, 0, 7); ctx.fill(); });
+  ctx.restore();
+}
+// ---------- outro: your goal → Say it. Tamm it. → lockup ----------
+function outro(t) {
+  if (t < OUT0 - 0.2) return; const v = seg(t, OUT0 - 0.2, OUT0); ctx.save(); ctx.globalAlpha = v; grid(0.035);
+  if (t < LOCK) {
+    txt('Your goal.', 540, 700, '700 104px Sat', WH, 'center');
+    promptBar(t, 820, t > OUT0 + 0.9 ? 'Say it.'.slice(0, Math.floor(clamp((t - OUT0 - 0.9) / 0.3) * 7)) : '', { a: 1 });
+    const q = spring(t, OUT0 + 1.6, 0.4); if (q > 0) { ctx.save(); ctx.globalAlpha = clamp(q * 1.6); ctx.translate(0, 30 * (1 - Math.min(1, q))); txt('We’ll Tamm it.', 540, 1160, '700 110px Sat', PU, 'center'); ctx.restore(); }
+  } else {
+    const fl = 1 - seg(t, LOCK, LOCK + 0.2); if (fl > 0) { ctx.fillStyle = `rgba(245,243,250,${0.6 * fl})`; ctx.fillRect(0, 0, W, H); }
+    const show = (t0, f) => { const q = spring(t, t0, 0.45); if (q <= 0) return; ctx.save(); ctx.globalAlpha = clamp(q * 1.6); ctx.translate(0, 26 * (1 - Math.min(1, q))); f(); ctx.restore(); };
+    show(LOCK + 0.05, () => { const SH = 250, SW = SH * 600 / 721; ctx.drawImage(SYMBOL, 540 - SW / 2, 600 - SH / 2, SW, SH); });
+    show(LOCK + 0.4, () => txt('SayTamm', 540, 930, '700 130px Sat', WH, 'center'));
+    show(LOCK + 0.7, () => txt('قول تم', 540, 1030, '700 68px Plex', MU, 'center', true));
+    show(LOCK + 1.1, () => txt('A digital marketing & performance agency', 540, 1130, '500 38px Sat', 'rgba(245,243,250,0.88)', 'center'));
+    show(LOCK + 1.5, () => { txt('saytamm.com', 540, 1290, '700 46px Sat', WH, 'center'); txt('info@saytamm.com', 540, 1350, '500 36px Sat', MU, 'center'); });
+  }
+  ctx.restore();
+}
+function draw(t) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H); if (t >= CH0 - 0.4 && t < OUT0) grid(0.03); intro(t); services(t); rail(t); quotes(t); outro(t); }
+window.seek = async (t) => { for (let p = 0; p < 4; p++) { MISS = []; draw(t); if (!MISS.length) return; await loadMissing(); } };
+
+// ---------- score: original, 120 BPM ----------
+window.renderAudio = async () => {
+  const SR = 48000, ac = new OfflineAudioContext(2, Math.ceil(SR * DUR), SR);
+  const master = ac.createDynamicsCompressor(); master.threshold.value = -14; master.ratio.value = 3.5; master.attack.value = 0.004; master.release.value = 0.15; master.connect(ac.destination);
+  const bus = ac.createGain(); bus.connect(master);
+  const rev = ac.createConvolver(); { const len = SR * 2.2, ir = ac.createBuffer(2, len, SR); for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let s = 11 + ch; for (let i = 0; i < len; i++) { s = (s * 16807) % 2147483647; d[i] = (s / 1073741823.5 - 1) * Math.pow(1 - i / len, 3.1); } } rev.buffer = ir; }
+  const revIn = ac.createGain(), revOut = ac.createGain(); revOut.gain.value = 0.28; revIn.connect(rev); rev.connect(revOut); revOut.connect(master);
+  const nb = (() => { const b = ac.createBuffer(1, SR, SR), d = b.getChannelData(0); let s = 3; for (let i = 0; i < d.length; i++) { s = (s * 16807) % 2147483647; d[i] = s / 1073741823.5 - 1; } return b; })();
+  const env = (g, t, a, pk, d) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+  const osc = (t, type, f0, f1, a, d, pk, pan = 0, send = 0, lp = 0) => { const o = ac.createOscillator(), g = ac.createGain(), p = ac.createStereoPanner(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + a + d * 0.6);
+    let n = o; if (lp) { const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = lp; o.connect(fl); n = fl; } env(g, t, a, pk, d); p.pan.value = pan; n.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } o.start(t); o.stop(t + a + d + 0.05); };
+  const noise = (t, type, f, q, a, d, pk, pan = 0, f1 = 0, send = 0) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(), p = ac.createStereoPanner(); s.buffer = nb; s.loop = true; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + a + d); fl.Q.value = q; env(g, t, a, pk, d); p.pan.value = pan; s.connect(fl); fl.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } s.start(t, (t * 0.37) % 0.8); s.stop(t + a + d + 0.05); };
+  const pad = (t, d, fs, g) => fs.forEach((f) => [-7, 7].forEach((dt) => { const o = ac.createOscillator(), fl = ac.createBiquadFilter(), gg = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = dt; fl.type = 'lowpass'; fl.frequency.value = 1100; gg.gain.setValueAtTime(0, t); gg.gain.linearRampToValueAtTime(g, t + 0.5); gg.gain.setValueAtTime(g, t + d - 0.4); gg.gain.linearRampToValueAtTime(0, t + d); o.connect(fl); fl.connect(gg); gg.connect(bus); const sg = ac.createGain(); sg.gain.value = 0.5; gg.connect(sg); sg.connect(revIn); o.start(t); o.stop(t + d + 0.05); }));
+  // D minor · B♭ · F · C
+  const CHD = [[293.7, 349.2, 440], [233.1, 293.7, 349.2], [349.2, 440, 523.3], [261.6, 329.6, 392]], ROOT = [73.4, 58.3, 87.3, 65.4];
+  // intro: a low drone, typing, a riser into Enter
+  pad(0, T_ENTER + 0.1, [146.8, 220], 0.012); noise(0.4, 'bandpass', 300, 1.5, T_ENTER - 0.45, 0.05, 0.08, 0, 6000);
+  const ticks = (a, b, gap = 0.055) => { for (let t = a; t < b; t += gap + ((t * 97) % 1) * 0.02) noise(t, 'bandpass', 3800, 3, 0.001, 0.018, 0.06, ((t * 13) % 1) - 0.5); };
+  GOALS.forEach(([, a, b]) => ticks(a, b)); ticks(CH0 + 6 * CHL + 0.5, CH0 + 6 * CHL + 1.4); ticks(CH0 + 6 * CHL + 1.85, CH0 + 6 * CHL + 2.55); ticks(OUT0 + 0.9, OUT0 + 1.2);
+  // Enter: the hit, the groove starts
+  osc(T_ENTER, 'sine', 120, 38, 0.002, 0.8, 0.9); noise(T_ENTER, 'lowpass', 4000, 0.5, 0.001, 0.5, 0.3, 0, 0, 0.7); [587.3, 880].forEach((f, i) => osc(T_ENTER + 0.25 + i * 0.25, 'triangle', f, 0, 0.002, 1.2, 0.04, 0, 0.6));
+  for (let beat = Math.round(T_ENTER / B); beat < Math.round(OUT0 / B); beat++) {
+    const t = beat * B, bar = Math.floor(beat / 4), c = bar % 4, ib = beat % 4, soft = t < CH0 || (t >= Q0 && t < OUT0);
+    if (!soft || ib === 0) osc(t, 'sine', 150, 42, 0.002, 0.32, soft ? 0.5 : 0.8); if (!soft && (ib === 1 || ib === 3)) [0, 0.012].forEach((d) => noise(t + d, 'bandpass', 1500, 1.1, 0.001, 0.09, 0.16, 0, 0, 0.3));
+    for (let k = 0; k < 2; k++) noise(t + k * B / 2, 'highpass', 8500, 0.7, 0.001, k ? 0.06 : 0.03, soft ? 0.025 : 0.05, 0.2);
+    if (ib === 0) pad(t, 4 * B, CHD[c], soft ? 0.012 : 0.009);
+    if (!soft) { for (let k = 0; k < 2; k++) osc(t + k * B / 2, 'sawtooth', ROOT[c] * (k ? 2 : 1), 0, 0.006, B * 0.4, 0.13, 0, 0, 320); osc(t + B / 2, 'triangle', CHD[c][(beat % 3)] * 2, 0, 0.003, 0.25, 0.03, (beat % 2 ? 0.3 : -0.3), 0.3); }
+    else osc(t + B / 2, 'triangle', CHD[c][(beat % 3)] * 2, 0, 0.003, 0.4, 0.028, (beat % 2 ? 0.3 : -0.3), 0.5);
+  }
+  // each service: a soft hit and a whoosh in; each quote: a chime
+  for (let i = 0; i < 9; i++) { const t = CH0 + i * CHL; osc(t, 'sine', 110, 40, 0.002, 0.45, 0.45); noise(t - 0.4, 'bandpass', 500, 1.2, 0.35, 0.06, 0.08, 0, 5000); osc(t, 'triangle', [587.3, 659.3, 698.5, 784, 880, 784, 698.5, 659.3, 587.3][i], 0, 0.002, 0.6, 0.035, 0, 0.5); }
+  QUOTES.forEach((q, i) => osc(Q0 + i * QL, 'triangle', [880, 784, 698.5, 659.3][i], 0, 0.002, 1.0, 0.04, 0, 0.6));
+  // outro: "Say it." then "We'll Tamm it.", then the lockup
+  osc(OUT0 + 1.6, 'sine', 110, 40, 0.002, 0.5, 0.7); noise(OUT0 + 1.6, 'lowpass', 3000, 0.6, 0.001, 0.25, 0.22, 0, 0, 0.5);
+  noise(LOCK - 1.0, 'bandpass', 400, 1.5, 0.95, 0.05, 0.12, 0, 7000);
+  osc(LOCK, 'sine', 100, 34, 0.002, 1.3, 0.95); noise(LOCK, 'lowpass', 5000, 0.5, 0.001, 0.9, 0.3, 0, 0, 0.8); pad(LOCK, DUR - LOCK, [293.7, 370, 440, 587.3], 0.014); osc(LOCK, 'sine', 73.4, 0, 0.05, DUR - LOCK - 0.2, 0.16, 0, 0, 160);
+  [[LOCK + 0.4, 880], [LOCK + 0.7, 1174.7], [LOCK + 1.5, 1108.7]].forEach(([t, f]) => osc(t, 'triangle', f, 0, 0.002, 1.3, 0.04, 0, 0.6));
+  const buf = await ac.startRendering(), Lc = buf.getChannelData(0), Rc = buf.getChannelData(1), n = Lc.length, ab = new ArrayBuffer(44 + n * 4), dv = new DataView(ab);
+  const ws = (o, s) => [...s].forEach((ch, i) => dv.setUint8(o + i, ch.charCodeAt(0)));
+  ws(0, 'RIFF'); dv.setUint32(4, 36 + n * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 2, true); dv.setUint32(24, SR, true); dv.setUint32(28, SR * 4, true); dv.setUint16(32, 4, true); dv.setUint16(34, 16, true); ws(36, 'data'); dv.setUint32(40, n * 4, true);
+  for (let i = 0; i < n; i++) { dv.setInt16(44 + i * 4, Math.max(-1, Math.min(1, Lc[i])) * 32767, true); dv.setInt16(46 + i * 4, Math.max(-1, Math.min(1, Rc[i])) * 32767, true); }
+  let bin = ''; const u8 = new Uint8Array(ab); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(bin);
+};
+window.ready = (async () => {
+  await Promise.all(['500 40px Sat', '700 40px Sat', '500 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول تم سعر Say it 0123'))); await document.fonts.load(`500 32px ${MONO}`, '/plan say ›'); await document.fonts.ready;
+  for (const [n, v] of Object.entries(ICONS)) PATHS[n] = new Path2D(v.d);
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode(); await window.seek(0); return true;
+})();
+</script></body></html>
