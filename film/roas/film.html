@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>SayTamm: The Ratio (services film, 39 s)</title>
+<style>
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-600-normal.woff2); font-weight: 600; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: transparent; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// =====================================================================================
+//  THE RATIO — ROAS is a fraction: return ÷ ad spend. The screen *is* that fraction.
+//  Above the line: the real world (stock footage of Riyadh, Cairo, Dubai, a checkout, a parcel) = RETURN.
+//  Below the line: the agency at work (animation: strategy, platforms, ad channels, stores, measurement) = SPEND.
+//  Every service pushes the line down: the return grows, the spend shrinks. No numbers needed.
+// =====================================================================================
+const VARIANT = '__VARIANT__', AR = VARIANT !== 'en', L = (a, e) => (AR ? a : e);
+const W = 1080, H = 1920, DUR = 39, BEAT = 0.5; window.DUR_S = DUR;
+const OB = '#09090D', GR = '#17171E', WH = '#F5F3FA', MU = '#96939F', PU = '#6C35FF';
+const FACE = AR ? 'Plex, Sat' : 'Sat, Plex';
+const ICONS = __ICONS__, PHONE = __PHONE__;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, q) => a + (b - a) * q;
+const ss = (x) => x * x * (3 - 2 * x);
+const eo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x));
+const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const spring = (t, t0, d = 0.5, z = 0.5) => { const x = (t - t0) / d; if (x <= 0) return 0; if (x >= 1.8) return 1; const w = 11, wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + z / Math.sqrt(1 - z * z) * Math.sin(wd * x)); };
+const rr = (c, x, y, w, h, r) => { c.beginPath(); c.roundRect(x, y, w, h, r); };
+function txt(c, s, x, y, font, color, align = 'center', rtl = AR) { c.font = font; c.fillStyle = color; c.textAlign = align; c.direction = rtl ? 'rtl' : 'ltr'; c.fillText(s, x, y); c.direction = 'ltr'; }
+const tw = (s, font, rtl = AR) => { ctx.font = font; ctx.direction = rtl ? 'rtl' : 'ltr'; const w = ctx.measureText(s).width; ctx.direction = 'ltr'; return w; };
+let SYMBOL = null, ZID = null; const PATHS = {};
+
+// ---------------- timeline ----------------
+const T_LINE1 = 0.38, T_LINE2 = 1.52, T_LINE3 = 2.55, T_STRIKE = 2.95, T_BAR = 3.35;
+const SECTIONS = [  // [start, end, number, AR, EN]
+  [6.0, 10.0, '01', 'الاستراتيجية', 'Strategy'],
+  [10.0, 14.0, '02', 'الإبداع والسوشيال ميديا', 'Creative & social'],
+  [14.0, 18.0, '03', 'الإعلانات والأداء', 'Performance media'],
+  [18.0, 24.5, '04', 'المتاجر الإلكترونية', 'E-commerce'],
+  [24.5, 28.5, '05', 'القياس والتحليل', 'Measurement & SEO'],
+];
+const T_PAY = 28.5, T_PAY2 = 30.2, T_LOCK = 32.5;
+// the fraction line: it is born at the hook, then every service pushes it down
+const BARK = [[T_BAR, 1180], [9.7, 1290], [13.7, 1400], [17.7, 1500], [24.2, 1590], [28.3, 1690], [T_PAY2 - 0.05, 1775]];
+function barY(t) {
+  let y = BARK[0][1];
+  for (let i = 1; i < BARK.length; i++) y += (BARK[i][1] - BARK[i - 1][1]) * spring(t, BARK[i][0], 0.42, 0.42);
+  return y;
+}
+
+// ---------------- icons ----------------
+const TILE = {
+  instagram: { bg: 'ig', fg: '#FFFFFF' }, tiktok: { bg: '#000000', fg: '#FFFFFF' }, snapchat: { bg: '#FFFC00', fg: '#000000' }, x: { bg: '#000000', fg: '#FFFFFF' },
+  youtube: { bg: '#FFFFFF', fg: '#FF0000' }, facebook: { bg: '#0866FF', fg: '#FFFFFF' }, meta: { bg: '#FFFFFF', fg: '#0467DF' }, googleads: { bg: '#FFFFFF', fg: '#4285F4' },
+  google: { bg: '#FFFFFF', fg: '#4285F4' }, shopify: { bg: '#FFFFFF', fg: '#7AB55C' }, salla: { bg: '#004956', fg: '#BAF3E6' }, zid: { bg: '#1B1530', fg: null },
+};
+function tile(c, name, x, y, s, a = 1) {
+  if (a <= 0) return; const t = TILE[name];
+  c.save(); c.globalAlpha *= a; c.translate(x, y);
+  c.shadowColor = 'rgba(0,0,0,0.35)'; c.shadowBlur = 24 * s / 100; c.shadowOffsetY = 8 * s / 100;
+  if (t.bg === 'ig') { const g = c.createLinearGradient(-s / 2, s / 2, s / 2, -s / 2); g.addColorStop(0, '#FEDA75'); g.addColorStop(0.35, '#FA7E1E'); g.addColorStop(0.65, '#D62976'); g.addColorStop(1, '#4F5BD5'); c.fillStyle = g; }
+  else c.fillStyle = t.bg;
+  rr(c, -s / 2, -s / 2, s, s, s * 0.24); c.fill(); c.shadowColor = 'transparent';
+  if (name === 'zid') { const iw = s * 0.74, ih = iw * 216 / 556.75; c.drawImage(ZID, -iw / 2, -ih / 2, iw, ih); }
+  else { const k = s * 0.56 / 24; c.translate(-12 * k, -12 * k); c.scale(k, k); c.fillStyle = t.fg; c.fill(PATHS[name]); }
+  c.restore();
+}
+
+// ---------------- pieces ----------------
+function hook(t) {
+  // three lines; «مصروف؟» gets struck — and the strike becomes the fraction line
+  const lines = AR ? ['إعلانك…', 'مصروف؟', 'ولا استثمار؟'] : ['Is your ad spend', 'a cost…', 'or an investment?'];
+  const ts = [T_LINE1, T_LINE2, T_LINE3], ys = [800, 960, 1120], sizes = AR ? [104, 150, 104] : [78, 140, 78];
+  const out = 1 - ss(seg(t, T_BAR + 0.1, T_BAR + 0.5));
+  if (out <= 0) return;
+  ctx.save(); ctx.globalAlpha = out;
+  // a soft shade behind the words
+  const g = ctx.createLinearGradient(0, 560, 0, 1300); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(0.5, 'rgba(9,9,13,0.55)'); g.addColorStop(1, 'rgba(9,9,13,0)'); ctx.fillStyle = g; ctx.fillRect(0, 560, W, 740);
+  lines.forEach((s, i) => {
+    const q = spring(t, ts[i], 0.45); if (q <= 0) return;
+    ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); ctx.translate(540, ys[i] + 30 * (1 - Math.min(1, q)));
+    txt(ctx, s, 0, 0, `700 ${sizes[i]}px ${FACE}`, i === 2 ? WH : (i === 1 ? WH : 'rgba(245,243,250,0.85)'));
+    ctx.restore();
+  });
+  ctx.restore();
+}
+function strikeLine(t) {
+  // 1) a purple stroke strikes «مصروف؟»  2) it stretches to full width and turns white  3) it drops to the bar position
+  if (t < T_STRIKE || t >= T_BAR + 0.5) return null;
+  const w2 = tw(AR ? 'مصروف؟' : 'a cost…', `700 ${AR ? 150 : 140}px ${FACE}`);
+  const q1 = eo(seg(t, T_STRIKE, T_STRIKE + 0.22)), q2 = eio(seg(t, T_STRIKE + 0.28, T_BAR)), q3 = spring(t, T_BAR, 0.42, 0.42);
+  const half = lerp(w2 / 2 + 20, 600, q2), y = lerp(960 - (AR ? 40 : 46), 1180, q3);
+  const x0 = AR ? 540 + w2 / 2 + 20 : 540 - w2 / 2 - 20, dir = AR ? -1 : 1;
+  const xa = lerp(x0, 540 - half, q2), xb = lerp(x0 + dir * (w2 + 40) * q1, 540 + half, q2);
+  return { xa: Math.min(xa, xb), xb: Math.max(xa, xb), y, col: q2 > 0.5 ? WH : PU, th: lerp(14, 8, q2) };
+}
+function panel(t, by) {
+  // the spend side: obsidian, fine grid, a faint label
+  const lockOut = eio(seg(t, T_LOCK, T_LOCK + 0.8)); const top = by + lockOut * (H - by + 40);
+  if (top >= H) return;
+  ctx.fillStyle = OB; ctx.fillRect(0, top, W, H - top);
+  ctx.save(); ctx.beginPath(); ctx.rect(0, top, W, H - top); ctx.clip();
+  ctx.strokeStyle = 'rgba(245,243,250,0.045)'; ctx.lineWidth = 1; for (let x = 60; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, H); ctx.stroke(); } for (let y = top + 60; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  const g = ctx.createLinearGradient(0, top, 0, top + 160); g.addColorStop(0, 'rgba(108,53,255,0.18)'); g.addColorStop(1, 'rgba(108,53,255,0)'); ctx.fillStyle = g; ctx.fillRect(0, top, W, 160);
+  ctx.restore();
+}
+function bar(t, by) {
+  const s = strikeLine(t);
+  if (s) { ctx.fillStyle = s.col; ctx.fillRect(s.xa, s.y - s.th / 2, s.xb - s.xa, s.th); return; }
+  if (t < T_BAR) return;
+  const lockQ = eio(seg(t, T_LOCK, T_LOCK + 0.9));
+  const y = lerp(by, 1030, lockQ), half = lerp(540, 150, lockQ);
+  // ripples where the spend crosses into return (performance section)
+  ctx.fillStyle = WH; ctx.fillRect(540 - half, y - 4, half * 2, 8);
+  if (lockQ < 1) {
+    ctx.save(); ctx.globalAlpha = 1 - lockQ;
+    // labels: return above, spend below (small, at the outer edge); ROAS pill on the line
+    const ex = AR ? 60 : 1020, al = AR ? 'left' : 'right';
+    txt(ctx, L('العائد', 'Return'), ex, y - 22, `600 34px ${FACE}`, WH, al);
+    txt(ctx, L('الإنفاق الإعلاني', 'Ad spend'), ex, y + 50, `500 30px ${FACE}`, MU, al);
+    const gro = 1 + 0.06 * BARK.filter(([bt]) => t > bt).length;
+    ctx.save(); ctx.translate(AR ? 1000 : 80, y); ctx.scale(gro, gro);
+    const pw = 150; rr(ctx, -pw / 2, -26, pw, 52, 26); ctx.fillStyle = PU; ctx.fill();
+    txt(ctx, 'ROAS', -12, 11, '700 28px Sat', WH, 'center', false);
+    ctx.strokeStyle = WH; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(46, 10); ctx.lineTo(46, -12); ctx.moveTo(37, -3); ctx.lineTo(46, -12); ctx.lineTo(55, -3); ctx.stroke();
+    ctx.restore(); ctx.restore();
+  }
+}
+function shadeAbove(t, by) {
+  // keep type legible on footage: a dark band above the line, and a soft top vignette
+  if (t < T_BAR - 0.2 || t > T_LOCK + 0.8) return;
+  const a = seg(t, T_BAR - 0.2, T_BAR + 0.3) * (1 - seg(t, T_LOCK, T_LOCK + 0.8));
+  const g = ctx.createLinearGradient(0, by - 420, 0, by); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(1, `rgba(9,9,13,${0.7 * a})`); ctx.fillStyle = g; ctx.fillRect(0, by - 420, W, 420);
+}
+function formula(t, by) {
+  // ROAS = return ÷ spend, and the job: grow the top line
+  if (t < T_BAR + 0.3 || t > 6.2) return;
+  const out = 1 - ss(seg(t, 5.7, 6.1));
+  const q = spring(t, T_BAR + 0.35, 0.5);
+  ctx.save(); ctx.globalAlpha = clamp(q * 1.5) * out;
+  txt(ctx, 'ROAS', 540, by - 200, '700 150px Sat', WH, 'center', false);
+  txt(ctx, L('العائد على الإنفاق الإعلاني', 'Return on ad spend'), 540, by - 110, `600 ${AR ? 50 : 46}px ${FACE}`, 'rgba(245,243,250,0.9)');
+  const q2 = spring(t, 4.3, 0.5);
+  ctx.globalAlpha = clamp(q2 * 1.5) * out;
+  txt(ctx, L('شغلنا: نكبّر العائد.', 'Our job: grow the return.'), 540, by + 190, `700 ${AR ? 64 : 58}px ${FACE}`, WH);
+  txt(ctx, L('مش الإنفاق.', 'Not the spend.'), 540, by + 270, `500 ${AR ? 46 : 42}px ${FACE}`, MU);
+  ctx.restore();
+}
+function sectionTitle(t, by) {
+  for (const [a, b, n, ar, en] of SECTIONS) {
+    if (t < a || t > b) continue;
+    const q = spring(t, a + 0.12, 0.45), out = 1 - ss(seg(t, b - 0.25, b));
+    const s = L(ar, en), f = `700 ${AR ? 66 : 62}px ${FACE}`;
+    ctx.save(); ctx.globalAlpha = clamp(q * 1.6) * out; ctx.translate(AR ? 40 * (1 - Math.min(1, q)) : -40 * (1 - Math.min(1, q)), 0);
+    const x = AR ? 1010 : 70, al = AR ? 'right' : 'left';
+    txt(ctx, n, x, by - 150, '700 34px Sat', PU, al, false);
+    txt(ctx, s, x, by - 76, f, WH, al);
+    ctx.restore();
+  }
+}
+// S1 · strategy
+function sStrategy(t, by) {
+  if (t < 6 || t > 10.1) return;
+  const out = 1 - ss(seg(t, 9.6, 10));
+  const chips = AR ? ['الهدف', 'الجمهور', 'الرسالة'] : ['Objective', 'Audience', 'Message'];
+  const xs = AR ? [830, 540, 250] : [250, 540, 830], y = by + 200;
+  ctx.save(); ctx.globalAlpha = out;
+  chips.forEach((s, i) => {
+    const q = spring(t, 6.4 + i * 0.45, 0.45); if (q <= 0) return;
+    if (i > 0) { const qa = eo(seg(t, 6.25 + i * 0.45, 6.55 + i * 0.45)), x0 = xs[i - 1] + (AR ? -110 : 110), x1 = xs[i] + (AR ? 110 : -110); ctx.strokeStyle = PU; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(lerp(x0, x1, qa), y); ctx.stroke(); }
+    ctx.save(); ctx.translate(xs[i], y); const k = lerp(0.6, 1, Math.min(1, q)); ctx.scale(k, k); ctx.globalAlpha *= clamp(q * 1.5);
+    rr(ctx, -100, -42, 200, 84, 42); ctx.fillStyle = GR; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.25)'; ctx.lineWidth = 2; ctx.stroke();
+    txt(ctx, s, 0, 13, `600 ${AR ? 36 : 32}px ${FACE}`, WH); ctx.restore();
+  });
+  // aim: a reticle draws on the city
+  const qa = eo(seg(t, 7.6, 8.4)), lock = spring(t, 8.4, 0.35);
+  if (qa > 0) {
+    const cx = 540, cy = 640, r = lerp(260, 120, lock);
+    ctx.strokeStyle = `rgba(245,243,250,${0.85 * qa})`; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * qa); ctx.stroke();
+    [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([a, b]) => { ctx.beginPath(); ctx.moveTo(cx + a * (r - 30), cy + b * (r - 30)); ctx.lineTo(cx + a * (r + 30) * qa, cy + b * (r + 30) * qa); ctx.stroke(); });
+    if (lock > 0) { ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(cx, cy, 12 * lock, 0, 7); ctx.fill(); }
+  }
+  ctx.restore();
+}
+// S2 · creative & social: tiles pop below the line, then fly up into the city and float as posts
+const SOC = ['instagram', 'tiktok', 'snapchat', 'x', 'youtube', 'facebook'];
+const SOC_DEST = [[230, 420], [820, 360], [170, 760], [900, 700], [330, 1050], [760, 1010]];
+function sSocial(t, by) {
+  if (t < 10 || t > 14.2) return;
+  const out = 1 - ss(seg(t, 13.6, 14.1));
+  ctx.save(); ctx.globalAlpha = out;
+  SOC.forEach((n, i) => {
+    const x0 = 135 + i * 162, y0 = by + 190, q = spring(t, 10.3 + i * 0.1, 0.4);
+    const tl = 11.6 + i * 0.07, f = eio(seg(t, tl, tl + 0.75));
+    const [dx, dy] = SOC_DEST[i], drift = Math.max(0, t - tl - 0.75) * 18;
+    const x = lerp(x0, dx, f), y = lerp(y0, dy - drift, f) - Math.sin(Math.PI * f) * 160;
+    const s = lerp(112, 150, f) * lerp(0.6, 1, Math.min(1, q));
+    if (f > 0.85) { // the post card behind the icon
+      const pq = ss(seg(f, 0.85, 1)); ctx.save(); ctx.globalAlpha *= pq; ctx.translate(x, y); ctx.rotate((hash(i) - 0.5) * 0.12);
+      rr(ctx, -s * 0.85, -s * 0.85, s * 1.7, s * 2.1, 26); ctx.fillStyle = 'rgba(245,243,250,0.16)'; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.35)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = 'rgba(245,243,250,0.7)'; rr(ctx, -s * 0.6, s * 0.72, s * 1.2, 12, 6); ctx.fill(); rr(ctx, -s * 0.6, s * 0.95, s * 0.8, 12, 6); ctx.fill(); ctx.restore();
+    }
+    tile(ctx, n, x, y, s, clamp(q * 1.5));
+  });
+  ctx.restore();
+}
+// S3 · performance: spend dots rise from the ad channels, cross the line and come back as return rings
+const ADS = ['meta', 'googleads', 'tiktok', 'snapchat'];
+function sPerformance(t, by) {
+  if (t < 14 || t > 18.2) return;
+  const out = 1 - ss(seg(t, 17.6, 18.1));
+  ctx.save(); ctx.globalAlpha = out;
+  const xs = [200, 420, 660, 880], ty = by + 210;
+  ADS.forEach((n, i) => { const q = spring(t, 14.3 + i * 0.1, 0.4); tile(ctx, n, xs[i], ty, 118 * lerp(0.6, 1, Math.min(1, q)), clamp(q * 1.5)); });
+  for (let k = 0; k < 44; k++) {
+    const i = k % 4, t0 = 14.9 + k * 0.06 + hash(k) * 0.1, p = (t - t0) / 1.2; if (p <= 0 || p >= 1) continue;
+    const x = xs[i] + (hash(k + 3) - 0.5) * 60, y0 = ty - 70, y = lerp(y0, by - 520, p);
+    if (y > by) { ctx.fillStyle = 'rgba(245,243,250,0.85)'; ctx.beginPath(); ctx.arc(x, y, 6, 0, 7); ctx.fill(); }
+    else { const u = (by - y) / 520; ctx.strokeStyle = `rgba(155,120,255,${0.9 * (1 - u)})`; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, y, 8 + u * 30, 0, 7); ctx.stroke(); }
+  }
+  ctx.restore();
+}
+// S4 · e-commerce: store platforms below; a real checkout above, on the tracked phone screen
+const STORES = [['shopify', 'Shopify', 'Shopify'], ['salla', 'سلة', 'Salla'], ['zid', 'زد', 'Zid']];
+function sStores(t, by) {
+  if (t < 18 || t > 24.7) return;
+  const out = 1 - ss(seg(t, 24.1, 24.5));
+  ctx.save(); ctx.globalAlpha = out;
+  const xs = AR ? [800, 540, 280] : [280, 540, 800], ty = by + 170;
+  STORES.forEach(([n, ar, en], i) => { const q = spring(t, 18.3 + i * 0.15, 0.4); tile(ctx, n, xs[i], ty, 124 * lerp(0.6, 1, Math.min(1, q)), clamp(q * 1.5)); ctx.globalAlpha = out * clamp(q * 1.5); txt(ctx, L(ar, en), xs[i], ty + 112, `600 ${AR ? 36 : 32}px ${FACE}`, WH); ctx.globalAlpha = out; });
+  ctx.restore();
+  phoneUI(t);
+  // the order goes out: chips over the cart and the parcel shots
+  const chip = (t0, t1, s, x, y) => { if (t < t0 || t > t1) return; const q = spring(t, t0, 0.4), o = 1 - ss(seg(t, t1 - 0.2, t1)); ctx.save(); ctx.globalAlpha = clamp(q * 1.6) * o; ctx.translate(x, y); const k = lerp(0.7, 1, Math.min(1, q)); ctx.scale(k, k); const w = tw(s, `700 44px ${FACE}`) + 120; rr(ctx, -w / 2, -44, w, 88, 44); ctx.fillStyle = 'rgba(9,9,13,0.82)'; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.25)'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(AR ? w / 2 - 46 : -w / 2 + 46, 0, 18, 0, 7); ctx.fill(); ctx.strokeStyle = WH; ctx.lineWidth = 5; ctx.beginPath(); const cx = AR ? w / 2 - 46 : -w / 2 + 46; ctx.moveTo(cx - 8, 0); ctx.lineTo(cx - 2, 7); ctx.lineTo(cx + 9, -7); ctx.stroke(); txt(ctx, s, AR ? -20 : 20, 15, `700 44px ${FACE}`, WH); ctx.restore(); };
+  chip(21.6, 23.0, L('طلب جديد', 'New order'), 540, 520);
+  chip(23.1, 24.4, L('في الطريق إليك', 'On its way'), 540, 520);
+}
+function phoneUI(t) {
+  if (t < PHONE.t0 || t >= PHONE.t0 + 3.5) return;
+  const f = Math.min(PHONE.track.length - 1, Math.max(0, Math.round((t - PHONE.t0) * PHONE.fps)));
+  // follow the phone: translation and rotation of the screen's top edge, applied around its midpoint
+  const [dx, dy, da] = PHONE.track[f], P0 = PHONE.corners, mx = (P0[0][0] + P0[1][0]) / 2, my = (P0[0][1] + P0[1][1]) / 2, ca = Math.cos(da), sa = Math.sin(da);
+  const C = P0.map(([x, y]) => [mx + dx + (x - mx) * ca - (y - my) * sa, my + dy + (x - mx) * sa + (y - my) * ca]);
+  const UW = 360, UH = 640, ux = [(C[1][0] - C[0][0]) / UW, (C[1][1] - C[0][1]) / UW], uy = [(C[3][0] - C[0][0]) / UH, (C[3][1] - C[0][1]) / UH];
+  const a = ss(seg(t, PHONE.t0, PHONE.t0 + 0.25));
+  ctx.save(); ctx.globalAlpha = a; ctx.transform(ux[0], ux[1], uy[0], uy[1], C[0][0], C[0][1]);
+  ctx.translate(UW * 0.06, UH * 0.035); ctx.scale(0.88, 0.88);
+  ctx.beginPath(); ctx.roundRect(0, 0, UW, UH * 0.6, 18); ctx.clip();
+  ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, UW, UH * 0.6);
+  const s = t - PHONE.t0;
+  // header: the store, built on one of the three platforms
+  ctx.fillStyle = '#F2F0F7'; ctx.fillRect(0, 0, UW, 56);
+  txt(ctx, L('متجرك', 'Your store'), AR ? 340 : 20, 37, `700 24px ${FACE}`, OB, AR ? 'right' : 'left');
+  const plat = ['shopify', 'salla', 'zid'][Math.min(2, Math.floor(s / 0.9))];
+  tile(ctx, plat, AR ? 30 : 330, 28, 34);
+  // product
+  const g = ctx.createLinearGradient(20, 70, 340, 250); g.addColorStop(0, '#2A1D5C'); g.addColorStop(1, PU); ctx.fillStyle = g; rr(ctx, 20, 70, 320, 170, 16); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.beginPath(); ctx.arc(180, 155, 44, 0, 7); ctx.fill();
+  ctx.fillStyle = '#D9D6E3'; rr(ctx, AR ? 140 : 20, 256, 200, 16, 8); ctx.fill(); rr(ctx, AR ? 200 : 20, 282, 140, 14, 7); ctx.fill();
+  // the button: add to cart → checkout → order placed
+  const stage = s < 1.0 ? 0 : s < 1.8 ? 1 : 2;
+  const press = (t0) => 1 - 0.06 * Math.sin(Math.PI * clamp((s - t0) / 0.2));
+  ctx.save(); ctx.translate(180, 336); ctx.scale(press(stage === 1 ? 1.0 : 1.8), press(stage === 1 ? 1.0 : 1.8));
+  rr(ctx, -160, -26, 320, 52, 26); ctx.fillStyle = stage === 2 ? PU : OB; ctx.fill();
+  txt(ctx, [L('أضف للسلة', 'Add to cart'), L('إتمام الطلب', 'Checkout'), L('تم الطلب ✓', 'Order placed ✓')][stage], 0, 9, `700 22px ${FACE}`, WH);
+  ctx.restore();
+  // a tap ring on each press
+  [1.0, 1.8].forEach((tp) => { const q = seg(s, tp - 0.05, tp + 0.35); if (q > 0 && q < 1) { ctx.strokeStyle = `rgba(108,53,255,${1 - q})`; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(250, 336, 10 + q * 40, 0, 7); ctx.stroke(); } });
+  ctx.restore();
+}
+// S5 · measurement: a funnel fills step by step; search sits beside it
+function sMeasure(t, by) {
+  if (t < 24.5 || t > 28.7) return;
+  const out = 1 - ss(seg(t, 28.1, 28.5));
+  ctx.save(); ctx.globalAlpha = out;
+  const rows = AR ? ['الظهور', 'الزيارات', 'الطلبات'] : ['Reach', 'Visits', 'Orders'];
+  const x0 = AR ? 980 : 100, dir = AR ? -1 : 1, top = by + 70;
+  rows.forEach((s, i) => {
+    const q = eo(seg(t, 24.9 + i * 0.4, 25.5 + i * 0.4)), w = [620, 470, 320][i] * q, y = top + i * 62;
+    ctx.fillStyle = i === 2 ? PU : 'rgba(245,243,250,0.16)'; rr(ctx, dir > 0 ? x0 : x0 - w, y, Math.max(1, w), 44, 22); ctx.fill();
+    ctx.globalAlpha = out * clamp(q * 2); txt(ctx, s, dir > 0 ? x0 + 22 : x0 - 22, y + 31, `600 ${AR ? 28 : 26}px ${FACE}`, WH, AR ? 'right' : 'left'); ctx.globalAlpha = out;
+  });
+  const gq = spring(t, 26.2, 0.45); tile(ctx, 'google', AR ? 140 : 940, top + 90, 110 * lerp(0.6, 1, Math.min(1, gq)), clamp(gq * 1.5));
+  ctx.globalAlpha = out * clamp(gq * 1.5); txt(ctx, 'SEO', AR ? 140 : 940, top + 186, '700 28px Sat', WH, 'center', false);
+  ctx.restore();
+}
+// payoff: likes fall through the line; returns are what we count
+function payoff(t, by) {
+  if (t < T_PAY || t > T_LOCK + 0.4) return;
+  const out = 1 - ss(seg(t, T_LOCK - 0.1, T_LOCK + 0.3));
+  ctx.save(); ctx.globalAlpha = out;
+  const q1 = spring(t, 28.7, 0.45);
+  if (q1 > 0) {
+    ctx.save(); ctx.globalAlpha *= clamp(q1 * 1.6); txt(ctx, L('مش بنعدّ اللايكات…', "We don't count likes."), 540, 700, `700 ${AR ? 84 : 72}px ${FACE}`, WH); ctx.restore();
+    // the like: pops, gets struck, falls through the line
+    const hq = spring(t, 29.05, 0.4), fall = Math.max(0, t - 29.95), y = 880 + 0.5 * 4200 * fall * fall, xh = 540;
+    if (hq > 0 && y < H + 100) {
+      ctx.save(); ctx.translate(xh, y); ctx.rotate(fall * 2.4); const k = 1.6 * lerp(0.5, 1, Math.min(1, hq)); ctx.scale(k, k);
+      ctx.beginPath(); ctx.moveTo(0, 22); ctx.bezierCurveTo(-48, -10, -26, -44, 0, -22); ctx.bezierCurveTo(26, -44, 48, -10, 0, 22); ctx.fillStyle = WH; ctx.fill();
+      const sq = eo(seg(t, 29.75, 29.95)); if (sq > 0) { ctx.strokeStyle = PU; ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(-46, 30); ctx.lineTo(lerp(-46, 46, sq), lerp(30, -40, sq)); ctx.stroke(); }
+      ctx.restore();
+    }
+  }
+  const q2 = spring(t, T_PAY2, 0.5);
+  if (q2 > 0) {
+    ctx.save(); ctx.globalAlpha *= clamp(q2 * 1.6); ctx.translate(540, 1100); const k = lerp(1.3, 1, Math.min(1, q2)); ctx.scale(k, k);
+    const s = L('بنعدّ العائد', 'We count returns'), f = `700 ${AR ? 120 : 104}px ${FACE}`, w = tw(s, f);
+    txt(ctx, s, AR ? 14 : -14, 0, f, WH); ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(AR ? 14 - w / 2 - 26 : -14 + w / 2 + 26, -12, 16, 0, 7); ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
+}
+// lockup over the city
+function lockup(t) {
+  if (t < T_LOCK) return;
+  const d = eio(seg(t, T_LOCK, T_LOCK + 0.9));
+  ctx.fillStyle = `rgba(9,9,13,${0.78 * d})`; ctx.fillRect(0, 0, W, H);
+  const vg = ctx.createRadialGradient(540, 900, 100, 540, 900, 900); vg.addColorStop(0, `rgba(108,53,255,${0.14 * d})`); vg.addColorStop(1, 'rgba(108,53,255,0)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+  const show = (t0, f) => { const q = spring(t, t0, 0.45); if (q <= 0) return; ctx.save(); ctx.globalAlpha = clamp(q * 1.6); ctx.translate(0, 26 * (1 - Math.min(1, q))); f(); ctx.restore(); };
+  show(T_LOCK + 0.5, () => { const SH = 230, SW = SH * 600 / 721; ctx.drawImage(SYMBOL, 540 - SW / 2, 560 - SH / 2, SW, SH); });
+  show(T_LOCK + 0.8, () => { if (AR) { txt(ctx, 'قول تم', 540, 900, '700 112px Plex', WH); txt(ctx, 'SayTamm', 540, 960, '500 38px Sat', MU, 'center', false); } else txt(ctx, 'SayTamm', 540, 905, '700 112px Sat', WH, 'center', false); });
+  show(T_LOCK + 1.1, () => txt(ctx, L('وكالة تسويق رقمي وأداء', 'A digital marketing & performance agency'), 540, AR ? 1010 : 975, `500 ${AR ? 42 : 36}px ${FACE}`, 'rgba(245,243,250,0.88)'));
+  show(T_LOCK + 1.5, () => txt(ctx, L('استراتيجية · إبداع · إعلانات · متاجر · قياس', 'Strategy · Creative · Media · E-commerce · Measurement'), 540, 1100, `500 ${AR ? 36 : 30}px ${FACE}`, MU));
+  show(T_LOCK + 2.2, () => { const s = L('قول. تم', 'Say it. Tamm it'), f = `700 ${AR ? 76 : 66}px ${FACE}`, w = tw(s, f); txt(ctx, s, 540 + (AR ? 12 : -12), 1215, f, WH); ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(AR ? 540 + 12 - w / 2 - 20 : 540 - 12 + w / 2 + 20, 1207, 11, 0, 7); ctx.fill(); });
+  show(T_LOCK + 3.6, () => { txt(ctx, L('عندك هدف؟ ابدأ من هنا.', 'Have an objective? Start here.'), 540, 1320, `600 ${AR ? 50 : 46}px ${FACE}`, WH); txt(ctx, 'info@saytamm.com', 540, 1386, '500 38px Sat', MU, 'center', false); });
+}
+
+// ---------------- frame ----------------
+window.seek = (t) => {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H);
+  const by = barY(t);
+  // top vignette on the footage
+  const tv = ctx.createLinearGradient(0, 0, 0, 300); tv.addColorStop(0, 'rgba(9,9,13,0.5)'); tv.addColorStop(1, 'rgba(9,9,13,0)'); ctx.fillStyle = tv; ctx.fillRect(0, 0, W, 300);
+  if (t >= T_BAR) shadeAbove(t, by);
+  hook(t);
+  if (t >= T_BAR) panel(t, by);
+  sStrategy(t, by); sSocial(t, by); sPerformance(t, by); sStores(t, by); sMeasure(t, by);
+  formula(t, by); sectionTitle(t, by); payoff(t, by);
+  bar(t, by);
+  lockup(t);
+  // cut flashes are left to the edit; a whisper of grain keeps footage and type in one world
+};
+window.ready = (async () => {
+  const fonts = ['500 46px Plex', '600 46px Plex', '700 46px Plex', '500 46px Sat', '700 46px Sat'];
+  await Promise.all(fonts.map((f) => document.fonts.load(f, 'العائد الإنفاق ROAS Return 0123')));
+  await document.fonts.ready;
+  for (const [n, v] of Object.entries(ICONS)) PATHS[n] = new Path2D(v.d);
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
+  ZID = new Image(); ZID.src = '__ZID__'; await ZID.decode();
+  window.seek(0); return true;
+})();
+
+// ================= sound: 120 BPM; the line has its own voice (a strike, a thunk on every push) =================
+window.renderAudio = async () => {
+  const SR = 48000, ac = new OfflineAudioContext(2, SR * DUR, SR);
+  const master = ac.createDynamicsCompressor(); master.threshold.value = -14; master.ratio.value = 3; master.attack.value = 0.004; master.release.value = 0.15; master.connect(ac.destination);
+  const bus = ac.createGain(); bus.connect(master);
+  const rev = ac.createConvolver(); { const len = SR * 2.2, ir = ac.createBuffer(2, len, SR); for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let s = 5 + ch; for (let i = 0; i < len; i++) { s = (s * 16807) % 2147483647; d[i] = (s / 1073741823.5 - 1) * Math.pow(1 - i / len, 3.2); } } rev.buffer = ir; }
+  const revIn = ac.createGain(), revOut = ac.createGain(); revOut.gain.value = 0.28; revIn.connect(rev); rev.connect(revOut); revOut.connect(master);
+  const nb = (() => { const b = ac.createBuffer(1, SR, SR), d = b.getChannelData(0); let s = 3; for (let i = 0; i < d.length; i++) { s = (s * 16807) % 2147483647; d[i] = s / 1073741823.5 - 1; } return b; })();
+  const env = (g, t, a, pk, d) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+  const osc = (t, type, f0, f1, a, d, pk, pan = 0, send = 0) => { const o = ac.createOscillator(), g = ac.createGain(), p = ac.createStereoPanner(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + a + d * 0.6); env(g, t, a, pk, d); p.pan.value = pan; o.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } o.start(t); o.stop(t + a + d + 0.05); };
+  const noise = (t, type, f, q, a, d, pk, pan = 0, f1, send = 0) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(), p = ac.createStereoPanner(); s.buffer = nb; s.loop = true; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + a + d); fl.Q.value = q; env(g, t, a, pk, d); p.pan.value = pan; s.connect(fl); fl.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } s.start(t, (t * 0.37) % 0.8); s.stop(t + a + d + 0.05); };
+  const HJ = [164.8, 174.6, 207.7, 220, 246.9, 261.6, 293.7, 329.6];
+  const kick = (t, g = 0.85) => { osc(t, 'sine', 150, 42, 0.002, 0.32, g); noise(t, 'lowpass', 1200, 0.7, 0.001, 0.02, g * 0.25); };
+  const clap = (t, g = 0.3) => { for (let i = 0; i < 3; i++) noise(t + i * 0.011, 'bandpass', 1700, 0.9, 0.001, i === 2 ? 0.16 : 0.01, g, -0.1, 0, 0.3); };
+  const hat = (t, g = 0.06, pan = 0.25) => noise(t, 'highpass', 8500, 0.7, 0.001, 0.03, g, pan);
+  const sub = (t, f, d, g = 0.32) => { osc(t, 'sine', f, 0, 0.01, d, g); osc(t, 'triangle', f * 2, 0, 0.01, d * 0.6, g * 0.15); };
+  const pluck = (t, f, g = 0.06, pan = 0) => { osc(t, 'triangle', f, 0, 0.003, 0.3, g, pan, 0.35); osc(t, 'sine', f * 2, 0, 0.003, 0.12, g * 0.3, -pan, 0.35); };
+  const thunk = (t, g = 0.7) => { osc(t, 'sine', 95, 48, 0.002, 0.45, g); noise(t, 'bandpass', 2600, 3, 0.001, 0.05, g * 0.3, 0, 0, 0.3); osc(t, 'square', 1975, 0, 0.001, 0.03, 0.03); };
+  const whoosh = (t1, d = 0.5, g = 0.12) => noise(t1 - d, 'bandpass', 400, 1.3, d * 0.85, d * 0.15, g, 0, 5000, 0.3);
+  const pop = (t, f, g = 0.09, pan = 0) => { osc(t, 'sine', f, f * 1.6, 0.002, 0.08, g, pan, 0.2); noise(t, 'bandpass', 3000, 2, 0.001, 0.02, g * 0.4, pan); };
+  const riser = (t0, t1, g = 0.1) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), gg = ac.createGain(); s.buffer = nb; s.loop = true; fl.type = 'bandpass'; fl.Q.value = 2; fl.frequency.setValueAtTime(300, t0); fl.frequency.exponentialRampToValueAtTime(6000, t1); gg.gain.setValueAtTime(0.0001, t0); gg.gain.exponentialRampToValueAtTime(g, t1 - 0.02); gg.gain.linearRampToValueAtTime(0, t1); s.connect(fl); fl.connect(gg); gg.connect(bus); s.start(t0); s.stop(t1 + 0.05); };
+  // ---- the hook: a held tone, three soft notes for three words, the strike, the line drops ----
+  [[0, 3.1]].forEach(([a, b]) => [82.4, 123.5, 164.8].forEach((f, i) => { const o = ac.createOscillator(), g = ac.createGain(), fl = ac.createBiquadFilter(); o.type = 'sawtooth'; o.frequency.value = f; fl.type = 'lowpass'; fl.frequency.setValueAtTime(300, a); fl.frequency.exponentialRampToValueAtTime(1600, b); g.gain.setValueAtTime(0, a); g.gain.linearRampToValueAtTime(0.025 - i * 0.005, a + 0.8); g.gain.setValueAtTime(0.025 - i * 0.005, b - 0.1); g.gain.linearRampToValueAtTime(0, b); o.connect(fl); fl.connect(g); g.connect(bus); const sg = ac.createGain(); sg.gain.value = 0.5; g.connect(sg); sg.connect(revIn); o.start(a); o.stop(b + 0.05); }));
+  [T_LINE1, T_LINE2, T_LINE3].forEach((t, i) => pluck(t, [329.6, 293.7, 246.9][i], 0.08));
+  noise(T_STRIKE, 'bandpass', 1800, 1.2, 0.01, 0.22, 0.22, 0.2, 5000); osc(T_STRIKE + 0.28, 'sine', 400, 1200, 0.05, 0.35, 0.04);
+  thunk(T_BAR, 1.0); osc(T_BAR, 'sine', 60, 34, 0.004, 1.2, 0.5);
+  // ---- the groove: from the drop to the payoff ----
+  for (let b = 0; ; b++) {
+    const t = T_BAR + b * BEAT; if (t >= T_PAY - 0.01) break;
+    const intro = t < 6;
+    if (b % 4 === 0 || (b % 8 === 6 && !intro)) kick(t, 0.85); if (b % 4 === 2) clap(t, intro ? 0.18 : 0.28);
+    for (let k = 0; k < 4; k++) if (!intro || k % 2 === 0) hat(t + k * BEAT / 4, k % 2 ? 0.04 : 0.07, k % 2 ? 0.3 : -0.2);
+    const root = [82.4, 82.4, 87.3, 103.8][Math.floor(b / 4) % 4]; if (b % 2 === 0) sub(t, root, BEAT * 1.8, intro ? 0.22 : 0.3);
+    if (!intro) { const pat = [0, 2, 4, 5, 4, 2, 1, 0]; pluck(t + BEAT / 2, HJ[pat[b % 8]] * 2, 0.045, b % 2 ? 0.35 : -0.35); }
+  }
+  // section boundaries: risers into each cut, a thunk on each push of the line, whooshes on cuts
+  [6.0, 10.0, 14.0, 18.0, 24.5, 28.5].forEach((t) => { riser(t - 1.0, t, 0.08); whoosh(t, 0.45, 0.1); });
+  [21.5, 23.0].forEach((t) => whoosh(t, 0.35, 0.08));
+  BARK.slice(1).forEach(([t], i) => thunk(t, 0.55 + i * 0.05));
+  // strategy chips, reticle lock
+  [6.4, 6.85, 7.3].forEach((t, i) => pop(t, 660 + i * 110, 0.08, (i - 1) * 0.4)); noise(7.6, 'bandpass', 900, 2, 0.6, 0.2, 0.05, 0, 2400); osc(8.4, 'sine', 1318.5, 0, 0.002, 0.5, 0.08, 0, 0.4);
+  // social tiles pop, then launch
+  SOC.forEach((n, i) => pop(10.3 + i * 0.1, 520 + i * 90, 0.08, (i - 2.5) * 0.25)); noise(11.6, 'bandpass', 500, 1.2, 0.5, 0.25, 0.16, 0, 5000, 0.3);
+  SOC.forEach((n, i) => osc(12.35 + i * 0.07, 'sine', 1200 + i * 120, 0, 0.002, 0.15, 0.04, (i - 2.5) * 0.3, 0.3));
+  // performance: ad tiles, then a stream of soft ticks as spend becomes return
+  ADS.forEach((n, i) => pop(14.3 + i * 0.1, 440 + i * 110, 0.08, (i - 1.5) * 0.3));
+  for (let k = 0; k < 44; k++) { const t0 = 14.9 + k * 0.06 + hash(k) * 0.1 + 0.55; osc(t0, 'sine', 1500 + hash(k + 9) * 900, 0, 0.001, 0.05, 0.025, (hash(k) - 0.5) * 0.8, 0.2); }
+  // stores; the phone: two taps and a success chime
+  STORES.forEach((s, i) => pop(18.3 + i * 0.15, 587 + i * 147, 0.08, (i - 1) * 0.4));
+  [PHONE.t0 + 1.0, PHONE.t0 + 1.8].forEach((t) => { noise(t, 'bandpass', 2500, 2, 0.001, 0.03, 0.12); osc(t, 'sine', 900, 0, 0.002, 0.06, 0.05); });
+  [0, 4, 7].forEach((n, i) => osc(PHONE.t0 + 1.82 + i * 0.07, 'triangle', [659.3, 830.6, 987.8][i], 0, 0.002, 0.5, 0.07, 0, 0.4));
+  pop(21.6, 880, 0.09); pop(23.1, 988, 0.09);
+  // measurement: three fills, the search tile
+  [24.9, 25.3, 25.7].forEach((t, i) => noise(t, 'bandpass', 600 + i * 400, 1.5, 0.4, 0.15, 0.05, 0, 2500 + i * 800)); pop(26.2, 784, 0.08);
+  // payoff: the floor drops out, a heartbeat, the like is struck and falls, then the slam
+  for (let k = 0; k < 4; k++) { const t = T_PAY + 0.2 + k * 0.5; osc(t, 'sine', 60, 40, 0.004, 0.18, 0.4); osc(t + 0.16, 'sine', 55, 38, 0.004, 0.16, 0.25); }
+  pop(29.05, 700, 0.1); noise(29.75, 'bandpass', 1800, 1.2, 0.01, 0.2, 0.2, 0, 5000); whoosh(30.15, 0.25, 0.1);
+  kick(T_PAY2, 1.1); osc(T_PAY2, 'sine', 62, 32, 0.004, 1.6, 0.6); noise(T_PAY2, 'lowpass', 2400, 0.6, 0.001, 0.4, 0.35, 0, 0, 0.8);
+  for (let b = 1; ; b++) { const t = T_PAY2 + b * BEAT; if (t >= T_LOCK) break; if (b % 2 === 0) kick(t, 0.8); if (b % 4 === 2) clap(t); hat(t + BEAT / 2, 0.07); sub(t, 82.4, BEAT * 0.9, 0.28); }
+  // lockup: warm Hijaz pad and the brand notes
+  const pad = (t, d, fs, g) => fs.forEach((f) => [-6, 6].forEach((dt) => { const o = ac.createOscillator(), fl = ac.createBiquadFilter(), gg = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = dt; fl.type = 'lowpass'; fl.frequency.value = 1400; gg.gain.setValueAtTime(0, t); gg.gain.linearRampToValueAtTime(g, t + 0.8); gg.gain.setValueAtTime(g, t + d - 1.5); gg.gain.linearRampToValueAtTime(0, t + d); o.connect(fl); fl.connect(gg); gg.connect(bus); const sg = ac.createGain(); sg.gain.value = 0.6; gg.connect(sg); sg.connect(revIn); o.start(t); o.stop(t + d + 0.05); }));
+  pad(T_LOCK, DUR - T_LOCK, [164.8, 207.7, 246.9, 329.6], 0.012);
+  for (let b = 0; ; b++) { const t = T_LOCK + 0.5 + b * BEAT * 2; if (t > DUR - 2) break; kick(t, 0.45); sub(t, 82.4, BEAT * 1.6, 0.16); }
+  [T_LOCK + 0.5, T_LOCK + 2.2, T_LOCK + 3.6].forEach((t, i) => osc(t, 'triangle', [659.3, 830.6, 987.8][i], 0, 0.002, 1.0, 0.06, 0, 0.6));
+  const buf = await ac.startRendering();
+  let peak = 0; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) peak = Math.max(peak, Math.abs(d[i])); }
+  const gn = 0.89 / (peak || 1), Lc = buf.getChannelData(0), Rc = buf.getChannelData(1), len = Lc.length, ab = new ArrayBuffer(44 + len * 4), v = new DataView(ab);
+  const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + len * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true); v.setUint32(24, SR, true); v.setUint32(28, SR * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); ws(36, 'data'); v.setUint32(40, len * 4, true);
+  for (let i = 0; i < len; i++) { v.setInt16(44 + i * 4, clamp(Lc[i] * gn, -1, 1) * 32767, true); v.setInt16(46 + i * 4, clamp(Rc[i] * gn, -1, 1) * 32767, true); }
+  let bin = ''; const u8 = new Uint8Array(ab); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+</script>
+</body>
+</html>
