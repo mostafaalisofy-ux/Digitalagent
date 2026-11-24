@@ -11,8 +11,8 @@ OUTF = os.path.join(D, 'SayTamm_TheRatio_v5_Stores_AR_33s_9x16.mp4')
 DUR = 36.5 / 1.35 + 6.0
 # the take's 11 phrases: 0 عندك متجر؟ · 1 زيارات كثيرة… · 2 وطلبات قليلة؟ · 3 هدفنا واحد: · 4 عائد أعلى من كل إعلان. ·
 # 5 لا نعدّ الإعجابات… · 6 نعدّ الطلبات. · 7 قول… · 8 تم. · 9 عندك متجر؟ · 10 ابدأ من هنا.
-# (first phrase, last phrase, start time in the film): each line lands with its words on screen
-CUES = [(0, 0, 1.70), (1, 1, 2.58), (2, 2, 3.34), (3, 4, 4.50), (5, 5, 24.00), (6, 6, 25.45), (7, 8, 29.28), (9, 10, 30.62)]
+# (first phrase, last phrase, start time in the film): each line lands with its words on screen, never over the next line
+CUES = [(0, 0, 1.55), (1, 1, 2.50), (2, 2, 3.92), (3, 4, 5.25), (5, 5, 23.90), (6, 6, 25.45), (7, 8, 29.28), (9, 10, 30.62)]
 run = lambda *a: subprocess.run(list(a), capture_output=True, text=True)
 
 def phrases(p, thresh='-35dB', gap=0.25):

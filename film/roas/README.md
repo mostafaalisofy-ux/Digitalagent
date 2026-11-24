@@ -184,6 +184,66 @@ bash film/roas/render4_parallel.sh
 python3 film/roas/mix4.py
 ```
 
+## v5: Arabic, for store owners (33 s)
+
+**Master:** `SayTamm_TheRatio_v5_Stores_AR_33s_9x16.mp4`, 1080×1920 at 60 fps. The same film structure, rewritten for e-commerce store owners, in the v4 centred layout and at the v3 pace. v5 is rendered at that pace directly rather than retimed, so motion stays smooth.
+
+**Voice:** a single take in Modern Standard Arabic (ElevenLabs "Rawi", eleven_v4), from a fully vowelled script. This follows the house rule for Arabic copy: professional Arabic, with no imitated dialect. An automatic transcription (ElevenLabs Scribe) matched the script word for word:
+
+| Line | When |
+|---|---|
+| «عِنْدَكَ مَتْجَر؟ زِيَارَاتٌ كَثِيرَة… وَطَلَبَاتٌ قَلِيلَة؟» | The hook. «وطلبات قليلة؟» is struck and becomes the line |
+| «هَدَفُنَا وَاحِد: عَائِدٌ أَعْلَى مِنْ كُلِّ إِعْلَان.» | The formula |
+| «لَا نَعُدُّ الإِعْجَابَات… نَعُدُّ الطَّلَبَات.» | The payoff, with «نعدّ الطلبات» filled with footage |
+| «قُولْ… تَمّ.» / «عِنْدَكَ مَتْجَر؟ اِبْدَأْ مِنْ هُنَا.» | The lockup |
+
+**Copy for store owners:**
+
+- **Sections:** الاستهداف / محتوى يبيع / إعلانات الأداء / متجرك (سلة · زد · Shopify) / القياس.
+- **Funnel:** الزيارات → السلة → الطلبات.
+- **Services line:** «استهداف · محتوى · إعلانات · متاجر · قياس».
+
+**City labels:** each label sits only on a shot whose city Pexels confirms:
+
+| Label | Shot |
+|---|---|
+| الرياض | R_18511357 "Riyadh Skyline", and Kingdom Centre |
+| القاهرة | C_4174555, "Cairo's skyline from the Citadel" |
+| دبي | D_33739603 "Aerial View of Dubai Skyline", and D_36470958 "Dubai Skyline at Sunset" |
+
+**Dropped:**
+
+- The highway shot R_31114786. Pexels names no city for it; it looks like Dubai but was labelled Riyadh in v2.
+- The Nile shot, from the Cairo panel of the triptych. It now uses a texture cut from C_4174555 (`seq/tri2cairo`).
+
+**New Pexels clips** (in `stock5/`, hands only):
+
+| File | Pexels video | Used for |
+|---|---|---|
+| E_9862359 | "Top view of a person packing a dress" (9862359) | An order packed |
+| E_8937985 | "A person shopping online holding a credit card" (8937985) | Payment |
+
+Candidates with faces (6342201, 6342204, 6347120, 7464002) were downloaded but not used.
+
+**Smoother:**
+
+- The white flash on the cold-open cuts is gone.
+- The plate is cut on whole output frames, and each clip plays 1.35× before the lockup, so the tracked phone stays locked.
+
+```bash
+python3 film/roas/plate5.py
+```
+
+```bash
+bash film/roas/render5_parallel.sh
+```
+
+```bash
+python3 film/roas/mix5.py
+```
+
+The score is `Ratio3_Score.wav` (see v3).
+
 ## Before publishing
 
 - **Platform logos:** check each brand's guidelines (Meta, Google, TikTok, Snap, X, YouTube, Shopify, Salla, Zid). Do not imply partner status the agency does not hold.
