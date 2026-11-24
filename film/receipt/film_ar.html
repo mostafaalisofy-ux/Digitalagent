@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="ar"><head><meta charset="utf-8">
+<!-- قول تم · «الإيصال» (9:16), Arabic cut for online-store owners. No voice-over: the story is told in kinetic type.
+     K.S Furniture is told line by line; the other three receipts drop in without explanation.
+     Every figure and claim is copied from site/src/data/cases.ts (Arabic fields where they exist; status: pending).
+     Wording rule from that file: ROAS is revenue ÷ ad spend, not profit, so no result is called "ربح" here.
+     Type: IBM Plex Sans Arabic only (Arabic + Latin subsets), so this cut carries no Satoshi. -->
+<style>
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFC, U+200C-200F; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-600-normal.woff2); font-weight: 600; unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFC, U+200C-200F; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFC, U+200C-200F; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-latin-500-normal.woff2); font-weight: 500; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FFFD; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-latin-600-normal.woff2); font-weight: 600; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FFFD; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-latin-700-normal.woff2); font-weight: 700; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FFFD; }
+  html, body { margin: 0; background: #09090D; } canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+const W = 1080, H = 1920;
+// ---------- timing (seconds) ----------
+const T = {
+  h0: 0.35, h1: 2.0, strike: 3.45, h2: 3.7, hookOut: 5.45,
+  intro: 6.0, intro2: 7.5, introOut: 9.35,
+  A: 9.8, Aout: 14.7,
+  B: 15.0, Bout: 21.3,
+  C: 21.6, mv: [21.85, 25.15, 28.45, 31.75], mvLen: 3.3, Cout: 34.75,
+  rc: 35.0, printDur: 2.6, countAt: 3.0, barAt: 3.9, stampAt: 5.6, shrinkAt: 6.6, bigAt: 7.25, rcOut: 46.6,
+  ot0: 47.0, ot: [47.8, 50.2, 52.6], otOut: 55.0,
+  sum: 55.2, sumLine: 55.5, end: 59.6, num: 59.85, say: 61.3, tamm: 62.3, lock: 64.0, gulf: 64.5, DUR: 69.5,
+};
+const DUR = T.DUR; window.DUR_S = DUR;
+const PU = '#6C35FF', OB = '#09090D', WH = '#F5F3FA', MU = 'rgba(245,243,250,0.66)', LN = 'rgba(245,243,250,0.16)';
+const PAPER = '#F4F1EA', INK = '#16161C', GREY = '#6E6B75';
+const cv = document.getElementById('c'), ctx = cv.getContext('2d'), SEQ = '__SEQ__', SEQN = __SEQN__; let SYMBOL;
+ctx.imageSmoothingQuality = 'high';
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), seg = (t, a, b) => clamp((t - a) / (b - a)), lerp = (a, b, q) => a + (b - a) * q;
+const eo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x)), eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const spring = (t, t0, d = 0.5, z = 0.55) => { const x = (t - t0) / d; if (x <= 0) return 0; if (x >= 1.8) return 1; const w = 11, wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + z / Math.sqrt(1 - z * z) * Math.sin(wd * x)); };
+const rr = (x, y, w, h, r) => { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); };
+const F = (w, s) => `${w} ${s}px Plex`;
+const hasAr = (s) => /[؀-ۿ]/.test(s);
+const X = (s) => '‎' + s + '‎';   // keeps "4×" reading left to right inside Arabic
+function draw1(s, x, y, font, color, align, dir) { ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align; ctx.direction = dir || (hasAr(s) ? 'rtl' : 'ltr'); if (ctx.direction === 'ltr') s = s.replace(/[\u200E\u200F]/g, ''); ctx.fillText(s, x, y); ctx.direction = 'ltr'; }
+// Arabic lines that carry Latin or digits are laid out word by word, right to left, so "4×" and "15–20" never flip
+function txt(s, x, y, font, color, align = 'right', dir) {
+  if (dir || !hasAr(s) || !/[0-9A-Za-z×%]/.test(s)) return draw1(s, x, y, font, color, align, dir);
+  const toks = s.split(' '), sp = tw(' ', font), ws = toks.map((k) => tw(k, font)), total = ws.reduce((a, b) => a + b, 0) + sp * (toks.length - 1);
+  let xr = align === 'left' ? x + total : align === 'center' ? x + total / 2 : x;
+  toks.forEach((k, i) => { draw1(k, xr, y, font, color, 'right'); xr -= ws[i] + sp; });
+}
+const tw = (s, font) => { ctx.font = font; return ctx.measureText(s).width; };
+function wrap(s, font, maxW) { const ws = s.split(' '), out = []; let cur = ''; ws.forEach((w) => { const t = cur ? cur + ' ' + w : w; if (tw(t, font) > maxW && cur) { out.push(cur); cur = w; } else cur = t; }); if (cur) out.push(cur); return out; }
+const CACHE = new Map(); let MISS = [];
+function img(url) { let im = CACHE.get(url); if (im && im.complete && im.naturalWidth) return im; if (!im) { im = new Image(); im.src = url; CACHE.set(url, im); if (CACHE.size > 300) CACHE.delete(CACHE.keys().next().value); } MISS.push(im); return null; }
+const clip = (name, t) => img(`${SEQ}/${name}/${String(Math.min(SEQN[name], Math.max(1, Math.floor(t * 30) + 1))).padStart(4, '0')}.jpg`);
+async function loadMissing() { await Promise.all([...new Set(MISS)].map((im) => (im.complete ? null : new Promise((r) => { im.addEventListener('load', r, { once: true }); im.addEventListener('error', r, { once: true }); })))); }
+function footage(name, t, a = 1, dim = 0.5, z = 1) { if (a <= 0) return; const im = clip(name, Math.max(0, t)); if (!im) return; ctx.save(); ctx.globalAlpha = a; ctx.translate(540, 960); ctx.scale(z, z); ctx.drawImage(im, -540, -960, 1080, 1920); ctx.restore();
+  ctx.save(); ctx.globalAlpha = a * dim; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H); ctx.restore(); }
+// a darker band where the words sit, so they read on any frame
+function scrim(a, y0 = 480, y1 = 1600) { if (a <= 0) return; ctx.save(); ctx.globalAlpha = a; const g = ctx.createLinearGradient(0, y0 - 200, 0, y1 + 200); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(0.25, 'rgba(9,9,13,0.72)'); g.addColorStop(0.75, 'rgba(9,9,13,0.72)'); g.addColorStop(1, 'rgba(9,9,13,0)'); ctx.fillStyle = g; ctx.fillRect(0, y0 - 200, W, y1 - y0 + 400); ctx.restore(); }
+function grid(a = 0.035) { ctx.strokeStyle = `rgba(245,243,250,${a})`; ctx.lineWidth = 1; for (let x = 60; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); } for (let y = 60; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); } }
+const RX = 1010;   // right margin of every text block (70 px)
+
+// ---------- kinetic type: words rise out of a mask in reading order (right to left), then leave upwards ----------
+function fit(s, w, size, max = 940) { while (size > 20 && tw(s, F(w, size)) > max) size -= 2; return size; }
+function kline(s, x, y, size, t, t0, o = {}) {
+  const w = o.w || 700; size = fit(s, w, size, o.max || 940); const font = F(w, size), toks = s.split(' '), sp = tw(' ', font), ws = toks.map((k) => tw(k, font));
+  const total = ws.reduce((a, b) => a + b, 0) + sp * (toks.length - 1); let xr = o.align === 'center' ? x + total / 2 : x;
+  const st = o.stag ?? 0.075, out = o.out ?? 1e9, pos = [];
+  ctx.save(); ctx.beginPath(); ctx.rect(0, y - size * 1.2, W, size * 1.85); ctx.clip();
+  toks.forEach((k, i) => {
+    pos.push([xr - ws[i], xr]);
+    const q = spring(t, t0 + i * st, o.d ?? 0.6, 0.62), qo = eio(seg(t, out + i * 0.035, out + 0.34 + i * 0.035));
+    if (q > 0 && qo < 1) { ctx.save(); ctx.globalAlpha *= clamp(q * 2.2) * (o.alpha ?? 1);
+      txt(k, xr, y + (1 - q) * size * 1.15 - qo * size * 1.3, font, o.hi && o.hi.includes(i) ? PU : (o.color || WH), 'right'); ctx.restore(); }
+    xr -= ws[i] + sp;
+  });
+  ctx.restore(); return { pos, size, total };
+}
+function para(s, x, y, size, lh, t, t0, o = {}) { const lines = wrap(s, F(o.w || 500, size), o.max || 900); lines.forEach((l, i) => kline(l, x, y + i * lh, size, t, t0 + i * 0.22, { w: 500, color: MU, stag: 0.04, ...o })); return lines.length; }
+// strike a word through, drawn right to left
+function strike(p, y, size, q) { if (q <= 0) return; const [a, b] = p; ctx.save(); ctx.strokeStyle = PU; ctx.lineWidth = Math.max(8, size * 0.08); ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(b + 10, y - size * 0.3); ctx.lineTo(b + 10 - (b - a + 20) * eo(q), y - size * 0.3); ctx.stroke(); ctx.restore(); }
+// a receipt line as chapter label: perforation drawn right to left, label rising in, purple dot
+function label(s, t, t0, out, y = 600, extra = '') {
+  const q = eo(seg(t, t0, t0 + 0.6)), qo = seg(t, out, out + 0.3); if (q <= 0 || qo >= 1) return;
+  ctx.save(); ctx.globalAlpha *= 1 - qo; ctx.strokeStyle = 'rgba(245,243,250,0.38)'; ctx.setLineDash([12, 9]); ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(RX, y + 30); ctx.lineTo(RX - 940 * q, y + 30); ctx.stroke(); ctx.setLineDash([]);
+  const { total } = kline(s, RX - 30, y, 36, t, t0 + 0.08, { w: 600, color: MU, stag: 0.05 });
+  ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(RX - 8, y - 12, 9 * clamp(q * 1.5), 0, 7); ctx.fill();
+  if (extra) txt(extra, 70, y, F(600, 34), PU, 'left');
+  ctx.restore();
+}
+// a small mark: ✕ drawn in two strokes inside a ring
+function cross(x, y, q) { if (q <= 0) return; ctx.save(); ctx.strokeStyle = WH; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.globalAlpha *= clamp(q * 2); ctx.beginPath(); ctx.arc(x, y, 26, 0, 7 * Math.min(1, q)); ctx.stroke();
+  const a = eo(seg(q, 0.3, 0.7)), b = eo(seg(q, 0.6, 1)); ctx.strokeStyle = PU; ctx.beginPath(); ctx.moveTo(x + 11, y - 11); ctx.lineTo(x + 11 - 22 * a, y - 11 + 22 * a); ctx.stroke(); if (b > 0) { ctx.beginPath(); ctx.moveTo(x - 11, y - 11); ctx.lineTo(x - 11 + 22 * b, y - 11 + 22 * b); ctx.stroke(); } ctx.restore(); }
+
+// ---------- receipts (figures from site/src/data/cases.ts) ----------
+const PW = 860, PX = (W - PW) / 2, SLOT = 230, pad = 54, R0 = PW - pad, L0 = pad, IW = PW - 2 * pad;
+const money = (v, q) => typeof v === 'string' ? v : `${(v.n * q).toFixed(v.dec)}${v.suf}`;
+function sheet(PH, rows) {   // the paper with a torn edge, then its rows
+  ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 16; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(PW, 0); ctx.lineTo(PW, PH);
+  for (let k = 0; k <= 26; k++) ctx.lineTo(PW - k * PW / 26, PH + (k % 2 ? -14 : 0)); ctx.closePath(); ctx.fillStyle = PAPER; ctx.fill(); ctx.restore(); rows.forEach(([ry, f]) => f(ry)); }
+function stamp(x, y, q) { if (q <= 0) return; const k = lerp(1.9, 1, eo(q)); ctx.save(); ctx.globalAlpha *= clamp(q * 2) * 0.92; ctx.translate(x, y); ctx.rotate(0.18); ctx.scale(k, k);
+  rr(-112, -58, 224, 116, 18); ctx.strokeStyle = PU; ctx.lineWidth = 7; ctx.stroke(); txt('تم', 24, 26, F(700, 70), PU, 'center', 'rtl'); ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-84, 0); ctx.lineTo(-62, 22); ctx.lineTo(-28, -20); ctx.stroke(); ctx.restore(); }
+function dashRow(line) { line(44, (Y) => { ctx.strokeStyle = 'rgba(22,22,28,0.35)'; ctx.setLineDash([10, 8]); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(L0, Y - 10); ctx.lineTo(R0, Y - 10); ctx.stroke(); ctx.setLineDash([]); }); }
+function leader(name, val, Y, fn, fv, cv = INK) { txt(name, R0, Y, fn, INK, 'right'); txt(val, L0, Y, fv, cv, 'left'); const a = L0 + tw(val, fv) + 16, b = R0 - tw(name, fn) - 16;
+  ctx.fillStyle = 'rgba(22,22,28,0.35)'; for (let x = b; x > a; x -= 12) { ctx.beginPath(); ctx.arc(x, Y - 8, 2, 0, 7); ctx.fill(); } }
+// K.S Furniture, told in full
+const KS = { no: '01', client: 'K.S للأثاث', meta: 'أثاث وديكور · تجارة إلكترونية · السعودية', period: 'موسم اليوم الوطني السعودي · 2024',
+  items: [['Google', '40,000'], ['إنستغرام', '40,000'], ['سناب شات', '20,000']], total: '100,000 ريال',
+  l2: ['إجمالي مبيعات المتجر', { n: 1.09, dec: 2, suf: ' مليون ريال' }], bar: [100000, 1086534],
+  kpi: [`العائد: من ${X('4×')} إلى ${X('10×')} · المستهدف ${X('7×')}`, '507 طلبات · 15–20 طلباً يومياً', '446 عميلاً يشترون لأول مرة'],
+  note: 'مبيعات المتجر هي إجمالي المبيعات للفترة من منصة المتجر، وليست المبيعات المنسوبة للإعلانات فقط.' };
+function paperKS(x, y, lt, full = false) {
+  const rows = []; let yy = 74; const line = (h, f) => { rows.push([yy, f]); yy += h; };
+  line(0, (Y) => { txt(`إيصال رقم ${KS.no}`, R0, Y, F(500, 26), GREY); txt('قول تم', L0, Y, F(700, 30), INK, 'left'); }); yy += 70;
+  line(52, (Y) => txt(KS.client, R0, Y, F(700, 64), INK)); line(36, (Y) => txt(KS.meta, R0, Y, F(500, 26), GREY)); line(30, (Y) => txt(KS.period, R0, Y, F(500, 26), GREY));
+  dashRow(line); line(46, (Y) => txt('الميزانية الإعلانية', R0, Y, F(600, 26), GREY));
+  KS.items.forEach(([n, v]) => line(48, (Y) => leader(n, v, Y, F(500, 34), F(500, 34))));
+  line(70, (Y) => leader('الإجمالي', KS.total, Y + 14, F(700, 38), F(700, 48)));
+  dashRow(line); line(40, (Y) => txt(KS.l2[0], R0, Y, F(600, 28), GREY));
+  line(118, (Y) => { const q = full ? 1 : eo(seg(lt, T.countAt, T.countAt + 0.9)); txt(money(KS.l2[1], q), R0, Y + 66, F(700, 92), INK, 'right'); }); yy += 8;
+  line(116, (Y) => { const [s, r] = KS.bar, q = full ? 1 : eo(seg(lt, T.barAt, T.barAt + 0.8)), ws = Math.max(6, IW * s / r);
+    ctx.fillStyle = 'rgba(22,22,28,0.16)'; rr(L0, Y - 6, IW, 30, 6); ctx.fill(); ctx.fillStyle = INK; rr(R0 - ws, Y - 6, ws, 30, 6); ctx.fill(); txt('المصروف', R0 - ws - 12, Y + 18, F(600, 22), GREY, 'right');
+    ctx.fillStyle = PU; rr(R0 - IW * q, Y + 40, IW * q, 30, 6); ctx.fill(); if (q > 0.3) txt('المبيعات', R0 - 12, Y + 63, F(600, 22), WH, 'right'); txt('بالمقياس الحقيقي', L0, Y + 104, F(500, 20), GREY, 'left'); });
+  dashRow(line); KS.kpi.forEach((k) => line(48, (Y) => txt(k, R0, Y, F(700, 32), INK))); yy += 6;
+  wrap(KS.note, F(500, 23), IW).forEach((l) => line(32, (Y) => txt(l, R0, Y, F(500, 23), GREY))); yy += 40;
+  line(0, (Y) => txt('قول. تم', R0, Y + 70, F(600, 24), GREY)); yy += 120; const PH = yy;
+  ctx.save(); ctx.translate(x, y); sheet(PH, rows); stamp(170, PH - 110, full ? 1 : seg(lt, T.stampAt, T.stampAt + 0.16)); ctx.restore(); return PH;
+}
+// the other three, short: who, what went in, what came back, stamp
+const OT = [
+  { no: '02', client: 'موريا', meta: 'عقارات · عُمان', l1: ['الإنفاق الإعلاني', '18.2 ألف دولار'], l2: ['إيرادات الوحدات المباعة', { n: 1.51, dec: 2, suf: ' مليون دولار' }], kpi: '13 وحدة مباعة', note: 'قيمة الوحدات المباعة لمشترين جاؤوا عبر الحملة.' },
+  { no: '03', client: 'متاجر أزياء وتجميل', meta: 'تجارة إلكترونية · مصر · 2022', l1: ['الإنفاق · الحساب A', '535 ألف جنيه'], l2: ['قيمة المشتريات · الحساب A', { n: 7.4, dec: 1, suf: ' مليون جنيه' }], kpi: `العائد ${X('13.84×')} · 27,703 عملية شراء`, note: 'العائد وقيمة المشتريات منسوبة من Meta.' },
+  { no: '04', client: 'متجر إلكترونيات', meta: 'تجارة إلكترونية · مصر · الربع الرابع 2021', l1: ['الطلبات', '747'], l2: ['قيمة المشتريات', { n: 897, dec: 0, suf: ' ألف دولار' }], kpi: 'متوسط الطلب 1,201 دولار', note: 'قيمة المشتريات منسوبة من Meta.' },
+];
+function paperS(c, x, y, lt, full = false) {
+  const rows = []; let yy = 74; const line = (h, f) => { rows.push([yy, f]); yy += h; };
+  line(0, (Y) => { txt(`إيصال رقم ${c.no}`, R0, Y, F(500, 26), GREY); txt('قول تم', L0, Y, F(700, 30), INK, 'left'); }); yy += 70;
+  line(40, (Y) => txt(c.client, R0, Y, F(700, 60), INK)); line(30, (Y) => txt(c.meta, R0, Y, F(500, 26), GREY));
+  dashRow(line); line(66, (Y) => leader(c.l1[0], c.l1[1], Y + 8, F(600, 30), F(700, 44)));
+  line(40, (Y) => txt(c.l2[0], R0, Y, F(600, 28), GREY));
+  line(112, (Y) => { const q = full ? 1 : eo(seg(lt, 0.45, 1.15)); txt(money(c.l2[1], q), R0, Y + 64, F(700, 88), INK, 'right'); });
+  dashRow(line); line(46, (Y) => txt(c.kpi, R0, Y, F(700, 32), INK)); line(30, (Y) => txt(c.note, R0, Y, F(500, 23), GREY)); yy += 30;
+  line(0, (Y) => txt('قول. تم', R0, Y + 60, F(600, 24), GREY)); yy += 100; const PH = yy;
+  ctx.save(); ctx.translate(x, y); sheet(PH, rows); stamp(170, PH - 100, full ? 1 : seg(lt, 1.35, 1.5)); ctx.restore(); return PH;
+}
+function printer(a = 1) { if (a <= 0) return; ctx.save(); ctx.globalAlpha = a; rr(PX - 40, SLOT - 90, PW + 80, 110, 26); ctx.fillStyle = '#1C1C24'; ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = '#050507'; rr(PX - 10, SLOT - 14, PW + 20, 18, 9); ctx.fill();
+  ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(PX + 4, SLOT - 52, 8, 0, 7); ctx.fill(); txt('قول تم', PX + PW, SLOT - 40, F(600, 26), MU, 'right'); ctx.restore(); }
+
+// ---------- 1. hook: for store owners; likes don't pay the rent, sales do ----------
+function hook(t) {
+  if (t >= T.hookOut + 0.6) return; const out = seg(t, T.hookOut + 0.1, T.hookOut + 0.6);
+  footage('pay', t, 1 - out, 0.5, lerp(1.05, 1.0, seg(t, 0, T.hookOut))); scrim(1 - out, 560, 1320);
+  label('لأصحاب المتاجر الإلكترونية', t, T.h0, T.h1 - 0.35, 600);
+  kline('عندك متجر إلكتروني؟', RX, 820, 104, t, T.h0 + 0.25, { out: T.h1 - 0.3 });
+  const l1 = kline('الإعجابات', RX, 830, 128, t, T.h1, { out: T.hookOut });
+  kline('لا تدفع الإيجار.', RX, 980, 128, t, T.h1 + 0.2, { out: T.hookOut });
+  if (t < T.hookOut) strike(l1.pos[0], 830, l1.size, seg(t, T.strike, T.strike + 0.3));
+  kline('المبيعات تدفعه.', RX, 1200, 150, t, T.h2, { hi: [1], out: T.hookOut });
+}
+// ---------- 2. every campaign has a receipt; let's read one, line by line ----------
+function intro(t) {
+  if (t < T.intro - 0.3 || t >= T.A) return; const v = seg(t, T.intro - 0.3, T.intro + 0.1) * (1 - seg(t, T.introOut + 0.1, T.A)); ctx.save(); ctx.globalAlpha = v; grid();
+  kline('كل حملة', 540, 860, 124, t, T.intro + 0.05, { align: 'center', out: T.introOut });
+  kline('لها إيصال.', 540, 1020, 150, t, T.intro + 0.3, { align: 'center', hi: [1], out: T.introOut });
+  kline('تعالَ نقرأ واحداً منها… سطراً سطراً.', 540, 1200, 52, t, T.intro2, { align: 'center', w: 500, color: MU, stag: 0.05, out: T.introOut });
+  ctx.restore(); printer(seg(t, T.intro + 0.8, T.intro + 1.4) * (1 - seg(t, T.introOut, T.A)));
+}
+// ---------- 3. K.S Furniture, line 01: who ----------
+function chapA(t) {
+  if (t < T.A - 0.3 || t >= T.B) return; const v = seg(t, T.A - 0.3, T.A + 0.1) * (1 - seg(t, T.Aout + 0.05, T.B)); footage('sofa', t - T.A + 0.3, v, 0.48, lerp(1.0, 1.05, seg(t, T.A, T.B))); ctx.save(); ctx.globalAlpha = v; scrim(1, 560, 1340);
+  label('السطر 01 · العميل', t, T.A, T.Aout);
+  kline('K.S للأثاث', RX, 820, 150, t, T.A + 0.25, { out: T.Aout });
+  kline('متجر سعودي للأثاث والديكور،', RX, 960, 58, t, T.A + 0.85, { w: 600, stag: 0.05, out: T.Aout });
+  kline('يبيع أونلاين.', RX, 1040, 58, t, T.A + 1.1, { w: 600, stag: 0.05, out: T.Aout });
+  { const q = spring(t, T.A + 1.9, 0.55), qo = seg(t, T.Aout, T.Aout + 0.3); if (q > 0 && qo < 1) { const s = 'موسم اليوم الوطني السعودي · 2024', f = F(600, 44), w = tw(s, f) + 64; ctx.save(); ctx.globalAlpha *= clamp(q * 2) * (1 - qo);
+    ctx.translate(RX - w / 2, 1150); ctx.scale(lerp(0.7, 1, Math.min(1.05, q)), lerp(0.7, 1, Math.min(1.05, q))); rr(-w / 2, -44, w, 88, 44); ctx.strokeStyle = PU; ctx.lineWidth = 3; ctx.stroke(); txt(s, w / 2 - 32, 15, f, WH, 'right'); ctx.restore(); } }
+  kline('من أكثر مواسم السنة ازدحاماً… وخصومات.', RX, 1290, 48, t, T.A + 2.8, { w: 500, color: MU, stag: 0.05, out: T.Aout });
+  ctx.restore();
+}
+// ---------- 4. line 02: the problem and the target ----------
+function chapB(t) {
+  if (t < T.B - 0.3 || t >= T.C) return; const v = seg(t, T.B - 0.3, T.B + 0.1) * (1 - seg(t, T.Bout + 0.05, T.C)); footage('cushions', t - T.B + 0.3, v, 0.5, lerp(1.04, 1.0, seg(t, T.B, T.C))); ctx.save(); ctx.globalAlpha = v; scrim(1, 560, 1560);
+  label('السطر 02 · التحدي', t, T.B, T.Bout);
+  kline('المنافسون يقدّمون', RX, 790, 98, t, T.B + 0.2, { out: T.Bout });
+  kline('خصومات أكبر بكثير.', RX, 905, 98, t, T.B + 0.45, { hi: [2], out: T.Bout });
+  kline('والهدف:', RX, 1035, 52, t, T.B + 2.1, { w: 500, color: MU, out: T.Bout });
+  kline('رفع العائد على الإعلانات', RX, 1112, 66, t, T.B + 2.3, { w: 600, out: T.Bout });
+  { const q = spring(t, T.B + 2.85, 0.5), qo = eio(seg(t, T.Bout, T.Bout + 0.35)); if (q > 0 && qo < 1) { ctx.save(); ctx.globalAlpha *= clamp(q * 2) * (1 - qo); const y = 1268 - qo * 60, f = F(700, 132);
+    txt('4×', RX, y, f, WH, 'right', 'ltr'); txt('البداية', RX, y + 56, F(500, 30), MU, 'right');
+    const a = eo(seg(t, T.B + 3.15, T.B + 3.55)), x1 = RX - tw('4×', f) - 40, x0 = x1 - 230; ctx.strokeStyle = WH; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x1, y - 46); ctx.lineTo(x1 - 230 * a, y - 46); ctx.stroke();
+    if (a > 0.9) { ctx.beginPath(); ctx.moveTo(x0 + 22, y - 68); ctx.lineTo(x0, y - 46); ctx.lineTo(x0 + 22, y - 24); ctx.stroke(); }
+    const c = seg(t, T.B + 3.4, T.B + 4.0); if (c > 0) { const n = Math.round(lerp(4, 7, eo(c))); txt(`${n}×`, x0 - 40, y, f, PU, 'right', 'ltr'); txt('المستهدف', x0 - 40, y + 56, F(500, 30), MU, 'right'); }
+    ctx.restore(); } }
+  [['بدون خصومات كبيرة.', 4.45], ['وبدون مؤثرين.', 4.85]].forEach(([s, d], i) => { const y = 1440 + i * 92; kline(s, RX - 80, y, 54, t, T.B + d + 0.15, { w: 600, out: T.Bout }); if (t < T.Bout + 0.3) cross(RX - 26, y - 18, seg(t, T.B + d, T.B + d + 0.5) * (1 - seg(t, T.Bout, T.Bout + 0.3))); });
+  ctx.restore();
+}
+// ---------- 5. line 03: what we did, four moves ----------
+const MV = [
+  { clip: 'vase', head: [['نافسنا بالمنتج،', [1]], ['لا بالسعر.', []]], sub: 'منتجات رئيسية جديدة، وأعدنا ترتيب المتجر حول المنتجات الأكثر طلباً.' },
+  { clip: 'chair', head: [['باقات ترفع', []], ['قيمة السلة.', [1]]], sub: 'قطعة عالية القيمة مع منتج مكمّل أقل سعراً.' },
+  { clip: 'flowers', head: [['الخصم تحت 20%', []], ['والميزانية للتحويل.', [1]]], sub: 'Google · إنستغرام · سناب شات', split: true },
+  { clip: 'checkout', head: [['بدأنا في أغسطس،', []], ['قبل الموسم.', [1]]], sub: 'إعادة استهداف السلال المتروكة، ومتابعة يومية حتى أوائل أكتوبر.' },
+];
+function chapC(t) {
+  if (t < T.C - 0.3 || t >= T.rc) return; const v = seg(t, T.C - 0.3, T.C + 0.1) * (1 - seg(t, T.Cout + 0.05, T.rc));
+  MV.forEach((m, i) => { const a = T.mv[i] - (i ? 0.3 : 0.55), b = T.mv[i] + T.mvLen; if (t < a || t >= b + 0.3) return; footage(m.clip, t - a, v * seg(t, a, a + 0.3) * (i === 3 ? 1 : 1 - seg(t, b - 0.05, b + 0.3)), 0.48, lerp(1.0, 1.06, seg(t, a, b + 0.3))); });
+  ctx.save(); ctx.globalAlpha = v; scrim(1, 560, 1420);
+  const k = T.mv.filter((m) => t >= m - 0.1).length || 1; label('السطر 03 · ما فعلناه', t, T.C, T.Cout, 600, `${k} من 4`);
+  MV.forEach((m, i) => { const a = T.mv[i], out = a + T.mvLen - 0.42; if (t < a - 0.1 || t > out + 0.6) return;
+    kline(`0${i + 1}`, RX, 745, 60, t, a, { w: 700, color: PU, out });
+    m.head.forEach(([s, hi], j) => kline(s, RX, 880 + j * 115, 100, t, a + 0.12 + j * 0.2, { hi, out }));
+    if (m.split) { const q = eo(seg(t, a + 0.9, a + 1.6)), qo = eio(seg(t, out, out + 0.35)); if (q > 0 && qo < 1) { ctx.save(); ctx.globalAlpha *= clamp(q * 3) * (1 - qo); const y = 1150 - qo * 40, w = 940;
+      ctx.fillStyle = 'rgba(245,243,250,0.14)'; rr(RX - w, y, w, 64, 14); ctx.fill(); ctx.fillStyle = PU; rr(RX - w * 0.9 * q, y, w * 0.9 * q, 64, 14); ctx.fill();
+      txt(`تحويل ${X('90%')}`, RX - 24, y + 44, F(700, 34), WH, 'right'); if (q > 0.95) txt(`وعي ${X('10%')}`, RX - w, y + 110, F(600, 30), MU, 'left'); ctx.restore(); }
+      kline(m.sub, RX, 1330, 46, t, a + 1.3, { w: 500, color: MU, stag: 0.05, out }); }
+    else para(m.sub, RX, 1140, 48, 70, t, a + 0.75, { out, max: 900 });
+  });
+  ctx.restore();
+}
+// ---------- 6. the receipt prints; then the money, said plainly ----------
+function receiptKS(t) {
+  if (t < T.rc - 0.3 || t >= T.rcOut + 0.4) return; const lt = t - T.rc, v = seg(t, T.rc - 0.3, T.rc + 0.15), exit = eio(seg(t, T.rcOut - 0.1, T.rcOut + 0.4));
+  footage('packing', lt * 0.7, v * (1 - exit), 0.62, lerp(1.0, 1.06, seg(t, T.rc, T.rcOut)));
+  const PH = paperKS(-9999, 0, lt), prog = clamp(lt / T.printDur), step = Math.floor(prog * 44) / 44, rev = PH * eo(step);
+  const k = eio(seg(lt, T.shrinkAt, T.shrinkAt + 0.75)), s = lerp(1, 0.5, k), x = lerp(PX, 540 - PW * 0.5 / 2, k), y0 = SLOT - PH + rev, y = lerp(y0, 110, k) - exit * 1400;
+  ctx.save(); if (k <= 0) { ctx.beginPath(); ctx.rect(0, SLOT, W, H); ctx.clip(); } ctx.translate(x, y); ctx.rotate(-0.035 * k); ctx.scale(s, s); paperKS(0, 0, lt); ctx.restore();
+  printer(v * (1 - k));
+  if (k > 0) { ctx.save(); ctx.globalAlpha = 1 - exit; const g = ctx.createLinearGradient(0, 860, 0, 1600); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(0.3, 'rgba(9,9,13,0.8)'); g.addColorStop(1, 'rgba(9,9,13,0.85)'); ctx.fillStyle = g; ctx.fillRect(0, 860, W, 900);
+    const b = T.rc + T.bigAt, o = T.rcOut - 0.2;
+    kline('100 ألف ريال على الإعلانات…', RX, 1040, 62, t, b, { w: 600, color: MU, out: o });
+    kline('1.09 مليون ريال', RX, 1200, 132, t, b + 0.55, { hi: [0], out: o });
+    kline('مبيعات المتجر خلال الفترة.', RX, 1310, 70, t, b + 0.8, { w: 600, out: o });
+    kline(`والعائد: من ${X('4×')} إلى ${X('10×')} مقابل مستهدف ${X('7×')}`, RX, 1440, 48, t, b + 1.6, { w: 500, color: MU, stag: 0.05, out: o });
+    ctx.restore(); }
+}
+// ---------- 7. the other receipts drop in, no explanation ----------
+function others(t) {
+  if (t < T.ot0 - 0.3 || t >= T.otOut + 0.4) return; const v = seg(t, T.ot0 - 0.3, T.ot0 + 0.1) * (1 - seg(t, T.otOut, T.otOut + 0.4)); ctx.save(); ctx.globalAlpha = v; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H); grid();
+  kline('إيصالات أخرى', RX, 260, 92, t, T.ot0, { out: T.otOut - 0.3 });
+  kline('من سجل إنجاز الفريق', RX, 340, 44, t, T.ot0 + 0.3, { w: 500, color: MU, out: T.otOut - 0.3 });
+  OT.forEach((c, i) => { const a = T.ot[i]; if (t < a) return; const q = spring(t, a, 0.55, 0.6), push = T.ot.slice(i + 1).reduce((acc, b) => acc + spring(t, b, 0.5, 0.7), 0);
+    const s = 0.86 * lerp(1, 0.93, Math.min(2, push) / 2), rot = [-0.035, 0.03, -0.015][i], y = lerp(-1100, 470, Math.min(1.04, q)) + push * 34;
+    ctx.save(); ctx.translate(540, y); ctx.rotate(rot * Math.min(1, q)); ctx.scale(s, s); ctx.globalAlpha *= 1 - 0.35 * Math.min(1, push); paperS(c, -PW / 2, 0, t - a); ctx.restore(); });
+  ctx.restore();
+}
+// ---------- 8. spend smarter, sell more ----------
+function summary(t) {
+  if (t < T.sum - 0.3 || t >= T.end + 0.2) return; const v = seg(t, T.sum - 0.3, T.sum + 0.1) * (1 - seg(t, T.end - 0.2, T.end + 0.2)); footage('parcel', t - T.sum, v, 0.6); ctx.save(); ctx.globalAlpha = v; scrim(1, 200, 640);
+  kline('اصرف بذكاء.', RX, 360, 124, t, T.sumLine, { out: T.end - 0.3 });
+  kline('بِع أكثر.', RX, 500, 124, t, T.sumLine + 0.6, { hi: [1], out: T.end - 0.3 });
+  const P = [[OT[0], 250, 1060, -0.1, 0.42], [OT[2], 830, 1080, 0.09, 0.42], [OT[1], 560, 1180, 0.03, 0.44], [null, 520, 820, -0.02, 0.46]];
+  P.forEach(([c, x, y, r, s], i) => { const q = spring(t, T.sum + 0.2 + i * 0.14, 0.55); if (q <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(q * 2); ctx.translate(x, y + 80 * (1 - Math.min(1, q))); ctx.rotate(r); ctx.scale(s, s);
+    if (c) paperS(c, -PW / 2, 0, 99, true); else paperKS(-PW / 2, 0, 99, true); ctx.restore(); });
+  ctx.restore();
+}
+// ---------- 9. what's your number? say it, we'll Tamm it; lockup ----------
+function ending(t) {
+  if (t < T.end - 0.2) return; const v = seg(t, T.end - 0.2, T.end + 0.2); ctx.save(); ctx.globalAlpha = v; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H); grid();
+  if (t < T.lock + 0.4) { const lo = 1 - seg(t, T.lock - 0.1, T.lock + 0.3); ctx.save(); ctx.globalAlpha *= lo;
+    kline('وأنت…', RX, 640, 84, t, T.num, { w: 600, color: MU });
+    kline('ما رقمك؟', RX, 800, 156, t, T.num + 0.25, { hi: [1] });
+    { const q = seg(t, T.num + 0.9, T.num + 1.2); if (q > 0) { ctx.save(); ctx.globalAlpha *= q; rr(60, 900, 960, 116, 58); ctx.fillStyle = 'rgba(23,23,30,0.96)'; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.22)'; ctx.lineWidth = 2; ctx.stroke();
+      txt('قول ‹', 980, 972, F(700, 36), PU, 'right'); const full = Array.from('قُلها.'), typed = full.slice(0, Math.floor(clamp((t - T.say) / 0.45) * full.length)).join(''), x0 = 980 - tw('قول ‹', F(700, 36)) - 30;
+      txt(typed, x0, 974, F(600, 46), WH, 'right'); if (t % 0.8 < 0.45) { ctx.fillStyle = WH; ctx.fillRect(x0 - tw(typed, F(600, 46)) - 8, 933, 4, 52); } ctx.restore(); } }
+    if (t >= T.tamm - 0.1) { const r = seg(t, T.tamm - 0.1, T.tamm + 0.2); ctx.save(); ctx.globalAlpha *= r; txt('تم ‹', RX, 1130, F(700, 34), PU, 'right'); ctx.restore(); kline('ونحن نُتمّها.', RX, 1262, 124, t, T.tamm); }
+    ctx.restore(); }
+  const show = (t0, f) => { const q = spring(t, t0, 0.45); if (q <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); ctx.translate(0, 22 * (1 - Math.min(1, q))); f(); ctx.restore(); };
+  show(T.lock + 0.2, () => { const SH = 250, SW = SH * 600 / 721; ctx.drawImage(SYMBOL, 540 - SW / 2, 560 - SH / 2, SW, SH); });
+  show(T.lock + 0.45, () => { txt('قول تم', 540, 880, F(700, 130), WH, 'center', 'rtl'); txt('SayTamm', 540, 950, F(600, 42), MU, 'center', 'ltr'); });
+  show(T.lock + 1.1, () => { const s = 'قول. تم', f = F(700, 76), w = tw(s, f); txt(s, 552, 1090, f, WH, 'center', 'rtl'); ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(552 - w / 2 - 22, 1080, 11, 0, 7); ctx.fill(); });
+  show(T.lock + 1.4, () => txt('وكالة تسويق رقمي وأداء', 540, 1170, F(500, 40), MU, 'center', 'rtl'));
+  show(T.lock + 1.8, () => { txt('عندك متجر؟ ابدأ من هنا.', 540, 1300, F(700, 52), WH, 'center', 'rtl'); txt('saytamm.com', 540, 1390, F(700, 44), WH, 'center', 'ltr'); txt('info@saytamm.com', 540, 1448, F(500, 36), MU, 'center', 'ltr'); });
+  show(T.lock + 2.2, () => ['مشاريع قادها أعضاء من فريق قول تم،', 'ومنها أعمال نُفّذت في وكالات أخرى.'].forEach((l, i) => txt(l, 540, 1730 + i * 40, F(500, 26), 'rgba(245,243,250,0.5)', 'center', 'rtl')));
+  ctx.restore();
+}
+function draw(t) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H); hook(t); intro(t); chapA(t); chapB(t); chapC(t); receiptKS(t); others(t); summary(t); ending(t); }
+window.seek = async (t) => { for (let p = 0; p < 4; p++) { MISS = []; draw(t); if (!MISS.length) return; await loadMissing(); } };
+
+// ---------- score: warm, 96 BPM; soft hits on the words; printer, drops and stamps ----------
+window.renderAudio = async () => {
+  const SR = 48000, B = 60 / 96, ac = new OfflineAudioContext(2, Math.ceil(SR * DUR), SR);
+  const master = ac.createDynamicsCompressor(); master.threshold.value = -16; master.ratio.value = 3; master.attack.value = 0.004; master.release.value = 0.18; master.connect(ac.destination);
+  const bus = ac.createGain(); bus.connect(master);
+  const rev = ac.createConvolver(); { const len = SR * 2.0, ir = ac.createBuffer(2, len, SR); for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let s = 17 + ch; for (let i = 0; i < len; i++) { s = (s * 16807) % 2147483647; d[i] = (s / 1073741823.5 - 1) * Math.pow(1 - i / len, 3.2); } } rev.buffer = ir; }
+  const revIn = ac.createGain(), revOut = ac.createGain(); revOut.gain.value = 0.25; revIn.connect(rev); rev.connect(revOut); revOut.connect(master);
+  const nb = (() => { const b = ac.createBuffer(1, SR, SR), d = b.getChannelData(0); let s = 3; for (let i = 0; i < d.length; i++) { s = (s * 16807) % 2147483647; d[i] = s / 1073741823.5 - 1; } return b; })();
+  const env = (g, t, a, pk, d) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+  const osc = (t, type, f0, f1, a, d, pk, pan = 0, send = 0, lp = 0) => { const o = ac.createOscillator(), g = ac.createGain(), p = ac.createStereoPanner(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + a + d * 0.6);
+    let n = o; if (lp) { const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = lp; o.connect(fl); n = fl; } env(g, t, a, pk, d); p.pan.value = pan; n.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } o.start(t); o.stop(t + a + d + 0.05); };
+  const noise = (t, type, f, q, a, d, pk, pan = 0, f1 = 0, send = 0) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(), p = ac.createStereoPanner(); s.buffer = nb; s.loop = true; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + a + d); fl.Q.value = q; env(g, t, a, pk, d); p.pan.value = pan; s.connect(fl); fl.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } s.start(t, (t * 0.37) % 0.8); s.stop(t + a + d + 0.05); };
+  const pad = (t, d, fs, g) => fs.forEach((f) => [-6, 6].forEach((dt) => { const o = ac.createOscillator(), fl = ac.createBiquadFilter(), gg = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = dt; fl.type = 'lowpass'; fl.frequency.value = 900; gg.gain.setValueAtTime(0, t); gg.gain.linearRampToValueAtTime(g, t + 0.6); gg.gain.setValueAtTime(g, t + d - 0.5); gg.gain.linearRampToValueAtTime(0, t + d); o.connect(fl); fl.connect(gg); gg.connect(bus); const sg = ac.createGain(); sg.gain.value = 0.55; gg.connect(sg); sg.connect(revIn); o.start(t); o.stop(t + d + 0.05); }));
+  const whoosh = (t, d = 0.35, pk = 0.06) => noise(t - d * 0.7, 'bandpass', 500, 0.9, d * 0.7, d * 0.5, pk, 0, 4000, 0.3);
+  const tick = (t, f = 2400, pk = 0.05) => noise(t, 'bandpass', f, 3, 0.001, 0.02, pk, 0);
+  const hit = (t, f = 110, pk = 0.55) => { osc(t, 'sine', f, 40, 0.002, 0.5, pk); noise(t, 'lowpass', 3000, 0.6, 0.001, 0.18, 0.16, 0, 0, 0.5); };
+  // a warm progression: F · Am · Dm · C; the groove sits under the story, the pad alone under the hook and the end
+  const CH = [[174.6, 220, 261.6], [220, 261.6, 329.6], [146.8, 220, 293.7], [130.8, 196, 261.6]], ROOT = [43.65, 55, 36.7, 32.7];
+  const nb2 = Math.ceil(T.lock / (4 * B));
+  for (let bar = 0; bar < nb2; bar++) { const t0 = bar * 4 * B, c = bar % 4, groove = t0 >= T.intro && t0 < T.end;
+    pad(t0, 4 * B + 0.05, CH[c], groove ? 0.009 : 0.012);
+    for (let k = 0; k < 8; k++) { const t = t0 + k * B / 2; osc(t, 'triangle', CH[c][[0, 2, 1, 2, 0, 2, 1, 2][k]] * 2, 0, 0.003, 0.3, 0.022, (k % 2 ? 0.25 : -0.25), 0.3);
+      if (groove) { if (k % 4 === 0) osc(t, 'sine', 120, 42, 0.002, 0.3, 0.5); if (k % 4 === 2) [0, 0.012].forEach((d) => noise(t + d, 'bandpass', 1500, 1.1, 0.001, 0.08, 0.1, 0, 0, 0.3)); noise(t, 'highpass', 8500, 0.7, 0.001, 0.03, 0.03, 0.2); if (k % 2 === 0) osc(t, 'sine', ROOT[c] * 2, 0, 0.01, B * 0.8, 0.1, 0, 0, 220); } } }
+  // the hook and the chapters
+  hit(T.h0 + 0.25, 100, 0.4); hit(T.h1, 110); tick(T.strike, 1800, 0.08); noise(T.strike, 'bandpass', 2400, 1.5, 0.02, 0.25, 0.05, 0, 900); hit(T.h2, 130, 0.6);
+  hit(T.intro + 0.3, 120, 0.45); [T.A, T.B, T.C].forEach((t) => { whoosh(t); for (let k = 0; k < 5; k++) tick(t + 0.1 + k * 0.05, 3200, 0.03); hit(t + 0.25, 105, 0.4); });
+  tick(T.A + 1.9, 1800, 0.06); osc(T.A + 1.9, 'triangle', 1046.5, 0, 0.002, 0.5, 0.03, 0, 0.5);
+  for (let k = 0; k < 4; k++) tick(T.B + 3.4 + k * 0.15, 900 + k * 120, 0.05); [T.B + 4.45, T.B + 4.85].forEach((t) => { tick(t + 0.2, 2000, 0.06); tick(t + 0.35, 2000, 0.06); });
+  T.mv.forEach((t, i) => { whoosh(t, 0.3, 0.05); hit(t + 0.12, 115 + i * 8, 0.35); }); osc(T.mv[2] + 0.9, 'sine', 300, 700, 0.6, 0.2, 0.03);
+  // the receipt: motor hum, the head's ticks, the count, the bar, the stamp, the shrink
+  { const a = T.rc; noise(a, 'bandpass', 900, 2, 0.05, T.printDur, 0.05, 0, 0, 0); for (let k = 0; k < 44; k++) noise(a + k * T.printDur / 44, 'bandpass', 3200, 3, 0.001, 0.012, 0.05, 0.1);
+    for (let k = 0; k < 10; k++) osc(a + T.countAt + k * 0.08, 'sine', 900 + k * 60, 0, 0.002, 0.04, 0.03);
+    noise(a + T.barAt, 'bandpass', 600, 1.4, 0.4, 0.2, 0.05, 0, 3000);
+    const s = a + T.stampAt; osc(s, 'sine', 90, 36, 0.002, 0.35, 0.8); noise(s, 'lowpass', 900, 0.8, 0.001, 0.12, 0.4); osc(s + 0.02, 'triangle', 1318.5, 0, 0.002, 0.6, 0.03, 0, 0.5);
+    whoosh(a + T.shrinkAt + 0.3, 0.4, 0.05); hit(a + T.bigAt + 0.55, 120, 0.45); whoosh(T.rcOut + 0.1, 0.4, 0.06); }
+  // the drops: paper falls, lands, counts, stamps
+  T.ot.forEach((a) => { noise(a - 0.05, 'bandpass', 1400, 0.8, 0.12, 0.12, 0.08, 0, 3500); osc(a + 0.18, 'sine', 95, 40, 0.002, 0.25, 0.5); for (let k = 0; k < 7; k++) osc(a + 0.45 + k * 0.1, 'sine', 900 + k * 70, 0, 0.002, 0.04, 0.025);
+    osc(a + 1.35, 'sine', 90, 36, 0.002, 0.3, 0.7); noise(a + 1.35, 'lowpass', 900, 0.8, 0.001, 0.1, 0.32); });
+  hit(T.sumLine, 110, 0.45); hit(T.sumLine + 0.6, 130, 0.5);
+  hit(T.num + 0.25, 110, 0.5); for (let k = 0; k < 6; k++) tick(T.say + k * 0.075, 3800, 0.06); hit(T.tamm, 110, 0.6);
+  osc(T.lock, 'sine', 100, 34, 0.002, 1.3, 0.85); noise(T.lock, 'lowpass', 5000, 0.5, 0.001, 0.8, 0.26, 0, 0, 0.8); pad(T.lock, DUR - T.lock, [174.6, 220, 261.6, 349.2], 0.014); osc(T.lock, 'sine', 43.65, 0, 0.05, DUR - T.lock - 0.2, 0.15, 0, 0, 160);
+  [[T.lock + 0.45, 880], [T.gulf, 1046.5], [T.lock + 1.1, 1318.5]].forEach(([t, f]) => osc(t, 'triangle', f, 0, 0.002, 1.2, 0.035, 0, 0.6));
+  const buf = await ac.startRendering(), Lc = buf.getChannelData(0), Rc = buf.getChannelData(1), n = Lc.length, ab = new ArrayBuffer(44 + n * 4), dv = new DataView(ab);
+  const ws = (o, s) => [...s].forEach((ch, i) => dv.setUint8(o + i, ch.charCodeAt(0)));
+  ws(0, 'RIFF'); dv.setUint32(4, 36 + n * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 2, true); dv.setUint32(24, SR, true); dv.setUint32(28, SR * 4, true); dv.setUint16(32, 4, true); dv.setUint16(34, 16, true); ws(36, 'data'); dv.setUint32(40, n * 4, true);
+  for (let i = 0; i < n; i++) { dv.setInt16(44 + i * 4, Math.max(-1, Math.min(1, Lc[i])) * 32767, true); dv.setInt16(46 + i * 4, Math.max(-1, Math.min(1, Rc[i])) * 32767, true); }
+  let bin = ''; const u8 = new Uint8Array(ab); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(bin);
+};
+window.ready = (async () => {
+  await Promise.all(['500 40px Plex', '600 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول تم SayTamm 0123 ×%'))); await document.fonts.ready;
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode(); await window.seek(0); return true;
+})();
+</script></body></html>

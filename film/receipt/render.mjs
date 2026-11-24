@@ -11,8 +11,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const OUT = path.join(ROOT, 'handover', 'launch-film', 'receipt'); fs.mkdirSync(OUT, { recursive: true });
 const arg = (k) => { const i = process.argv.indexOf(k); return i < 0 ? null : process.argv[i + 1] ?? true; };
-const FPS = 60, SUB = 2, VAR = 'en';
-const html = fs.readFileSync(path.join(ROOT, 'film/receipt/film.html'), 'utf8')
+const AR = process.argv.includes('--ar'), FPS = 60, SUB = 2, VAR = AR ? 'ar' : 'en';
+const html = fs.readFileSync(path.join(ROOT, AR ? 'film/receipt/film_ar.html' : 'film/receipt/film.html'), 'utf8')
   .replaceAll('__SEQ__', pathToFileURL(path.join(OUT, 'seq')).href)
   .replace('__TIMING__', fs.readFileSync(path.join(ROOT, 'film/receipt/timing.json'), 'utf8'))
   .replace('__SEQN__', JSON.stringify(Object.fromEntries(fs.readdirSync(path.join(OUT, 'seq')).map((d) => [d, fs.readdirSync(path.join(OUT, 'seq', d)).length]))))
@@ -40,7 +40,7 @@ if (arg('--frames')) {
 }
 if (arg('--audio-only')) {
   const b64 = await page.evaluate(() => window.renderAudio());
-  fs.writeFileSync(path.join(OUT, 'Receipt_Score.wav'), Buffer.from(b64, 'base64'));
+  fs.writeFileSync(path.join(OUT, AR ? 'Receipt_ar_Score.wav' : 'Receipt_Score.wav'), Buffer.from(b64, 'base64'));
   await done(); console.log('wrote score'); process.exit(0);
 }
 const DUR = await page.evaluate(() => window.DUR_S), FT = Math.round(FPS * DUR);
