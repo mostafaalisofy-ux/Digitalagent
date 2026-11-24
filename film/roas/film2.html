@@ -481,7 +481,7 @@ window.renderAudio = async () => {
   thunk(T_BAR, 1.0); osc(T_BAR, 'sine', 60, 34, 0.004, 1.2, 0.5);
   // ---- the groove: from the drop to the payoff ----
   // cold open: an impact on every city
-  [0, 0.5, 1.0, 1.5].forEach((t, i) => { oscR(t, 'sine', 140, 42, 0.002, 0.32, 0.9); noiseR(t, 'lowpass', 2600, 0.6, 0.001, 0.18, 0.3, 0, 0, 0.5); oscR(t, 'triangle', [329.6, 293.7, 261.6, 246.9][i] * 2, 0, 0.002, 0.25, 0.06, 0, 0.4); noiseR(t - 0.18, 'bandpass', 600, 1.2, 0.15, 0.03, 0.08, 0, 4000); });
+  [0, 0.5, 1.0, 1.5].forEach((t, i) => { oscR(t, 'sine', 140, 42, 0.002, 0.32, 0.9); noiseR(t, 'lowpass', 2600, 0.6, 0.001, 0.18, 0.3, 0, 0, 0.5); oscR(t, 'triangle', [329.6, 293.7, 261.6, 246.9][i] * 2, 0, 0.002, 0.25, 0.06, 0, 0.4); if (t > 0.2) noiseR(t - 0.18, 'bandpass', 600, 1.2, 0.15, 0.03, 0.08, 0, 4000); });
   // the groove on the new clock (120 BPM, from the line's drop to the payoff)
   const kickN = (t, g) => { oscR(t, 'sine', 150, 42, 0.002, 0.32, g); noiseR(t, 'lowpass', 1200, 0.7, 0.001, 0.02, g * 0.25); };
   for (let b = 0; ; b++) {

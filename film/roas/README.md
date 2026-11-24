@@ -96,6 +96,56 @@ python3 film/roas/mix.py
 - **Platform logos:** see `assets/LOGOS_NOTE.md`. They are used only to name the platforms the agency works on, with no partnership claim.
 - **Positioning:** "a digital marketing & performance agency". It is never called a "Saudi agency"; the three cities are shown as the region the brand works in.
 
+## v2: richer in footage and animation (42.5 s)
+
+**Masters:** `SayTamm_TheRatio_v2_Services_AR_42s_9x16.mp4` and `SayTamm_TheRatio_v2_Services_EN_42s_9x16.mp4`, 1080×1920 at 60 fps.
+
+```bash
+python3 film/roas/plate2.py
+```
+
+```bash
+bash film/roas/render2_parallel.sh
+```
+
+```bash
+python3 film/roas/mix2.py
+```
+
+v2 keeps the v1 choreography (the fraction line, the five services, the payoff and the lockup) on a re-timed clock, and adds:
+
+| Time (s) | What is new |
+|---|---|
+| 0–2 | **Cold open:** four cuts in two seconds (Riyadh highway, Cairo pyramids from the air, Dubai from above, a thumb on an online store), each stamped with its word: الرياض / القاهرة / دبي / أونلاين |
+| 5.4–8 | **ROAS filled with footage:** the four letters are cut out of a moving Dubai skyline |
+| 8–12.5 | **Strategy over a city map:** Cairo, Riyadh and Dubai pins joined by arcs, on two Cairo shots (the Nile, then over the old city) |
+| 12.5–17 | **Reels:** three phone-framed vertical videos rise beside the platform tiles (Dubai, then Giza) |
+| 17–21.5 | **Live ad cards:** four cards with real footage drift through the frame while spend turns into return (Riyadh lights, then traffic toward the skyline) |
+| 21.5–28.5 | **Store:** the tracked phone UI, then three quick cuts: pay, cart and boxes, the parcel at the door |
+| 28.5–32.5 | **Measurement:** Giza time-lapse, then Dubai from above |
+| 32.5–34.5 | **Triptych:** three cities side by side in tall panels, then the frame darkens for the payoff |
+| 34.3–36.5 | **«بنعدّ العائد» filled with footage** (the Cairo pyramids from the air) |
+| 36.5–42.5 | Lockup over the Riyadh skyline |
+
+- **Sound:** a new 120 BPM groove under the services section, impacts and ticks for the cold open, whooshes for the reels, cards and triptych. The voice takes are the same as v1.
+- **Plate:** 18 shots instead of 10.
+
+**New Pexels clips** (same licence as above):
+
+| File | Pexels video | Used for |
+|---|---|---|
+| R_31114786 | Riyadh highway toward the skyline (31114786) | Cold open, performance |
+| C_10719817 | Pyramids of Giza from the air (10719817) | Cold open, ad card, «بنعدّ العائد» fill |
+| C_4174555 | Cairo seen from a height (4174555) | Strategy, ad card |
+| C_25797443 | Pyramid with a camel, no faces visible (25797443) | Social |
+| D_33739603 | Dubai from above (33739603) | Cold open, measurement |
+| D_36470958 | Dubai skyline (36470958) | ROAS fill, reel, triptych |
+| E_7568746 | A finger scrolling an online store on a phone, hands only (7568746) | Cold open |
+| E_6214217 | A phone showing "PAY" beside a card and a shopping bag (6214217) | Store |
+| E_6214214 | A phone showing "PAY", a hand placing letter dice (6214214) | Ad card |
+
+**Avoided on purpose:** a clip that shows the Saudi flag (flags are restricted in ads), a Dubai clip with the UAE flag in frame, and a Cairo clip with other brands' billboards.
+
 ## Before publishing
 
 - **Platform logos:** check each brand's guidelines (Meta, Google, TikTok, Snap, X, YouTube, Shopify, Salla, Zid). Do not imply partner status the agency does not hold.
