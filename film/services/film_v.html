@@ -1,0 +1,304 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- SayTamm services film, vertical cut (9:16) for Reels. Same story and timing as the 16:9 film. A goal is typed; Tamm answers; nine services, each with a sample, each stamped «تم ✓»;
+     clients in their own words; "Say it. We'll Tamm it." Samples are drawn at or below their own pixel size. -->
+<style>
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  html, body { margin: 0; background: #09090D; } canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+const W = 1080, H = 1920, T = __TIMING__, DUR = T.DUR; window.DUR_S = DUR;
+const ENTER = 3.3, G0 = 6.0, S0 = T.scenes[0][0], Q0 = T.Q0, QL = T.QL, E0 = T.E0, LOCK = T.LOCK;
+const PU = '#6C35FF', OB = '#09090D', GR = '#17171E', WH = '#F5F3FA', MU = 'rgba(245,243,250,0.62)', LN = 'rgba(245,243,250,0.16)', MONO = '"JetBrains Mono", "DejaVu Sans Mono", monospace';
+const cv = document.getElementById('c'), ctx = cv.getContext('2d'), LF = '__LF__', NIIMEE_N = __NN__, ICONS = __ICONS__, PATHS = {}; let SYMBOL;
+ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), seg = (t, a, b) => clamp((t - a) / (b - a)), lerp = (a, b, q) => a + (b - a) * q;
+const ss = (x) => x * x * (3 - 2 * x), eo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x)), eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const spring = (t, t0, d = 0.5, z = 0.55) => { const x = (t - t0) / d; if (x <= 0) return 0; if (x >= 1.8) return 1; const w = 11, wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + z / Math.sqrt(1 - z * z) * Math.sin(wd * x)); };
+const rr = (x, y, w, h, r) => { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); };
+function txt(s, x, y, font, color, align = 'left', rtl = false) { ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align; ctx.direction = rtl ? 'rtl' : 'ltr'; ctx.fillText(s, x, y); ctx.direction = 'ltr'; }
+function itx(s, x, y, font, color) { ctx.save(); ctx.translate(x, y); ctx.transform(1, 0, -0.2, 1, 0, 0); txt(s, 0, 0, font, color); ctx.restore(); }   // the accent: an oblique cut of the brand face
+const tw = (s, font) => { ctx.font = font; return ctx.measureText(s).width; };
+function wrap(s, font, maxW) { const ws = s.split(' '), out = []; let cur = ''; ws.forEach((w) => { const t = cur ? cur + ' ' + w : w; if (tw(t, font) > maxW && cur) { out.push(cur); cur = w; } else cur = t; }); if (cur) out.push(cur); return out; }
+// ---------- images ----------
+const CACHE = new Map(); let MISS = [];
+function img(url) { let im = CACHE.get(url); if (im && im.complete && im.naturalWidth) return im; if (!im) { im = new Image(); im.src = url; CACHE.set(url, im); if (CACHE.size > 300) CACHE.delete(CACHE.keys().next().value); } MISS.push(im); return null; }
+const pic = (id) => img(`${LF}/services/seq/img/${id}`), niimee = (t) => img(`${LF}/reel2/seq/niimee/${String(Math.min(NIIMEE_N, Math.max(1, Math.floor(t * 30) + 1))).padStart(4, '0')}.jpg`);
+const tamm = (t) => img(`${LF}/intro/seq/tv/${String(Math.min(240, Math.max(1, Math.floor(t * 24) + 1))).padStart(4, '0')}.jpg`);
+async function loadMissing() { await Promise.all([...new Set(MISS)].map((im) => (im.complete ? null : new Promise((r) => { im.addEventListener('load', r, { once: true }); im.addEventListener('error', r, { once: true }); })))); }
+function card(im, x, y, w, { r = 18, a = 1, rot = 0, shadow = true } = {}) {
+  if (!im) return w * 1.25; w = Math.min(w, im.naturalWidth); const h = w * im.naturalHeight / im.naturalWidth; if (a <= 0) return h;
+  ctx.save(); ctx.globalAlpha *= a; ctx.translate(x + w / 2, y + h / 2); ctx.rotate(rot); ctx.translate(-w / 2, -h / 2);
+  if (shadow) { ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14; rr(0, 0, w, h, r); ctx.fillStyle = OB; ctx.fill(); ctx.restore(); }
+  ctx.save(); rr(0, 0, w, h, r); ctx.clip(); ctx.drawImage(im, 0, 0, w, h); ctx.restore(); rr(0, 0, w, h, r); ctx.strokeStyle = 'rgba(245,243,250,0.12)'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore(); return h;
+}
+const enter = (lt, d) => { const q = spring(lt, d, 0.5); return { q, a: clamp(q * 1.8), dy: 40 * (1 - Math.min(1, q)) }; };
+function chip(s, x, y, { a = 1, fill = 'rgba(245,243,250,0.07)', color = WH, font = '600 26px Sat', rtl = false } = {}) { const w = tw(s, font) + 44; if (a <= 0) return w; ctx.save(); ctx.globalAlpha *= a; rr(x, y, w, 54, 27); ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke(); txt(s, x + w / 2, y + 37, font, color, 'center', rtl); ctx.restore(); return w; }
+function chips(list, x, y, lt, d0, opt = {}) { let xx = x; list.forEach((s, i) => { const e = enter(lt, d0 + i * 0.1); ctx.save(); ctx.translate(0, e.dy); xx += chip(s, xx, y, { a: e.a, ...(typeof opt === 'function' ? opt(i) : opt) }) + 12; ctx.restore(); }); }
+function tile(name, x, y, s, a = 1) {
+  const C = { google: ['#FFFFFF', '#4285F4'], meta: ['#FFFFFF', '#0467DF'], tiktok: ['#000000', '#FFFFFF'], snapchat: ['#FFFC00', '#000000'], youtube: ['#FFFFFF', '#FF0000'], instagram: ['ig', '#FFFFFF'], x: ['#000000', '#FFFFFF'] }[name];
+  if (a <= 0 || !PATHS[name]) return; ctx.save(); ctx.globalAlpha *= a; ctx.translate(x, y); ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 5;
+  if (C[0] === 'ig') { const g = ctx.createLinearGradient(-s / 2, s / 2, s / 2, -s / 2); g.addColorStop(0, '#FEDA75'); g.addColorStop(0.35, '#FA7E1E'); g.addColorStop(0.65, '#D62976'); g.addColorStop(1, '#4F5BD5'); ctx.fillStyle = g; } else ctx.fillStyle = C[0];
+  rr(-s / 2, -s / 2, s, s, s * 0.24); ctx.fill(); ctx.shadowColor = 'transparent'; const k = s * 0.56 / 24; ctx.translate(-12 * k, -12 * k); ctx.scale(k, k); ctx.fillStyle = C[1]; ctx.fill(PATHS[name]); ctx.restore();
+}
+function grid(a = 0.035) { ctx.strokeStyle = `rgba(245,243,250,${a})`; ctx.lineWidth = 1; for (let x = 60; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); } for (let y = 60; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); } }
+function check(x, y, q) { ctx.save(); rr(x, y, 44, 44, 12); ctx.fillStyle = q > 0 ? PU : 'rgba(245,243,250,0.06)'; ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke();
+  if (q > 0) { const p = eo(q); ctx.strokeStyle = WH; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x + 12, y + 23); ctx.lineTo(x + 12 + 8 * Math.min(1, p * 2), y + 23 + 8 * Math.min(1, p * 2)); if (p > 0.5) ctx.lineTo(x + 20 + 14 * (p - 0.5) * 2, y + 31 - 16 * (p - 0.5) * 2); ctx.stroke(); } ctx.restore(); }
+function promptBar(t, x, y, w, typed, { a = 1, cursor = true, h = 116 } = {}) {
+  ctx.save(); ctx.globalAlpha *= a; rr(x, y, w, h, h / 2); ctx.fillStyle = 'rgba(23,23,30,0.96)'; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.22)'; ctx.lineWidth = 2; ctx.stroke();
+  txt('say ›', x + 50, y + h / 2 + 13, `700 36px ${MONO}`, PU); const f = '600 42px Sat'; txt(typed, x + 180, y + h / 2 + 15, f, WH); if (cursor && t % 0.8 < 0.45) { ctx.fillStyle = WH; ctx.fillRect(x + 184 + tw(typed, f), y + h / 2 - 25, 4, 50); } ctx.restore();
+}
+// Tamm: a window on the vertical clip, or a round avatar on his face (the face sits still in the clip's second half)
+function tammWindow(t, x, y, w, t0, a = 1) { const im = tamm(t0); if (!im) return; const h = w * 16 / 9; ctx.save(); ctx.globalAlpha *= a; ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 50; rr(x, y, w, h, 28); ctx.fillStyle = OB; ctx.fill(); ctx.restore(); ctx.save(); rr(x, y, w, h, 28); ctx.clip(); ctx.drawImage(im, x, y, w, h); ctx.restore(); rr(x, y, w, h, 28); ctx.strokeStyle = 'rgba(245,243,250,0.18)'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore(); }
+function avatar(t, cx, cy, r, a = 1) { const im = tamm(4.6 + (t % 5.2)); if (!im) return; ctx.save(); ctx.globalAlpha *= a; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.clip(); const s = r / 190; ctx.drawImage(im, cx - 365 * s, cy - 285 * s, 720 * s, 1280 * s); ctx.restore(); ctx.save(); ctx.globalAlpha *= a; ctx.strokeStyle = PU; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(cx, cy, r + 3, 0, 7); ctx.stroke(); ctx.restore(); }
+// the voice lines, for the speech bubble
+const LINES = ['Got it.', 'Here’s how we get there.', 'Strategy first: the audience, the offer, and the number each channel must deliver.', '', 'A brand people remember, in Arabic and English.', 'Content made for the platforms your customers use.', 'One clear message in every piece.', 'Photo, video and motion, made for the feed.', 'Paid media, tested and scaled against sales. Not reach.', 'Found by buyers who are already searching.', 'Websites built to turn visits into sales.', 'And tracking you can trust, so the next decision is smarter.', 'Don’t take our word for it.', 'So… what’s your goal?', 'Say it.', 'We’ll Tamm it.'];
+
+// ---------- 0 · the goal, typed; Tamm answers ----------
+function opening(t) {
+  if (t >= G0) return; const out = ss(seg(t, G0 - 0.35, G0)); ctx.save(); ctx.globalAlpha = 1 - out; ctx.translate(0, -80 * out); grid(0.03 * seg(t, 0, 0.5));
+  const mv = eio(seg(t, ENTER, ENTER + 0.55)), F = '700 84px Sat';
+  const title = "What’s your goal?", n = Math.floor(clamp((t - 0.15) / 0.6) * title.length), tx = lerp(540 - tw(title, F) / 2, 70, mv), ty = lerp(800, 230, mv);
+  txt(title.slice(0, Math.min(n, 12)), tx, ty, F, WH); itx(n > 12 ? title.slice(12, n) : '', tx + tw('What’s your ', F), ty, F, PU);
+  const goal = 'Grow our sales in Saudi Arabia.', g = Math.floor(clamp((t - 1.0) / 1.9) * goal.length);
+  ctx.save(); ctx.translate(0, 0); promptBarV(t, 60, lerp(880, 290, mv), 960, goal.slice(0, g), seg(t, 0.6, 0.9), t < ENTER); ctx.restore();
+  if (t >= ENTER - 0.05 && t < ENTER + 0.18) { ctx.fillStyle = `rgba(245,243,250,${0.35 * (1 - seg(t, ENTER, ENTER + 0.18))})`; ctx.fillRect(0, 0, W, H); }
+  if (t > ENTER) {
+    const wq = spring(t, ENTER + 0.15, 0.55); tammWindow(t, 300, 470 + 60 * (1 - Math.min(1, wq)), 480, 3.2 + (t - ENTER), clamp(wq * 1.6));
+    [[0, T.cues[0][2]], [1, T.cues[1][2]]].forEach(([k, t0], i) => { const q = spring(t, t0 - 0.05, 0.4); if (q <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); ctx.translate(0, 24 * (1 - Math.min(1, q)));
+      const s2 = LINES[k], f = '600 44px Sat', w = tw(s2, f) + 76, y = 1390 + i * 120; rr(60, y, w, 96, 30); ctx.fillStyle = GR; ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke();
+      if (!i) txt('tamm ›', 60, y - 18, `600 28px ${MONO}`, PU); txt(s2, 98, y + 63, f, WH); ctx.restore(); });
+  }
+  ctx.restore();
+}
+function promptBarV(t, x, y, w, typed, a, cursor) { ctx.save(); ctx.globalAlpha *= a; const h = 116; rr(x, y, w, h, h / 2); ctx.fillStyle = 'rgba(23,23,30,0.96)'; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.22)'; ctx.lineWidth = 2; ctx.stroke();
+  txt('say ›', x + 44, y + 71, `700 34px ${MONO}`, PU); let f = '600 40px Sat'; if (tw(typed, f) > w - 230) f = '600 34px Sat'; txt(typed, x + 168, y + 72, f, WH); if (cursor && t % 0.8 < 0.45) { ctx.fillStyle = WH; ctx.fillRect(x + 172 + tw(typed, f), y + 33, 4, 50); } ctx.restore(); }
+// ---------- 1 · one goal, nine services ----------
+const GRID9 = ['w030.webp', 'w096.webp', 'w036.webp', 'w050.webp', 'w044.webp', 'w093.webp', 'w081.webp', 'w089.webp', 'w099.webp'];
+function nine(t) {
+  if (t < G0 - 0.2 || t >= S0) return; const v = seg(t, G0 - 0.2, G0 + 0.1) * (1 - seg(t, S0 - 0.3, S0)); ctx.save(); ctx.globalAlpha = v; grid(0.03);
+  const q1 = spring(t, G0 + 0.05, 0.45), q2 = spring(t, G0 + 0.45, 0.45), F = '700 124px Sat';
+  ctx.save(); ctx.globalAlpha *= clamp(q1 * 1.6); txt('One goal.', 70, 330, F, WH); ctx.restore();
+  ctx.save(); ctx.globalAlpha *= clamp(q2 * 1.6); txt('Nine', 70, 470, F, WH); itx('services.', 70 + tw('Nine ', F), 470, F, PU); ctx.restore();
+  const cnt = Math.min(9, Math.max(1, 1 + Math.floor(seg(t, G0 + 0.3, G0 + 1.7) * 8.999))); txt(String(cnt).padStart(2, '0'), 70, 640, `700 110px ${MONO}`, WH); txt('/ 09', 70 + tw('00 ', `700 110px ${MONO}`), 640, `500 44px ${MONO}`, MU);
+  ctx.save(); ctx.translate(560, 1260); ctx.rotate(-0.1);
+  GRID9.forEach((id, i) => { const r = Math.floor(i / 3), c = i % 3, d = G0 + 0.2 + (r + c) * 0.12, e = spring(t, d, 0.5); if (e <= 0) return; const w = 270, hh = 330, x = -435 + c * 300, y = -520 + r * 360 + 80 * (1 - Math.min(1, e));
+    ctx.save(); ctx.globalAlpha *= clamp(e * 1.6); ctx.save(); rr(x, y, w, hh, 16); ctx.clip(); const im = pic(id); if (im) { const sc = Math.max(w / im.naturalWidth, hh / im.naturalHeight); ctx.drawImage(im, x + (w - im.naturalWidth * sc) / 2, y + (hh - im.naturalHeight * sc) / 2, im.naturalWidth * sc, im.naturalHeight * sc); } ctx.restore(); rr(x, y, w, hh, 16); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke(); ctx.restore(); });
+  ctx.restore(); ctx.restore();
+}
+// ---------- 2 · the nine services ----------
+const SV = [
+  { n: '01', d: 'Strategy & Consulting', title: 'Digital Marketing Strategy', desc: 'A written plan that ties every channel and every riyal to a business objective.', line: 2, stage: stStrategy },
+  { n: '02', d: 'Creative & Content', title: 'Branding & Identity', desc: 'Positioning first, design second: Arabic and English developed together.', line: 4, stage: stBrand },
+  { n: '02', d: 'Creative & Content', title: 'Social Media Marketing', desc: 'Platform-native content and community management, measured by what it moves.', line: 5, stage: stSocial },
+  { n: '02', d: 'Creative & Content', title: 'Content Marketing', desc: 'Content that earns attention and moves buyers toward a decision.', line: 6, stage: stContent },
+  { n: '02', d: 'Creative & Content', title: 'Media Production', desc: 'Photography, video and motion, produced for the feed it will run in.', line: 7, stage: stProduction },
+  { n: '03', d: 'Media & Performance', title: 'Performance Marketing', desc: 'Paid search and paid social, planned, tested and scaled against revenue.', line: 8, stage: stPerformance },
+  { n: '04', d: 'Digital & Technology', title: 'SEO', desc: 'Be found by buyers who are already searching, in Arabic and English.', line: 9, stage: stSEO },
+  { n: '04', d: 'Digital & Technology', title: 'Website Development & CRO', desc: 'Fast, bilingual websites built to turn visits into enquiries and sales.', line: 10, stage: stWeb },
+  { n: '04', d: 'Digital & Technology', title: 'Analytics & Growth', desc: 'Tracking you can trust, and reports that end with the next decision.', line: 11, stage: stAnalytics },
+];
+const OX = 930, OY = 150;   // the stages are drawn in the 16:9 film's coordinates and moved into the vertical frame
+function services(t) {
+  SV.forEach((s, i) => {
+    const [a, b] = T.scenes[i]; if (t < a - 0.01 || t >= b) return; const lt = t - a, out = ss(seg(t, b - 0.3, b)), cue = T.cues[2 + i][2];
+    ctx.save(); ctx.globalAlpha = 1 - out; ctx.translate(-120 * out, 0);
+    const e = enter(lt, 0); ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy);
+    txt(s.n, 70, 200, `700 32px ${MONO}`, PU); txt('· ' + s.d, 70 + tw(s.n + ' ', `700 32px ${MONO}`), 200, `500 32px ${MONO}`, MU);
+    let z = 92; while (tw(s.title, `700 ${z}px Sat`) > 940 && z > 70) z -= 2; const tl = tw(s.title, `700 ${z}px Sat`) > 940 ? wrap(s.title, `700 ${z}px Sat`, 940) : [s.title];
+    tl.forEach((l, j) => txt(l, 64, 306 + j * (z + 6), `700 ${z}px Sat`, WH)); const yd = 306 + (tl.length - 1) * (z + 6) + 66;
+    wrap(s.desc, '500 34px Sat', 920).forEach((l, j) => txt(l, 70, yd + j * 46, '500 34px Sat', MU)); ctx.restore();
+    // the sample, moved from the 16:9 stage into the middle of the frame
+    ctx.save(); ctx.translate(90 - OX, 640 - OY); s.stage(lt, b - a); stamp(lt, b - a - 0.95); ctx.restore();
+    // Tamm says it
+    const sq = spring(t, cue - 0.1, 0.45); if (sq > 0) { ctx.save(); ctx.globalAlpha *= clamp(sq * 1.6); ctx.translate(0, 20 * (1 - Math.min(1, sq)));
+      avatar(t, 140, 1560, 66); const ls = wrap(LINES[s.line], '600 36px Sat', 640); const bh = 44 + ls.length * 46; rr(236, 1560 - bh / 2, 780, bh, 28); ctx.fillStyle = GR; ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke();
+      ls.forEach((l, j) => txt(l, 270, 1560 - bh / 2 + 54 + j * 46, '600 36px Sat', WH)); txt('tamm ›', 236, 1560 - bh / 2 - 16, `600 26px ${MONO}`, PU); ctx.restore(); }
+    ctx.restore();
+  });
+}
+function stamp(lt, t0) { const q = seg(lt, t0, t0 + 0.18); if (q <= 0) return; const k = lerp(1.8, 1, eo(q)); ctx.save(); ctx.globalAlpha *= clamp(q * 2) * 0.94; ctx.translate(1700, 250); ctx.rotate(-0.16); ctx.scale(k, k);
+  rr(-120, -62, 240, 124, 20); ctx.fillStyle = 'rgba(9,9,13,0.55)'; ctx.fill(); ctx.strokeStyle = PU; ctx.lineWidth = 7; ctx.stroke(); txt('تم', 26, 26, '700 76px Plex', PU, 'center', true); ctx.strokeStyle = PU; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-90, 0); ctx.lineTo(-66, 24); ctx.lineTo(-30, -22); ctx.stroke(); ctx.restore(); }
+function rail(t) {
+  const v = seg(t, S0 - 0.3, S0) * (1 - seg(t, Q0 - 0.3, Q0)); if (v <= 0) return; ctx.save(); ctx.globalAlpha = v;
+  const k = T.scenes.findIndex(([a, b]) => t >= a && t < b), kk = k < 0 ? 8 : k, sw = (940 - 8 * 10) / 9;
+  for (let i = 0; i < 9; i++) { const x = 70 + i * (sw + 10); ctx.fillStyle = 'rgba(245,243,250,0.14)'; ctx.fillRect(x, 1812, sw, 6); const [a, b] = T.scenes[i], p = seg(t, a, b); ctx.fillStyle = i < kk ? 'rgba(245,243,250,0.55)' : PU; ctx.fillRect(x, 1812, sw * p, 6); }
+  txt('/plan services', 70, 1784, `500 28px ${MONO}`, MU); txt(`${String(kk + 1).padStart(2, '0')} / 09`, 1010, 1784, `600 28px ${MONO}`, WH, 'right'); ctx.restore();
+}
+function stStrategy(lt) {
+  const items = ['Objective', 'Audience', 'Offer', 'Channels', 'The number each one must deliver'];
+  items.forEach((s, i) => { const e = enter(lt, 0.35 + i * 0.25), y = OY + 30 + i * 118, x = OX + 60, w = 760; if (e.q <= 0) return;
+    if (i) { ctx.fillStyle = PU; ctx.fillRect(x + w / 2 - 2, y - 26, 4, 26 * eo(seg(lt, 0.3 + i * 0.25, 0.5 + i * 0.25))); }
+    ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy); rr(x, y, w, 88, 44); ctx.fillStyle = i === 4 ? PU : GR; ctx.fill(); ctx.strokeStyle = i === 0 ? PU : LN; ctx.lineWidth = i === 0 ? 4 : 2; ctx.stroke();
+    txt(String(i + 1).padStart(2, '0'), x + 42, y + 56, `700 26px ${MONO}`, i === 4 ? WH : PU); txt(s, x + 100, y + 58, '700 36px Sat', WH); ctx.restore(); });
+  chips(['Saudi Arabia', 'UAE', 'Kuwait', 'Oman', 'Egypt'], OX + 60, OY + 640, lt, 2.0);
+}
+function stBrand(lt) {
+  const e = [0.3, 0.5, 0.7, 0.9].map((d) => enter(lt, d));
+  ctx.save(); ctx.translate(0, e[0].dy); card(pic('w096.webp'), OX, OY + 10, 480, { a: e[0].a }); ctx.restore();
+  ctx.save(); ctx.translate(0, e[1].dy); card(pic('w099.webp'), OX + 500, OY + 40, 400, { a: e[1].a, rot: 0.03 }); ctx.restore();
+  ctx.save(); ctx.translate(0, e[2].dy); card(pic('alia_logo.jpg'), OX + 20, OY + 400, 420, { a: e[2].a, rot: -0.02 }); ctx.restore();
+  ctx.save(); ctx.translate(0, e[3].dy); card(pic('w097.webp'), OX + 500, OY + 380, 380, { a: e[3].a, rot: 0.015 }); ctx.restore();
+  chips(['Logo', 'Palette', 'Type', 'Brand manual'], OX + 20, OY + 700, lt, 1.6);
+}
+function phoneFeed(x, y, w, h, ids, scroll, a) {
+  ctx.save(); ctx.globalAlpha *= a; ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 44; rr(x, y, w, h, 44); ctx.fillStyle = '#0E0E13'; ctx.fill(); ctx.restore(); rr(x, y, w, h, 44); ctx.strokeStyle = 'rgba(245,243,250,0.25)'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.save(); rr(x + 10, y + 10, w - 20, h - 20, 34); ctx.clip(); ctx.fillStyle = '#111'; ctx.fillRect(x, y, w, h); let yy = y + 60 - scroll;
+  ids.forEach((id) => { ctx.fillStyle = 'rgba(245,243,250,0.85)'; ctx.beginPath(); ctx.arc(x + 36, yy + 18, 12, 0, 7); ctx.fill(); ctx.fillRect(x + 58, yy + 11, 100, 12); yy += 40; const hh = card(pic(id), x + 10, yy, w - 20, { r: 0, shadow: false }); yy += hh + 8; ['♥', '◯', '➤'].forEach((s, k) => txt(s, x + 30 + k * 44, yy + 28, '600 26px Sat', WH)); yy += 52; });
+  ctx.restore(); ctx.fillStyle = '#0E0E13'; rr(x + w / 2 - 50, y + 18, 100, 24, 12); ctx.fill(); ctx.restore();
+}
+function stSocial(lt, L) {
+  const e = enter(lt, 0.3); ctx.save(); ctx.translate(0, e.dy); phoneFeed(OX + 10, OY + 10, 330, 700, ['w030.webp', 'w031.webp', 'w032.webp'], 470 * ss(seg(lt, 0.8, L - 0.6)), e.a); ctx.restore();
+  const e2 = enter(lt, 0.55), e3 = enter(lt, 0.75);
+  ctx.save(); ctx.translate(0, e2.dy); card(pic('w036.webp'), OX + 380, OY + 20, 260, { a: e2.a, rot: 0.03 }); ctx.restore();
+  ctx.save(); ctx.translate(0, e3.dy); card(pic('w037.webp'), OX + 640, OY + 90, 260, { a: e3.a, rot: -0.03 }); ctx.restore();
+  ['instagram', 'tiktok', 'snapchat', 'x', 'youtube'].forEach((n, i) => { const q = spring(lt, 1.2 + i * 0.08, 0.4); tile(n, OX + 430 + i * 100, OY + 520, 76 * lerp(0.6, 1, Math.min(1, q)), clamp(q * 1.6)); });
+  chips(['Community management', 'AR & EN'], OX + 385, OY + 610, lt, 1.6);
+}
+function stContent(lt) {
+  const e = [0.3, 0.5, 0.65].map((d) => enter(lt, d));
+  ctx.save(); ctx.translate(0, e[0].dy); const h = card(pic('w050.webp'), OX, OY + 20, 590, { a: e[0].a }); ctx.restore();
+  ctx.save(); ctx.translate(0, e[1].dy); card(pic('w051.webp'), OX + 610, OY + 20, 290, { a: e[1].a }); ctx.restore();
+  ctx.save(); ctx.translate(0, e[2].dy); card(pic('w052.webp'), OX + 610, OY + 250, 290, { a: e[2].a }); ctx.restore();
+  const q = enter(lt, 1.1); ctx.save(); ctx.globalAlpha *= q.a; ctx.translate(0, q.dy); const s = '“Al Zahid in every home”', f = '600 30px Sat', w = tw(s, f) + 56; rr(OX + 24, OY + 20 + h - 90, w, 64, 32); ctx.fillStyle = 'rgba(9,9,13,0.84)'; ctx.fill(); ctx.fillStyle = PU; ctx.fillRect(OX + 24, OY + 20 + h - 90, 7, 64); txt(s, OX + 52, OY + 20 + h - 47, f, WH); ctx.restore();
+  chips(['Bilingual', 'One message per piece', 'Ramadan & National Day'], OX, OY + 520, lt, 1.4);
+}
+function stProduction(lt) {
+  const e = enter(lt, 0.3); ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy);
+  const im = niimee(2.0 + lt); if (im) { ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 44; rr(OX, OY + 10, 420, 525, 20); ctx.fillStyle = OB; ctx.fill(); ctx.restore(); ctx.save(); rr(OX, OY + 10, 420, 525, 20); ctx.clip(); ctx.drawImage(im, OX, OY + 10, 420, 525); ctx.restore(); }
+  ctx.fillStyle = '#E5484D'; ctx.beginPath(); ctx.arc(OX + 34, OY + 46, 9, 0, 7); ctx.fill(); txt('REC  00:' + String(Math.floor(2 + lt)).padStart(2, '0'), OX + 52, OY + 55, `600 22px ${MONO}`, OB); ctx.restore();
+  const e2 = enter(lt, 0.55), e3 = enter(lt, 0.7), e4 = enter(lt, 0.9);
+  ctx.save(); ctx.translate(0, e2.dy); card(pic('w093.webp'), OX + 450, OY + 10, 210, { a: e2.a, rot: 0.02 }); ctx.restore();
+  ctx.save(); ctx.translate(0, e3.dy); card(pic('w094.webp'), OX + 685, OY + 30, 210, { a: e3.a, rot: -0.02 }); ctx.restore();
+  ctx.save(); ctx.translate(0, e4.dy); card(pic('w092.webp'), OX + 450, OY + 360, 420, { a: e4.a }); ctx.restore();
+  chips(['Motion & animated social', 'Short-form video', 'Product photography'], OX, OY + 640, lt, 1.4);
+}
+function stPerformance(lt) {
+  ['w040.webp', 'w041.webp'].forEach((id, i) => { const e = enter(lt, 0.3 + i * 0.2), x = OX + 170, y = OY + i * 360; ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy);
+    const win = i === 0 && lt > 2.0; rr(x, y, 560, 340, 22); ctx.fillStyle = GR; ctx.fill(); ctx.strokeStyle = win ? PU : LN; ctx.lineWidth = win ? 5 : 2; ctx.stroke();
+    ctx.fillStyle = 'rgba(245,243,250,0.8)'; ctx.beginPath(); ctx.arc(x + 32, y + 30, 13, 0, 7); ctx.fill(); txt('Tech Hive', x + 56, y + 30, '700 22px Sat', WH); txt('Sponsored', x + 56, y + 52, '500 18px Sat', MU);
+    card(pic(id), x + 10, y + 70, 540, { r: 12, shadow: false }); ctx.fillStyle = i ? WH : PU; ctx.beginPath(); ctx.arc(x + 530, y + 32, 20, 0, 7); ctx.fill(); txt(i ? 'B' : 'A', x + 530, y + 41, '700 24px Sat', i ? OB : WH, 'center'); ctx.restore(); });
+  ['google', 'meta', 'snapchat', 'tiktok', 'youtube'].forEach((n, i) => { const q = spring(lt, 0.9 + i * 0.08, 0.4); tile(n, OX + 60, OY + 60 + i * 128, 80 * lerp(0.6, 1, Math.min(1, q)), clamp(q * 1.6)); });
+  chips(['Test → learn → scale'], OX + 170, OY + 725, lt, 2.1, { fill: PU }); chips(['Against sales, not reach'], OX + 470, OY + 725, lt, 2.3);
+}
+function stSEO(lt) {
+  const e = enter(lt, 0.3); ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy); rr(OX, OY + 20, 900, 100, 50); ctx.fillStyle = GR; ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke();
+  ctx.strokeStyle = WH; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(OX + 60, OY + 66, 17, 0, 7); ctx.moveTo(OX + 73, OY + 79); ctx.lineTo(OX + 86, OY + 92); ctx.stroke();
+  const en = 'ready-built gaming pc', ar = 'جهاز قيمنق جاهز'; if (lt < 1.55) txt(en.slice(0, Math.floor(clamp((lt - 0.45) / 0.85) * en.length)), OX + 110, OY + 84, '600 38px Sat', WH); else txt(ar.slice(0, Math.floor(clamp((lt - 1.65) / 0.6) * ar.length)), OX + 860, OY + 84, '600 40px Plex', WH, 'right', true);
+  ctx.restore(); const rise = eo(seg(lt, 2.0, 2.6));
+  [0, 1, 2].forEach((k) => { const ee = enter(lt, 0.55 + k * 0.1); if (ee.q <= 0) return; const slot = k === 2 ? lerp(2, 0, rise) : k + rise, y = OY + 160 + slot * 150, hl = k === 2;
+    ctx.save(); ctx.globalAlpha *= ee.a; rr(OX, y, 900, 128, 18); ctx.fillStyle = hl ? 'rgba(108,53,255,0.16)' : GR; ctx.fill(); ctx.strokeStyle = hl ? PU : LN; ctx.lineWidth = hl ? 4 : 2; ctx.stroke();
+    ctx.fillStyle = hl ? WH : 'rgba(245,243,250,0.35)'; rr(OX + 36, y + 30, hl ? 460 : 400, 22, 11); ctx.fill(); ctx.fillStyle = 'rgba(245,243,250,0.18)'; rr(OX + 36, y + 70, 700, 14, 7); ctx.fill(); rr(OX + 36, y + 96, 500, 14, 7); ctx.fill();
+    if (hl) chip('Your page', OX + 730, y + 20, { fill: PU, font: '600 22px Sat' }); ctx.restore(); });
+  chips(['price', 'best', 'near me'], OX, OY + 660, lt, 1.3); chips(['سعر', 'أفضل', 'قريب مني'], OX + 460, OY + 660, lt, 1.6, { font: '600 26px Plex', rtl: true });
+}
+function stWeb(lt, L) {
+  const e = enter(lt, 0.3), sc = ss(seg(lt, 0.9, L - 0.6)); ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy);
+  rr(OX, OY + 30, 740, 500, 18); ctx.fillStyle = '#1C1C24'; ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke(); ['#E5484D', '#F5A524', '#45B36B'].forEach((c, i) => { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(OX + 30 + i * 24, OY + 56, 7, 0, 7); ctx.fill(); });
+  rr(OX + 110, OY + 42, 420, 28, 14); ctx.fillStyle = 'rgba(245,243,250,0.08)'; ctx.fill(); txt('saytamm.com', OX + 130, OY + 63, `500 18px ${MONO}`, MU);
+  ctx.save(); rr(OX + 10, OY + 84, 720, 436, 10); ctx.clip(); const im = pic('site_en_desk.png'); if (im) ctx.drawImage(im, OX + 10, OY + 84, 720, 720 * im.naturalHeight / im.naturalWidth); ctx.restore(); ctx.restore();
+  const e2 = enter(lt, 0.55); ctx.save(); ctx.globalAlpha *= e2.a; ctx.translate(0, e2.dy); const px = OX + 640, py = OY + 200, pw = 260, ph = 540;
+  ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 44; rr(px, py, pw, ph, 36); ctx.fillStyle = '#0E0E13'; ctx.fill(); ctx.restore(); rr(px, py, pw, ph, 36); ctx.strokeStyle = 'rgba(245,243,250,0.25)'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.save(); rr(px + 8, py + 8, pw - 16, ph - 16, 28); ctx.clip(); const m = pic('site_ar.png'); if (m) { const sw = pw - 16, sh = sw * m.naturalHeight / m.naturalWidth; ctx.drawImage(m, px + 8, py + 8 - sc * (sh - ph + 16), sw, sh); } ctx.restore(); ctx.restore();
+  chips(['EN · left to right', 'AR · right to left'], OX, OY + 580, lt, 1.2); chips(['Fast', 'Built to convert'], OX, OY + 650, lt, 1.5, (i) => ({ fill: i ? PU : 'rgba(245,243,250,0.07)' }));
+}
+function stAnalytics(lt) {
+  const rows = ['A measurement plan for every channel', 'Tracking set-up and checks', 'Website and ad-platform conversions', 'Platform results vs. total business results', 'Reviews that end with the next budget decision'];
+  const e = enter(lt, 0.25); ctx.save(); ctx.globalAlpha *= e.a; ctx.translate(0, e.dy); rr(OX, OY + 10, 900, 570, 26); ctx.fillStyle = GR; ctx.fill(); ctx.strokeStyle = LN; ctx.lineWidth = 2; ctx.stroke(); txt('measurement.plan', OX + 40, OY + 66, `600 26px ${MONO}`, MU); ctx.restore();
+  rows.forEach((s, i) => { const y = OY + 100 + i * 94, q = enter(lt, 0.45 + i * 0.22); if (q.q <= 0) return; ctx.save(); ctx.globalAlpha *= q.a; ctx.translate(0, q.dy); check(OX + 40, y, seg(lt, 0.75 + i * 0.22, 1.0 + i * 0.22)); txt(s, OX + 110, y + 32, '600 30px Sat', WH); ctx.restore(); });
+  chips(['Measure', '→', 'Learn', '→', 'Plan', '→', 'Repeat'], OX, OY + 640, lt, 1.8, (i) => ({ fill: i % 2 ? 'rgba(0,0,0,0)' : 'rgba(245,243,250,0.07)' }));
+}
+// ---------- 3 · in their words ----------
+const QUOTES = [
+  { q: '…Within a few months, our brand was visible across all platforms, and we started getting serious inquiries.', who: 'DC Block Factory', what: 'Building materials', img: 'w110.webp' },
+  { q: '…delivered high-quality content that reflects our identity perfectly. We’ve seen real engagement growth.', who: 'Altopiano', what: 'Hospitality', img: 'w080.webp' },
+  { q: '…The team is proactive, creative, and truly understands business needs.', who: 'Bitumat', what: 'Building materials', img: 'w071.webp' },
+  { q: '…We’ve seen stronger brand presence, better audience targeting, and a steady flow of high-quality leads.', who: 'Alqimma Equipment', what: 'Industrial equipment', img: 'w117.webp' },
+];
+function quotes(t) {
+  if (t < Q0 - 0.3 || t >= E0) return; const v = seg(t, Q0 - 0.3, Q0) * (1 - seg(t, E0 - 0.3, E0)); ctx.save(); ctx.globalAlpha = v; grid(0.03);
+  const big = 1 - eio(seg(t, Q0 + 1.1, Q0 + 1.5)), q0 = spring(t, T.cues[11][2] - 0.05, 0.45), fs = Math.round(lerp(58, 120, big)), f = `700 ${fs}px Sat`, y0 = lerp(190, 860, big);
+  ctx.save(); ctx.globalAlpha *= clamp(q0 * 1.6); txt('Don’t take our', 70, y0, f, WH); itx('word for it.', 70, y0 + fs + 12, f, PU); ctx.restore();
+  QUOTES.forEach((c, i) => { const a = Q0 + 1.5 + i * QL, b = a + QL; if (t < a || t >= b) return; const lt = t - a, out = ss(seg(t, b - 0.25, b)), e = enter(lt, 0.02);
+    ctx.save(); ctx.globalAlpha *= e.a * (1 - out); ctx.translate(-100 * out, e.dy);
+    card(pic(c.img), 70, 360, 400, { rot: -0.02 }); txt(c.who, 510, 440, '700 46px Sat', WH); txt(c.what, 510, 490, `500 30px ${MONO}`, MU);
+    const lines = wrap(c.q, '600 60px Sat', 940); txt('“', 60, 1060, '700 220px Sat', PU); lines.forEach((l, j) => txt(l, 70, 1100 + j * 78, '600 60px Sat', WH)); ctx.restore(); });
+  QUOTES.forEach((c, i) => { ctx.fillStyle = t >= Q0 + 1.5 + i * QL ? WH : 'rgba(245,243,250,0.2)'; ctx.beginPath(); ctx.arc(80 + i * 34, 1800, 8, 0, 7); ctx.fill(); });
+  ctx.restore();
+}
+// ---------- 4 · your goal, then the lockup ----------
+function ending(t) {
+  if (t < E0 - 0.3) return; const v = seg(t, E0 - 0.3, E0); ctx.save(); ctx.globalAlpha = v; grid(0.03);
+  if (t < LOCK + 0.6) {
+    const q = spring(t, T.cues[12][2] - 0.05, 0.45), F = '700 104px Sat'; ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); txt('So… what’s', 70, 260, F, WH); txt('your', 70, 380, F, WH); itx('goal?', 70 + tw('your ', F), 380, F, PU); ctx.restore();
+    const wq = spring(t, E0 + 0.05, 0.55); tammWindow(t, 330, 470 + 50 * (1 - Math.min(1, wq)), 420, 6.0 + (t - E0) * 0.8, clamp(wq * 1.6));
+    const say = 'Say it.', n = Math.floor(clamp((t - T.say) / 0.3) * say.length); promptBarV(t, 60, 1290, 960, say.slice(0, n), seg(t, E0 + 0.6, E0 + 0.9), true);
+    const r = spring(t, T.tamm - 0.05, 0.4); if (r > 0) { ctx.save(); ctx.globalAlpha *= clamp(r * 1.6); ctx.translate(0, 30 * (1 - Math.min(1, r))); txt('tamm ›', 70, 1520, `700 32px ${MONO}`, PU); txt('We’ll Tamm it.', 64, 1640, '700 118px Sat', WH); ctx.restore(); }
+  }
+  if (t >= LOCK - 0.1) {
+    const S = 120, cols = Math.ceil(W / S), rows = Math.ceil(H / S);
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const d = Math.hypot(c - cols / 2, r - rows / 2) / Math.hypot(cols / 2, rows / 2), p = eo(seg(t, LOCK - 0.1 + d * 0.45, LOCK + 0.15 + d * 0.45)); if (p <= 0) continue; const s2 = S * p; ctx.fillStyle = OB; ctx.fillRect(c * S + (S - s2) / 2, r * S + (S - s2) / 2, s2 + 1, s2 + 1); if (p < 1) { ctx.strokeStyle = 'rgba(108,53,255,0.5)'; ctx.lineWidth = 2; ctx.strokeRect(c * S + (S - s2) / 2, r * S + (S - s2) / 2, s2, s2); } }
+    const show = (t0, f) => { const q = spring(t, t0, 0.45); if (q <= 0) return; ctx.save(); ctx.globalAlpha = clamp(q * 1.6); ctx.translate(0, 22 * (1 - Math.min(1, q))); f(); ctx.restore(); };
+    show(LOCK + 0.5, () => { const SH = 250, SW = SH * 600 / 721; ctx.drawImage(SYMBOL, 540 - SW / 2, 620 - SH / 2, SW, SH); });
+    show(LOCK + 0.75, () => txt('SayTamm', 540, 920, '700 130px Sat', WH, 'center'));
+    show(T.GULF, () => txt('قول تم', 540, 1020, '700 66px Plex', MU, 'center', true));
+    show(LOCK + 1.4, () => { const s2 = 'Say it. Tamm it', f = '700 68px Sat', w = tw(s2, f); txt(s2, 528, 1160, f, WH, 'center'); ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(528 + w / 2 + 16, 1151, 10, 0, 7); ctx.fill(); });
+    show(LOCK + 1.8, () => { txt('A digital marketing & performance agency', 540, 1250, '500 36px Sat', MU, 'center'); txt('saytamm.com', 540, 1360, '700 46px Sat', WH, 'center'); txt('info@saytamm.com', 540, 1420, '500 36px Sat', MU, 'center'); });
+  }
+  ctx.restore();
+}
+function draw(t) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H); if (t >= S0 - 0.3 && t < Q0) grid(0.03); opening(t); nine(t); services(t); rail(t); quotes(t); ending(t); }
+window.seek = async (t) => { for (let p = 0; p < 4; p++) { MISS = []; draw(t); if (!MISS.length) return; await loadMissing(); } };
+
+// ---------- score: original, 120 BPM ----------
+window.renderAudio = async () => {
+  const SR = 48000, B = 0.5, ac = new OfflineAudioContext(2, Math.ceil(SR * DUR), SR);
+  const master = ac.createDynamicsCompressor(); master.threshold.value = -16; master.ratio.value = 3; master.attack.value = 0.004; master.release.value = 0.18; master.connect(ac.destination);
+  const bus = ac.createGain(); bus.connect(master);
+  const rev = ac.createConvolver(); { const len = SR * 2.2, ir = ac.createBuffer(2, len, SR); for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let s = 13 + ch; for (let i = 0; i < len; i++) { s = (s * 16807) % 2147483647; d[i] = (s / 1073741823.5 - 1) * Math.pow(1 - i / len, 3.1); } } rev.buffer = ir; }
+  const revIn = ac.createGain(), revOut = ac.createGain(); revOut.gain.value = 0.26; revIn.connect(rev); rev.connect(revOut); revOut.connect(master);
+  const nb = (() => { const b = ac.createBuffer(1, SR, SR), d = b.getChannelData(0); let s = 3; for (let i = 0; i < d.length; i++) { s = (s * 16807) % 2147483647; d[i] = s / 1073741823.5 - 1; } return b; })();
+  const env = (g, t, a, pk, d) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+  const osc = (t, type, f0, f1, a, d, pk, pan = 0, send = 0, lp = 0) => { const o = ac.createOscillator(), g = ac.createGain(), p = ac.createStereoPanner(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + a + d * 0.6);
+    let n = o; if (lp) { const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = lp; o.connect(fl); n = fl; } env(g, t, a, pk, d); p.pan.value = pan; n.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } o.start(t); o.stop(t + a + d + 0.05); };
+  const noise = (t, type, f, q, a, d, pk, pan = 0, f1 = 0, send = 0) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(), p = ac.createStereoPanner(); s.buffer = nb; s.loop = true; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + a + d); fl.Q.value = q; env(g, t, a, pk, d); p.pan.value = pan; s.connect(fl); fl.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } s.start(t, (t * 0.37) % 0.8); s.stop(t + a + d + 0.05); };
+  const pad = (t, d, fs, g) => fs.forEach((f) => [-7, 7].forEach((dt) => { const o = ac.createOscillator(), fl = ac.createBiquadFilter(), gg = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = dt; fl.type = 'lowpass'; fl.frequency.value = 1000; gg.gain.setValueAtTime(0, t); gg.gain.linearRampToValueAtTime(g, t + 0.5); gg.gain.setValueAtTime(g, t + d - 0.4); gg.gain.linearRampToValueAtTime(0, t + d); o.connect(fl); fl.connect(gg); gg.connect(bus); const sg = ac.createGain(); sg.gain.value = 0.5; gg.connect(sg); sg.connect(revIn); o.start(t); o.stop(t + d + 0.05); }));
+  const CHD = [[220, 261.6, 329.6], [174.6, 220, 261.6], [261.6, 329.6, 392], [196, 246.9, 293.7]], ROOT = [55, 43.65, 65.4, 49];
+  const ticks = (a, b, gap = 0.05) => { for (let t = a; t < b; t += gap + ((t * 97) % 1) * 0.02) noise(t, 'bandpass', 3800, 3, 0.001, 0.018, 0.06, ((t * 13) % 1) - 0.5); };
+  pad(0, ENTER + 0.1, [110, 164.8], 0.012); ticks(0.15, 0.75, 0.07); ticks(1.0, 2.9); noise(1.2, 'bandpass', 300, 1.5, ENTER - 1.25, 0.05, 0.07, 0, 5000);
+  osc(ENTER, 'sine', 120, 38, 0.002, 0.8, 0.85); noise(ENTER, 'lowpass', 4000, 0.5, 0.001, 0.4, 0.26, 0, 0, 0.7);
+  const quietA = E0, quietB = LOCK;
+  for (let beat = Math.round(ENTER / B); beat < Math.round(LOCK / B); beat++) {
+    const t = beat * B, bar = Math.floor(beat / 4), c = bar % 4, ib = beat % 4, soft = t < G0 || (t >= Q0 && t < E0) || t >= quietA;
+    if (!soft || ib === 0) osc(t, 'sine', 150, 42, 0.002, 0.3, soft ? 0.45 : 0.75); if (!soft && (ib === 1 || ib === 3)) [0, 0.012].forEach((d) => noise(t + d, 'bandpass', 1500, 1.1, 0.001, 0.09, 0.14, 0, 0, 0.3));
+    for (let k = 0; k < 2; k++) noise(t + k * B / 2, 'highpass', 8500, 0.7, 0.001, k ? 0.06 : 0.03, soft ? 0.02 : 0.045, 0.2);
+    if (ib === 0) pad(t, 4 * B, CHD[c], soft ? 0.012 : 0.008);
+    if (!soft) { for (let k = 0; k < 2; k++) osc(t + k * B / 2, 'sawtooth', ROOT[c] * (k ? 2 : 1), 0, 0.006, B * 0.4, 0.12, 0, 0, 320); osc(t + B / 2, 'triangle', CHD[c][beat % 3] * 2, 0, 0.003, 0.25, 0.026, (beat % 2 ? 0.3 : -0.3), 0.3); }
+    else osc(t + B / 2, 'triangle', CHD[c][beat % 3] * 2, 0, 0.003, 0.4, 0.024, (beat % 2 ? 0.3 : -0.3), 0.5);
+  }
+  // the count, each service, each stamp, each quote
+  for (let k = 0; k < 9; k++) osc(G0 + 0.3 + k * 0.155, 'sine', 523 + k * 55, 0, 0.002, 0.08, 0.04);
+  T.scenes.forEach(([a, b], i) => { osc(a, 'sine', 110, 40, 0.002, 0.4, 0.4); noise(a - 0.35, 'bandpass', 500, 1.2, 0.3, 0.05, 0.07, 0, 5000);
+    const s = b - 0.95; osc(s, 'sine', 90, 36, 0.002, 0.35, 0.75); noise(s, 'lowpass', 900, 0.8, 0.001, 0.12, 0.35); osc(s + 0.02, 'triangle', [880, 987.8, 1046.5, 1174.7, 1318.5, 1174.7, 1046.5, 987.8, 880][i], 0, 0.002, 0.5, 0.03, 0, 0.5); });
+  ticks(T.scenes[6][0] + 0.45, T.scenes[6][0] + 1.3); ticks(T.scenes[6][0] + 1.65, T.scenes[6][0] + 2.25);
+  QUOTES.forEach((q, i) => osc(Q0 + 1.5 + i * QL, 'triangle', [880, 784, 698.5, 659.3][i], 0, 0.002, 1.0, 0.035, 0, 0.6));
+  ticks(T.say, T.say + 0.3); osc(T.tamm, 'sine', 110, 40, 0.002, 0.5, 0.65); noise(T.tamm, 'lowpass', 3000, 0.6, 0.001, 0.22, 0.2, 0, 0, 0.5);
+  for (let k = 0; k < 10; k++) noise(LOCK + k * 0.05, 'bandpass', 2000 + k * 200, 2, 0.001, 0.03, 0.04, (k % 2) - 0.5);
+  osc(LOCK + 0.5, 'sine', 100, 34, 0.002, 1.3, 0.9); noise(LOCK + 0.5, 'lowpass', 5000, 0.5, 0.001, 0.8, 0.28, 0, 0, 0.8); pad(LOCK + 0.5, DUR - LOCK - 0.5, [220, 277.2, 329.6, 440], 0.014); osc(LOCK + 0.5, 'sine', 55, 0, 0.05, DUR - LOCK - 0.7, 0.16, 0, 0, 160);
+  [[LOCK + 0.75, 880], [T.GULF, 1318.5], [LOCK + 1.4, 1108.7]].forEach(([t, f]) => osc(t, 'triangle', f, 0, 0.002, 1.2, 0.035, 0, 0.6));
+  const buf = await ac.startRendering(), Lc = buf.getChannelData(0), Rc = buf.getChannelData(1), n = Lc.length, ab = new ArrayBuffer(44 + n * 4), dv = new DataView(ab);
+  const ws = (o, s) => [...s].forEach((ch, i) => dv.setUint8(o + i, ch.charCodeAt(0)));
+  ws(0, 'RIFF'); dv.setUint32(4, 36 + n * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 2, true); dv.setUint32(24, SR, true); dv.setUint32(28, SR * 4, true); dv.setUint16(32, 4, true); dv.setUint16(34, 16, true); ws(36, 'data'); dv.setUint32(40, n * 4, true);
+  for (let i = 0; i < n; i++) { dv.setInt16(44 + i * 4, Math.max(-1, Math.min(1, Lc[i])) * 32767, true); dv.setInt16(46 + i * 4, Math.max(-1, Math.min(1, Rc[i])) * 32767, true); }
+  let bin = ''; const u8 = new Uint8Array(ab); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(bin);
+};
+window.ready = (async () => {
+  await Promise.all(['500 40px Sat', '700 40px Sat', '500 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول تم سعر Say it 0123'))); await document.fonts.load(`500 32px ${MONO}`, '/plan say ›'); await document.fonts.ready;
+  for (const [n, v] of Object.entries(ICONS)) PATHS[n] = new Path2D(v.d);
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode(); await window.seek(0); return true;
+})();
+</script></body></html>

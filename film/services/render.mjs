@@ -12,7 +12,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const OUT = path.join(ROOT, 'handover', 'launch-film', 'services'); fs.mkdirSync(OUT, { recursive: true });
 const arg = (k) => { const i = process.argv.indexOf(k); return i < 0 ? null : process.argv[i + 1] ?? true; };
 const FPS = 60, SUB = 2, VAR = 'en';
-const html = fs.readFileSync(path.join(ROOT, 'film/services/film.html'), 'utf8')
+const html = fs.readFileSync(path.join(ROOT, 'film/services/' + (arg('--vertical') ? 'film_v.html' : 'film.html') + ''), 'utf8')
   .replaceAll('__LF__', pathToFileURL(path.join(ROOT, 'handover', 'launch-film')).href)
   .replace('__TIMING__', fs.readFileSync(path.join(ROOT, 'film/services/timing.json'), 'utf8'))
   .replace('__ICONS__', fs.readFileSync(path.join(ROOT, 'film/roas/assets/platform-icons.json'), 'utf8'))
@@ -21,13 +21,13 @@ const html = fs.readFileSync(path.join(ROOT, 'film/services/film.html'), 'utf8')
   .replaceAll('__PLEX__', pathToFileURL(path.join(ROOT, 'site/node_modules/@fontsource/ibm-plex-sans-arabic/files')).href)
   .replaceAll('__SYMBOL__', pathToFileURL(path.join(ROOT, 'brand/production/logo/SayTamm_Symbol_Signature_White-Purple.svg')).href)
   .replaceAll('__VARIANT__', VAR);
-const TAG = `_${VAR}` + (arg('--part') !== null ? `_${arg('--part')}` : arg('--frames') ? '_f' : arg('--audio-only') ? '_a' : '');
+const TAG = `_${VAR}` + (arg('--vertical') ? 'v' : '') + (arg('--part') !== null ? `_${arg('--part')}` : arg('--frames') ? '_f' : arg('--audio-only') ? '_a' : '');
 const TMP = path.join(OUT, `_film${TAG}.html`); fs.writeFileSync(TMP, html);
 const require = createRequire(import.meta.url);
 let playwright;
 try { playwright = require('playwright'); } catch { playwright = require(execFileSync('npm', ['root', '-g']).toString().trim() + '/playwright'); }
 const browser = await playwright.chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+const page = await browser.newPage({ viewport: arg('--vertical') ? { width: 1080, height: 1920 } : { width: 1920, height: 1080 } });
 const errs = []; page.on('pageerror', (e) => errs.push(e.message));
 await page.goto(pathToFileURL(TMP).href, { waitUntil: 'load' });
 await page.evaluate(() => window.ready);
@@ -35,7 +35,7 @@ if (errs.length) throw new Error(errs.join('\n'));
 const at = async (t, o = {}) => { await page.evaluate((x) => window.seek(x), t); return page.screenshot({ type: 'jpeg', quality: 100, ...o }); };
 const done = async () => { if (errs.length) throw new Error(errs.join('\n')); await browser.close(); try { fs.rmSync(TMP); } catch {} };
 if (arg('--frames')) {
-  const d = path.join(OUT, `_frames_${VAR}`); fs.mkdirSync(d, { recursive: true });
+  const d = path.join(OUT, `_frames_${VAR}${arg('--vertical') ? 'v' : ''}`); fs.mkdirSync(d, { recursive: true });
   for (const t of String(arg('--frames')).split(',').map(Number)) await at(t, { path: path.join(d, `t${t.toFixed(2).padStart(5, '0')}.jpg`), quality: 85 });
   await done(); console.log('frames in', d); process.exit(0);
 }
