@@ -2,7 +2,10 @@
 
 A film about what SayTamm does, not a showreel. The style follows the owner's reference (kinetic type, a typed prompt, a grid that assembles with a counter, a tiled wipe into the logo). It is built on the brand's own "prompt" language from the 2026 profile.
 
-**Master:** `handover/launch-film/services/SayTamm_Services_EN_16x9.mp4`, 1920×1080 at 60 fps. It is not in git.
+**Masters** (not in git), both at 60 fps:
+
+- `handover/launch-film/services/SayTamm_Services_EN_16x9.mp4`, 1920×1080.
+- `SayTamm_Services_EN_9x16.mp4`, 1080×1920 for Reels: the same story, timing and sound, laid out again from `film_v.html`. The service sits on top, the sample in the middle, and Tamm's line at the bottom.
 
 ## Story
 
@@ -64,6 +67,16 @@ bash film/services/render_parallel.sh
 
 ```bash
 python3 film/services/mix.py
+```
+
+For the vertical cut:
+
+```bash
+bash film/services/render_parallel_v.sh
+```
+
+```bash
+python3 film/services/mix.py --vertical
 ```
 
 ## Before publishing
