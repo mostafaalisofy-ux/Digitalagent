@@ -2,7 +2,11 @@
 
 The owner found v1 (`film/money/`, type-only, no voice) too slow. v2 rebuilds the series with a voice-over, real hands-only footage, colour blocks, semantic colour for money (green in, coral out), popping kinetic type and scene transitions (whip, zoom, flash, slam). Arabic, 9:16, 60 fps.
 
-**Episode 01 · ROAS** (`ep1.html`, 20 s). Master (not in git): `handover/launch-film/money/SayTamm_QamoosElFlous_v2_01_ROAS_AR_9x16.mp4`.
+**Episodes** (all in `film.html`, picked by `--ep N`): 01 ROAS (20 s), 02 CPA (26 s), 03 AOV (26.4 s), 04 CR (25.6 s). Scripts and cue plans for the voice: `VO_SCRIPTS.md`.
+
+**Brand rules applied** (Brand Guidelines v1): the symbol stands alone on the end card, with the tagline set apart from it, never as a name lockup (OQ-05); text and logo stay inside the 9:16 safe zone (y 250–1640).
+
+**Episode 01 · ROAS** (20 s). Master (not in git): `handover/launch-film/money/SayTamm_QamoosElFlous_v2_01_ROAS_AR_9x16.mp4`.
 
 | Time | Scene |
 |---|---|
@@ -13,7 +17,13 @@ The owner found v1 (`film/money/`, type-only, no voice) too slow. v2 rebuilds th
 | 9.2–11.3 s | "PAY" phone footage: «العائدُ يقيسُ المبيعات…» and the formula as pills: المبيعات ÷ الإعلانات = 4× |
 | 11.3–12.4 s | Soft white: ROAS ≠ الربح |
 | 12.4–15.2 s | Calculator footage: «اعرفْ هامشَك قبل أن تحتفل.» and a gauge filling to 10% |
-| 15.2–20 s | End card: symbol, «قول تم», «قول. تم.», «احفظ الفيديو… وأرسله لصاحب متجر.», «قول… تم» in Gulf Arabic |
+| 15.2–20 s | End card: the symbol alone, then «قول. تم.», «احفظ الفيديو… وأرسله لصاحب متجر.», saytamm.com; «قول… تم» in Gulf Arabic |
+
+**Episode 02 · CPA**: split screen of two campaigns on the same 5,000 budget (teal and pink footage); click cost 1 vs 2.5; «انظر إلى الطلبات» with a magnifier; orders fill as squares, 25 vs 50; cost per order 200 vs 100 (5,000 ÷ 25, 5,000 ÷ 50) with the stamp on B; «أرخص نقرة» struck → «أرخص طلب»; the formula الإنفاق ÷ الطلبات = تكلفة الطلب.
+
+**Episode 03 · AOV**: 100 orders a month (parcel footage); average 300; 100 × 300 = 30,000; a complementary product drops into a cart; the average climbs to 360 (+60); before/after bars 30,000 → 36,000 (+6,000) with the same 100 orders; «ارفعْ قيمةَ الطلب».
+
+**Episode 04 · CR**: 10,000 visitors as 200 squares of 50; 1% buy = 100 orders; «تريد طلباتٍ أكثر؟»; «زوارًا أكثر» struck; a phone with three checks (clearer page, visible price, shipping known before paying); 1.5% = 150 orders (+50) with the same visitors.
 
 All numbers are hypothetical and the badge «مثال توضيحي» stays on screen; the end card says the numbers are an illustration, not client results. The arithmetic: 40,000 − 10,000 − 20,000 − 4,000 − 2,000 = 4,000 = 10% of sales; ROAS = 40,000 ÷ 10,000 = 4×.
 
@@ -32,5 +42,7 @@ python3 film/money2/prep.py
 ```bash
 bash film/money2/render_parallel.sh 1
 ```
+
+Re-mix one episode after its voice-over take arrives (no re-render): `python3 film/money2/mix.py 2`.
 
 Spot frames: `node film/money2/render.mjs --ep 1 --frames 1.3,6.6,10.2`.

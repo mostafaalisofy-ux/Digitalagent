@@ -12,7 +12,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const OUT = path.join(ROOT, 'handover', 'launch-film', 'money'); fs.mkdirSync(OUT, { recursive: true });
 const arg = (k) => { const i = process.argv.indexOf(k); return i < 0 ? null : process.argv[i + 1] ?? true; };
 const EP = Number(arg('--ep') || 1), FPS = 60, SUB = 2;
-const html = fs.readFileSync(path.join(ROOT, `film/money2/ep${EP}.html`), 'utf8')
+const html = fs.readFileSync(path.join(ROOT, 'film/money2/film.html'), 'utf8')
+  .replace('__EP__', String(EP))
   .replaceAll('__SEQ__', pathToFileURL(path.join(OUT, 'seq')).href)
   .replace('__SEQN__', JSON.stringify(Object.fromEntries(fs.readdirSync(path.join(OUT, 'seq')).map((d) => [d, fs.readdirSync(path.join(OUT, 'seq', d)).length]))))
   .replaceAll('__PLEX__', pathToFileURL(path.join(ROOT, 'site/node_modules/@fontsource/ibm-plex-sans-arabic/files')).href)

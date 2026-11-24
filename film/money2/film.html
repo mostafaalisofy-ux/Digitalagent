@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="ar"><head><meta charset="utf-8">
+<!-- قول تم · «قاموس الفلوس» v2: episodes 01–04 (ROAS, CPA, AOV, CR). Voice-over (ElevenLabs "Rawi", MSA), real hands-only footage (Pexels),
+     colour blocks, semantic green/coral for money in/out, scene transitions. Every number is hypothetical and «مثال توضيحي» stays on screen.
+     Type: IBM Plex Sans Arabic only. Logo: the original SVG, alone (no name lockup, OQ-05). Text and logo stay inside the 9:16 safe zone (y 250–1640). -->
+<style>
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFC, U+200C-200F; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-600-normal.woff2); font-weight: 600; unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFC, U+200C-200F; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFC, U+200C-200F; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-latin-500-normal.woff2); font-weight: 500; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FFFD; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-latin-600-normal.woff2); font-weight: 600; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FFFD; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-latin-700-normal.woff2); font-weight: 700; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FFFD; }
+  html, body { margin: 0; background: #09090D; } canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+const W = 1080, H = 1920, EP = __EP__;
+const PU = '#6C35FF', OB = '#09090D', WH = '#F5F3FA', MU = 'rgba(245,243,250,0.7)', INK = '#0E0E13', GREY = '#5C5967', GREEN = '#22C27A', CORAL = '#FF5A47';
+const SEQ = '__SEQ__', SEQN = __SEQN__; let SYMBOL;
+const main = document.getElementById('c'), mctx = main.getContext('2d');
+const bufA = document.createElement('canvas'), bufB = document.createElement('canvas'); bufA.width = bufB.width = W; bufA.height = bufB.height = H;
+const actx = bufA.getContext('2d'), bctx = bufB.getContext('2d');
+let ctx = mctx; [mctx, actx, bctx].forEach((c) => { c.imageSmoothingQuality = 'high'; });
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), seg = (t, a, b) => clamp((t - a) / (b - a)), lerp = (a, b, q) => a + (b - a) * q;
+const eo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x)), eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2), eb = (x) => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const spring = (t, t0, d = 0.5, z = 0.5) => { const x = (t - t0) / d; if (x <= 0) return 0; if (x >= 1.8) return 1; const w = 11, wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + z / Math.sqrt(1 - z * z) * Math.sin(wd * x)); };
+const rr = (x, y, w, h, r) => { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); };
+const F = (w, s) => `${w} ${s}px Plex`;
+const hasAr = (s) => /[؀-ۿ]/.test(s);
+const tw = (s, font) => { ctx.font = font; return ctx.measureText(s).width; };
+function draw1(s, x, y, font, color, align, dir) { ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align; ctx.direction = dir || (hasAr(s) ? 'rtl' : 'ltr'); if (ctx.direction === 'ltr') s = s.replace(/[‎‏]/g, ''); ctx.fillText(s, x, y); ctx.direction = 'ltr'; }
+function txt(s, x, y, font, color, align = 'right', dir) {
+  if (dir || !hasAr(s) || !/[0-9A-Za-z×%]/.test(s)) return draw1(s, x, y, font, color, align, dir);
+  const toks = s.split(' '), sp = tw(' ', font), ws = toks.map((k) => tw(k, font)), total = ws.reduce((a, b) => a + b, 0) + sp * (toks.length - 1);
+  let xr = align === 'left' ? x + total : align === 'center' ? x + total / 2 : x;
+  toks.forEach((k, i) => { draw1(k, xr, y, font, color, 'right'); xr -= ws[i] + sp; });
+}
+const fmt = (n) => Math.round(n).toLocaleString('en-US');
+const CACHE = new Map(); let MISS = [];
+function img(url) { let im = CACHE.get(url); if (im && im.complete && im.naturalWidth) return im; if (!im) { im = new Image(); im.src = url; CACHE.set(url, im); if (CACHE.size > 260) CACHE.delete(CACHE.keys().next().value); } MISS.push(im); return null; }
+const frame = (name, t) => img(`${SEQ}/${name}/${String(Math.min(SEQN[name], Math.max(1, Math.floor(t * 30) + 1))).padStart(4, '0')}.jpg`);
+async function loadMissing() { await Promise.all([...new Set(MISS)].map((im) => (im.complete ? null : new Promise((r) => { im.addEventListener('load', r, { once: true }); im.addEventListener('error', r, { once: true }); })))); }
+function footage(name, lt, x = 0, y = 0, w = W, h = H, z = 1, dim = 0) { const im = frame(name, Math.max(0, lt)); if (!im) return; const s = Math.max(w / 1080, h / 1920) * z, dw = 1080 * s, dh = 1920 * s;
+  ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.drawImage(im, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh); if (dim) { ctx.fillStyle = `rgba(9,9,13,${dim})`; ctx.fillRect(x, y, w, h); } ctx.restore(); }
+function shade(y0, y1, a) { const g = ctx.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(1, `rgba(9,9,13,${a})`); ctx.fillStyle = g; ctx.fillRect(0, Math.min(y0, y1), W, Math.abs(y1 - y0)); }
+const bg = (c) => { ctx.fillStyle = c; ctx.fillRect(0, 0, W, H); };
+function pop(s, x, y, size, t, t0, o = {}) {
+  const w = o.w || 700, font = F(w, size), toks = s.split(' '), sp = tw(' ', font), ws = toks.map((k) => tw(k, font)), total = ws.reduce((a, b) => a + b, 0) + sp * (toks.length - 1);
+  let xr = o.align === 'center' ? x + total / 2 : o.align === 'left' ? x + total : x; const st = o.stag ?? 0.06;
+  toks.forEach((k, i) => { const q = seg(t, t0 + i * st, t0 + i * st + 0.32); if (q > 0) { const s2 = lerp(o.from ?? 1.6, 1, eb(q)); ctx.save(); ctx.globalAlpha *= clamp(q * 3);
+      ctx.translate(xr - ws[i] / 2, y - size * 0.32); ctx.scale(s2, s2); ctx.rotate((1 - eo(q)) * (o.rot ?? -0.12)); txt(k, ws[i] / 2, size * 0.32, font, o.hi && o.hi.includes(i) ? (o.hc || PU) : (o.color || WH), 'right'); ctx.restore(); }
+    xr -= ws[i] + sp; });
+  return total;
+}
+function pill(s, cx, cy, t, t0, o = {}) { const q = seg(t, t0, t0 + 0.35); if (q <= 0) return; const f = F(o.w || 700, o.size || 56), w = tw(s, f) + (o.padx || 64), h = (o.size || 56) * 1.7, k = eb(q);
+  ctx.save(); ctx.globalAlpha *= clamp(q * 3); ctx.translate(cx, cy); ctx.scale(k, k); ctx.rotate((o.rot || 0) * (1 - eo(q)) + (o.tilt || 0)); rr(-w / 2, -h / 2, w, h, h / 2); ctx.fillStyle = o.bg || WH; ctx.fill();
+  if (o.stroke) { ctx.strokeStyle = o.stroke; ctx.lineWidth = 4; ctx.stroke(); }
+  txt(s, 0, (o.size || 56) * 0.34, f, o.fg || INK, 'center');
+  if (o.strike) { const sq = eo(seg(t, o.strike, o.strike + 0.25)); if (sq > 0) { ctx.strokeStyle = CORAL; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(w / 2 - 20, 0); ctx.lineTo(w / 2 - 20 - (w - 40) * sq, 0); ctx.stroke(); } }
+  ctx.restore(); return w; }
+function ring(cx, cy, r0, t, t0, color, lw = 10) { const q = seg(t, t0, t0 + 0.55); if (q <= 0 || q >= 1) return; ctx.save(); ctx.globalAlpha *= 1 - q; ctx.strokeStyle = color; ctx.lineWidth = lw * (1 - q) + 2; ctx.beginPath(); ctx.arc(cx, cy, r0 + 260 * eo(q), 0, 7); ctx.stroke(); ctx.restore(); }
+function card(s, cx, cy, size, t, t0, o = {}) { const q = seg(t, t0, t0 + 0.35); if (q <= 0) return; const f = F(700, size), w = tw(s, f) + size * 0.8, h = size * 1.25;
+  ctx.save(); ctx.translate(cx, cy); const k = lerp(o.from ?? 2.6, 1, eb(q)); ctx.scale(k, k); ctx.rotate((o.rot ?? -0.08) * (1 - eo(q))); ctx.globalAlpha *= clamp(q * 3);
+  rr(-w / 2, -h / 2, w, h, size * 0.16); ctx.fillStyle = o.bg || WH; ctx.fill(); draw1(s, 0, size * 0.36, f, o.fg || INK, 'center', hasAr(s) ? 'rtl' : 'ltr'); ctx.restore(); }
+function check(cx, cy, r, q, color = GREEN) { if (q <= 0) return; ctx.save(); ctx.translate(cx, cy); ctx.scale(eb(clamp(q * 1.4)), eb(clamp(q * 1.4))); ctx.fillStyle = color; ctx.beginPath(); ctx.arc(0, 0, r, 0, 7); ctx.fill();
+  ctx.strokeStyle = WH; ctx.lineWidth = r * 0.17; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; const c = eo(seg(q, 0.3, 1)); ctx.beginPath(); ctx.moveTo(-r * 0.42, r * 0.03); ctx.lineTo(-r * 0.42 + r * 0.29 * Math.min(1, c * 2), r * 0.03 + r * 0.29 * Math.min(1, c * 2)); if (c > 0.5) ctx.lineTo(-r * 0.13 + r * 0.63 * (c - 0.5) * 2, r * 0.32 - r * 0.63 * (c - 0.5) * 2); ctx.stroke(); ctx.restore(); }
+function magnifier(cx, cy, r, q, color = INK) { if (q <= 0) return; ctx.save(); ctx.translate(cx, cy); ctx.scale(eb(clamp(q)), eb(clamp(q))); ctx.rotate(-0.2 * (1 - eo(q))); ctx.strokeStyle = color; ctx.lineWidth = r * 0.2; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2 * eo(q)); ctx.stroke(); if (q > 0.5) { ctx.beginPath(); ctx.moveTo(r * 0.72, r * 0.72); ctx.lineTo(r * 0.72 + r * 0.8 * eo((q - 0.5) * 2), r * 0.72 + r * 0.8 * eo((q - 0.5) * 2)); ctx.stroke(); } ctx.restore(); }
+function cartIcon(cx, cy, s, color = INK) { ctx.save(); ctx.translate(cx, cy); ctx.scale(s, s); ctx.strokeStyle = color; ctx.lineWidth = 14; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.beginPath(); ctx.moveTo(-210, -150); ctx.lineTo(-150, -150); ctx.lineTo(-100, 90); ctx.lineTo(170, 90); ctx.lineTo(200, -90); ctx.lineTo(-130, -90); ctx.stroke();
+  [[-70, 150], [140, 150]].forEach(([x, y]) => { ctx.beginPath(); ctx.arc(x, y, 26, 0, 7); ctx.stroke(); }); ctx.restore(); }
+function badge() { const s = 'مثال توضيحي', f = F(600, 30), w = tw(s, f) + 44; ctx.save(); rr(70, 272, w, 56, 28); ctx.fillStyle = 'rgba(9,9,13,0.55)'; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.55)'; ctx.lineWidth = 2; ctx.stroke(); draw1(s, 70 + w / 2, 310, f, WH, 'center', 'rtl'); ctx.restore(); }
+function tag(dark) { const s = `قاموس الفلوس · 0${EP}`, f = F(600, 30), w = tw(s, f) + 70; ctx.save(); rr(1010 - w, 272, w, 56, 28); ctx.fillStyle = dark ? 'rgba(9,9,13,0.55)' : 'rgba(23,23,30,0.08)'; ctx.fill();
+  txt(s, 1010 - 26, 310, f, dark ? WH : INK, 'right'); ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(1010 - w + 26, 300, 8, 0, 7); ctx.fill(); ctx.restore(); }
+// a grid of squares: n lit (purple), the rest dim; RTL fill from the top-right
+function grid200(x0, y0, cols, rows, size, gap, t, t0, lit) { for (let i = 0; i < cols * rows; i++) { const q = seg(t, t0 + i * 0.004, t0 + 0.25 + i * 0.004); if (q <= 0) continue; const c = cols - 1 - (i % cols), r = Math.floor(i / cols), x = x0 + c * (size + gap), y = y0 + r * (size + gap);
+  const lq = i < lit.length ? seg(t, lit[i], lit[i] + 0.25) : 0; ctx.save(); ctx.globalAlpha *= q; rr(x, y, size, size, size * 0.2); ctx.fillStyle = lq > 0 ? `rgba(108,53,255,${0.3 + 0.7 * lq})` : 'rgba(245,243,250,0.12)'; ctx.fill(); ctx.restore(); } }
+// the end card: the symbol alone, then the tagline apart from it (no name lockup), all inside the safe zone
+function endCard(t, t0) {
+  bg(OB); ctx.strokeStyle = 'rgba(245,243,250,0.035)'; ctx.lineWidth = 1; for (let x = 60; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); } for (let y = 60; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  const show = (d, f) => { const q = spring(t, t0 + d, 0.45); if (q <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); ctx.translate(0, 26 * (1 - Math.min(1, q))); f(); ctx.restore(); };
+  show(0.15, () => { const SH = 260, SW = SH * 600 / 721; ctx.drawImage(SYMBOL, 540 - SW / 2, 700 - SH / 2, SW, SH); });
+  show(0.6, () => { const s = 'قول. تم.', f = F(700, 92), w = tw(s, f); draw1(s, 556, 1130, f, WH, 'center', 'rtl'); ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(556 - w / 2 - 24, 1118, 13, 0, 7); ctx.fill(); });
+  show(1.1, () => draw1('احفظ الفيديو… وأرسله لصاحب متجر.', 540, 1250, F(500, 44), MU, 'center', 'rtl'));
+  show(1.3, () => draw1('saytamm.com', 540, 1340, F(600, 40), WH, 'center', 'ltr'));
+  show(1.6, () => draw1('الأرقام في الفيديو مثال توضيحي، وليست نتائج عميل.', 540, 1580, F(500, 26), 'rgba(245,243,250,0.5)', 'center', 'rtl'));
+}
+
+// ---------- episodes ----------
+const EPS = {
+// ===== 01 · ROAS (voice-over at +0.4 s, measured) =====
+1: { dur: 20.0, end: 15.2, breaks: [[3.95, 5.55]], cuts: [[3.05, 'flash'], [3.95, 'slam'], [5.55, 'whip'], [9.2, 'zoom'], [11.25, 'flash'], [12.4, 'whip'], [15.2, 'zoom']],
+  scenes: [
+  { a: 0.0, b: 3.05, dark: true, draw(lt, t) {
+    const punch = 1 + 0.06 * (1 - eo(seg(t, 1.45, 1.9))) * (t > 1.45 ? 1 : 0);
+    footage('pay', lt, 0, 0, W, H, lerp(1.0, 1.12, seg(t, 0, 3.05)) * punch, 0.42); shade(700, 1920, 0.6);
+    pop('عائدُ إعلاناتِك', 1010, 560, 92, t, 0.45);
+    card('4×', 540, 960, 300, t, 1.4, { from: 3.2 });
+    ring(540, 960, 200, t, 1.45, GREEN, 14);
+    pop('أربعةُ أضعاف؟', 540, 1330, 84, t, 1.75, { align: 'center' });
+    pill('ROAS', 540, 1480, t, 2.15, { bg: PU, fg: WH, size: 48, rot: 0.4 });
+  } },
+  { a: 3.05, b: 3.95, dark: false, draw(lt, t) {
+    bg(WH); check(540, 820, 190, seg(t, 3.1, 3.6)); ring(540, 820, 190, t, 3.15, GREEN, 12);
+    pop('جميل…', 540, 1200, 150, t, 3.2, { align: 'center', color: INK });
+  } },
+  { a: 3.95, b: 5.55, dark: true, draw(lt, t) {
+    bg(OB); const sh = t > 4.6 && t < 4.9 ? Math.sin(t * 90) * 10 * (1 - seg(t, 4.6, 4.9)) : 0; ctx.save(); ctx.translate(sh, 0);
+    const q = seg(t, 4.0, 4.3); if (q > 0) { ctx.save(); ctx.translate(540, 760); ctx.scale(eb(q), eb(q)); ctx.fillStyle = CORAL; rr(-95, -130, 70, 260, 22); ctx.fill(); rr(25, -130, 70, 260, 22); ctx.fill(); ctx.restore(); }
+    pop('لكن…', 540, 1120, 110, t, 4.2, { align: 'center', color: MU });
+    pop('انتظر.', 540, 1300, 200, t, 4.6, { align: 'center', from: 2.2 });
+    const b = eo(seg(t, 4.75, 5.2)); ctx.fillStyle = CORAL; ctx.fillRect(540 - 300 * b, 1360, 600 * b, 14); ctx.restore();
+  } },
+  { a: 5.55, b: 9.2, dark: true, draw(lt, t) {
+    bg(OB);
+    const L = [[5.62, 'الإعلانات', 10000, 'cartlap'], [6.3, 'البضاعة', 20000, 'pack'], [7.5, 'الشحن', 4000, 'parcel'], [8.0, 'العمولات', 2000, 'cashcalc']];
+    let cur = L[0]; L.forEach((l) => { if (t >= l[0]) cur = l; });
+    const since = t - cur[0], kick = 1 + 0.08 * (1 - eo(clamp(since / 0.35)));
+    footage(cur[3], since + 0.2, 0, 0, W, 860, kick, 0.12);
+    { const g = ctx.createLinearGradient(0, 700, 0, 860); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(1, 'rgba(9,9,13,1)'); ctx.fillStyle = g; ctx.fillRect(0, 700, W, 160); }
+    const left = L.reduce((v, l) => v - l[2] * eo(seg(t, l[0], l[0] + 0.45)), 40000), done = seg(t, 8.55, 8.8);
+    if (done <= 0) pill(`−${fmt(cur[2])}  ${cur[1]}`, 540, 660, t, cur[0] + 0.02, { bg: CORAL, fg: WH, size: 60, rot: 0.5, tilt: -0.04 });
+    else pill('10% فقط من المبيعات', 540, 660, t, 8.6, { bg: WH, fg: INK, size: 56, rot: 0.5 });
+    txt(left > 39999 ? 'المبيعات' : 'المتبقّي', 1010, 960, F(600, 46), MU, 'right');
+    draw1(fmt(left), 1010, 1140, F(700, 180), done > 0 ? PU : (left > 39999 ? GREEN : WH), 'right', 'ltr');
+    rr(70, 1185, 940, 30, 15); ctx.fillStyle = 'rgba(245,243,250,0.12)'; ctx.fill(); const bw = 940 * left / 40000; rr(1010 - bw, 1185, Math.max(30, bw), 30, 15); ctx.fillStyle = done > 0 ? PU : GREEN; ctx.fill();
+    L.forEach((l, i) => { const q = seg(t, l[0], l[0] + 0.3); if (q <= 0) return; const y = 1300 + i * 86; ctx.save(); ctx.globalAlpha *= clamp(q * 3); ctx.translate((1 - eo(q)) * 120, 0);
+      txt(l[1], 1010, y, F(600, 48), WH, 'right'); draw1(`−${fmt(l[2])}`, 70, y, F(700, 52), CORAL, 'left', 'ltr'); ctx.fillStyle = 'rgba(245,243,250,0.14)'; ctx.fillRect(70, y + 24, 940, 2); ctx.restore(); });
+    if (done > 0) ring(760, 1080, 120, t, 8.55, PU, 12);
+  } },
+  { a: 9.2, b: 11.25, dark: true, draw(lt, t) {
+    footage('payphone', lt + 0.3, 0, 0, W, H, lerp(1.04, 1.14, seg(t, 9.2, 11.25)), 0.5); shade(900, 1920, 0.55);
+    pop('العائدُ يقيسُ المبيعات…', 1010, 560, 84, t, 9.4);
+    const y = 1000; pill('المبيعات', 800, y, t, 9.9, { size: 54, rot: 0.3 }); const q1 = seg(t, 10.15, 10.4); if (q1 > 0) { ctx.save(); ctx.globalAlpha *= q1; draw1('÷', 600, y + 30, F(700, 110), WH, 'center', 'ltr'); ctx.restore(); }
+    pill('الإعلانات', 400, y, t, 10.3, { size: 54, rot: -0.3 });
+    const q2 = seg(t, 10.6, 10.85); if (q2 > 0) { ctx.save(); ctx.globalAlpha *= q2; draw1('=', 540, y + 190, F(700, 110), WH, 'center', 'ltr'); ctx.restore(); }
+    pill('4×', 540, y + 320, t, 10.75, { bg: PU, fg: WH, size: 120, padx: 90, rot: 0.5 });
+  } },
+  { a: 11.25, b: 12.4, dark: false, draw(lt, t) {
+    bg(WH); const k = 1 + 0.04 * (1 - eo(seg(t, 11.4, 11.7)));
+    ctx.save(); ctx.translate(540, 900); ctx.scale(k, k); ctx.translate(-540, -900);
+    pop('ROAS', 540, 700, 170, t, 11.3, { align: 'center', color: INK });
+    const q = seg(t, 11.42, 11.62); if (q > 0) { ctx.save(); ctx.translate(540, 870); ctx.scale(eb(q), eb(q)); ctx.strokeStyle = CORAL; ctx.lineWidth = 26; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-110, -36); ctx.lineTo(110, -36); ctx.moveTo(-110, 36); ctx.lineTo(110, 36); ctx.moveTo(60, -110); ctx.lineTo(-60, 110); ctx.stroke(); ctx.restore(); }
+    pop('الربح', 540, 1140, 190, t, 11.55, { align: 'center', color: INK }); ctx.restore();
+    pop('لا الربح.', 540, 1420, 70, t, 11.75, { align: 'center', color: GREY, w: 600 });
+  } },
+  { a: 12.4, b: 15.2, dark: true, draw(lt, t) {
+    footage('calc', lt + 0.2, 0, 0, W, H, lerp(1.06, 1.16, seg(t, 12.4, 15.2)), 0.55); shade(800, 1920, 0.65);
+    pop('اعرفْ هامشَك', 1010, 520, 110, t, 12.6); pop('قبل أن تحتفل.', 1010, 660, 84, t, 13.5, { color: MU, w: 600 });
+    const cx = 540, cy = 1120, r = 230, q = eo(seg(t, 13.0, 13.9)), a0 = -Math.PI / 2;
+    ctx.save(); ctx.globalAlpha *= seg(t, 12.8, 13.1); ctx.lineCap = 'round'; ctx.lineWidth = 46; ctx.strokeStyle = 'rgba(245,243,250,0.16)'; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.stroke();
+    ctx.strokeStyle = PU; ctx.beginPath(); ctx.arc(cx, cy, r, a0, a0 + Math.PI * 2 * 0.10 * q); ctx.stroke(); draw1(`${Math.round(10 * q)}%`, cx, cy + 50, F(700, 150), WH, 'center', 'ltr'); ctx.restore();
+    pill('المتبقّي من كل 100 مبيعات: 10', 540, 1480, t, 13.9, { bg: WH, fg: INK, size: 44 });
+  } },
+  { a: 15.2, b: 20.0, dark: true, end: true, draw(lt, t) { endCard(t, 15.2); } },
+  ],
+  sfx: [['pop', 0.5], ['thud', 1.45], ['ding', 1.47, 1046.5], ['pop', 1.8, 600], ['pop', 2.15, 900], ['ding', 3.15, 1568], ['pop', 3.25, 900],
+    ['tape', 3.95], ['thud', 4.02], ['ticks', 4.25, 5.5], ['thud', 4.62], ['thud', 5.56], ['minus', 5.62], ['minus', 6.3], ['minus', 7.5], ['minus', 8.0], ['ding', 8.56, 1046.5], ['pop', 8.6, 800],
+    ['pop', 9.45], ['pop', 9.9, 600], ['pop', 10.3, 700], ['pop', 10.75, 900], ['ding', 10.8, 1318.5], ['thud', 11.3], ['buzz', 11.42], ['thud', 11.55],
+    ['pop', 12.65], ['count', 13.0, 6], ['ding', 13.9, 1174.7], ['pop', 13.92, 800]] },
+
+// ===== 02 · CPA. Voice cues (phrase → time) are planned; the take drops in when voiced =====
+2: { dur: 26.0, end: 21.6, breaks: [[6.6, 8.45]], cuts: [[6.6, 'flash'], [8.5, 'slam'], [12.6, 'whip'], [15.6, 'zoom'], [19.5, 'flash'], [21.6, 'zoom']],
+  vo: [0.4, 3.0, 5.0, 6.9, 8.6, 11.1, 12.8, 15.8, 19.6],
+  scenes: [
+  { a: 0.0, b: 6.6, dark: true, draw(lt, t) {   // two campaigns, same budget; A's click is cheaper. Is it better?
+    const sx = lerp(0, 1, eo(seg(t, 0.1, 0.6)));
+    footage('payphone', lt, 540, 0, 540, H, 1.0 + 0.06 * seg(t, 0, 6.6), 0.35); footage('cart', lt, 0, 0, 540 * sx, H, 1.0 + 0.06 * seg(t, 0, 6.6), 0.35);
+    ctx.fillStyle = OB; ctx.fillRect(536, 0, 8, H); shade(250, 0, 0); { const g = ctx.createLinearGradient(0, 250, 0, 700); g.addColorStop(0, 'rgba(9,9,13,0.85)'); g.addColorStop(1, 'rgba(9,9,13,0)'); ctx.fillStyle = g; ctx.fillRect(0, 250, W, 450); }
+    if (t < 2.95) { ctx.save(); ctx.globalAlpha *= 1 - seg(t, 2.6, 2.9); pop('حملتان بالميزانية نفسها.', 1010, 460, 76, t, 0.45); ctx.restore(); }
+    pill('حملة A', 810, 700, t, 1.0, { bg: WH, fg: INK, size: 50, rot: 0.3 }); pill('حملة B', 270, 700, t, 1.2, { bg: WH, fg: INK, size: 50, rot: -0.3 });
+    card('5,000', 810, 860, 80, t, 1.6, { from: 2 }); card('5,000', 270, 860, 80, t, 1.75, { from: 2 });
+    pill('النقرة: 1', 810, 1180, t, 3.3, { bg: GREEN, fg: WH, size: 62, rot: 0.5 }); pill('النقرة: 2.5', 270, 1180, t, 3.7, { bg: CORAL, fg: WH, size: 62, rot: -0.5 });
+    if (t > 3.0) { const q = seg(t, 3.0, 3.2); ctx.save(); ctx.globalAlpha *= q; ctx.fillStyle = 'rgba(9,9,13,0.6)'; ctx.fillRect(0, 380, W, 140); ctx.restore(); pop('الأولى نقرتُها أرخص…', 1010, 470, 72, t, 3.05); }
+    const qq = seg(t, 5.0, 5.3); if (qq > 0) { ctx.save(); ctx.translate(540, 1420); ctx.scale(eb(qq), eb(qq)); ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(0, 0, 110, 0, 7); ctx.fill(); draw1('؟', 0, 52, F(700, 150), WH, 'center', 'rtl'); ctx.restore(); }
+    pop('فهل هي الأفضل؟', 540, 1600, 64, t, 5.1, { align: 'center' });
+  } },
+  { a: 6.6, b: 8.5, dark: false, draw(lt, t) {   // «انظر إلى الطلبات.»
+    bg(WH); magnifier(540, 860, 150, seg(t, 6.7, 7.3)); pop('انظر إلى الطلبات.', 540, 1260, 110, t, 6.95, { align: 'center', color: INK });
+  } },
+  { a: 8.5, b: 12.6, dark: true, draw(lt, t) {   // orders: 25 vs 50
+    bg(OB); footage('pack', lt, 0, 250, W, 420, 1.05, 0.25); { const g = ctx.createLinearGradient(0, 520, 0, 670); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(1, 'rgba(9,9,13,1)'); ctx.fillStyle = g; ctx.fillRect(0, 520, W, 150); }
+    txt('حملة A', 1010, 740, F(700, 50), WH, 'right'); txt('حملة B', 470, 740, F(700, 50), WH, 'right');
+    const box = (x0, n, t0, dt) => { for (let i = 0; i < 50; i++) { const c = 4 - (i % 5), r = Math.floor(i / 5), x = x0 + c * 78, y = 790 + r * 64, on = i < n ? seg(t, t0 + i * dt, t0 + i * dt + 0.15) : 0;
+      ctx.save(); rr(x, y, 66, 52, 10); ctx.fillStyle = on > 0 ? (n === 50 ? `rgba(34,194,122,${0.3 + 0.7 * on})` : `rgba(245,243,250,${0.25 + 0.6 * on})`) : 'rgba(245,243,250,0.07)'; ctx.fill(); ctx.restore(); } };
+    box(620, 25, 8.7, 0.075); box(80, 50, 11.1, 0.024);
+    const a = Math.round(25 * seg(t, 8.7, 8.7 + 25 * 0.075)), b = Math.round(50 * seg(t, 11.1, 11.1 + 50 * 0.024));
+    if (t > 8.7) draw1(`${a}`, 800, 1530, F(700, 110), WH, 'center', 'ltr'); if (t > 11.1) draw1(`${b}`, 260, 1530, F(700, 110), GREEN, 'center', 'ltr');
+    if (t > 8.7) txt('طلبًا', 800, 1600, F(500, 36), MU, 'center'); if (t > 11.1) txt('طلبًا', 260, 1600, F(500, 36), MU, 'center');
+  } },
+  { a: 12.6, b: 15.6, dark: true, draw(lt, t) {   // cost per order: 200 vs 100
+    bg(OB); pop('تكلفةُ الطلب', 1010, 460, 84, t, 12.75);
+    const col = (cx, name, num, den, val, color, t0) => { const q = seg(t, t0, t0 + 0.35); if (q <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(q * 3); ctx.translate(cx, 1000); ctx.scale(eb(q), eb(q));
+      rr(-235, -330, 470, 660, 40); ctx.fillStyle = '#17171E'; ctx.fill(); ctx.strokeStyle = color; ctx.lineWidth = 5; ctx.stroke();
+      txt(name, 0, -230, F(700, 48), WH, 'center'); draw1(`${num} ÷ ${den}`, 0, -120, F(600, 46), MU, 'center', 'ltr'); draw1(String(val), 0, 90, F(700, 190), color, 'center', 'ltr'); ctx.restore(); };
+    col(800, 'حملة A', '5,000', 25, 200, CORAL, 12.9); col(280, 'حملة B', '5,000', 50, 100, GREEN, 13.3);
+    const sq = seg(t, 14.5, 14.66); if (sq > 0) { const k = lerp(1.9, 1, eo(sq)); ctx.save(); ctx.globalAlpha *= clamp(sq * 2) * 0.95; ctx.translate(280, 1270); ctx.rotate(0.16); ctx.scale(k, k);
+      rr(-112, -58, 224, 116, 18); ctx.strokeStyle = PU; ctx.lineWidth = 8; ctx.stroke(); draw1('تم', 24, 26, F(700, 70), PU, 'center', 'rtl'); ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-84, 0); ctx.lineTo(-62, 22); ctx.lineTo(-28, -20); ctx.stroke(); ctx.restore(); }
+    pill('طلب B بنصف التكلفة', 540, 1500, t, 14.8, { bg: WH, fg: INK, size: 50 });
+  } },
+  { a: 15.6, b: 19.5, dark: true, draw(lt, t) {   // «النقرةُ الأرخص… ليست دائمًا الطلبَ الأرخص.»
+    footage('pay', lt, 0, 0, W, H, lerp(1.04, 1.14, seg(t, 15.6, 19.5)), 0.55); shade(800, 1920, 0.6);
+    pop('النقرةُ الأرخص…', 1010, 470, 92, t, 15.8); pop('ليست دائمًا الطلبَ الأرخص.', 1010, 610, 76, t, 16.9, { hi: [2, 3], hc: GREEN });
+    pill('أرخص نقرة', 760, 1050, t, 17.2, { bg: WH, fg: INK, size: 60, strike: 17.6 });
+    const q = eo(seg(t, 17.8, 18.2)); if (q > 0) { ctx.save(); ctx.globalAlpha *= q; ctx.strokeStyle = WH; ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(560, 1050); ctx.lineTo(560 - 90 * q, 1050); ctx.lineTo(560 - 90 * q + 28, 1022); ctx.moveTo(560 - 90 * q, 1050); ctx.lineTo(560 - 90 * q + 28, 1078); ctx.stroke(); ctx.restore(); }
+    pill('أرخص طلب', 300, 1240, t, 18.25, { bg: GREEN, fg: WH, size: 60, rot: 0.4 });
+  } },
+  { a: 19.5, b: 21.6, dark: false, draw(lt, t) {   // «قِسْ بتكلفة الطلب.»
+    bg(WH); pop('قِسْ بتكلفة الطلب.', 540, 640, 110, t, 19.65, { align: 'center', color: INK, hi: [1, 2] });
+    pill('الإنفاق', 790, 1000, t, 20.0, { bg: INK, fg: WH, size: 54, rot: 0.3 }); { const q = seg(t, 20.2, 20.4); if (q > 0) { ctx.save(); ctx.globalAlpha *= q; draw1('÷', 560, 1032, F(700, 110), INK, 'center', 'ltr'); ctx.restore(); } }
+    pill('الطلبات', 330, 1000, t, 20.3, { bg: INK, fg: WH, size: 54, rot: -0.3 }); { const q = seg(t, 20.55, 20.75); if (q > 0) { ctx.save(); ctx.globalAlpha *= q; draw1('=', 540, 1200, F(700, 110), INK, 'center', 'ltr'); ctx.restore(); } }
+    pill('تكلفة الطلب', 540, 1340, t, 20.7, { bg: PU, fg: WH, size: 70, rot: 0.4 });
+  } },
+  { a: 21.6, b: 26.0, dark: true, end: true, draw(lt, t) { endCard(t, 21.6); } },
+  ],
+  sfx: [['pop', 0.5], ['pop', 1.0, 600], ['pop', 1.2, 700], ['ding', 1.6, 880], ['ding', 1.75, 988], ['plus', 3.3], ['minus', 3.7], ['pop', 5.0, 500], ['ding', 5.05, 1318.5],
+    ['tape', 6.6], ['pop', 6.75, 600], ['ticks', 7.2, 8.4], ['thud', 8.52], ['count', 8.7, 13, 0.15], ['count', 11.1, 13, 0.09], ['ding', 11.1 + 1.2, 1568],
+    ['thud', 12.75], ['minus', 12.9], ['plus', 13.3], ['stamp', 14.5], ['pop', 14.8, 800], ['pop', 15.8], ['pop', 17.2, 700], ['buzz', 17.6], ['plus', 18.25],
+    ['pop', 19.65], ['pop', 20.0, 600], ['pop', 20.3, 700], ['ding', 20.7, 1318.5]] },
+
+// ===== 03 · AOV =====
+3: { dur: 26.4, end: 22.0, breaks: [], cuts: [[2.3, 'whip'], [4.5, 'slam'], [7.0, 'flash'], [9.9, 'whip'], [13.1, 'zoom'], [17.6, 'whip'], [22.0, 'zoom']],
+  vo: [0.4, 2.4, 4.6, 7.2, 10.0, 13.3, 14.8, 17.8],
+  scenes: [
+  { a: 0.0, b: 2.3, dark: true, draw(lt, t) {   // «مئةُ طلبٍ في الشهر.»
+    footage('parcel', lt, 0, 0, W, H, lerp(1.0, 1.1, seg(t, 0, 2.3)), 0.4); shade(700, 1920, 0.5);
+    card('100', 540, 900, 260, t, 0.45, { from: 3 }); ring(540, 900, 210, t, 0.5, WH, 12); pop('طلبٍ في الشهر', 540, 1260, 84, t, 0.9, { align: 'center' });
+  } },
+  { a: 2.3, b: 4.5, dark: true, draw(lt, t) {   // «متوسطُ الطلب: ثلاثمئة.»
+    footage('cartlap', lt, 0, 0, W, H, lerp(1.0, 1.1, seg(t, 2.3, 4.5)), 0.4);
+    pop('متوسطُ الطلب', 1010, 560, 96, t, 2.45); card('300', 540, 1000, 240, t, 3.0, { from: 2.6, rot: 0.08 }); pill('لكل طلب', 540, 1260, t, 3.3, { bg: PU, fg: WH, size: 48 });
+  } },
+  { a: 4.5, b: 7.0, dark: true, draw(lt, t) {   // «المبيعات: ثلاثون ألفًا.»
+    bg(OB); pop('المبيعات', 1010, 520, 84, t, 4.6, { color: MU });
+    const y = 820; card('100', 820, y, 110, t, 4.75, { from: 1.8 }); { const q = seg(t, 4.95, 5.1); if (q > 0) { ctx.save(); ctx.globalAlpha *= q; draw1('×', 640, y + 40, F(700, 110), WH, 'center', 'ltr'); ctx.restore(); } }
+    card('300', 460, y, 110, t, 5.05, { from: 1.8 });
+    const v = 30000 * eo(seg(t, 5.3, 6.1)); if (t > 5.25) draw1(fmt(v), 540, 1180, F(700, 200), GREEN, 'center', 'ltr');
+    const bw = 860 * seg(t, 5.3, 6.1); rr(1010 - bw * 0 - 940, 1240, 940, 30, 15); ctx.fillStyle = 'rgba(245,243,250,0.12)'; ctx.fill(); rr(1010 - 783 * eo(seg(t, 5.3, 6.1)), 1240, Math.max(30, 783 * eo(seg(t, 5.3, 6.1))), 30, 15); ctx.fillStyle = GREEN; ctx.fill();
+  } },
+  { a: 7.0, b: 9.9, dark: false, draw(lt, t) {   // «أضِفْ منتجًا مكمّلًا إلى السلة…»
+    bg(WH); pop('أضِفْ منتجًا مكمّلًا', 1010, 470, 90, t, 7.2, { color: INK, hi: [1, 2] }); pop('إلى السلة…', 1010, 600, 74, t, 7.9, { color: GREY, w: 600 });
+    cartIcon(540, 1150, 1.25); { const q = seg(t, 7.3, 7.6); if (q > 0) { ctx.save(); ctx.translate(560, 1100); ctx.scale(eb(q), eb(q)); rr(-120, -90, 240, 180, 26); ctx.fillStyle = INK; ctx.fill(); ctx.restore(); } }
+    const f = seg(t, 8.2, 8.9); if (f > 0) { const x = lerp(900, 760, eo(f)), y = lerp(780, 1060 + (f < 1 ? 0 : 0), eb(clamp(f))); ctx.save(); ctx.translate(x, y); ctx.rotate(lerp(0.5, 0, eo(f))); rr(-90, -70, 180, 140, 22); ctx.fillStyle = PU; ctx.fill();
+      ctx.strokeStyle = WH; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-30, 0); ctx.lineTo(30, 0); ctx.moveTo(0, -30); ctx.lineTo(0, 30); ctx.stroke(); ctx.restore(); }
+    pill('منتج مكمّل', 760, 1420, t, 9.0, { bg: PU, fg: WH, size: 48 });
+  } },
+  { a: 9.9, b: 13.1, dark: true, draw(lt, t) {   // «فيرتفعُ المتوسط إلى ثلاثمئةٍ وستين.»
+    footage('pay', lt, 0, 250, W, 560, 1.06, 0.2); { const g = ctx.createLinearGradient(0, 640, 0, 810); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(1, 'rgba(9,9,13,1)'); ctx.fillStyle = g; ctx.fillRect(0, 640, W, 170); } ctx.fillStyle = OB; ctx.fillRect(0, 810, W, H - 810);
+    pop('فيرتفعُ المتوسط', 1010, 930, 84, t, 10.05);
+    const v = lerp(300, 360, eo(seg(t, 11.3, 12.1))); draw1(String(Math.round(v)), 540, 1230, F(700, 230), t > 11.3 ? GREEN : WH, 'center', 'ltr');
+    pill('+60', 860, 1080, t, 12.1, { bg: GREEN, fg: WH, size: 60, rot: 0.6 }); ring(540, 1160, 150, t, 12.1, GREEN, 12);
+  } },
+  { a: 13.1, b: 17.6, dark: true, draw(lt, t) {   // «الطلباتُ نفسُها… والمبيعاتُ ستةٌ وثلاثون ألفًا.»
+    bg(OB); pop('الطلباتُ نفسُها…', 1010, 470, 84, t, 13.3);
+    pill('100 = 100', 540, 640, t, 13.6, { bg: '#17171E', fg: WH, size: 54, stroke: 'rgba(245,243,250,0.3)' });
+    const bar = (y, label, val, color, t0, grow = 1) => { const q = eo(seg(t, t0, t0 + 0.7)); if (q <= 0) return; txt(label, 1010, y - 30, F(600, 44), MU, 'right');
+      const w = 940 * val / 36000 * q; rr(1010 - w, y, w, 90, 20); ctx.fillStyle = color; ctx.fill(); draw1(fmt(val * q), 1010 - w + 24, y + 64, F(700, 56), color === GREEN ? WH : WH, 'left', 'ltr'); };
+    bar(880, 'قبل', 30000, 'rgba(245,243,250,0.25)', 13.9); bar(1110, 'بعد', 36000, GREEN, 14.8);
+    pill('+6,000', 300, 1360, t, 15.8, { bg: GREEN, fg: WH, size: 70, rot: -0.5 }); pop('دون طلبٍ إضافيٍّ واحد', 540, 1530, 52, t, 16.2, { align: 'center', color: MU, w: 600 });
+  } },
+  { a: 17.6, b: 22.0, dark: true, draw(lt, t) {   // «قبل أن تبحث عن عملاء جدد… ارفعْ قيمةَ الطلب.»
+    footage('calc', lt, 0, 0, W, H, lerp(1.04, 1.14, seg(t, 17.6, 22.0)), 0.55); shade(800, 1920, 0.6);
+    pop('قبل أن تبحث عن عملاء جدد…', 1010, 520, 72, t, 17.8, { w: 600 }); pop('ارفعْ قيمةَ الطلب.', 1010, 700, 116, t, 19.6, { hi: [2] , hc: GREEN });
+    card('300 → 360', 540, 1120, 120, t, 20.2, { from: 2 });
+  } },
+  { a: 22.0, b: 26.4, dark: true, end: true, draw(lt, t) { endCard(t, 22.0); } },
+  ],
+  sfx: [['thud', 0.45], ['ding', 0.5, 1046.5], ['pop', 0.9], ['pop', 2.45], ['thud', 3.0], ['pop', 3.3, 800], ['pop', 4.75, 600], ['pop', 5.05, 700], ['count', 5.3, 8, 0.1], ['ding', 6.1, 1318.5],
+    ['pop', 7.2], ['pop', 7.35, 500], ['whoosh', 8.3], ['thud', 8.85], ['ding', 8.9, 1568], ['pop', 9.0, 800], ['pop', 10.05], ['count', 11.3, 8, 0.1], ['plus', 12.1],
+    ['pop', 13.3], ['pop', 13.6, 600], ['count', 13.9, 6, 0.11], ['count', 14.8, 6, 0.11], ['plus', 15.8], ['pop', 16.2, 700], ['pop', 17.8], ['thud', 19.6], ['ding', 20.2, 1318.5]] },
+
+// ===== 04 · CR =====
+4: { dur: 25.6, end: 21.2, breaks: [[7.4, 7.95]], cuts: [[5.5, 'flash'], [7.4, 'slam'], [10.2, 'whip'], [14.4, 'zoom'], [18.2, 'whip'], [21.2, 'zoom']],
+  vo: [0.4, 2.2, 4.2, 5.6, 7.5, 10.3, 14.6, 18.3],
+  scenes: [
+  { a: 0.0, b: 5.5, dark: true, draw(lt, t) {   // «عشرةُ آلاف زائر. واحدٌ في المئة يشترون… مئةُ طلب.»
+    footage('cart', lt, 0, 0, W, H, lerp(1.0, 1.1, seg(t, 0, 5.5)), 0.6);
+    const v = 10000 * eo(seg(t, 0.4, 1.3)); if (t > 0.4) txt(`${fmt(v)} زائر`, 1010, 520, F(700, 110), WH, 'right');
+    grid200(75, 640, 20, 10, 36, 11, t, 0.5, [2.4, 2.55]); if (t > 1.0) draw1('كل مربع = 50 زائر', 1010, 1150, F(500, 30), MU, 'right', 'rtl');
+    pop('1% يشترون…', 1010, 1290, 84, t, 2.3); pill('= 100 طلب', 330, 1290, t, 4.25, { bg: PU, fg: WH, size: 60, rot: 0.4 });
+  } },
+  { a: 5.5, b: 7.4, dark: false, draw(lt, t) {   // «تريد طلباتٍ أكثر؟»
+    bg(WH); { const q = seg(t, 5.55, 5.9); if (q > 0) { ctx.save(); ctx.translate(540, 820); ctx.scale(eb(q), eb(q)); ctx.fillStyle = GREEN; ctx.beginPath(); ctx.arc(0, 0, 170, 0, 7); ctx.fill();
+      ctx.strokeStyle = WH; ctx.lineWidth = 30; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.moveTo(0, 80); ctx.lineTo(0, -80); ctx.moveTo(-60, -20); ctx.lineTo(0, -80); ctx.lineTo(60, -20); ctx.stroke(); ctx.restore(); } }
+    pop('تريد طلباتٍ أكثر؟', 540, 1220, 110, t, 5.7, { align: 'center', color: INK });
+  } },
+  { a: 7.4, b: 10.2, dark: true, draw(lt, t) {   // «لا تشترِ زوارًا أكثر بالضرورة.»
+    bg(OB); pop('لا تشترِ', 540, 640, 110, t, 7.55, { align: 'center', color: MU });
+    pill('زوارًا أكثر', 540, 900, t, 7.9, { bg: WH, fg: INK, size: 84, strike: 8.6 });
+    pop('بالضرورة.', 540, 1150, 90, t, 9.2, { align: 'center' });
+  } },
+  { a: 10.2, b: 14.4, dark: true, draw(lt, t) {   // «صفحةٌ أوضح، وسعرٌ ظاهر، وشحنٌ معروف قبل الدفع…»
+    bg(OB); { const x = 600, y = 360, w = 420, h = 840; ctx.save(); rr(x - 14, y - 14, w + 28, h + 28, 64); ctx.fillStyle = '#1E1E26'; ctx.fill(); ctx.beginPath(); ctx.roundRect(x, y, w, h, 50); ctx.clip(); footage('payphone', lt, x, y, w, h, 1.0, 0.05); ctx.restore(); }
+    const items = [[10.4, 'صفحة أوضح'], [11.6, 'سعر ظاهر'], [12.8, 'شحن معروف قبل الدفع']];
+    items.forEach(([t0, s], i) => { const y = 520 + i * 230, q = seg(t, t0, t0 + 0.35); if (q <= 0) return; check(470, y, 56, seg(t, t0, t0 + 0.5)); ctx.save(); ctx.globalAlpha *= clamp(q * 3); ctx.translate((1 - eo(q)) * 60, 0);
+      const lines = s.split(' ').length > 2 ? ['شحن معروف', 'قبل الدفع'] : [s]; lines.forEach((l, j) => txt(l, 390, y + 18 + j * 60 - (lines.length - 1) * 30, F(700, 52), WH, 'right')); ctx.restore(); });
+    pop('صفحةٌ أوضح، وسعرٌ ظاهر…', 1010, 1400, 60, t, 10.35, { w: 600, color: MU });
+  } },
+  { a: 14.4, b: 18.2, dark: true, draw(lt, t) {   // «واحدٌ ونصف في المئة… مئةٌ وخمسون طلبًا.»
+    bg(OB); txt('10,000 زائر', 1010, 500, F(700, 84), WH, 'right'); pill('الزوار أنفسهم', 260, 470, t, 14.5, { bg: '#17171E', fg: WH, size: 40, stroke: 'rgba(245,243,250,0.3)' });
+    grid200(75, 600, 20, 10, 36, 11, t, 14.3, [14.3, 14.3, 15.0]);
+    const c = eo(seg(t, 15.0, 15.8)); txt(`${(1 + 0.5 * c).toFixed(1).replace('.0', '')}% يشترون`, 1010, 1240, F(700, 72), WH, 'right'); txt(`= ${Math.round(100 + 50 * c)} طلب`, 70, 1240, F(700, 72), c > 0 ? GREEN : WH, 'left');
+    pill('+50 طلب', 540, 1420, t, 16.9, { bg: GREEN, fg: WH, size: 66, rot: 0.5 });
+  } },
+  { a: 18.2, b: 21.2, dark: true, draw(lt, t) {   // «الزوارُ أنفسُهم… طلباتٌ أكثر.»
+    footage('parcel', lt, 0, 0, W, H, lerp(1.04, 1.14, seg(t, 18.2, 21.2)), 0.5); shade(800, 1920, 0.6);
+    pop('الزوارُ أنفسُهم…', 1010, 520, 96, t, 18.35); pop('طلباتٌ أكثر.', 1010, 690, 140, t, 19.4, { hi: [1], hc: GREEN });
+    card('100 → 150', 540, 1150, 120, t, 19.9, { from: 2 });
+  } },
+  { a: 21.2, b: 25.6, dark: true, end: true, draw(lt, t) { endCard(t, 21.2); } },
+  ],
+  sfx: [['count', 0.4, 8, 0.11], ['ding', 1.3, 1046.5], ['pop', 2.3], ['ding', 2.4, 1318.5], ['ding', 2.55, 1568], ['pop', 4.25, 800], ['pop', 5.6], ['ding', 5.7, 1318.5],
+    ['tape', 7.4], ['thud', 7.55], ['pop', 7.9, 600], ['buzz', 8.6], ['thud', 9.2], ['thud', 10.22], ['plus', 10.4], ['plus', 11.6], ['plus', 12.8],
+    ['pop', 14.5, 600], ['ding', 15.0, 1568], ['count', 15.0, 6, 0.13], ['plus', 16.9], ['pop', 18.35], ['thud', 19.4], ['ding', 19.9, 1318.5]] },
+};
+const E = EPS[EP], S = E.scenes, CUTS = E.cuts, DUR = E.dur; window.DUR_S = DUR; window.VO_CUES = E.vo || null;
+const TW = 0.16;
+function drawScene(i, t, c) { const sc = S[i]; const prev = ctx; ctx = c; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.filter = 'none'; sc.draw(t - sc.a, t); if (!sc.end) tag(sc.dark); ctx = prev; }
+function draw(t) {
+  ctx = mctx; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.filter = 'none'; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H);
+  let i = S.findIndex((s) => t >= s.a && t < s.b); if (i < 0) i = S.length - 1;
+  const cut = CUTS.find(([c]) => Math.abs(t - c) < TW);
+  if (cut) { const [c, type] = cut, j = S.findIndex((s) => Math.abs(s.a - c) < 1e-6), p = j - 1, e = seg(t, c - TW, c + TW);
+    drawScene(p, Math.min(t, c - 1e-3), actx); drawScene(j, Math.max(t, c), bctx);
+    if (type === 'whip') { const k = eio(e), bl = Math.sin(Math.PI * e) * 22; mctx.filter = `blur(${bl.toFixed(1)}px)`; mctx.drawImage(bufA, -W * k, 0); mctx.drawImage(bufB, W * (1 - k), 0); mctx.filter = 'none'; }
+    else if (type === 'zoom') { const k = eio(e); mctx.save(); mctx.globalAlpha = 1 - k; mctx.translate(540, 960); mctx.scale(1 + 0.6 * k, 1 + 0.6 * k); mctx.drawImage(bufA, -540, -960); mctx.restore();
+      mctx.save(); mctx.globalAlpha = k; mctx.translate(540, 960); mctx.scale(1.25 - 0.25 * k, 1.25 - 0.25 * k); mctx.drawImage(bufB, -540, -960); mctx.restore(); }
+    else if (type === 'flash') { mctx.drawImage(t < c ? bufA : bufB, 0, 0); mctx.fillStyle = `rgba(245,243,250,${(1 - Math.abs(e - 0.5) * 2) * 0.85})`; mctx.fillRect(0, 0, W, H); }
+    else { const k = t < c ? 0 : seg(t, c, c + TW); if (t < c) mctx.drawImage(bufA, 0, 0); else { const s2 = lerp(1.18, 1, eo(k)); mctx.save(); mctx.translate(540, 960); mctx.scale(s2, s2); mctx.drawImage(bufB, -540, -960); mctx.restore(); } }
+  } else drawScene(i, t, mctx);
+  ctx = mctx; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; badge();
+}
+window.seek = async (t) => { for (let p = 0; p < 4; p++) { MISS = []; draw(t); if (!MISS.length) return; await loadMissing(); } };
+
+// ---------- score: 120 BPM, punchy; stops for the "break" moments; sfx from each episode's list ----------
+window.renderAudio = async () => {
+  const SR = 48000, B = 0.5, ac = new OfflineAudioContext(2, Math.ceil(SR * DUR), SR);
+  const master = ac.createDynamicsCompressor(); master.threshold.value = -14; master.ratio.value = 3; master.attack.value = 0.003; master.release.value = 0.15; master.connect(ac.destination);
+  const mus = ac.createGain(), sfx = ac.createGain(); mus.connect(master); sfx.connect(master);
+  mus.gain.setValueAtTime(1, 0); E.breaks.forEach(([a, b]) => { mus.gain.setValueAtTime(1, a); mus.gain.linearRampToValueAtTime(0, a + 0.22); mus.gain.setValueAtTime(0, b - 0.05); mus.gain.linearRampToValueAtTime(1, b + 0.01); });
+  const rev = ac.createConvolver(); { const len = SR * 1.6, ir = ac.createBuffer(2, len, SR); for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let s = 31 + ch; for (let i = 0; i < len; i++) { s = (s * 16807) % 2147483647; d[i] = (s / 1073741823.5 - 1) * Math.pow(1 - i / len, 3); } } rev.buffer = ir; }
+  const revIn = ac.createGain(), revOut = ac.createGain(); revOut.gain.value = 0.2; revIn.connect(rev); rev.connect(revOut); revOut.connect(master);
+  const nb = (() => { const b = ac.createBuffer(1, SR, SR), d = b.getChannelData(0); let s = 7 + EP; for (let i = 0; i < d.length; i++) { s = (s * 16807) % 2147483647; d[i] = s / 1073741823.5 - 1; } return b; })();
+  const env = (g, t, a, pk, d) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+  const osc = (bus, t, type, f0, f1, a, d, pk, pan = 0, send = 0, lp = 0) => { const o = ac.createOscillator(), g = ac.createGain(), p = ac.createStereoPanner(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + a + d * 0.6);
+    let n = o; if (lp) { const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = lp; o.connect(fl); n = fl; } env(g, t, a, pk, d); p.pan.value = pan; n.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } o.start(t); o.stop(t + a + d + 0.05); };
+  const noise = (bus, t, type, f, q, a, d, pk, pan = 0, f1 = 0, send = 0) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(), p = ac.createStereoPanner(); s.buffer = nb; s.loop = true; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + a + d); fl.Q.value = q; env(g, t, a, pk, d); p.pan.value = pan; s.connect(fl); fl.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } s.start(t, (t * 0.37) % 0.8); s.stop(t + a + d + 0.05); };
+  // each episode its own progression, same groove
+  const PROG = { 1: [[220, 261.6, 329.6], [174.6, 220, 261.6], [130.8, 196, 261.6], [196, 246.9, 293.7]], 2: [[146.8, 174.6, 220], [116.5, 146.8, 174.6], [174.6, 220, 261.6], [130.8, 164.8, 196]],
+    3: [[196, 246.9, 293.7], [164.8, 196, 246.9], [130.8, 164.8, 196], [146.8, 185, 220]], 4: [[164.8, 196, 246.9], [130.8, 164.8, 196], [196, 246.9, 293.7], [146.8, 185, 220]] }[EP];
+  const ROOT = PROG.map((c) => c[0] / 4), END = E.end;
+  for (let bar = 0; bar * 4 * B < END; bar++) { const t0 = bar * 4 * B, c = bar % 4;
+    for (let k = 0; k < 16; k++) { const t = t0 + k * B / 4; if (t >= END) break;
+      if (k % 4 === 0) { osc(mus, t, 'sine', 150, 45, 0.002, 0.26, 0.75); noise(mus, t, 'lowpass', 900, 0.7, 0.001, 0.03, 0.12); }
+      if (k === 4 || k === 12) { [0, 0.01, 0.022].forEach((d) => noise(mus, t + d, 'bandpass', 1500, 1.2, 0.001, 0.09, 0.16, 0, 0, 0.35)); }
+      if (k % 2 === 0) noise(mus, t, 'highpass', 9000, 0.7, 0.001, k % 4 === 2 ? 0.06 : 0.025, k % 4 === 2 ? 0.06 : 0.035, 0.25);
+      if ([0, 3, 6, 8, 11, 14].includes(k)) osc(mus, t, 'sawtooth', ROOT[c], 0, 0.004, B * 0.42, 0.11, 0, 0, 260);
+      if ([0, 2, 3, 5, 7, 8, 10, 13].includes(k)) osc(mus, t, 'triangle', PROG[c][[0, 1, 2, 1, 0, 2, 1, 2][k % 8]] * 2, 0, 0.002, 0.16, 0.05, (k % 2 ? 0.3 : -0.3), 0.25); } }
+  const whoosh = (t, pk = 0.09) => noise(sfx, t - 0.22, 'bandpass', 400, 0.9, 0.2, 0.14, pk, 0, 5000, 0.3);
+  const thud = (t) => { osc(sfx, t, 'sine', 120, 40, 0.002, 0.3, 0.7); noise(sfx, t, 'lowpass', 1200, 0.7, 0.001, 0.1, 0.2); };
+  const FX = {
+    pop: (t, f = 700) => osc(sfx, t, 'sine', f, f * 2.2, 0.002, 0.09, 0.1),
+    thud, whoosh,
+    minus: (t) => { thud(t); osc(sfx, t + 0.02, 'square', 330, 165, 0.002, 0.18, 0.04, 0, 0, 1800); },
+    plus: (t) => { osc(sfx, t, 'sine', 520, 1040, 0.002, 0.14, 0.08); osc(sfx, t + 0.07, 'sine', 780, 1560, 0.002, 0.14, 0.07); osc(sfx, t + 0.02, 'triangle', 1568, 0, 0.002, 0.5, 0.04, 0, 0.5); },
+    ding: (t, f = 1318.5) => { osc(sfx, t, 'triangle', f, 0, 0.002, 0.8, 0.07, 0, 0.6); osc(sfx, t, 'sine', f * 2, 0, 0.002, 0.5, 0.03, 0, 0.6); },
+    ticks: (t0, t1) => { for (let t = t0; t < t1; t += 0.25) noise(sfx, t, 'bandpass', 3200, 4, 0.001, 0.015, 0.06, (Math.round(t * 4) % 2 ? 0.2 : -0.2)); },
+    tape: (t) => osc(sfx, t, 'sawtooth', 220, 30, 0.01, 0.35, 0.12, 0, 0, 900),
+    buzz: (t) => osc(sfx, t, 'square', 260, 130, 0.002, 0.25, 0.05, 0, 0, 1500),
+    count: (t, n = 6, dt = 0.14) => { for (let k = 0; k < n; k++) osc(sfx, t + k * dt, 'sine', 600 + k * 70, 0, 0.002, 0.05, 0.04); },
+    stamp: (t) => { osc(sfx, t, 'sine', 90, 36, 0.002, 0.35, 0.8); noise(sfx, t, 'lowpass', 900, 0.8, 0.001, 0.12, 0.4); osc(sfx, t + 0.02, 'triangle', 1318.5, 0, 0.002, 0.6, 0.03, 0, 0.5); },
+  };
+  CUTS.forEach(([c]) => whoosh(c)); E.sfx.forEach(([k, ...a]) => FX[k](...a));
+  const L = E.end; osc(sfx, L + 0.05, 'sine', 100, 34, 0.002, 1.2, 0.8); noise(sfx, L + 0.05, 'lowpass', 5000, 0.5, 0.001, 0.7, 0.22, 0, 0, 0.8);
+  [[L + 0.15, 880], [L + 0.6, 1046.5], [L + 1.1, 1318.5]].forEach(([t, f]) => osc(sfx, t, 'triangle', f, 0, 0.002, 1.1, 0.04, 0, 0.6));
+  PROG[0].concat([PROG[0][0] * 2]).forEach((f) => [-6, 6].forEach((dt) => { const o = ac.createOscillator(), fl = ac.createBiquadFilter(), g = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = dt; fl.type = 'lowpass'; fl.frequency.value = 900;
+    g.gain.setValueAtTime(0, L + 0.05); g.gain.linearRampToValueAtTime(0.012, L + 0.6); g.gain.setValueAtTime(0.012, DUR - 0.8); g.gain.linearRampToValueAtTime(0, DUR); o.connect(fl); fl.connect(g); g.connect(sfx); o.start(L + 0.05); o.stop(DUR); }));
+  const buf = await ac.startRendering(), Lc = buf.getChannelData(0), Rc = buf.getChannelData(1), n = Lc.length, ab = new ArrayBuffer(44 + n * 4), dv = new DataView(ab);
+  const ws = (o, s) => [...s].forEach((ch, i) => dv.setUint8(o + i, ch.charCodeAt(0)));
+  ws(0, 'RIFF'); dv.setUint32(4, 36 + n * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 2, true); dv.setUint32(24, SR, true); dv.setUint32(28, SR * 4, true); dv.setUint16(32, 4, true); dv.setUint16(34, 16, true); ws(36, 'data'); dv.setUint32(40, n * 4, true);
+  for (let i = 0; i < n; i++) { dv.setInt16(44 + i * 4, Math.max(-1, Math.min(1, Lc[i])) * 32767, true); dv.setInt16(46 + i * 4, Math.max(-1, Math.min(1, Rc[i])) * 32767, true); }
+  let bin = ''; const u8 = new Uint8Array(ab); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(bin);
+};
+window.ready = (async () => {
+  await Promise.all(['500 40px Plex', '600 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول تم ROAS 0123 ×%'))); await document.fonts.ready;
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode(); await window.seek(0); return true;
+})();
+</script></body></html>
