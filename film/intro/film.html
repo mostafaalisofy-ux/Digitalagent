@@ -1,0 +1,343 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- SayTamm intro film, hosted by Tamm (the brand character). English, with «قول… تم» spoken in Gulf Arabic.
+     Structure follows the 2026 profile, "Prompt edition": /say who we are · /plan services · /make work · /tamm. -->
+<style>
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-400.woff2); font-weight: 400; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  html, body { margin: 0; background: #09090D; }
+  canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+const W = 1080, H = 1920, DUR = 63.5; window.DUR_S = DUR;
+const PU = '#6C35FF', OB = '#09090D', GR = '#17171E', WH = '#F5F3FA', MU = 'rgba(245,243,250,0.62)', MONO = '"JetBrains Mono", "DejaVu Sans Mono", monospace';
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const T = __TIMING__, WORDS = T.words, SEQ = '__SEQ__', SEQN = __SEQN__, ICONS = __ICONS__;
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), seg = (t, a, b) => clamp((t - a) / (b - a)), lerp = (a, b, q) => a + (b - a) * q;
+const ss = (x) => x * x * (3 - 2 * x), eo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x)), eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const spring = (t, t0, d = 0.5, z = 0.5) => { const x = (t - t0) / d; if (x <= 0) return 0; if (x >= 1.8) return 1; const w = 11, wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + z / Math.sqrt(1 - z * z) * Math.sin(wd * x)); };
+const win = (t, a, b, fi = 0.3, fo = 0.3) => ss(seg(t, a, a + fi)) * (1 - ss(seg(t, b - fo, b)));   // visible from a to b, with fades
+const rr = (c, x, y, w, h, r) => { c.beginPath(); c.roundRect(x, y, w, h, r); };
+function txt(s, x, y, font, color, align = 'center', rtl = false) { ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align; ctx.direction = rtl ? 'rtl' : 'ltr'; ctx.fillText(s, x, y); ctx.direction = 'ltr'; }
+const tw = (s, font) => { ctx.font = font; return ctx.measureText(s).width; };
+const PATHS = {}; let SYMBOL;
+
+// ---------------- textures ----------------
+const CACHE = new Map(); let MISS = [];
+function img(url) { let im = CACHE.get(url); if (im && im.complete && im.naturalWidth) return im; if (!im) { im = new Image(); im.src = url; CACHE.set(url, im); if (CACHE.size > 500) { const k = CACHE.keys().next().value; CACHE.delete(k); } } MISS.push(im); return null; }
+const frame = (name, t) => img(`${SEQ}/${name}/${String(Math.min(SEQN[name], Math.max(1, Math.floor(t * 24) + 1))).padStart(4, '0')}.jpg`);
+const still = (rel) => img(`${SEQ}/${rel}`);
+async function loadMissing() { await Promise.all([...new Set(MISS)].map((im) => (im.complete ? null : new Promise((r) => { im.addEventListener('load', r, { once: true }); im.addEventListener('error', r, { once: true }); })))); }
+function cover(im, x, y, w, h, fx = 0.5, fy = 0.5, z = 1) {
+  if (!im) return; const s = Math.max(w / im.naturalWidth, h / im.naturalHeight) * z, dw = im.naturalWidth * s, dh = im.naturalHeight * s;
+  ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.drawImage(im, x + (w - dw) * fx, y + (h - dh) * fy, dw, dh); ctx.restore();
+}
+function grade(a = 0.25) { ctx.fillStyle = `rgba(9,9,13,${a})`; ctx.fillRect(0, 0, W, H); }
+function grid(a = 0.05) { ctx.strokeStyle = `rgba(245,243,250,${a})`; ctx.lineWidth = 1; for (let x = 60; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); } for (let y = 60; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); } }
+function band(y0, y1, a) { const g = ctx.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(1, `rgba(9,9,13,${a})`); ctx.fillStyle = g; ctx.fillRect(0, y0, W, y1 - y0); }
+
+// ---------------- footage shots (full-frame background) ----------------
+// [start, end, source, in-point, playback rate, zoom from, zoom to, focus y, kind]
+const SHOTS = [
+  [0.0, 4.45, 'tv', 0.0, 1.0, 1.0, 1.05, 0.5, 'full'],
+  [4.3, 9.15, 'tw', 0.3, 1.0, 1.0, 1.04, 0.5, 'panel'],
+  [11.15, 17.75, 'tv', 3.6, 1.0, 1.0, 1.08, 0.45, 'full'],
+  [22.45, 25.65, 'tw', 4.6, 1.0, 1.0, 1.03, 0.5, 'blur'],
+  [41.35, 47.3, 'tl', 0.0, 1.0, 1.0, 1.04, 0.5, 'full'],
+  [54.6, 59.1, 'tl', 6.0, 0.9, 1.02, 1.08, 0.45, 'full'],
+];
+function shot(t, [a, b, src, tin, rate, z0, z1, fy, kind]) {
+  const v = win(t, a, b, 0.35, 0.35); if (v <= 0) return;
+  const lt = tin + (t - a) * rate, z = lerp(z0, z1, seg(t, a, b)), im = frame(src, lt);
+  ctx.save(); ctx.globalAlpha = v;
+  if (kind === 'full') { cover(im, 0, 0, W, H, 0.5, fy, z); grade(0.12); }
+  else if (kind === 'blur' || kind === 'panel') {
+    if (im) { ctx.filter = 'blur(28px) brightness(0.45)'; cover(im, -60, -60, W + 120, H + 120, 0.5, 0.5, 1.1); ctx.filter = 'none'; }
+    if (kind === 'panel') { const ph = 608 * 1.18, py = (H - ph) / 2 - 40; ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 60; rr(ctx, 0, py, W, ph, 0); ctx.fillStyle = OB; ctx.fill(); ctx.restore(); cover(im, 0, py, W, ph, 0.5, 0.42, z * 1.45); }
+  }
+  ctx.restore();
+}
+
+// ---------------- small pieces ----------------
+function chip(t, a, b, s, x = 70, y = 128) {   // a section command, like the profile's prompt edition: "/say who-we-are"
+  const v = win(t, a, b, 0.25, 0.25); if (v <= 0) return;
+  const n = Math.floor(clamp((t - a) / 0.6) * s.length), show = s.slice(0, Math.max(1, n));
+  ctx.save(); ctx.globalAlpha = v; const f = `500 34px ${MONO}`, w = tw(s, f) + 64;
+  rr(ctx, x, y - 44, w, 64, 32); ctx.fillStyle = 'rgba(9,9,13,0.7)'; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.18)'; ctx.lineWidth = 2; ctx.stroke();
+  txt(show[0], x + 32, y, `700 34px ${MONO}`, PU, 'left'); txt(show.slice(1), x + 32 + tw('/', `700 34px ${MONO}`), y, f, WH, 'left');
+  ctx.restore();
+}
+function tile(name, x, y, s, a = 1) {
+  const C = { google: ['#FFFFFF', '#4285F4'], meta: ['#FFFFFF', '#0467DF'], tiktok: ['#000000', '#FFFFFF'], snapchat: ['#FFFC00', '#000000'], youtube: ['#FFFFFF', '#FF0000'], instagram: ['ig', '#FFFFFF'], x: ['#000000', '#FFFFFF'], googleads: ['#FFFFFF', '#4285F4'] }[name];
+  if (a <= 0 || !PATHS[name]) return; ctx.save(); ctx.globalAlpha *= a; ctx.translate(x, y);
+  ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 20; ctx.shadowOffsetY = 6;
+  if (C[0] === 'ig') { const g = ctx.createLinearGradient(-s / 2, s / 2, s / 2, -s / 2); g.addColorStop(0, '#FEDA75'); g.addColorStop(0.35, '#FA7E1E'); g.addColorStop(0.65, '#D62976'); g.addColorStop(1, '#4F5BD5'); ctx.fillStyle = g; } else ctx.fillStyle = C[0];
+  rr(ctx, -s / 2, -s / 2, s, s, s * 0.24); ctx.fill(); ctx.shadowColor = 'transparent';
+  const k = s * 0.56 / 24; ctx.translate(-12 * k, -12 * k); ctx.scale(k, k); ctx.fillStyle = C[1]; ctx.fill(PATHS[name]); ctx.restore();
+}
+
+// captions: the narration, a few words at a time, the spoken word highlighted
+const CAP_OFF = [[8.9, 11.4], [41.3, 63.5]];   // off over the «قول تم» card and from the markets onward (those scenes set their own words)
+const CHUNKS = (() => { const out = []; let cur = [];
+  WORDS.forEach((w, i) => { cur.push(w); const s = cur.map((x) => x.w).join(' '), nx = WORDS[i + 1];
+    if (/[.,:?…]$/.test(w.w) || s.length > 24 || !nx || nx.a - w.b > 0.35) { out.push(cur); cur = []; } });
+  return out; })();
+function captions(t) {
+  if (CAP_OFF.some(([a, b]) => t > a && t < b)) return;
+  const c = CHUNKS.find((ch, i) => t >= ch[0].a - 0.12 && t < (CHUNKS[i + 1] ? Math.min(CHUNKS[i + 1][0].a - 0.12, ch[ch.length - 1].b + 0.6) : ch[ch.length - 1].b + 0.6)); if (!c) return;
+  const f = `700 54px Sat`, sp = tw(' ', f), ws = c.map((w) => w.w), wl = ws.map((s) => tw(s, f)), total = wl.reduce((p, q) => p + q, 0) + sp * (ws.length - 1);
+  const a = ss(seg(t, c[0].a - 0.12, c[0].a + 0.05)); let x = 540 - total / 2; const y = 1742;
+  ctx.save(); ctx.globalAlpha = a; band(1520, 1920, 0.75);
+  ws.forEach((s, i) => { const on = t >= c[i].a - 0.04; ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 16; txt(s, x, y, f, on ? WH : 'rgba(245,243,250,0.42)', 'left'); ctx.restore();
+    if (on && t < c[i].b + 0.05) { ctx.fillStyle = PU; ctx.fillRect(x, y + 18, wl[i], 6); } x += wl[i] + sp; });
+  ctx.restore();
+}
+
+// ---------------- scenes ----------------
+// S1 · "Hi, I'm Tamm."
+function nameTag(t) {
+  const v = win(t, 1.55, 4.35, 0.3, 0.3); if (v <= 0) return; const q = spring(t, 1.55, 0.5);
+  ctx.save(); ctx.globalAlpha = v; ctx.translate(-60 * (1 - Math.min(1, q)), 0);
+  rr(ctx, 70, 1300, 600, 168, 28); ctx.fillStyle = 'rgba(9,9,13,0.72)'; ctx.fill(); ctx.fillStyle = PU; ctx.fillRect(70, 1300, 10, 168);
+  txt('Tamm', 112, 1384, '700 76px Sat', WH, 'left'); txt('The Playful Strategist · SayTamm', 112, 1438, `500 30px Sat`, MU, 'left');
+  ctx.restore();
+}
+// S2 · "In Gulf Arabic, when a request is as good as done…": a lookup, typed like a prompt
+function lookup(t) {
+  const v = win(t, 4.6, 9.1, 0.3, 0.3); if (v <= 0) return;
+  ctx.save(); ctx.globalAlpha = v;
+  const l1 = 'lookup("as good as done")', n = Math.floor(clamp((t - 4.75) / 1.4) * l1.length);
+  txt('>', 80, 470, `700 42px ${MONO}`, PU, 'left'); txt(l1.slice(0, n) + (t % 0.8 < 0.4 && n < l1.length ? '▍' : ''), 120, 470, `500 42px ${MONO}`, WH, 'left');
+  if (t > 7.9) { const q = spring(t, 7.95, 0.4); ctx.globalAlpha = v * clamp(q * 1.5); txt('→ Gulf Arabic · 2 words', 120, 540, `500 36px ${MONO}`, MU, 'left'); }
+  ctx.restore();
+}
+// S3 · «قول… تم»: the prompt and its result
+function name(t) {
+  const v = win(t, 8.95, 11.45, 0.2, 0.35); if (v <= 0) return;
+  ctx.save(); ctx.globalAlpha = v; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H); grid(0.045);
+  const g0 = T.gulf[0], q1 = spring(t, g0 + 0.03, 0.42, 0.45), q2 = spring(t, g0 + 1.17, 0.42, 0.45);
+  if (q1 > 0) { ctx.save(); ctx.globalAlpha = v * clamp(q1 * 1.6); ctx.translate(540, 820); const k = lerp(1.35, 1, Math.min(1, q1)); ctx.scale(k, k); txt('قول', 0, 0, '700 300px Plex', WH, 'center', true); ctx.restore();
+    ctx.save(); ctx.globalAlpha = v * clamp(q1 * 1.6); txt('prompt · "say it"', 540, 930, `500 36px ${MONO}`, MU); ctx.restore(); }
+  if (q2 > 0) { ctx.save(); ctx.globalAlpha = v * clamp(q2 * 1.6); ctx.translate(540, 1290); const k = lerp(1.35, 1, Math.min(1, q2)); ctx.scale(k, k); txt('تم', 0, 0, '700 300px Plex', WH, 'center', true);
+      ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(-200, -40, 26, 0, 7); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.globalAlpha = v * clamp(q2 * 1.6); txt('result · "done ✓"', 540, 1400, `500 36px ${MONO}`, MU); ctx.restore(); }
+  ctx.restore();
+}
+// S4 · "That's our name and our promise. You tell us the goal; we take responsibility for getting there."
+function promise(t) {
+  const v = win(t, 11.4, 17.75, 0.3, 0.3); if (v <= 0) return;
+  ctx.save(); ctx.globalAlpha = v; band(0, 600, 0); { const g = ctx.createLinearGradient(0, 0, 0, 620); g.addColorStop(0, 'rgba(9,9,13,0.75)'); g.addColorStop(1, 'rgba(9,9,13,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, 620); }
+  [['Our name.', 11.89, 300], ['Our promise.', 13.25, 410]].forEach(([s, t0, y]) => { const q = spring(t, t0 - 0.05, 0.45); if (q <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); ctx.translate(0, 26 * (1 - Math.min(1, q))); txt(s, 80, y, '700 104px Sat', WH, 'left'); ctx.restore(); });
+  // the prompt card: the client says the goal; SayTamm answers «تم»
+  const q = spring(t, 14.0, 0.5); if (q > 0) {
+    ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); ctx.translate(0, 40 * (1 - Math.min(1, q)));
+    rr(ctx, 60, 1100, 960, 330, 32); ctx.fillStyle = 'rgba(9,9,13,0.82)'; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.16)'; ctx.lineWidth = 2; ctx.stroke();
+    [0, 1, 2].forEach((i) => { ctx.fillStyle = 'rgba(245,243,250,0.18)'; ctx.beginPath(); ctx.arc(104 + i * 30, 1146, 8, 0, 7); ctx.fill(); });
+    const goal = 'Launch our new model in Saudi Arabia.', n = Math.floor(clamp((t - 14.25) / 1.15) * goal.length);
+    txt('say ›', 100, 1236, `700 38px ${MONO}`, PU, 'left'); txt(goal.slice(0, n) + (n < goal.length && t % 0.6 < 0.3 ? '▍' : ''), 236, 1236, `500 34px ${MONO}`, WH, 'left');
+    const r = spring(t, 15.46, 0.4); if (r > 0) { ctx.globalAlpha *= clamp(r * 1.6); txt('tamm ›', 100, 1340, `700 38px ${MONO}`, MU, 'left'); txt('تم', 330, 1346, '700 64px Plex', WH, 'center', true); txt('done ✓', 380, 1340, `500 34px ${MONO}`, MU, 'left'); }
+    ctx.restore();
+  }
+  ctx.restore();
+}
+// S5 · "SayTamm is a digital marketing and performance agency, founded in 2021." The spec sheet, from the profile
+function whoWeAre(t) {
+  const v = win(t, 17.6, 22.7, 0.35, 0.35); if (v <= 0) return;
+  ctx.save(); ctx.globalAlpha = v; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H); grid(0.04);
+  const cap = still('tamm_cap.webp'), z = lerp(1.0, 1.06, seg(t, 17.6, 22.7));
+  ctx.save(); rr(ctx, 140, 230, 800, 1000, 40); ctx.clip(); cover(cap, 140, 230, 800, 1000, 0.5, 0.25, z); const g = ctx.createLinearGradient(0, 900, 0, 1230); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(1, 'rgba(9,9,13,0.9)'); ctx.fillStyle = g; ctx.fillRect(140, 900, 800, 330); ctx.restore();
+  const q = spring(t, 17.9, 0.5); ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); txt('A digital marketing', 540, 1160, '700 64px Sat', WH); txt('& performance agency', 540, 1236, '700 64px Sat', WH); ctx.restore();
+  const stats = [['2021', 'founded', 21.4], ['30', 'people on the team', 21.75], ['5', 'markets', 22.05]];
+  stats.forEach(([n, l, t0], i) => { const s = spring(t, t0, 0.45); if (s <= 0) return; const x = 200 + i * 340; ctx.save(); ctx.globalAlpha *= clamp(s * 1.6); ctx.translate(0, 30 * (1 - Math.min(1, s)));
+    txt(n, x, 1410, '700 104px Sat', i === 0 ? PU : WH); txt(l, x, 1462, '500 30px Sat', MU); ctx.restore();
+    if (i) { ctx.fillStyle = 'rgba(245,243,250,0.15)'; ctx.fillRect(x - 170, 1330, 2, 150); } });
+  ctx.restore();
+}
+// S6 · "One team. Four connected disciplines."
+const DISC = [['01', 'Strategy'], ['02', 'Creative'], ['03', 'Media'], ['04', 'Technology']];
+function oneTeam(t) {
+  const v = win(t, 22.55, 25.75, 0.3, 0.3); if (v <= 0) return;
+  ctx.save(); ctx.globalAlpha = v; grade(0.25);
+  [['One team.', 22.68, 380], ['Four connected disciplines.', 23.64, 480]].forEach(([s, t0, y], i) => { const q = spring(t, t0 - 0.05, 0.45); if (q <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); txt(s, 540, y, `700 ${i ? 64 : 110}px Sat`, WH); ctx.restore(); });
+  const cx = 540, cy = 1000, R = 270, d = eo(seg(t, 23.7, 24.9));
+  ctx.strokeStyle = 'rgba(245,243,250,0.35)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, R, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * d); ctx.stroke();
+  DISC.forEach(([n, s], i) => { const a = -Math.PI / 2 + i * Math.PI / 2, q = spring(t, 23.75 + i * 0.22, 0.4); if (q <= 0) return; const x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R;
+    ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); ctx.translate(x, y); const k = lerp(0.6, 1, Math.min(1, q)); ctx.scale(k, k);
+    const w = tw(s, '700 40px Sat') + 120; rr(ctx, -w / 2, -42, w, 84, 42); ctx.fillStyle = GR; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.22)'; ctx.lineWidth = 2; ctx.stroke();
+    txt(n, -w / 2 + 44, 12, `700 28px ${MONO}`, PU, 'left'); txt(s, -w / 2 + 96, 14, '700 40px Sat', WH, 'left'); ctx.restore(); });
+  ctx.restore();
+}
+// S7 · the four disciplines: Tamm in a window above, the discipline card below
+const CARDS = [
+  { a: 25.45, b: 29.05, n: '01', title: 'Strategy & Consulting', line: 'The audience, the offer, the channels,', line2: 'and the number each one must deliver.', src: 'tl', tin: 6.1, rate: 0.55, fy: 0.3, g: 'strategy' },
+  { a: 28.9, b: 33.05, n: '02', title: 'Creative & Content', line: 'Branding · Social media · Content', line2: 'Media production', src: 'tv', tin: 5.0, rate: 0.9, fy: 0.3, g: 'creative' },
+  { a: 32.9, b: 37.1, n: '03', title: 'Media & Performance', line: 'Paid search and paid social, scaled', line2: 'against revenue: not reach.', src: 'tw', tin: 6.0, rate: 0.9, fy: 0.5, g: 'media' },
+  { a: 36.95, b: 41.5, n: '04', title: 'Digital & Technology', line: 'SEO · Websites & CRO', line2: 'Analytics & growth', src: 'tl', tin: 8.2, rate: 0.4, fy: 0.3, g: 'tech' },
+];
+function disciplines(t) {
+  const any = win(t, 25.45, 41.5, 0.35, 0.35); if (any <= 0) return;
+  ctx.save(); ctx.globalAlpha = any; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H); grid(0.04); ctx.restore();
+  chip(t, 25.5, 41.4, '/plan services');
+  CARDS.forEach((c, i) => {
+    const v = win(t, c.a, c.b, 0.35, 0.35); if (v <= 0) return; const lt = c.tin + (t - c.a) * c.rate, q = spring(t, c.a, 0.55);
+    ctx.save(); ctx.globalAlpha = v;
+    // Tamm, in a window
+    ctx.save(); rr(ctx, 60, 190, 960, 820, 40); ctx.clip(); cover(frame(c.src, lt), 60, 190, 960, 820, 0.5, c.fy, lerp(1.0, 1.05, seg(t, c.a, c.b))); ctx.restore();
+    rr(ctx, 60, 190, 960, 820, 40); ctx.strokeStyle = 'rgba(245,243,250,0.14)'; ctx.lineWidth = 2; ctx.stroke();
+    // the card
+    ctx.translate(0, 50 * (1 - Math.min(1, q)));
+    rr(ctx, 60, 1050, 960, 470, 32); ctx.fillStyle = GR; ctx.fill(); ctx.fillStyle = PU; ctx.fillRect(60, 1050, 960, 6);
+    txt(c.n, 110, 1135, `700 36px ${MONO}`, PU, 'left'); txt(c.title, 110, 1212, '700 64px Sat', WH, 'left');
+    txt(c.line, 110, 1272, '500 34px Sat', MU, 'left'); txt(c.line2, 110, 1316, '500 34px Sat', MU, 'left');
+    graphic(c.g, t, c.a, 110, 1380);
+    ctx.restore();
+  });
+}
+function graphic(g, t, a, x, y) {
+  if (g === 'strategy') { ['Audience', 'Offer', 'Channels', 'Number'].forEach((s, i) => { const q = spring(t, a + 0.6 + i * 0.3, 0.4); if (q <= 0) return; const w = tw(s, '600 32px Sat') + 50, xx = x + [0, 230, 400, 625][i];
+    if (i) { ctx.strokeStyle = PU; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(xx - 34, y + 44); ctx.lineTo(xx - 10, y + 44); ctx.stroke(); }
+    ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); rr(ctx, xx, y + 10, w, 68, 34); ctx.fillStyle = i === 3 ? PU : 'rgba(245,243,250,0.08)'; ctx.fill(); txt(s, xx + w / 2, y + 55, '600 32px Sat', WH); ctx.restore(); }); }
+  if (g === 'creative') { ['work/img107.jpg', 'work/img032.jpg', 'work/img122.jpg', 'work/img108.jpg'].forEach((p, i) => { const q = spring(t, a + 0.5 + i * 0.18, 0.45); if (q <= 0) return; const w = 186, h = 110, xx = x + i * 206;
+    ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); ctx.translate(0, 20 * (1 - Math.min(1, q))); rr(ctx, xx, y, w, h, 16); ctx.save(); ctx.clip(); cover(still(p), xx, y, w, h, 0.5, 0.35); ctx.restore(); ctx.restore(); }); }
+  if (g === 'media') { ['google', 'meta', 'snapchat', 'tiktok', 'youtube'].forEach((n, i) => { const q = spring(t, a + 0.5 + i * 0.12, 0.4); tile(n, x + 50 + i * 120, y + 50, 92 * lerp(0.6, 1, Math.min(1, q)), clamp(q * 1.5)); });
+    const sq = eo(seg(t, a + 2.05, a + 2.35)); if (sq > 0) { const s = 'reach', f = '500 34px Sat', xs = 110 + tw('against revenue: not ', f); ctx.fillStyle = PU; ctx.fillRect(xs - 4, 1304, (tw(s, f) + 8) * sq, 5); } }
+  if (g === 'tech') { const q = spring(t, a + 0.5, 0.45); if (q <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(q * 1.6);
+    rr(ctx, x, y, 860, 110, 18); ctx.fillStyle = 'rgba(245,243,250,0.06)'; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.18)'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.strokeStyle = WH; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(x + 50, y + 50, 16, 0, 7); ctx.moveTo(x + 62, y + 62); ctx.lineTo(x + 74, y + 74); ctx.stroke();
+    const s = 'buyers already searching', n = Math.floor(clamp((t - a - 0.8) / 1.2) * s.length); txt(s.slice(0, n), x + 100, y + 66, `500 34px ${MONO}`, WH, 'left');
+    const r = spring(t, a + 2.3, 0.4); if (r > 0) { ctx.globalAlpha *= clamp(r * 1.6); rr(ctx, x + 640, y + 26, 200, 58, 29); ctx.fillStyle = PU; ctx.fill(); txt('tracked ✓', x + 740, y + 66, `600 28px ${MONO}`, WH); }
+    ctx.restore(); }
+}
+// S8 · markets: Tamm changes looks while the five markets stack up
+const MARKETS = [['01', 'Saudi Arabia', 'السعودية', 'Saudi'], ['02', 'UAE', 'الإمارات', 'UAE,'], ['03', 'Kuwait', 'الكويت', 'Kuwait,'], ['04', 'Oman', 'عُمان', 'Oman'], ['05', 'Egypt', 'مصر', 'Egypt.']];
+const wt = (w, after = 0) => (WORDS.find((x) => x.w === w && x.a > after) || { a: 1e9 }).a;
+function markets(t) {
+  const v = win(t, 41.4, 47.3, 0.3, 0.35); if (v <= 0) return;
+  ctx.save(); ctx.globalAlpha = v; band(1000, 1920, 0.92); chip(t, 41.45, 47.25, '/say markets');
+  const q0 = spring(t, 41.75, 0.45); ctx.save(); ctx.globalAlpha *= clamp(q0 * 1.6); txt('Experience across markets.', 80, 1130, '700 58px Sat', WH, 'left'); ctx.restore();
+  MARKETS.forEach(([n, en, ar, w], i) => { const t0 = wt(w, 41), q = spring(t, t0 - 0.06, 0.4); if (q <= 0) return; const y = 1230 + i * 80;
+    ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); ctx.translate(-40 * (1 - Math.min(1, q)), 0);
+    ctx.fillStyle = 'rgba(245,243,250,0.12)'; ctx.fillRect(80, y + 22, 920, 2);
+    txt(n, 80, y, `700 30px ${MONO}`, PU, 'left'); txt(en, 150, y + 4, '700 52px Sat', WH, 'left'); txt(ar, 1000, y + 4, '500 40px Plex', MU, 'right', true); ctx.restore(); });
+  const qf = spring(t, 46.7, 0.4); ctx.save(); ctx.globalAlpha *= clamp(qf * 1.6); txt('// experience, not offices', 80, 1690, `500 30px ${MONO}`, MU, 'left'); ctx.restore();
+  ctx.restore();
+}
+// S9 · the work: three columns of real projects from the profile, and the sectors as they are named
+const COLS = [['img025', 'img107', 'img119', 'img032', 'img115', 'img110', 'img000', 'img026'],
+              ['img122', 'img121', 'img027', 'img108', 'img116', 'img113', 'img117', 'img001'],
+              ['img109', 'img028', 'img033', 'img118', 'img112', 'img120', 'img111', 'img124', 'img123']];
+const SECT = [['Posts', 'Posts,'], ['Campaigns', 'campaigns,'], ['Identities', 'identities'], ['Packaging', 'packaging,'], ['Automotive', 'automotive,'], ['Retail', 'retail,'], ['Fashion', 'fashion,'], ['Food', 'food'], ['Technology', 'technology.']];
+function work(t) {
+  const v = win(t, 47.15, 54.75, 0.35, 0.35); if (v <= 0) return;
+  ctx.save(); ctx.globalAlpha = v; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H);
+  const cw = 330, gap = 22, x0 = (W - 3 * cw - 2 * gap) / 2, p = t - 47.15;
+  COLS.forEach((col, ci) => { const speed = [70, 110, 85][ci], off = (ci === 1 ? -200 : 0) - p * speed * (ci === 1 ? -1 : 1); let y = off - 400;
+    for (let k = 0; k < 3; k++) col.forEach((id) => { const im = still(`work/${id}.jpg`), ar = im ? im.naturalHeight / im.naturalWidth : 1.3, h = cw * ar, x = x0 + ci * (cw + gap);
+      if (y + h > -50 && y < H + 50) { ctx.save(); rr(ctx, x, y, cw, h, 18); ctx.clip(); if (im) ctx.drawImage(im, x, y, cw, h); ctx.restore(); } y += h + gap; }); });
+  grade(0.35); band(700, 1250, 0); { const g = ctx.createLinearGradient(0, 660, 0, 1260); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(0.5, 'rgba(9,9,13,0.85)'); g.addColorStop(1, 'rgba(9,9,13,0)'); ctx.fillStyle = g; ctx.fillRect(0, 660, W, 600); }
+  chip(t, 47.2, 54.7, '/make work');
+  const cur = SECT.map(([s, w]) => [s, wt(w, 47)]).filter(([, a]) => t >= a - 0.08).pop();
+  if (cur) { const [s, a] = cur, q = spring(t, a - 0.08, 0.35); ctx.save(); ctx.globalAlpha *= clamp(q * 2); ctx.translate(540, 990); const k = lerp(1.25, 1, Math.min(1, q)); ctx.scale(k, k); txt(s + '.', 0, 0, '700 128px Sat', WH); ctx.restore(); }
+  const q2 = spring(t, 47.4, 0.4); ctx.save(); ctx.globalAlpha *= clamp(q2 * 1.6) * 0.9; txt('Made by the SayTamm team', 540, 1090, `500 32px ${MONO}`, MU); ctx.restore();
+  ctx.restore();
+}
+// S10 · "So… what's your goal? Say it. We'll Tamm it."
+function ask(t) {
+  const v = win(t, 54.65, 59.15, 0.3, 0.3); if (v <= 0) return;
+  ctx.save(); ctx.globalAlpha = v; { const g = ctx.createLinearGradient(0, 0, 0, 640); g.addColorStop(0, 'rgba(9,9,13,0.8)'); g.addColorStop(1, 'rgba(9,9,13,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, 640); } band(1150, 1920, 0.9);
+  const q = spring(t, 55.05, 0.45); ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); txt("So… what's", 540, 300, '700 104px Sat', WH); txt('your goal?', 540, 410, '700 104px Sat', WH); ctx.restore();
+  // the prompt bar
+  rr(ctx, 60, 1300, 960, 120, 60); ctx.fillStyle = 'rgba(23,23,30,0.92)'; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.2)'; ctx.lineWidth = 2; ctx.stroke();
+  const goal = 'Say it.', n = Math.floor(clamp((t - 56.95) / 0.35) * goal.length);
+  txt('say ›', 110, 1374, `700 38px ${MONO}`, PU, 'left'); txt(n ? goal.slice(0, n) : (t % 0.8 < 0.4 ? '▍' : ''), 245, 1374, '700 44px Sat', WH, 'left');
+  const r = spring(t, 58.0, 0.4); if (r > 0) { ctx.save(); ctx.globalAlpha *= clamp(r * 1.6); ctx.translate(0, 30 * (1 - Math.min(1, r))); txt('Tamm it.', 540, 1590, '700 132px Sat', WH); ctx.restore(); }
+  ctx.restore();
+}
+// S11 · lockup
+function lockup(t) {
+  const v = ss(seg(t, 58.95, 59.45)); if (v <= 0) return;
+  ctx.save(); ctx.globalAlpha = v; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H); grid(0.035);
+  const show = (t0, f) => { const q = spring(t, t0, 0.45); if (q <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); ctx.translate(0, 26 * (1 - Math.min(1, q))); f(); ctx.restore(); };
+  show(59.3, () => { const SH = 240, SW = SH * 600 / 721; ctx.drawImage(SYMBOL, 540 - SW / 2, 560 - SH / 2, SW, SH); });
+  show(59.55, () => { txt('SayTamm', 540, 880, '700 120px Sat', WH); });
+  show(60.2, () => { txt('قول تم', 540, 975, '700 64px Plex', MU, 'center', true); });
+  show(60.6, () => { txt('A digital marketing & performance agency', 540, 1070, '500 38px Sat', 'rgba(245,243,250,0.88)'); });
+  show(61.0, () => { const s = 'Say it. Tamm it', f = '700 72px Sat', w = tw(s, f); txt(s, 540 - 12, 1210, f, WH); ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(540 - 12 + w / 2 + 18, 1202, 11, 0, 7); ctx.fill(); });
+  show(61.5, () => { txt('info@saytamm.com', 540, 1350, '500 40px Sat', WH); txt('www.saytamm.com', 540, 1410, '500 40px Sat', MU); });
+  ctx.restore();
+}
+
+// ---------------- frame ----------------
+function draw(t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H);
+  SHOTS.forEach((s) => shot(t, s));
+  nameTag(t); lookup(t); promise(t); whoWeAre(t); oneTeam(t); disciplines(t); markets(t); work(t); ask(t);
+  chip(t, 17.75, 22.55, '/say who-we-are'); chip(t, 22.6, 25.5, '/plan how-we-work'); chip(t, 54.7, 58.9, '/tamm');
+  captions(t); name(t); lockup(t);
+}
+window.seek = async (t) => { for (let pass = 0; pass < 4; pass++) { MISS = []; draw(t); if (!MISS.length) return; await loadMissing(); } };
+
+// ---------------- score: an original Web Audio piece, 104 BPM ----------------
+window.renderAudio = async () => {
+  const SR = 48000, ac = new OfflineAudioContext(2, Math.ceil(SR * DUR), SR);
+  const master = ac.createDynamicsCompressor(); master.threshold.value = -16; master.ratio.value = 3; master.attack.value = 0.004; master.release.value = 0.2; master.connect(ac.destination);
+  const bus = ac.createGain(); bus.connect(master);
+  const rev = ac.createConvolver(); { const len = SR * 2.4, ir = ac.createBuffer(2, len, SR); for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let s = 7 + ch; for (let i = 0; i < len; i++) { s = (s * 16807) % 2147483647; d[i] = (s / 1073741823.5 - 1) * Math.pow(1 - i / len, 3.0); } } rev.buffer = ir; }
+  const revIn = ac.createGain(), revOut = ac.createGain(); revOut.gain.value = 0.3; revIn.connect(rev); rev.connect(revOut); revOut.connect(master);
+  const nb = (() => { const b = ac.createBuffer(1, SR, SR), d = b.getChannelData(0); let s = 3; for (let i = 0; i < d.length; i++) { s = (s * 16807) % 2147483647; d[i] = s / 1073741823.5 - 1; } return b; })();
+  const env = (g, t, a, pk, d) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+  const osc = (t, type, f0, f1, a, d, pk, pan = 0, send = 0, lp = 0) => { if (t < 0) return; const o = ac.createOscillator(), g = ac.createGain(), p = ac.createStereoPanner(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + a + d * 0.6);
+    let node = o; if (lp) { const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = lp; o.connect(fl); node = fl; } env(g, t, a, pk, d); p.pan.value = pan; node.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } o.start(t); o.stop(t + a + d + 0.05); };
+  const noise = (t, type, f, q, a, d, pk, pan = 0, f1 = 0, send = 0) => { if (t < 0) return; const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(), p = ac.createStereoPanner(); s.buffer = nb; s.loop = true; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + a + d); fl.Q.value = q; env(g, t, a, pk, d); p.pan.value = pan; s.connect(fl); fl.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } s.start(t, (t * 0.37) % 0.8); s.stop(t + a + d + 0.05); };
+  const BEAT = 60 / 104, BAR = BEAT * 4;
+  // chords: A minor · F · C · G (voiced low), one per bar; the bass follows
+  const CH = [[220, 261.6, 329.6], [174.6, 220, 261.6], [196, 261.6, 329.6], [196, 246.9, 293.7]], BASS = [55, 43.65, 65.41, 49];
+  const pad = (t, d, fs, g) => fs.forEach((f) => [-7, 7].forEach((dt) => { const o = ac.createOscillator(), fl = ac.createBiquadFilter(), gg = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = dt; fl.type = 'lowpass'; fl.frequency.value = 900;
+    gg.gain.setValueAtTime(0, t); gg.gain.linearRampToValueAtTime(g, t + 0.6); gg.gain.setValueAtTime(g, t + d - 0.5); gg.gain.linearRampToValueAtTime(0, t + d); o.connect(fl); fl.connect(gg); gg.connect(bus); const sg = ac.createGain(); sg.gain.value = 0.5; gg.connect(sg); sg.connect(revIn); o.start(t); o.stop(t + d + 0.05); }));
+  const nBars = Math.ceil(58.9 / BAR);
+  for (let b = 0; b < nBars; b++) { const t0 = b * BAR, c = b % 4, full = t0 > 11.3 && t0 < 54.4 && !(t0 > 8.8 && t0 < 11.3);
+    pad(t0, BAR + 0.05, CH[c], full ? 0.012 : 0.016);
+    for (let k = 0; k < 8; k++) { const t = t0 + k * BEAT / 2;
+      if (t > 8.85 && t < 11.3) continue;   // the name card stands in silence
+      if (b > 0) osc(t, 'triangle', CH[c][[0, 1, 2, 1, 2, 0, 1, 2][k]] * 2, 0, 0.003, 0.22, 0.022, (k % 2 ? 0.25 : -0.25), 0.25);   // pluck arpeggio
+      if (full) { if (k % 2 === 0) osc(t, 'sine', BASS[c], 0, 0.01, BEAT * 0.8, 0.12, 0, 0, 200);
+        if (k % 4 === 0) { osc(t, 'sine', 140, 44, 0.002, 0.28, 0.55); noise(t, 'lowpass', 1400, 0.7, 0.001, 0.02, 0.12); }
+        if (k % 4 === 2) noise(t, 'bandpass', 2200, 0.8, 0.002, 0.12, 0.08, 0, 0, 0.2);
+        noise(t, 'highpass', 8000, 0.7, 0.001, 0.03, k % 2 ? 0.035 : 0.02, 0.2); } } }
+  // the name: a hush, then two hits for «قول» and «تم»
+  noise(8.0, 'bandpass', 400, 1.5, 0.8, 0.1, 0.05, 0, 5000);
+  [[T.gulf[0] + 0.03, 1], [T.gulf[0] + 1.17, 1.15]].forEach(([t, k]) => { osc(t, 'sine', 120 * k, 38, 0.002, 0.6, 0.8); noise(t, 'lowpass', 3000, 0.6, 0.001, 0.25, 0.25, 0, 0, 0.6); osc(t, 'triangle', 659.3 * k, 0, 0.002, 0.8, 0.05, 0, 0.6); });
+  // transitions: soft whooshes into each section
+  [4.2, 11.2, 17.55, 22.45, 25.35, 28.8, 32.8, 36.85, 41.25, 47.05, 54.5].forEach((t) => noise(t - 0.35, 'bandpass', 500, 1.2, 0.3, 0.12, 0.08, 0, 4500));
+  // typing ticks for the prompts
+  const ticks = (a, b, gap = 0.045) => { for (let t = a; t < b; t += gap + ((t * 97) % 1) * 0.02) noise(t, 'bandpass', 3800, 3, 0.001, 0.018, 0.05, ((t * 13) % 1) - 0.5); };
+  ticks(4.75, 6.15); ticks(14.25, 15.4); ticks(26.25, 26.9, 0.1); ticks(37.75, 38.95); ticks(56.95, 57.3);
+  // pops for chips, stats, markets, sectors
+  const pop = (t, f = 880, g = 0.05) => { osc(t, 'sine', f, f * 1.5, 0.002, 0.09, g); noise(t, 'bandpass', 2600, 2, 0.001, 0.03, g * 0.8); };
+  [15.46, 21.4, 21.75, 22.05].forEach((t, i) => pop(t, 660 + i * 110));
+  [23.75, 23.97, 24.19, 24.41].forEach((t, i) => pop(t, 523 + i * 130, 0.04));
+  WORDS.filter((w) => w.a > 43 && w.a < 46.8 && /^(Saudi|UAE|Kuwait|Oman|Egypt)/.test(w.w)).forEach((w, i) => pop(w.a, 587 + i * 98, 0.045));
+  WORDS.filter((w) => w.a > 47 && w.a < 54.6 && /^(Posts|campaigns|identities|packaging|automotive|retail|fashion|food|technology)/.test(w.w)).forEach((w, i) => pop(w.a, 523 + (i % 5) * 98, 0.04));
+  // the answer, then the lockup chord
+  osc(58.0, 'sine', 110, 40, 0.002, 0.5, 0.7); noise(58.0, 'lowpass', 2500, 0.6, 0.001, 0.2, 0.2, 0, 0, 0.5);
+  pad(58.95, 4.5, [220, 277.2, 329.6, 440], 0.016); osc(58.95, 'sine', 55, 0, 0.05, 4.4, 0.18, 0, 0, 160);
+  [[59.3, 880], [59.55, 1318.5], [61.0, 1108.7]].forEach(([t, f]) => osc(t, 'triangle', f, 0, 0.002, 1.4, 0.035, 0, 0.6));
+  const buf = await ac.startRendering(), L = buf.getChannelData(0), Rr = buf.getChannelData(1), n = L.length, ab = new ArrayBuffer(44 + n * 4), dv = new DataView(ab);
+  const ws = (o, s) => [...s].forEach((ch, i) => dv.setUint8(o + i, ch.charCodeAt(0)));
+  ws(0, 'RIFF'); dv.setUint32(4, 36 + n * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 2, true); dv.setUint32(24, SR, true); dv.setUint32(28, SR * 4, true); dv.setUint16(32, 4, true); dv.setUint16(34, 16, true); ws(36, 'data'); dv.setUint32(40, n * 4, true);
+  for (let i = 0; i < n; i++) { dv.setInt16(44 + i * 4, Math.max(-1, Math.min(1, L[i])) * 32767, true); dv.setInt16(46 + i * 4, Math.max(-1, Math.min(1, Rr[i])) * 32767, true); }
+  let bin = ''; const u8 = new Uint8Array(ab); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(bin);
+};
+
+window.ready = (async () => {
+  await Promise.all(['400 40px Sat', '500 40px Sat', '700 40px Sat', '500 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول تم السعودية Tamm 0123')));
+  await document.fonts.load(`500 34px ${MONO}`, 'say › /plan'); await document.fonts.ready;
+  for (const [n, v] of Object.entries(ICONS)) PATHS[n] = new Path2D(v.d);
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
+  await window.seek(0); return true;
+})();
+</script></body></html>
