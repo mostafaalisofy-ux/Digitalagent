@@ -31,8 +31,8 @@ SayTamm is a digital marketing & performance agency. This repo holds the website
 
 ## Next steps (from the plan)
 
-1. Teasers «قولها» (V01): three 8 s 9:16 motion teasers, Arabic, Plex only, «قريباً» until the launch date is set. Folder `film/teasers/` was started, empty.
-2. «قاموس الفلوس» (V05): 15–20 s money explainers with clearly labelled illustrative numbers, built on the receipt engine.
+1. Teasers «قولها» (V01): done in another session; the owner supplied the three masters (`handover/launch-film/teasers/`). Their source is not in this repo.
+2. «قاموس الفلوس» (V05): episodes 01–04 built in `film/money/` (ROAS, CPA, AOV, CR). Next episodes from the plan: new vs returning customer, the Boost button, wasted spend, CTR alone.
 3. Filming days for the human series (The Relay, Meet the 30, founder, sketches) need the owner's footage and consent; use the owner's folders on this machine for any material they point to.
 4. Owner decisions still open: launch date, who appears on camera, publishing our own ad numbers and the test budget, the CTA, dialect per platform, campaign line (D-023), Tamm character reference, client approvals (OQ-32).
 

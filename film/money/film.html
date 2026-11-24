@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ar"><head><meta charset="utf-8">
+<!-- قول تم · «قاموس الفلوس» (V05 in docs/LAUNCH_VIDEO_PLAN.html). One marketing term per episode, turned into money.
+     Every number in these episodes is hypothetical and the badge «مثال توضيحي» stays on screen the whole time.
+     No client figures, no voice-over. Type: IBM Plex Sans Arabic only (Arabic + Latin subsets), so no Satoshi. -->
+<style>
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFC, U+200C-200F; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-600-normal.woff2); font-weight: 600; unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFC, U+200C-200F; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFC, U+200C-200F; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-latin-500-normal.woff2); font-weight: 500; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FFFD; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-latin-600-normal.woff2); font-weight: 600; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FFFD; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-latin-700-normal.woff2); font-weight: 700; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2010-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FFFD; }
+  html, body { margin: 0; background: #09090D; } canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+const W = 1080, H = 1920, EP = __EP__;
+const PU = '#6C35FF', OB = '#09090D', WH = '#F5F3FA', MU = 'rgba(245,243,250,0.66)', LN = 'rgba(245,243,250,0.16)';
+const PAPER = '#F4F1EA', INK = '#16161C', GREY = '#6E6B75';
+const cv = document.getElementById('c'), ctx = cv.getContext('2d'); let SYMBOL;
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), seg = (t, a, b) => clamp((t - a) / (b - a)), lerp = (a, b, q) => a + (b - a) * q;
+const eo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x)), eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const spring = (t, t0, d = 0.5, z = 0.55) => { const x = (t - t0) / d; if (x <= 0) return 0; if (x >= 1.8) return 1; const w = 11, wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + z / Math.sqrt(1 - z * z) * Math.sin(wd * x)); };
+const rr = (x, y, w, h, r) => { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); };
+const F = (w, s) => `${w} ${s}px Plex`;
+const hasAr = (s) => /[؀-ۿ]/.test(s);
+const tw = (s, font) => { ctx.font = font; return ctx.measureText(s).width; };
+function draw1(s, x, y, font, color, align, dir) { ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align; ctx.direction = dir || (hasAr(s) ? 'rtl' : 'ltr'); ctx.fillText(s, x, y); ctx.direction = 'ltr'; }
+// Arabic lines that carry Latin or digits are laid out word by word, right to left, so "4×" and "1.5%" never flip
+function txt(s, x, y, font, color, align = 'right', dir) {
+  if (dir || !hasAr(s) || !/[0-9A-Za-z×%]/.test(s)) return draw1(s, x, y, font, color, align, dir);
+  const toks = s.split(' '), sp = tw(' ', font), ws = toks.map((k) => tw(k, font)), total = ws.reduce((a, b) => a + b, 0) + sp * (toks.length - 1);
+  let xr = align === 'left' ? x + total : align === 'center' ? x + total / 2 : x;
+  toks.forEach((k, i) => { draw1(k, xr, y, font, color, 'right'); xr -= ws[i] + sp; });
+}
+function grid(a = 0.035) { ctx.strokeStyle = `rgba(245,243,250,${a})`; ctx.lineWidth = 1; for (let x = 60; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); } for (let y = 60; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); } }
+const RX = 1010;
+const fmt = (n, dec = 0) => n.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+
+// ---------- kinetic type: words rise out of a mask in reading order, then leave upwards ----------
+function fit(s, w, size, max = 940) { while (size > 20 && tw(s, F(w, size)) > max) size -= 2; return size; }
+function kline(s, x, y, size, t, t0, o = {}) {
+  const w = o.w || 700; size = fit(s, w, size, o.max || 940); const font = F(w, size), toks = s.split(' '), sp = tw(' ', font), ws = toks.map((k) => tw(k, font));
+  const total = ws.reduce((a, b) => a + b, 0) + sp * (toks.length - 1); let xr = o.align === 'center' ? x + total / 2 : x;
+  const st = o.stag ?? 0.075, out = o.out ?? 1e9;
+  ctx.save(); ctx.beginPath(); ctx.rect(0, y - size * 1.2, W, size * 1.85); ctx.clip();
+  toks.forEach((k, i) => {
+    const q = spring(t, t0 + i * st, o.d ?? 0.6, 0.62), qo = eio(seg(t, out + i * 0.035, out + 0.34 + i * 0.035));
+    if (q > 0 && qo < 1) { ctx.save(); ctx.globalAlpha *= clamp(q * 2.2) * (o.alpha ?? 1);
+      txt(k, xr, y + (1 - q) * size * 1.15 - qo * size * 1.3, font, o.hi && o.hi.includes(i) ? PU : (o.color || WH), 'right'); ctx.restore(); }
+    xr -= ws[i] + sp;
+  });
+  ctx.restore(); return { size, total };
+}
+function label(s, t, t0, out, y = 230) {
+  const q = eo(seg(t, t0, t0 + 0.6)), qo = seg(t, out, out + 0.3); if (q <= 0 || qo >= 1) return;
+  ctx.save(); ctx.globalAlpha *= 1 - qo; ctx.strokeStyle = 'rgba(245,243,250,0.38)'; ctx.setLineDash([12, 9]); ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(RX, y + 30); ctx.lineTo(RX - 940 * q, y + 30); ctx.stroke(); ctx.setLineDash([]);
+  kline(s, RX - 30, y, 36, t, t0 + 0.08, { w: 600, color: MU, stag: 0.05 });
+  ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(RX - 8, y - 12, 9 * clamp(q * 1.5), 0, 7); ctx.fill(); ctx.restore();
+}
+function stamp(x, y, q, s = 1) { if (q <= 0) return; const k = lerp(1.9, 1, eo(q)) * s; ctx.save(); ctx.globalAlpha *= clamp(q * 2) * 0.92; ctx.translate(x, y); ctx.rotate(0.18); ctx.scale(k, k);
+  rr(-112, -58, 224, 116, 18); ctx.strokeStyle = PU; ctx.lineWidth = 7; ctx.stroke(); draw1('تم', 24, 26, F(700, 70), PU, 'center', 'rtl'); ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-84, 0); ctx.lineTo(-62, 22); ctx.lineTo(-28, -20); ctx.stroke(); ctx.restore(); }
+
+// ---------- a receipt whose lines arrive one by one ----------
+// row: { l: label, v: value (string, or {to, from, dec, neg}), at: time, kind: 'row'|'big'|'title'|'dash', hi: purple value, note: small text under the label }
+let RS = 1; function rowH(r) { return Math.round(((r.kind === 'big' ? 120 : r.kind === 'dash' ? 40 : r.kind === 'title' ? 80 : 76) + (r.note ? 30 : 0)) * RS); }
+function receipt(x, y, w, rows, t, t0, o = {}) {
+  RS = w < 500 ? 1 : 1.2; const pad = 40, R0 = w - pad, L0 = pad, h = 46 + rows.reduce((a, r) => a + rowH(r), 0) + 36, ap = eo(seg(t, t0, t0 + 0.5)), out = o.out ? eio(seg(t, o.out, o.out + 0.4)) : 0;
+  if (ap <= 0 || out >= 1) return h;
+  ctx.save(); ctx.globalAlpha *= ap * (1 - out); ctx.translate(x, y + (1 - ap) * 60 - out * 80);
+  ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 36; ctx.shadowOffsetY = 14; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(w, 0); ctx.lineTo(w, h);
+  const n = Math.round(w / 34); for (let k = 0; k <= n; k++) ctx.lineTo(w - k * w / n, h + (k % 2 ? -13 : 0)); ctx.closePath(); ctx.fillStyle = PAPER; ctx.fill(); ctx.restore();
+  let yy = 46;
+  rows.forEach((r) => { const rh = rowH(r), q = spring(t, r.at ?? t0, 0.45, 0.7), Y = yy + (rh - (r.note ? 30 * RS : 0)) * 0.62; yy += rh; if (q <= 0) return;
+    ctx.save(); ctx.globalAlpha *= clamp(q * 2); const dx = (1 - Math.min(1, q)) * 40;
+    if (r.kind === 'dash') { ctx.strokeStyle = 'rgba(22,22,28,0.35)'; ctx.setLineDash([10, 8]); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(L0, Y - 18); ctx.lineTo(L0 + (R0 - L0) * eo(clamp(q)), Y - 18); ctx.stroke(); ctx.setLineDash([]); ctx.restore(); return; }
+    if (r.kind === 'title') { txt(r.l, R0 + dx, Y, F(700, Math.round(42 * RS)), INK, 'right'); ctx.restore(); return; }
+    const big = r.kind === 'big', fl = F(big ? 700 : 600, Math.round((big ? 36 : 32) * RS)), fv = F(700, Math.round((big ? 64 : 40) * RS));
+    let v = typeof r.v === 'function' ? r.v(t) : r.v; if (typeof v === 'object') { const c = eo(seg(t, (r.at ?? t0) + (v.delay || 0), (r.at ?? t0) + (v.delay || 0) + 0.8)); const n = lerp(v.from ?? 0, v.to, c); v = (v.neg ? '−' : '') + fmt(v.dec ? n : Math.round(n), v.dec || 0) + (v.suf || ''); }
+    txt(r.l, R0 + dx, Y, fl, INK, 'right'); draw1(v, L0 + dx, Y + (big ? 8 : 2), fv, r.hi ? PU : INK, 'left', 'ltr');
+    if (r.note) { const nq = seg(t, r.noteAt ?? r.at ?? t0, (r.noteAt ?? r.at ?? t0) + 0.3); if (nq > 0) { ctx.save(); ctx.globalAlpha *= nq; txt(r.note, R0 + dx, Y + 36 * RS, F(500, Math.round(24 * RS)), r.noteHi ? PU : GREY, 'right'); ctx.restore(); } }
+    const a = L0 + tw(v, fv) + 18 + dx, b = R0 - tw(r.l, fl) - 18 + dx; ctx.fillStyle = 'rgba(22,22,28,0.3)'; for (let xx = b; xx > a; xx -= 12) { ctx.beginPath(); ctx.arc(xx, Y - 9, 2, 0, 7); ctx.fill(); }
+    ctx.restore(); });
+  if (o.stamp) stamp(o.stamp[0], o.stamp[1], seg(t, o.stamp[2], o.stamp[2] + 0.16), 0.75);
+  ctx.restore(); return h;
+}
+function chip(s, x, y, t, t0, out, hi = true) { const q = spring(t, t0, 0.5, 0.6), qo = seg(t, out, out + 0.3); if (q <= 0 || qo >= 1) return; const f = F(600, 40), w = tw(s, f) + 70;
+  ctx.save(); ctx.globalAlpha *= clamp(q * 2) * (1 - qo); ctx.translate(x - w / 2, y); ctx.scale(lerp(0.7, 1, Math.min(1.05, q)), lerp(0.7, 1, Math.min(1.05, q)));
+  rr(-w / 2, -42, w, 84, 42); ctx.fillStyle = hi ? 'rgba(108,53,255,0.16)' : 'rgba(245,243,250,0.06)'; ctx.fill(); ctx.strokeStyle = hi ? PU : LN; ctx.lineWidth = 3; ctx.stroke(); txt(s, w / 2 - 35, 14, f, WH, 'right'); ctx.restore(); }
+
+// ---------- the four episodes (all numbers are hypothetical) ----------
+const EPS = {
+  1: { term: 'ROAS', termAr: 'العائد على الإنفاق الإعلاني', dur: 18.5, endAt: 15.3,
+    draw(t) {
+      const b = (s, y, sz, t0, o) => kline(s, RX, y, sz, t, t0, { out: 15.0, ...o });
+      kline('‎4×‎', 540, 930, 300, t, 0.9, { align: 'center', out: 2.35 }); kline('حلو؟', 540, 1100, 80, t, 1.35, { align: 'center', w: 600, color: MU, out: 2.35 });
+      receipt(110, 540, 860, [
+        { l: 'المبيعات', v: { to: 40000 }, at: 2.7 },
+        { l: 'الإعلانات', v: { to: 10000, neg: true }, at: 3.5, note: 'ROAS = 40,000 ÷ 10,000 = 4×', noteAt: 4.1 },
+        { kind: 'dash', at: 4.6 },
+        { l: 'تكلفة البضاعة', v: { to: 20000, neg: true }, at: 4.9 },
+        { l: 'الشحن والعمولات', v: { to: 6000, neg: true }, at: 5.7 },
+        { kind: 'dash', at: 6.6 },
+        { l: 'اللي فاضل', v: { to: 4000 }, at: 6.9, kind: 'big', hi: true },
+      ], t, 2.5, { out: 15.0 });
+      b('ROAS بيقيس المبيعات…', 1400, 72, 9.3, { w: 600 }); b('مش الربح.', 1525, 110, 9.9, { hi: [1] });
+      b('اعرف هامش ربحك قبل ما تحتفل بالرقم.', 1660, 50, 12.0, { w: 500, color: MU, stag: 0.05 });
+    },
+    sfx: [[0.9, 'hit'], [1.35, 'tick'], [2.5, 'paper'], [2.7, 'count'], [3.5, 'count'], [4.9, 'count'], [5.7, 'count'], [6.9, 'big'], [9.3, 'whoosh'], [9.9, 'hit'], [12.0, 'tick']] },
+  2: { term: 'CPA', termAr: 'تكلفة الطلب', dur: 19, endAt: 15.8,
+    draw(t) {
+      const b = (s, y, sz, t0, o) => kline(s, RX, y, sz, t, t0, { out: 15.5, ...o });
+      kline('حملتين. نفس الميزانية.', RX, 610, 66, t, 0.8, { out: 15.5 });
+      const col = (x, name, clicks, cpc, orders, cpa, win, t0) => receipt(x, 700, 440, [
+        { kind: 'title', l: name, at: t0 },
+        { l: 'الإنفاق', v: '5,000', at: t0 + 0.2 },
+        { l: 'النقرات', v: { to: clicks }, at: t0 + 0.5 },
+        { l: 'تكلفة النقرة', v: cpc, at: t0 + 1.0 },
+        { kind: 'dash', at: 6.6 },
+        { l: 'الطلبات', v: { to: orders }, at: 6.9 },
+        { l: 'تكلفة الطلب', v: { to: cpa }, at: 7.6, kind: 'big', hi: win },
+      ], t, t0, { out: 15.5, stamp: win ? [130, 95, 8.6] : null });
+      col(570, 'حملة A', 5000, '1', 25, 200, false, 1.6); col(70, 'حملة B', 2000, '2.5', 50, 100, true, 2.2);
+      chip('النقرة في A أرخص… يبقى A أحسن؟', 540, 1500, t, 4.0, 6.5, false);
+      b('النقرة الأرخص…', 1440, 76, 10.0, { w: 600 }); b('مش دايماً الطلب الأرخص.', 1560, 92, 10.5, { hi: [2] });
+      b('قيس بتكلفة الطلب… مش بتكلفة النقرة.', 1690, 48, 12.8, { w: 500, color: MU, stag: 0.05 });
+    },
+    sfx: [[0.8, 'hit'], [1.6, 'paper'], [2.2, 'paper'], [2.1, 'count'], [2.7, 'count'], [4.0, 'tick'], [6.9, 'count'], [7.6, 'big'], [8.6, 'stamp'], [10.0, 'whoosh'], [10.5, 'hit'], [12.8, 'tick']] },
+  3: { term: 'AOV', termAr: 'متوسط قيمة الطلب', dur: 18, endAt: 14.8,
+    draw(t) {
+      const b = (s, y, sz, t0, o) => kline(s, RX, y, sz, t, t0, { out: 14.5, ...o });
+      receipt(110, 560, 860, [
+        { l: 'الطلبات', v: '100', at: 1.2, note: 'نفس العدد', noteAt: 5.2, noteHi: true },
+        { l: 'متوسط قيمة الطلب', v: { from: 300, to: 360, delay: 3.4 }, at: 1.8 },
+        { kind: 'dash', at: 2.4 },
+        { l: 'المبيعات', v: (tt) => fmt(Math.round(30000 * eo(seg(tt, 2.7, 3.5)) + 6000 * eo(seg(tt, 5.4, 6.2)))), at: 2.7, kind: 'big', hi: t >= 5.4 },
+      ], t, 1.0, { out: 14.5 });
+      chip('+ منتج مكمّل في نفس الطلب', 540, 1150, t, 4.4, 14.4);
+      b('نفس عدد الطلبات…', 1340, 72, 8.2, { w: 600 }); b('مبيعات أكتر.', 1460, 110, 8.8, { hi: [1] });
+      b('قبل ما تجيب عملاء أكتر… زوّد قيمة الطلب.', 1600, 48, 11.0, { w: 500, color: MU, stag: 0.05 });
+    },
+    sfx: [[0.8, 'hit'], [1.0, 'paper'], [1.2, 'tick'], [1.8, 'count'], [2.7, 'big'], [4.4, 'hit'], [5.2, 'count'], [5.4, 'big'], [8.2, 'whoosh'], [8.8, 'hit'], [11.0, 'tick']] },
+  4: { term: 'CR', termAr: 'معدل التحويل', dur: 18.5, endAt: 15.3,
+    draw(t) {
+      const b = (s, y, sz, t0, o) => kline(s, RX, y, sz, t, t0, { out: 15.0, ...o });
+      const out = 1 - eio(seg(t, 15.0, 15.4));
+      // 10,000 visitors: 200 squares, each one 50 visitors; 1% buy = 2 squares, 1.5% = 3
+      const vq = eo(seg(t, 0.9, 1.9)); if (vq > 0) { ctx.save(); ctx.globalAlpha *= clamp(vq * 2) * out; draw1(`${fmt(Math.round(10000 * vq))} زائر`, RX, 640, F(700, 84), WH, 'right', 'rtl'); ctx.restore(); }
+      for (let i = 0; i < 200; i++) { const q = seg(t, 1.0 + i * 0.006, 1.3 + i * 0.006); if (q <= 0) continue; const c = 19 - (i % 20), r = Math.floor(i / 20), x = 75 + c * 47, y = 720 + r * 47;
+        const lit = (i < 2 && t >= 3.3) || (i === 2 && t >= 6.6), lq = i < 2 ? seg(t, 3.3, 3.6) : seg(t, 6.6, 6.9);
+        ctx.save(); ctx.globalAlpha *= q * out; rr(x, y, 36, 36, 7); ctx.fillStyle = lit ? `rgba(108,53,255,${0.25 + 0.75 * lq})` : 'rgba(245,243,250,0.10)'; ctx.fill(); ctx.restore(); }
+      { const q = seg(t, 1.6, 2.0) * out; if (q > 0) { ctx.save(); ctx.globalAlpha *= q; draw1('كل مربع = 50 زائر', RX, 1235, F(500, 30), MU, 'right', 'rtl'); ctx.restore(); } }
+      { const q = seg(t, 3.3, 3.7) * out; if (q > 0) { const c = eo(seg(t, 6.6, 7.3)); ctx.save(); ctx.globalAlpha *= q;
+        txt(`${(1 + 0.5 * c).toFixed(1).replace('.0', '')}% بيشتروا`, RX, 1340, F(700, 64), WH, 'right'); txt(`= ${Math.round(100 + 50 * c)} طلب`, 70, 1340, F(700, 64), c > 0 ? PU : WH, 'left'); ctx.restore(); } }
+      chip('نفس الزوار… صفحة أوضح', 540, 1460, t, 5.6, 9.0);
+      b('مش محتاج زوار أكتر…', 1470, 70, 9.4, { w: 600 }); b('محتاج زوار يشتروا.', 1590, 100, 10.0, { hi: [2] });
+      b('صلّح الصفحة قبل ما تزوّد الإعلان.', 1720, 48, 12.2, { w: 500, color: MU, stag: 0.05 });
+    },
+    sfx: [[0.9, 'count'], [1.0, 'whoosh'], [3.3, 'big'], [5.6, 'tick'], [6.6, 'count'], [6.9, 'big'], [9.4, 'whoosh'], [10.0, 'hit'], [12.2, 'tick']] },
+};
+const E = EPS[EP], DUR = E.dur; window.DUR_S = DUR;
+
+function header(t) { if (t >= E.endAt + 0.3) return; const out = seg(t, E.endAt - 0.3, E.endAt + 0.2); ctx.save(); ctx.globalAlpha = 1 - out;
+  label(`قاموس الفلوس · 0${EP}`, t, 0.1, 1e9, 220); kline(E.term, RX, 370, 118, t, 0.25); kline(E.termAr, RX, 448, 44, t, 0.45, { w: 500, color: MU, stag: 0.05 }); ctx.restore(); }
+function badge(t) { const a = seg(t, 0.1, 0.5); const s = 'مثال توضيحي', f = F(600, 30), w = tw(s, f) + 44; ctx.save(); ctx.globalAlpha = a * 0.95; rr(70, 92, w, 56, 28); ctx.strokeStyle = 'rgba(245,243,250,0.4)'; ctx.lineWidth = 2; ctx.stroke(); draw1(s, 70 + w / 2, 130, f, WH, 'center', 'rtl'); ctx.restore(); }
+function ending(t) { if (t < E.endAt - 0.2) return; const v = seg(t, E.endAt - 0.2, E.endAt + 0.25); ctx.save(); ctx.globalAlpha = v; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H); grid();
+  const show = (t0, f) => { const q = spring(t, t0, 0.45); if (q <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(q * 1.6); ctx.translate(0, 22 * (1 - Math.min(1, q))); f(); ctx.restore(); };
+  show(E.endAt + 0.1, () => { const SH = 230, SW = SH * 600 / 721; ctx.drawImage(SYMBOL, 540 - SW / 2, 700 - SH / 2, SW, SH); });
+  show(E.endAt + 0.35, () => draw1('قول تم', 540, 960, F(700, 116), WH, 'center', 'rtl'));
+  show(E.endAt + 0.7, () => { const s = 'قول. تم.', f = F(700, 64), w = tw(s, f); draw1(s, 552, 1075, f, WH, 'center', 'rtl'); ctx.fillStyle = PU; ctx.beginPath(); ctx.arc(552 - w / 2 - 20, 1066, 10, 0, 7); ctx.fill(); });
+  show(E.endAt + 1.1, () => draw1('احفظ الفيديو… وابعته لحد عنده متجر.', 540, 1190, F(500, 42), MU, 'center', 'rtl'));
+  show(E.endAt + 1.4, () => draw1('الأرقام في الفيديو مثال توضيحي، مش نتايج عميل.', 540, 1760, F(500, 26), 'rgba(245,243,250,0.5)', 'center', 'rtl'));
+  ctx.restore(); }
+function draw(t) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.fillStyle = OB; ctx.fillRect(0, 0, W, H); grid(0.03);
+  if (t < E.endAt + 0.3) { header(t); ctx.save(); ctx.globalAlpha = 1 - seg(t, E.endAt - 0.2, E.endAt + 0.2); E.draw(t); ctx.restore(); }
+  ending(t); badge(t); }
+window.seek = async (t) => { draw(t); };
+
+// ---------- score: light 100 BPM groove under the numbers; ticks, counts, a stamp; a short sting on the end card ----------
+window.renderAudio = async () => {
+  const SR = 48000, B = 60 / 100, ac = new OfflineAudioContext(2, Math.ceil(SR * DUR), SR);
+  const master = ac.createDynamicsCompressor(); master.threshold.value = -16; master.ratio.value = 3; master.attack.value = 0.004; master.release.value = 0.18; master.connect(ac.destination);
+  const bus = ac.createGain(); bus.connect(master);
+  const rev = ac.createConvolver(); { const len = SR * 1.8, ir = ac.createBuffer(2, len, SR); for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let s = 23 + ch; for (let i = 0; i < len; i++) { s = (s * 16807) % 2147483647; d[i] = (s / 1073741823.5 - 1) * Math.pow(1 - i / len, 3.2); } } rev.buffer = ir; }
+  const revIn = ac.createGain(), revOut = ac.createGain(); revOut.gain.value = 0.22; revIn.connect(rev); rev.connect(revOut); revOut.connect(master);
+  const nb = (() => { const b = ac.createBuffer(1, SR, SR), d = b.getChannelData(0); let s = 5; for (let i = 0; i < d.length; i++) { s = (s * 16807) % 2147483647; d[i] = s / 1073741823.5 - 1; } return b; })();
+  const env = (g, t, a, pk, d) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+  const osc = (t, type, f0, f1, a, d, pk, pan = 0, send = 0, lp = 0) => { const o = ac.createOscillator(), g = ac.createGain(), p = ac.createStereoPanner(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + a + d * 0.6);
+    let n = o; if (lp) { const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = lp; o.connect(fl); n = fl; } env(g, t, a, pk, d); p.pan.value = pan; n.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } o.start(t); o.stop(t + a + d + 0.05); };
+  const noise = (t, type, f, q, a, d, pk, pan = 0, f1 = 0, send = 0) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(), p = ac.createStereoPanner(); s.buffer = nb; s.loop = true; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f1) fl.frequency.exponentialRampToValueAtTime(f1, t + a + d); fl.Q.value = q; env(g, t, a, pk, d); p.pan.value = pan; s.connect(fl); fl.connect(g); g.connect(p); p.connect(bus); if (send) { const sg = ac.createGain(); sg.gain.value = send; p.connect(sg); sg.connect(revIn); } s.start(t, (t * 0.37) % 0.8); s.stop(t + a + d + 0.05); };
+  const pad = (t, d, fs, g) => fs.forEach((f) => [-6, 6].forEach((dt) => { const o = ac.createOscillator(), fl = ac.createBiquadFilter(), gg = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = dt; fl.type = 'lowpass'; fl.frequency.value = 900; gg.gain.setValueAtTime(0, t); gg.gain.linearRampToValueAtTime(g, t + 0.5); gg.gain.setValueAtTime(g, t + d - 0.4); gg.gain.linearRampToValueAtTime(0, t + d); o.connect(fl); fl.connect(gg); gg.connect(bus); const sg = ac.createGain(); sg.gain.value = 0.5; gg.connect(sg); sg.connect(revIn); o.start(t); o.stop(t + d + 0.05); }));
+  // Dm · Bb · F · C, light groove until the end card
+  const CH = [[146.8, 220, 293.7], [116.5, 174.6, 233.1], [174.6, 220, 261.6], [130.8, 196, 261.6]], ROOT = [36.7, 29.1, 43.65, 32.7];
+  for (let bar = 0; bar * 4 * B < E.endAt; bar++) { const t0 = bar * 4 * B, c = bar % 4; pad(t0, Math.min(4 * B + 0.05, E.endAt - t0 + 0.4), CH[c], 0.009);
+    for (let k = 0; k < 8; k++) { const t = t0 + k * B / 2; if (t >= E.endAt) break; osc(t, 'triangle', CH[c][[0, 2, 1, 2, 0, 2, 1, 2][k]] * 2, 0, 0.003, 0.28, 0.02, (k % 2 ? 0.25 : -0.25), 0.3);
+      if (t > 0.8) { if (k % 4 === 0) osc(t, 'sine', 120, 42, 0.002, 0.28, 0.42); if (k % 4 === 2) noise(t, 'bandpass', 1600, 1.1, 0.001, 0.07, 0.08, 0, 0, 0.3); noise(t, 'highpass', 8500, 0.7, 0.001, 0.025, 0.025, 0.2); if (k % 2 === 0) osc(t, 'sine', ROOT[c] * 2, 0, 0.01, B * 0.8, 0.09, 0, 0, 220); } } }
+  const FX = {
+    tick: (t) => noise(t, 'bandpass', 2600, 3, 0.001, 0.02, 0.06),
+    hit: (t) => { osc(t, 'sine', 110, 40, 0.002, 0.45, 0.5); noise(t, 'lowpass', 3000, 0.6, 0.001, 0.16, 0.14, 0, 0, 0.5); },
+    whoosh: (t) => noise(t - 0.25, 'bandpass', 500, 0.9, 0.25, 0.18, 0.05, 0, 4000, 0.3),
+    paper: (t) => { noise(t, 'bandpass', 900, 2, 0.04, 0.5, 0.04); for (let k = 0; k < 10; k++) noise(t + k * 0.05, 'bandpass', 3200, 3, 0.001, 0.012, 0.04, 0.1); },
+    count: (t) => { for (let k = 0; k < 8; k++) osc(t + k * 0.09, 'sine', 900 + k * 60, 0, 0.002, 0.04, 0.03); },
+    big: (t) => { osc(t, 'sine', 95, 38, 0.002, 0.35, 0.6); osc(t + 0.02, 'triangle', 1046.5, 0, 0.002, 0.5, 0.03, 0, 0.5); },
+    stamp: (t) => { osc(t, 'sine', 90, 36, 0.002, 0.35, 0.8); noise(t, 'lowpass', 900, 0.8, 0.001, 0.12, 0.4); osc(t + 0.02, 'triangle', 1318.5, 0, 0.002, 0.6, 0.03, 0, 0.5); },
+  };
+  E.sfx.forEach(([t, k]) => FX[k](t));
+  const L = E.endAt; osc(L + 0.1, 'sine', 100, 34, 0.002, 1.1, 0.7); noise(L + 0.1, 'lowpass', 5000, 0.5, 0.001, 0.6, 0.2, 0, 0, 0.8); pad(L + 0.1, DUR - L - 0.1, [174.6, 220, 261.6, 349.2], 0.012);
+  [[L + 0.35, 880], [L + 0.7, 1046.5], [L + 1.1, 1318.5]].forEach(([t, f]) => osc(t, 'triangle', f, 0, 0.002, 1.1, 0.035, 0, 0.6));
+  const buf = await ac.startRendering(), Lc = buf.getChannelData(0), Rc = buf.getChannelData(1), n = Lc.length, ab = new ArrayBuffer(44 + n * 4), dv = new DataView(ab);
+  const ws = (o, s) => [...s].forEach((ch, i) => dv.setUint8(o + i, ch.charCodeAt(0)));
+  ws(0, 'RIFF'); dv.setUint32(4, 36 + n * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 2, true); dv.setUint32(24, SR, true); dv.setUint32(28, SR * 4, true); dv.setUint16(32, 4, true); dv.setUint16(34, 16, true); ws(36, 'data'); dv.setUint32(40, n * 4, true);
+  for (let i = 0; i < n; i++) { dv.setInt16(44 + i * 4, Math.max(-1, Math.min(1, Lc[i])) * 32767, true); dv.setInt16(46 + i * 4, Math.max(-1, Math.min(1, Rc[i])) * 32767, true); }
+  let bin = ''; const u8 = new Uint8Array(ab); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(bin);
+};
+window.ready = (async () => {
+  await Promise.all(['500 40px Plex', '600 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول تم ROAS 0123 ×%'))); await document.fonts.ready;
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode(); await window.seek(0); return true;
+})();
+</script></body></html>
