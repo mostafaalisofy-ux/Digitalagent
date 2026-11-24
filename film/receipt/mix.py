@@ -35,8 +35,15 @@ g = chains + [''.join(labs) + f'amix=inputs={len(labs)}:normalize=0:duration=lon
 pre, mas, out = os.path.join(D, 'Receipt_premaster.wav'), os.path.join(D, 'Receipt_master.wav'), os.path.join(D, 'SayTamm_The_Receipt_EN_9x16.mp4')
 r = run('ffmpeg', '-y', '-v', 'error', *inputs, '-filter_complex', ';'.join(g), '-map', '[out]', pre)
 if r.returncode: sys.exit(r.stderr)
-I = float([l for l in run('ffmpeg', '-hide_banner', '-i', pre, '-af', 'ebur128', '-f', 'null', '-').stderr.splitlines() if l.strip().startswith('I:')][-1].split()[1])
-run('ffmpeg', '-y', '-v', 'error', '-i', pre, '-af', f'aresample=192000,volume={-14.0 - I + 0.4:.2f}dB,alimiter=limit=0.80:attack=2:release=60:level=false,aresample=48000', '-ar', '48000', mas)
+# the printer ticks and stamps are peaky: a gentle compressor, then gain into an oversampled limiter, re-measured until -14 LUFS
+lufs = lambda f: float([l for l in run('ffmpeg', '-hide_banner', '-i', f, '-af', 'ebur128', '-f', 'null', '-').stderr.splitlines() if l.strip().startswith('I:')][-1].split()[1])
+G = -14.0 - lufs(pre) + 0.4
+for _ in range(4):
+    run('ffmpeg', '-y', '-v', 'error', '-i', pre, '-af', f'acompressor=threshold=-20dB:ratio=2.5:attack=5:release=120,aresample=192000,volume={G:.2f}dB,'
+        'alimiter=limit=0.80:attack=2:release=60:level=false,aresample=48000', '-ar', '48000', mas)
+    I = lufs(mas)
+    if abs(I + 14.0) < 0.25: break
+    G += -14.0 - I
 r = run('ffmpeg', '-y', '-v', 'error', '-i', os.path.join(D, 'Receipt_picture.mp4'), '-i', mas, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '320k', '-shortest', '-movflags', '+faststart', out)
 if r.returncode: sys.exit(r.stderr)
 print('wrote', out)
