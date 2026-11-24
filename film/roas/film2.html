@@ -441,7 +441,9 @@ function draw(tn) {
   bar(t, by);
   lockup(t);
 }
-window.seek = async (tn) => { for (let pass = 0; pass < 3; pass++) { VMISS = []; draw(tn); if (!VMISS.length) return; await loadMissing(); } };
+// keep one corner pixel transparent: a fully opaque frame makes Chromium save an RGB PNG, and that format change resets ffmpeg's filter clock mid-stream
+const keepAlpha = () => { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, 1, 1); ctx.restore(); };
+window.seek = async (tn) => { for (let pass = 0; pass < 3; pass++) { VMISS = []; draw(tn); keepAlpha(); if (!VMISS.length) return; await loadMissing(); } };
 window.ready = (async () => {
   const fonts = ['500 46px Plex', '600 46px Plex', '700 46px Plex', '500 46px Sat', '700 46px Sat'];
   await Promise.all(fonts.map((f) => document.fonts.load(f, 'العائد الإنفاق ROAS Return 0123')));
