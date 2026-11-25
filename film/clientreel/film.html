@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ar"><head><meta charset="utf-8"><title>Client work</title>
+<style>
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-700-normal.woff2); font-weight: 700; }
+  html, body { margin: 0; background: #09090D; overflow: hidden; } canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+'use strict';
+// Client work reel (9:16, Arabic, Plex only). Real client ads cut on the beat (120 BPM), chapters joined by the 45° blade.
+// Shots avoid real faces and the clients' contact end cards (shots.json). window.seek(t) is async (frames load on demand).
+const W = 1080, H = 1920, BEAT = 0.5, DUR = 23;
+window.DUR_S = DUR;
+const PU = '#6C35FF', OB = '#09090D', GR = '#17171E', WH = '#F5F3FA', MU = '#96939F';
+const SEQ = '__SEQ__', SEQN = __SEQN__;
+const c = document.getElementById('c').getContext('2d');
+const clamp = (x, a = 0, b = 1) => (x < a ? a : x > b ? b : x), lerp = (a, b, u) => a + (b - a) * u, inv = (a, b, x) => clamp((x - a) / (b - a));
+const eo = (u) => (u >= 1 ? 1 : 1 - Math.pow(2, -10 * u)), eio = (u) => (u <= 0 ? 0 : u >= 1 ? 1 : u < 0.5 ? Math.pow(2, 20 * u - 10) / 2 : (2 - Math.pow(2, -20 * u + 10)) / 2);
+const spr = (x, w = 18) => (x <= 0 ? 0 : 1 - (1 + w * x) * Math.exp(-w * x));
+const E = (t, a, b, f = eo) => f(inv(a, b, t));
+
+// the cut: [start, shot id]; chapters carry the credit
+const CH = [
+  { a: 2, b: 8, who: 'Tech Hive', what: 'حملة الجمعة البيضاء', shots: ['bf1', 'bf2', 'bf3', 'bf4', 'bf5', 'bf6'] },
+  { a: 8, b: 12, who: 'Tech Hive', what: 'إعلان «مهمة الترقية»', shots: ['nd1', 'nd2', 'nd3', 'nd4'] },
+  { a: 12, b: 16, who: 'Tech Hive', what: 'محتوى المتجر والمنتجات', shots: ['st1', 'st2', 'st3', 'st4'] },
+  { a: 16, b: 20, who: 'Niimee', what: 'إعلان Every Body', shots: ['ni1', 'ni2', 'ni3', 'ni4'], fit: 'feed' },
+];
+const CACHE = new Map();
+function frameImg(id, k) {
+  k = Math.max(1, Math.min(SEQN[id], k)); const key = id + k;
+  if (!CACHE.has(key)) { const im = new Image(); im.src = `${SEQ}/${id}/${String(k).padStart(3, '0')}.jpg`; CACHE.set(key, im.decode().then(() => im)); if (CACHE.size > 40) CACHE.delete(CACHE.keys().next().value); }
+  return CACHE.get(key);
+}
+function T(s, x, y, px, { w = 700, col = WH, al = 'center', a = 1, latin = false } = {}) {
+  c.font = `${w} ${px}px ${latin ? 'PlexL' : 'Plex, PlexL'}`; c.direction = latin ? 'ltr' : 'rtl'; c.textAlign = al; c.fillStyle = col; c.globalAlpha = a; c.fillText(s, x, y); c.globalAlpha = 1; c.direction = 'ltr';
+}
+const RR = (x, y, w, h, r, fill, a = 1) => { c.beginPath(); c.roundRect(x, y, w, h, r); c.globalAlpha = a; c.fillStyle = fill; c.fill(); c.globalAlpha = 1; };
+let SYMBOL;
+
+function creditCard(ch, t) {   // one beat at the head of each chapter: who it was for, and what we made
+  c.fillStyle = OB; c.fillRect(0, 0, W, H);
+  const u = spr(t - ch.a, 22), v = spr(t - ch.a - 0.08, 22);
+  c.save(); c.beginPath(); c.rect(0, 760, W, 170); c.clip(); T(ch.who, W / 2, 890 + 150 * (1 - u), 120, { latin: true }); c.restore();
+  c.save(); c.beginPath(); c.rect(0, 950, W, 90); c.clip(); T(ch.what, W / 2, 1010 + 80 * (1 - v), 48, { w: 500, col: MU }); c.restore();
+  c.fillStyle = PU; c.fillRect(W / 2 - 70 * u, 1080, 140 * u, 8);
+}
+async function chapter(ch, t) {
+  if (t < ch.a + 0.5) { creditCard(ch, t); return; }
+  const i = Math.min(ch.shots.length - 1, Math.floor(t - ch.a - 0.5)), id = ch.shots[i], lt = t - ch.a - 0.5 - i;
+  const im = await frameImg(id, Math.floor(lt * 30) + 1);
+  const pop = 1 + 0.04 * (1 - spr(lt, 16));   // each cut lands with a small push
+  c.save(); c.translate(W / 2, H / 2); c.scale(pop, pop); c.translate(-W / 2, -H / 2);
+  if (ch.fit === 'feed') { c.fillStyle = '#EEE9E0'; c.fillRect(0, 0, W, H); c.drawImage(im, 0, (H - 1350) / 2, 1080, 1350); }
+  else c.drawImage(im, 0, 0, W, H);
+  c.restore();
+}
+function blade(t, t0) {   // a 45° purple blade sweeps up across the frame; the next scene is revealed behind it
+  const u = E(t, t0 - 0.22, t0 + 0.06, eio); if (u <= 0 || u >= 1) return null;
+  return lerp(H + W + 60, -60, u);   // the line x + y = k (a "/"), sweeping from bottom-right to top-left
+}
+function openCard(t) {
+  c.fillStyle = OB; c.fillRect(0, 0, W, H);
+  const a1 = spr(t - 0.05, 20), a2 = spr(t - 0.55, 20);
+  c.save(); c.beginPath(); c.rect(0, 700, W, 170); c.clip(); T('الكلام سهل.', W / 2, 840 + 120 * (1 - a1), 120); c.restore();
+  c.save(); c.beginPath(); c.rect(0, 890, W, 190); c.clip(); T('ده الشغل.', W / 2, 1040 + 140 * (1 - a2), 132, { col: PU }); c.restore();
+  const l = E(t, 1.0, 1.4); if (l > 0) { c.fillStyle = MU; c.globalAlpha = 0.6; c.fillRect(W / 2 - 160 * l, 1130, 320 * l, 3); c.globalAlpha = 1; }
+  if (t > 1.0) T('من شغل فريق قول تم لعملائه', W / 2, 1210, 34, { w: 500, col: MU, a: E(t, 1.0, 1.35) });
+}
+function endCard(t) {
+  c.fillStyle = OB; c.fillRect(0, 0, W, H);
+  const u = E(t, 20.05, 20.5), h = 210, w = (h * 600) / 721;
+  c.drawImage(SYMBOL, W / 2 - w / 2 + 220 * (1 - u), 560 - 220 * (1 - u), w, h);
+  const a = spr(t - 20.5, 20), b = spr(t - 21.0, 20);
+  c.save(); c.beginPath(); c.rect(0, 860, W, 180); c.clip(); T('قول. تم.', W / 2, 1000 + 150 * (1 - a), 120); c.restore();
+  T('وكالة تسويق رقمي وأداء', W / 2, 1100, 40, { w: 500, col: MU, a: b });
+  T('saytamm.com', W / 2, 1180, 38, { w: 500, col: WH, a: b, latin: true });
+}
+async function draw(t) {
+  if (t < 2) openCard(t);
+  else if (t >= 20) endCard(t);
+  else for (const ch of CH) if (t >= ch.a && t < ch.b) await chapter(ch, t);
+  // blade transitions into each chapter and into the end card
+  for (const t0 of [2, 8, 12, 16, 20]) {
+    const k = blade(t, t0); if (k === null) continue;
+    // the region the blade has already passed (x + y > k) shows the next scene
+    c.save(); c.beginPath(); c.moveTo(k + 9000, -9000); c.lineTo(-9000, k + 9000); c.lineTo(9000, 9000); c.closePath(); c.clip();
+    const nt = t0 + 0.001;
+    if (t0 === 20) endCard(nt); else { const ch = CH.find((x) => x.a === t0); await chapter(ch, nt); }
+    c.restore();
+    c.strokeStyle = PU; c.lineWidth = 26; c.lineCap = 'round'; c.beginPath(); c.moveTo(k + 300, -300); c.lineTo(k - H - 300, H + 300); c.stroke();
+  }
+}
+window.seek = async (t) => { await draw(Math.max(0, Math.min(DUR - 1e-4, t))); return true; };
+
+window.renderAudio = async () => {
+  const SR = 48000, A = new OfflineAudioContext(2, Math.round(SR * DUR), SR), OUT = A.createGain(); OUT.gain.value = 0.7; OUT.connect(A.destination);
+  const NB = A.createBuffer(1, SR * 2, SR); { const d = NB.getChannelData(0); let s = 98765; for (let i = 0; i < d.length; i++) { s = (s * 1103515245 + 12345) & 0x7fffffff; d[i] = s / 0x3fffffff - 1; } }
+  const env = (g, t, at, pk, dec) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + at); g.gain.exponentialRampToValueAtTime(0.0001, t + at + dec); };
+  const route = (n, pan) => { if (pan) { const p = A.createStereoPanner(); p.pan.value = pan; n.connect(p).connect(OUT); } else n.connect(OUT); };
+  function osc(type, f0, f1, t, dec, pk, at = 0.002, pan = 0, lp = 0) {
+    const o = A.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + Math.max(0.02, dec * 0.5));
+    const g = A.createGain(); env(g, t, at, pk, dec); let n = o;
+    if (lp) { const f = A.createBiquadFilter(); f.type = 'lowpass'; f.frequency.setValueAtTime(lp, t); f.frequency.exponentialRampToValueAtTime(Math.max(120, lp / 5), t + dec); n = n.connect(f); }
+    route(n.connect(g), pan); o.start(t); o.stop(t + at + dec + 0.05);
+  }
+  function noise(t, dec, type, fr, q, pk, at = 0.001, pan = 0, f1 = 0) {
+    const s = A.createBufferSource(); s.buffer = NB; const f = A.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(fr, t); if (f1) f.frequency.exponentialRampToValueAtTime(f1, t + at + dec); f.Q.value = q;
+    const g = A.createGain(); env(g, t, at, pk, dec); route(s.connect(f).connect(g), pan); s.start(t, (t * 0.731) % 1.4); s.stop(t + at + dec + 0.05);
+  }
+  const CHORD = { A: [220, 261.63, 329.63], F: [174.61, 220, 261.63], C: [196, 261.63, 329.63], G: [196, 246.94, 293.66] }, ROOT = { A: 55, F: 43.65, C: 65.41, G: 49 };
+  const PROG = ['A', 'F', 'C', 'G', 'A', 'F', 'C', 'G', 'A', 'F', 'A', 'A'];
+  const stab = (t, ch, p = 0.075, dec = 0.42) => CHORD[ch].forEach((f, i) => { for (const dt of [-0.004, 0.004]) osc('sawtooth', f * (1 + dt), f * (1 + dt), t, dec, p, 0.003, (i - 1) * 0.35, 3400); });
+  for (let b = 0; b < DUR / BEAT; b++) {
+    const t = b * BEAT, bar = Math.floor(t / 2), intro = t < 2, outro = t >= 21;
+    if (!outro) { osc('sine', 165, 44, t, 0.36, intro && b % 2 ? 0 : 0.95); noise(t, 0.014, 'highpass', 2600, 0.7, 0.15); }
+    if (!intro && !outro && b % 2 === 1) { for (const d of [0, 0.011, 0.023]) noise(t + d, 0.012, 'bandpass', 1400, 0.9, 0.34); noise(t + 0.03, 0.16, 'bandpass', 1250, 0.8, 0.28); }
+    if (!outro) { noise(t + 0.25, 0.035, 'highpass', 7600, 0.7, 0.1, 0.001, 0.18); const f = ROOT[PROG[bar]]; osc('sawtooth', f, f, t + 0.25, 0.2, 0.3, 0.004, 0, 700); osc('sine', f, f, t + 0.25, 0.22, 0.27, 0.004); }
+    if (t >= 2 && t < 20) { noise(t + 0.125, 0.03, 'highpass', 8000, 0.7, 0.04, 0.001, -0.25); noise(t + 0.375, 0.03, 'highpass', 8000, 0.7, 0.04, 0.001, -0.25); }
+  }
+  for (const t of [2, 8, 12, 16, 20]) { noise(t - 0.24, 0.12, 'bandpass', 500, 1.2, 0.26, 0.14, 0, 5200); stab(t, PROG[Math.floor(t / 2)], 0.08); }
+  for (let t = 2; t < 20; t += 1) if (![2, 8, 12, 16].includes(t)) noise(t, 0.05, 'bandpass', 2600, 1.2, 0.16);
+  [220, 261.63, 329.63, 493.88].forEach((f, i) => osc('triangle', f, f, 20.5, 2.2, 0.06, 0.01, (i - 1.5) * 0.3));
+  const buf = await A.startRendering();
+  let pk = 0; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) pk = Math.max(pk, Math.abs(d[i])); }
+  const g = 0.89 / pk, n = buf.length, ab = new ArrayBuffer(44 + n * 4), v = new DataView(ab), ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + n * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true);
+  v.setUint32(24, SR, true); v.setUint32(28, SR * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); ws(36, 'data'); v.setUint32(40, n * 4, true);
+  const L = buf.getChannelData(0), R = buf.getChannelData(1); let o = 44;
+  for (let i = 0; i < n; i++) for (const d of [L, R]) { const s = Math.max(-1, Math.min(1, d[i] * g)); v.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true); o += 2; }
+  const u8 = new Uint8Array(ab); let bin = ''; for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+window.ready = (async () => {
+  await Promise.all(['500 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول')).concat(['500 40px PlexL', '700 40px PlexL'].map((f) => document.fonts.load(f, 'Aa'))));
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
+  await window.seek(0); return true;
+})();
+</script></body></html>
