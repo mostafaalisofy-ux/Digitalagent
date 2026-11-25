@@ -1,0 +1,950 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Said. Done.</title>
+<style>
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-600-normal.woff2); font-weight: 600; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  html, body { margin: 0; background: #09090D; overflow: hidden; }
+  canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="1920" height="1080"></canvas>
+<script>
+'use strict';
+// «Said. Done.» — SayTamm services, 16:9, 120 BPM, 29 s, loops (frame 0 = last frame).
+// Every scene is made out of the previous one. The cursor that types the brief tilts to 45° and becomes the blade
+// (the diagonal of the SayTamm symbol); the blade becomes a path, the path's last node a dot, the dot a swatch, …
+// window.seek(t) is a pure function of time; window.renderAudio() returns the score as base64 WAV.
+const W = 1920, H = 1080, BEAT = 0.5, DUR = 29;
+window.DUR_S = DUR;
+const PU = '#6C35FF', OB = '#09090D', GR = '#17171E', WH = '#F5F3FA', MU = '#96939F', ED = '#0E0E13', BK = '#121218';
+const RGB = { [PU]: [108, 53, 255], [OB]: [9, 9, 13], [GR]: [23, 23, 30], [WH]: [245, 243, 250], [MU]: [150, 147, 159], [ED]: [14, 14, 19], [BK]: [18, 18, 24] };
+const mix = (a, b, u) => { const A = RGB[a], B = RGB[b]; u = Math.max(0, Math.min(1, u)); return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * u)).join(',')})`; };
+
+// ---------- canvas, buffers ----------
+const CV = document.getElementById('c'), MAIN = CV.getContext('2d');
+const mk = (o) => { const k = document.createElement('canvas'); k.width = W; k.height = H; return k.getContext('2d', o); };
+const SCR = mk(), ACC = mk({ colorType: 'float16' }) || mk();
+let c = SCR, GA = 1;
+
+// ---------- math ----------
+const clamp = (x, a = 0, b = 1) => (x < a ? a : x > b ? b : x), lerp = (a, b, u) => a + (b - a) * u, inv = (a, b, x) => clamp((x - a) / (b - a));
+const eo = (u) => (u >= 1 ? 1 : 1 - Math.pow(2, -10 * u)), ei = (u) => (u <= 0 ? 0 : Math.pow(2, 10 * u - 10));
+const eio = (u) => (u <= 0 ? 0 : u >= 1 ? 1 : u < 0.5 ? Math.pow(2, 20 * u - 10) / 2 : (2 - Math.pow(2, -20 * u + 10)) / 2);
+const spr = (x, w = 18) => (x <= 0 ? 0 : 1 - (1 + w * x) * Math.exp(-w * x));   // critically damped: no overshoot
+const E = (t, a, b, f = eo) => f(inv(a, b, t));
+const along = (p, q, u) => [lerp(p[0], q[0], u), lerp(p[1], q[1], u)];
+const R2 = Math.SQRT1_2, N45 = [R2, R2];   // normal of the 45° blade (down-right); the blade runs up-right
+const interp = (arr, a) => { const i = Math.min(arr.length - 2, Math.max(0, Math.floor(a))); return lerp(arr[i], arr[i + 1], clamp(a - i)); };
+
+// ---------- drawing helpers ----------
+const alpha = (a) => { c.globalAlpha = clamp(GA * a); };
+const font = (px, w = 700, fam = 'Sat') => { c.font = `${w} ${px}px ${fam}`; };
+const defLs = (px, fam) => (fam === 'Sat' && px >= 60 ? -0.02 * px : 0);
+const WCACHE = new Map();
+function tw(s, px, w = 700, fam = 'Sat', ls = null) {
+  const L = ls === null ? defLs(px, fam) : ls, key = `${s}|${px}|${w}|${fam}|${L}`;
+  if (WCACHE.has(key)) return WCACHE.get(key);
+  const g = c; c = SCR; font(px, w, fam); c.letterSpacing = L + 'px'; c.direction = fam === 'Plex' ? 'rtl' : 'ltr'; const v = c.measureText(s).width - (s.length ? L : 0); c.letterSpacing = '0px'; c.direction = 'ltr'; c = g;
+  WCACHE.set(key, v); return v;
+}
+function T(s, x, y, px, o = {}) {
+  const { w = 700, col = WH, al = 'left', ls = null, fam = 'Sat', a = 1 } = o;
+  if (a <= 0 || !s) return;
+  const L = ls === null ? defLs(px, fam) : ls, wd = al === 'left' ? 0 : tw(s, px, w, fam, L);
+  font(px, w, fam); c.letterSpacing = L + 'px'; c.direction = fam === 'Plex' ? 'rtl' : 'ltr'; c.textAlign = 'left'; c.textBaseline = 'alphabetic'; c.fillStyle = col; alpha(a);
+  c.fillText(s, al === 'center' ? x - wd / 2 : al === 'right' ? x - wd : x, y);
+  c.letterSpacing = '0px'; c.direction = 'ltr'; c.globalAlpha = GA;
+}
+function RR(x, y, w, h, r, fill, stroke, lw = 2, a = 1) {
+  if (w <= 0.5 || h <= 0.5 || a <= 0) return;
+  c.beginPath(); c.roundRect(x, y, w, h, Math.max(0, Math.min(r, w / 2, h / 2))); alpha(a);
+  if (fill) { c.fillStyle = fill; c.fill(); }
+  if (stroke) { c.strokeStyle = stroke; c.lineWidth = lw; c.stroke(); }
+  c.globalAlpha = GA;
+}
+function circle(x, y, r, fill, stroke, lw = 2, a = 1) {
+  if (r <= 0.2 || a <= 0) return;
+  c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); alpha(a);
+  if (fill) { c.fillStyle = fill; c.fill(); }
+  if (stroke) { c.strokeStyle = stroke; c.lineWidth = lw; c.stroke(); }
+  c.globalAlpha = GA;
+}
+function line(x1, y1, x2, y2, col, lw, a = 1, cap = 'round') {
+  if (a <= 0) return;
+  c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.strokeStyle = col; c.lineWidth = lw; c.lineCap = cap; alpha(a); c.stroke(); c.globalAlpha = GA;
+}
+function poly(pts, fill, stroke, lw = 2, a = 1, close = true) {
+  if (a <= 0 || pts.length < 2) return;
+  c.beginPath(); c.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) c.lineTo(pts[i][0], pts[i][1]); if (close) c.closePath();
+  alpha(a); if (fill) { c.fillStyle = fill; c.fill(); }
+  if (stroke) { c.strokeStyle = stroke; c.lineWidth = lw; c.lineJoin = 'round'; c.lineCap = 'round'; c.stroke(); }
+  c.globalAlpha = GA;
+}
+const clipRect = (x, y, w, h) => { c.beginPath(); c.rect(x, y, w, h); c.clip(); };
+const clipX = (x0, x1, y0 = -50, y1 = H + 50) => clipRect(x0, y0, Math.max(0, x1 - x0), y1 - y0);
+function clipHalf(k, side) {   // half-plane x + y < k (side < 0) or x + y > k (side > 0)
+  const L = 9000; c.beginPath(); c.moveTo(k + L, -L); c.lineTo(-L, k + L);
+  if (side < 0) c.lineTo(-L, -L); else c.lineTo(L, L);
+  c.closePath(); c.clip();
+}
+function halfPoly(k0, k1) {   // the band k0 < x + y < k1 as a polygon (frame-sized)
+  const L = 4000; return [[k0 + L, -L], [k1 + L, -L], [-L, k1 + L], [-L, k0 + L]];
+}
+function blade(x1, y1, x2, y2, th, col = PU, a = 1) { line(x1, y1, x2, y2, col, th, a, 'round'); }
+function cursorBar(cx, cy, ang, len, th, col = PU, a = 1) {   // a rounded bar centred on (cx, cy); ang 0 = vertical, π/4 = blade
+  const dx = Math.sin(ang), dy = -Math.cos(ang), h = Math.max(0, len / 2 - th / 2);
+  line(cx - dx * h, cy - dy * h, cx + dx * h, cy + dy * h, col, th, a, 'round');
+}
+let SYMBOL = null;
+function sym(cx, top, h, a = 1) { if (a <= 0) return; alpha(a); const w = (h * 600) / 721; c.drawImage(SYMBOL, cx - w / 2, top, w, h); c.globalAlpha = GA; }
+function heart(cx, cy, s, col) {
+  if (s <= 0.5) return;
+  c.beginPath(); c.moveTo(cx, cy + 0.36 * s);
+  c.bezierCurveTo(cx - 0.62 * s, cy - 0.04 * s, cx - 0.34 * s, cy - 0.58 * s, cx, cy - 0.22 * s);
+  c.bezierCurveTo(cx + 0.34 * s, cy - 0.58 * s, cx + 0.62 * s, cy - 0.04 * s, cx, cy + 0.36 * s);
+  alpha(1); c.fillStyle = col; c.fill(); c.globalAlpha = GA;
+}
+function tri(x, y, s, col, a = 1) { poly([[x - s * 0.36, y - s * 0.5], [x - s * 0.36, y + s * 0.5], [x + s * 0.5, y]], col, null, 0, a); }
+function check(x, y, s, col, lw, u = 1) {   // a tick drawn on with u
+  const p = [[x, y], [x + s * 0.36, y + s * 0.36], [x + s, y - s * 0.5]];
+  const L1 = Math.hypot(s * 0.36, s * 0.36), L2 = Math.hypot(s * 0.64, s * 0.86), d = (L1 + L2) * u;
+  const pts = [p[0]];
+  if (d <= L1) pts.push(along(p[0], p[1], d / L1)); else { pts.push(p[1]); pts.push(along(p[1], p[2], (d - L1) / L2)); }
+  poly(pts, null, col, lw, 1, false);
+}
+function arrow(x, y, dir, s, col, lw) {   // dir +1 up, -1 down
+  line(x, y + dir * s / 2, x, y - dir * s / 2, col, lw);
+  line(x - s * 0.32, y - dir * (s / 2 - s * 0.32), x, y - dir * s / 2, col, lw);
+  line(x + s * 0.32, y - dir * (s / 2 - s * 0.32), x, y - dir * s / 2, col, lw);
+}
+
+// ---------- end title (frame 0 = last frame) ----------
+const ET = { top: 180, symH: 150, say: 550, tamm: 710, ar: 820, sub: 900, px: 150 };
+const AR = 'قول. تم.', SUB = 'A digital marketing & performance agency  ·  saytamm.com';
+const arLine = () => T(AR, 960, ET.ar, 42, { w: 600, fam: 'Plex', col: MU, al: 'center' });
+const subLine = () => T(SUB, 960, ET.sub, 24, { w: 500, col: MU, al: 'center', ls: 1.2 });
+let W_AR = 0, W_SUB = 0;
+function endTitle(t) {
+  if (t < 28.0) return;
+  T('Say it.', 960, ET.say, 150, { col: WH, al: 'center' });
+  T('Tamm it.', 960, ET.tamm, 150, { col: PU, al: 'center' });
+  const u = E(t, 28.0, 28.42, eo);   // the symbol returns down its own diagonal
+  sym(960 + 520 * (1 - u), ET.top - 520 * (1 - u), ET.symH);
+  const ua = E(t, 28.25, 28.45, eio);   // Arabic: revealed right to left
+  if (ua > 0) { c.save(); clipX(960 + W_AR / 2 + 6 - (W_AR + 12) * ua, 960 + W_AR / 2 + 6); arLine(); c.restore(); }
+  const us = E(t, 28.5, 28.66, eio);
+  if (us > 0) { c.save(); clipX(960 - W_SUB / 2 - 6, 960 - W_SUB / 2 - 6 + (W_SUB + 12) * us); subLine(); c.restore(); }
+}
+
+// ---------- bar 1 · hook: the brief (0–2) ----------
+const TP = 120, TY = 600, GROW = 'Grow our sales.', SAY = 'Say it.';
+let TX = 0, W_GROW = 0, W_LAB = 0;
+const CUT = [942, 558];   // the cut point, on the line x + y = 1500 (through the frame centre)
+function lineState(t) {
+  if (t < 0.5) {
+    const u = E(t, 0.05, 0.45, eio);
+    return { s: SAY, x: lerp(960 - tw(SAY, 150) / 2, TX, u), y: lerp(ET.say, TY, u), px: lerp(150, TP, u) };
+  }
+  let s = '';
+  if (t < 0.85) s = SAY.slice(0, Math.max(0, 7 - Math.floor((t - 0.5) / 0.05 + 1)));
+  else if (t >= 1.0) s = GROW.slice(0, Math.min(15, Math.floor((t - 1.0) / 0.028) + 1));
+  return { s, x: TX, y: TY, px: TP };
+}
+function briefGroup(t, L) {
+  if (t >= 0.45) { const u = E(t, 0.45, 0.66, eo); c.save(); clipX(TX - 4, TX - 4 + (W_LAB + 10) * u); T('THE BRIEF', TX, TY - 170, 22, { w: 500, col: MU, ls: 4 }); c.restore(); }
+  if (t >= 0.5) { const u = E(t, 0.5, 0.82, eo); line(TX, TY + 52, TX + W_GROW * u, TY + 52, MU, 2, 0.45, 'butt'); }
+  T(L.s, L.x, L.y, L.px, { col: WH });
+}
+function hook(t) {
+  if (t >= 2.0) return;
+  if (t < 0.42) { const u = E(t, 0, 0.4, ei); sym(960 + 760 * u, ET.top - 760 * u, ET.symH); }   // the symbol leaves up its diagonal
+  if (t < 0.24) {
+    const u = E(t, 0, 0.22, eio);
+    c.save(); clipX(lerp(960 - W_AR / 2 - 6, 960 + W_AR / 2 + 6, u), 960 + W_AR / 2 + 6); arLine(); c.restore();
+    c.save(); clipX(lerp(960 - W_SUB / 2 - 6, 960 + W_SUB / 2 + 6, u), 960 + W_SUB / 2 + 6); subLine(); c.restore();
+  }
+  if (t < 0.32) {   // "Tamm it." squeezes into the cursor
+    const u = E(t, 0, 0.3, eio);
+    c.save(); c.translate(960, ET.tamm - 52); c.scale(Math.max(0.002, 1 - u), 1 + 0.1 * u); T('Tamm it.', 0, 52, 150, { col: PU, al: 'center' }); c.restore();
+  }
+  const L = lineState(t);
+  if (t < 1.75) briefGroup(t, L);
+  else {   // the cut: the two halves separate across the blade
+    const s = 26 * E(t, 1.75, 1.86, eo) + 1150 * E(t, 1.8, 2.0, ei);
+    c.save(); c.translate(-s * N45[0], -s * N45[1]); clipHalf(1500, -1); briefGroup(t, L); c.restore();
+    c.save(); c.translate(s * N45[0], s * N45[1]); clipHalf(1500, 1); briefGroup(t, L); c.restore();
+  }
+  // the cursor → the blade
+  const endX = (st) => st.x + (st.s ? tw(st.s, st.px) : 0) + 14 + 5;
+  let cx, cy, ang = 0, len = 118, th = 10, wid = 10;
+  if (t < 0.5) {
+    const C0 = [960, ET.tamm - 52], C1 = [endX(L), TY - 34], u = E(t, 0.22, 0.5, eio);
+    cx = lerp(C0[0], C1[0], u); cy = lerp(C0[1], C1[1], u); wid = 10 * E(t, 0, 0.3, eio);
+  } else if (t < 1.5) { cx = endX(L); cy = TY - 34; }
+  else {
+    const C1 = [TX + W_GROW + 19, TY - 34], um = E(t, 1.6, 1.75, eio);
+    cx = lerp(C1[0], CUT[0], um); cy = lerp(C1[1], CUT[1], um);
+    ang = (Math.PI / 4) * spr(t - 1.5, 30);
+    len = lerp(118, 170, spr(t - 1.5, 30)) + 1630 * E(t, 1.62, 1.8, eo);
+    th = lerp(10, 16, E(t, 1.6, 1.75));
+  }
+  if (t < 0.3) RR(cx - wid / 2, cy - 59, wid, 118, 3, PU);
+  else cursorBar(cx, cy, ang, len, t < 1.5 ? 10 : th);
+}
+
+// ---------- bar 2 · Digital Marketing Strategy (2–4) ----------
+const P0 = [560, 940], MS = [[760, 740], [960, 540], [1160, 340]], P3 = [1360, 140], SLAB = ['Research', 'Position', 'Plan'];
+const NODE_T = [2.05, 2.6, 3.1];
+const BL0 = [CUT[0] - 636.4, CUT[1] + 636.4], BR0 = [CUT[0] + 636.4, CUT[1] - 636.4];
+function strategy(t) {
+  if (t < 2.0 || t >= 4.0) return;
+  const uc = E(t, 2.0, 2.32, eio);
+  let a = along(BL0, P0, uc), b = along(BR0, MS[0], uc);
+  const th = lerp(16, 8, uc);
+  if (t >= 2.5) b = along(MS[0], MS[1], E(t, 2.5, 2.72, eo));
+  if (t >= 3.0) b = along(MS[1], MS[2], E(t, 3.0, 3.22, eo));
+  if (t >= 3.5) a = along(P0, MS[2], E(t, 3.5, 3.88, eio));
+  const g0 = t < 2.5 ? MS[0] : b, g1 = t < 3.5 ? P3 : along(P3, MS[2], E(t, 3.5, 3.85, eio)), rev = E(t, 2.12, 2.45, eo);
+  if (rev > 0 && Math.hypot(g1[0] - g0[0], g1[1] - g0[1]) > 2) {
+    const e = along(g0, g1, rev); c.save(); c.setLineDash([12, 14]); line(g0[0], g0[1], e[0], e[1], MU, 3, 0.75, 'butt'); c.restore();
+  }
+  if (Math.hypot(b[0] - a[0], b[1] - a[1]) > 0.5) blade(a[0], a[1], b[0], b[1], th);
+  for (let k = 0; k < 3; k++) {   // milestones
+    const s = spr(t - NODE_T[k], 22); if (s <= 0) continue;
+    const p = t >= 3.5 && k < 2 && a[0] > MS[k][0] ? a : MS[k];
+    circle(p[0], p[1], 22 * s * (1 - E(t, 3.6, 3.92, eio)), null, WH, 2, 0.9);
+    circle(p[0], p[1], 11 * s, PU);
+  }
+  for (let k = 0; k < 3; k++) {
+    const t0 = NODE_T[k] + 0.06; if (t < t0) continue;
+    const lx = MS[k][0] + 64, by = MS[k][1] + 30, wl = tw(SLAB[k], 84);
+    const u = E(t, t0, t0 + 0.32, eo), ux = E(t, 3.5, 3.7, eio);
+    c.save(); clipX(lx - 8, lx - 8 + (wl + 24) * u * (1 - ux)); T(SLAB[k], lx - 46 * (1 - u), by, 84); c.restore();
+  }
+}
+
+// ---------- bar 3 · Branding & Identity (4–6) ----------
+const SW = [{ x: 542, col: OB, name: 'Obsidian', hex: '#09090D' }, { x: 830, col: WH, name: 'Soft White', hex: '#F5F3FA' }, { x: 1118, col: PU, name: 'Electric Purple', hex: '#6C35FF' }];
+const SWW = 260, SWH = 360, SWY = 360;
+function swatchRect(t, j) {
+  const s = spr(t - 5.0, 18);
+  if (j === 1) return [lerp(780, 830, s), SWY, lerp(360, SWW, s), SWH, lerp(40, 28, s)];
+  return [lerp(830, SW[j].x, s), SWY, SWW, SWH, 28];
+}
+function branding(t) {
+  if (t < 4.0 || t >= 6.0) return;
+  if (t < 4.5) {
+    const p = along(MS[2], [960, 540], E(t, 4.0, 4.34, eio)), r = lerp(11, 180, E(t, 4.04, 4.42, eo));
+    circle(p[0], p[1], r, mix(PU, WH, E(t, 4.1, 4.4, eio))); return;
+  }
+  if (t < 5.0) { RR(780, 360, 360, 360, lerp(180, 40, spr(t - 4.5, 20)), WH); return; }
+  for (const j of [0, 2, 1]) {
+    const [x, y, w, h, r] = swatchRect(t, j);
+    if (j === 0) RR(x, y, w, h, r, OB, MU, 2, 0.6 * E(t, 5.0, 5.2)); else RR(x, y, w, h, r, SW[j].col);
+  }
+  const out = E(t, 5.88, 6.0, ei);   // labels and specimens drop out just before the tiles split off
+  const lu = E(t, 5.15, 5.42, eo);
+  if (lu > 0) for (let j = 0; j < 3; j++) {
+    const x = SW[j].x + 26, tc = j === 1 ? OB : WH;
+    c.save(); clipRect(SW[j].x, 620, SWW, 92); const dy = 38 * (1 - lu) + 70 * out;
+    T(SW[j].name, x, 664 + dy, 25, { w: 700, col: tc }); T(SW[j].hex, x, 694 + dy, 19, { w: 500, col: j === 1 ? MU : WH, a: j === 1 ? 1 : 0.7, ls: 1 }); c.restore();
+  }
+  const su = E(t, 5.5, 5.78, eo);
+  if (su > 0) {
+    const dy = 70 * (1 - su) + 110 * out;
+    c.save(); clipRect(SW[0].x, 370, SWW, 240); T('Aa', SW[0].x + 130, 552 + dy, 168, { col: WH, al: 'center' }); c.restore();
+    c.save(); clipRect(SW[1].x, 370, SWW, 240); T('أب', SW[1].x + 130, 552 + dy, 150, { fam: 'Plex', col: OB, al: 'center' }); c.restore();
+    c.save(); clipRect(SW[2].x, 370, SWW, 240); T('Aa', SW[2].x + 130, 552 + dy, 168, { col: WH, al: 'center' }); c.restore();
+  }
+  const cu = E(t, 5.6, 5.86, eio);
+  if (cu > 0) {
+    const cw = tw('Arabic & English, built together.', 32, 500);
+    c.save(); clipX(960 - cw / 2 - 6 + (cw + 12) * out, 960 - cw / 2 - 6 + (cw + 12) * cu, 740, 830);
+    T('Arabic & English, built together.', 960, 804, 32, { w: 500, col: MU, al: 'center' }); c.restore();
+  }
+}
+
+// ---------- bar 4 · Social Media Marketing (6–8) ----------
+const GX = [725, 885, 1045], GY0 = 340, TS = 150, TG = 160;
+const TCOL = [[GR, WH, GR], [GR, GR, WH], [WH, PU, GR], [GR, WH, GR]];
+const TGL = [['play', 'dot', 'lines'], ['lines', 'play', 'dot'], ['dot', null, 'play'], ['play', 'lines', 'dot']];
+const PLAT = ['Instagram', 'TikTok', 'Snapchat', 'LinkedIn', 'YouTube'];
+const PHONE = { x: 700, y: 90, w: 520, h: 900, r: 56 }, PHONE_LEN = 2 * (520 + 900) - 8 * 56 + 2 * Math.PI * 56;
+function tileGlyph(kind, x, y, s, col, a) {
+  if (!kind || a <= 0) return;
+  const cx = x + s / 2, cy = y + s / 2, k = s / 150;
+  const ink = col === WH ? OB : MU;
+  if (kind === 'play') tri(cx + 4 * k, cy, 40 * k, ink, a);
+  if (kind === 'dot') circle(cx, cy, 22 * k, ink, null, 0, a);
+  if (kind === 'lines') { RR(cx - 40 * k, cy - 22 * k, 80 * k, 9 * k, 4 * k, ink, null, 0, a); RR(cx - 40 * k, cy - 4 * k, 56 * k, 9 * k, 4 * k, ink, null, 0, a); RR(cx - 40 * k, cy + 14 * k, 68 * k, 9 * k, 4 * k, ink, null, 0, a); }
+}
+function social(t) {
+  if (t < 6.0 || t >= 8.45) return;
+  const scroll = TG * E(t, 6.5, 6.85, eio), xo = E(t, 8.0, 8.3, ei);
+  // phone outline: drawn on, then off
+  const pl = t < 8.0 ? E(t, 6.05, 6.45, eio) : 1 - E(t, 8.0, 8.28, eio);
+  if (pl > 0) { c.save(); c.setLineDash([PHONE_LEN * pl, PHONE_LEN + 10]); RR(PHONE.x, PHONE.y, PHONE.w, PHONE.h, PHONE.r, null, WH, 2, 0.55); c.restore(); }
+  const hs = spr(t - 6.25, 20) * (1 - E(t, 8.0, 8.14, eio));
+  if (hs > 0) {
+    c.save(); c.translate(960, 200); c.scale(hs, hs); c.translate(-960, -200);
+    RR(910, 108, 100, 22, 11, GR);
+    circle(790, 200, 40, GR, PU, 3);
+    RR(850, 178, 170, 16, 8, WH); RR(850, 206, 110, 12, 6, MU, null, 0, 0.6);
+    RR(1080, 180, 110, 42, 21, null, WH, 1.5, 0.7); T('Follow', 1135, 208, 18, { w: 700, col: WH, al: 'center' });
+    for (let i = 0; i < 5; i++) circle(780 + i * 90, 920, 7, MU, null, 0, 0.5);
+    c.restore();
+  }
+  const clipOn = t >= 6.42;
+  if (clipOn) { c.save(); clipRect(700, 330, 520, 485); }
+  for (let r = 0; r < 4; r++) for (let j = 0; j < 3; j++) {
+    if (r === 3 && t < 6.45) continue;
+    if (r === 2 && j === 1 && t >= 8.0) continue;   // the centre tile becomes the card (content)
+    const tx = GX[j], ty = GY0 + TG * r - scroll;
+    let x = tx, y = ty, w = TS, h = TS, col = TCOL[r][j], rr = 14, ga = 1;
+    if (r < 3) {
+      const u = spr(t - 6.0 - 0.03 * (r + j), 16), sx = swatchRect(6.0, j)[0], sy = SWY + 120 * r;
+      x = lerp(sx, tx, u); y = lerp(sy, ty, u); w = lerp(SWW, TS, u); h = lerp(120, TS, u);
+      col = mix(j === 0 ? OB : SW[j].col, TCOL[r][j], u); rr = lerp(4, 14, u); ga = E(t, 6.25, 6.45);
+      if (j === 0 && u < 1) RR(x, y, w, h, rr, null, MU, 2, 0.6 * (1 - u));
+    }
+    if (xo > 0) {   // the other tiles fall into the centre tile
+      const cx0 = 885, cy0 = GY0 + TG * 2 - TG; x = lerp(x, cx0 + (TS - w * 0.4) / 2, xo); y = lerp(y, cy0 + (TS - h * 0.4) / 2, xo);
+      w = lerp(w, w * 0.4, xo); h = lerp(h, h * 0.4, xo);
+    }
+    RR(x, y, w, h, rr, col);
+    tileGlyph(TGL[r][j], x, y, w, TCOL[r][j], ga * (1 - xo));
+  }
+  if (clipOn) c.restore();
+  if (t >= 7.0 && t < 8.0) heart(960, 578, 64 * spr(t - 7.0, 24), WH);
+  for (let k = 0; k < 5; k++) {   // platforms
+    const t0 = 7.5 + 0.05 * k; if (t < t0) continue;
+    const u = E(t, t0, t0 + 0.3, eo), uo = E(t, 7.98 + 0.02 * k, 8.12 + 0.02 * k, eio), y = 400 + 72 * k, wl = tw(PLAT[k], 40);
+    c.save(); clipX(1300 - 6 + (wl + 12) * uo, 1300 - 6 + (wl + 12) * u, y - 44, y + 14); T(PLAT[k], 1300, y, 40, { col: k === 0 ? WH : WH, a: 1 - 0.35 * (k > 0) }); c.restore();
+  }
+}
+
+// ---------- bar 5 · Content Marketing → Media Production (8–10): 2D → 3D ----------
+const CARD = { x: 780, y: 220, w: 360, h: 640 };
+const CARDS = [
+  { name: 'Reels', tag: 'CONTENT', g: 'reel' }, { name: 'Photography', tag: 'PRODUCTION', g: 'photo' }, { name: 'Video', tag: 'PRODUCTION', g: 'video' },
+  { name: 'Motion', tag: 'PRODUCTION', g: 'motion' }, { name: 'Stories', tag: 'CONTENT', g: 'story' }, { name: 'Carousels', tag: 'CONTENT', g: 'carousel' }];
+const TEX = [];
+function buildTextures() {
+  for (const cd of CARDS) {
+    const k = document.createElement('canvas'); k.width = 360; k.height = 640; const g = c; c = k.getContext('2d'); GA = 1;
+    RR(0, 0, 360, 640, 28, GR); RR(0.75, 0.75, 358.5, 638.5, 28, null, WH, 1.5, 0.12);
+    T(cd.tag, 32, 60, 16, { w: 500, col: MU, ls: 3 }); T(cd.name, 32, 108, 40, { w: 700, col: WH });
+    const cx = 180, cy = 350;
+    if (cd.g === 'reel') { circle(cx, cy, 74, null, WH, 4); tri(cx + 6, cy, 56, WH); }
+    if (cd.g === 'photo') { RR(90, 290, 180, 124, 18, null, WH, 4); RR(126, 270, 54, 22, 6, null, WH, 4); circle(cx, 352, 38, null, WH, 4); circle(246, 314, 7, PU); }
+    if (cd.g === 'video') { RR(80, 280, 200, 124, 14, null, WH, 4); tri(cx + 4, 342, 40, WH); RR(80, 430, 200, 6, 3, MU, null, 0, 0.5); RR(80, 430, 84, 6, 3, PU); circle(164, 433, 9, PU); }
+    if (cd.g === 'motion') {
+      c.save(); c.setLineDash([6, 8]); line(84, 420, 160, 420, MU, 2, 0.7, 'butt'); line(200, 280, 276, 280, MU, 2, 0.7, 'butt'); c.restore();
+      c.beginPath(); c.moveTo(84, 420); c.bezierCurveTo(160, 420, 200, 280, 276, 280); c.strokeStyle = WH; c.lineWidth = 4; c.stroke();
+      for (const [x, y] of [[84, 420], [276, 280]]) poly([[x, y - 11], [x + 11, y], [x, y + 11], [x - 11, y]], PU);
+    }
+    if (cd.g === 'story') { for (let i = 0; i < 3; i++) RR(32 + i * 102, 150, 92, 6, 3, i === 0 ? WH : MU, null, 0, i === 0 ? 0.9 : 0.35); circle(cx, cy, 62, null, PU, 4); circle(cx, cy, 46, MU, null, 0, 0.25); }
+    if (cd.g === 'carousel') { RR(130, 262, 150, 150, 14, null, MU, 3, 0.45); RR(115, 277, 150, 150, 14, null, MU, 3, 0.7); RR(100, 292, 150, 150, 14, GR, WH, 4); for (let i = 0; i < 3; i++) circle(160 + i * 20, 486, 5, i === 1 ? PU : MU); }
+    RR(32, 560, 296, 6, 3, MU, null, 0, 0.3); RR(32, 560, 130, 6, 3, WH, null, 0, 0.8);
+    TEX.push(c.canvas); c = g;
+  }
+}
+const P3D = 1500, RING = 680, DEP = 18;
+const BASE = [0, 60, 120, 180, -120, -60].map((d) => (d * Math.PI) / 180);
+function ringState(t) {
+  const u = E(t, 8.5, 8.95, eio);
+  return { spread: u, R: RING * u, tilt: ((15 * Math.PI) / 180) * u, th0: -(Math.PI / 3) * (E(t, 9.0, 9.4, eio) + E(t, 9.5, 9.9, eio)), dep: DEP * (1 - E(t, 9.9, 10.0)) };
+}
+function cardGeo(i, st) { const a = st.th0 + st.spread * BASE[i]; return { a, C: [st.R * Math.sin(a), 0, st.R - st.R * Math.cos(a)], Tn: [Math.cos(a), 0, Math.sin(a)], Nn: [Math.sin(a), 0, -Math.cos(a)] }; }
+function tiltP(p, st) { const ct = Math.cos(st.tilt), sn = Math.sin(st.tilt), y = p[1], z = p[2] - st.R; return [p[0], y * ct - z * sn, st.R + y * sn + z * ct]; }
+function cardP(g, st, u, v, d = 0) { return tiltP([g.C[0] + g.Tn[0] * u - g.Nn[0] * d, v, g.C[2] + g.Tn[2] * u - g.Nn[2] * d], st); }
+const proj = (p) => { const s = P3D / (P3D + p[2]); return [960 + p[0] * s, 540 + p[1] * s]; };
+const RRPTS = (() => {
+  const pts = [], w = 180, h = 320, r = 28, n = 6;
+  for (const [cx, cy, a0] of [[w - r, -h + r, -Math.PI / 2], [w - r, h - r, 0], [-w + r, h - r, Math.PI / 2], [-w + r, -h + r, Math.PI]])
+    for (let i = 0; i <= n; i++) { const a = a0 + (i / n) * (Math.PI / 2); pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); }
+  return pts;
+})();
+function cardLayer(g, st, d, col, edge = 0) { poly(RRPTS.map(([u, v]) => proj(cardP(g, st, u, v, d))), col, edge ? WH : null, 1.5, 1); if (edge) poly(RRPTS.map(([u, v]) => proj(cardP(g, st, u, v, d))), null, WH, 1.5, edge); }
+function texTri(img, S, X) {   // one triangle of the texture, mapped exactly onto its three screen points
+  const cx = (S[0][0] + S[1][0] + S[2][0]) / 3, cy = (S[0][1] + S[1][1] + S[2][1]) / 3;
+  const ex = S.map(([x, y]) => { const dx = x - cx, dy = y - cy, l = Math.hypot(dx, dy) || 1; return [x + (dx / l) * 0.8, y + (dy / l) * 0.8]; });
+  c.save(); c.beginPath(); c.moveTo(ex[0][0], ex[0][1]); c.lineTo(ex[1][0], ex[1][1]); c.lineTo(ex[2][0], ex[2][1]); c.closePath(); c.clip();
+  const [[u0, v0], [u1, v1], [u2, v2]] = X, [[x0, y0], [x1, y1], [x2, y2]] = S, den = (u1 - u0) * (v2 - v0) - (u2 - u0) * (v1 - v0);
+  const a = ((x1 - x0) * (v2 - v0) - (x2 - x0) * (v1 - v0)) / den, b = ((y1 - y0) * (v2 - v0) - (y2 - y0) * (v1 - v0)) / den;
+  const cc = ((x2 - x0) * (u1 - u0) - (x1 - x0) * (u2 - u0)) / den, d = ((y2 - y0) * (u1 - u0) - (y1 - y0) * (u2 - u0)) / den;
+  c.setTransform(a, b, cc, d, x0 - a * u0 - cc * v0, y0 - b * u0 - d * v0); c.drawImage(img, 0, 0); c.restore();
+}
+function texMap(img, P, a = 1, N = 8) {   // P(x, y) → screen point for texture pixel (x, y)
+  if (a <= 0) return;
+  const iw = img.width, ih = img.height; alpha(a);
+  for (let i = 0; i < N; i++) {
+    const x0 = (i / N) * iw, x1 = ((i + 1) / N) * iw, TL = P(x0, 0), TR = P(x1, 0), BL = P(x0, ih), BR = P(x1, ih);
+    texTri(img, [TL, TR, BL], [[x0, 0], [x1, 0], [x0, ih]]); texTri(img, [TR, BR, BL], [[x1, 0], [x1, ih], [x0, ih]]);
+  }
+  c.globalAlpha = GA;
+}
+const texStrips3D = (img, g, st, a = 1) => texMap(img, (x, y) => proj(cardP(g, st, -180 + (x * 360) / img.width, -320 + (y * 640) / img.height)), a);
+const texStrips2D = (img, q, a = 1) => texMap(img, (x, y) => { const u = x / img.width, v = y / img.height; return along(along(q[0], q[1], u), along(q[3], q[2], u), v); }, a);
+function visible(g, st) {
+  const ct = Math.cos(st.tilt), sn = Math.sin(st.tilt), N = [g.Nn[0], -g.Nn[2] * sn, g.Nn[2] * ct];
+  const C = tiltP(g.C, st); return N[0] * -C[0] + N[1] * -C[1] + N[2] * (-P3D - C[2]) > 0;
+}
+function carousel(t) {
+  const st = ringState(t), order = [...CARDS.keys()].map((i) => ({ i, g: cardGeo(i, st) }));
+  order.forEach((o) => { o.z = tiltP(o.g.C, st)[2]; });
+  order.sort((p, q) => q.z - p.z || (p.i === 0 ? 1 : q.i === 0 ? -1 : 0));
+  for (const { i, g } of order) {
+    const vis = visible(g, st), layers = st.dep > 0.5 ? 4 : 0;
+    if (vis) { for (let l = layers; l >= 1; l--) cardLayer(g, st, (st.dep * l) / layers, ED); texStrips3D(TEX[i], g, st); }
+    else { cardLayer(g, st, 0, ED); for (let l = 1; l <= layers; l++) cardLayer(g, st, (st.dep * l) / layers, l === layers ? GR : ED, l === layers ? 0.1 : 0); }
+  }
+}
+function viewfinder(t) {
+  const u = E(t, 9.5, 9.7, eo) * (1 - E(t, 10.0, 10.12, eio)); if (u <= 0) return;
+  const L = 46 * u, X0 = 440, Y0 = 150, X1 = 1480, Y1 = 930;
+  for (const [x, y, sx, sy] of [[X0, Y0, 1, 1], [X1, Y0, -1, 1], [X0, Y1, 1, -1], [X1, Y1, -1, -1]]) { line(x, y, x + sx * L, y, WH, 3, 0.9, 'butt'); line(x, y, x, y + sy * L, WH, 3, 0.9, 'butt'); }
+  c.save(); clipX(X0 + 20, X0 + 20 + 160 * u); if ((t - 9.5) % 0.5 < 0.32) circle(X0 + 38, 214, 9, PU); T('REC', X0 + 56, 222, 22, { w: 700, col: WH, ls: 2 }); c.restore();
+  const f = Math.floor((t % 1) * 60 + 1e-6), s = Math.floor(t);
+  c.save(); clipX(X1 - 20 - 200 * u, X1 - 20); T(`00:00:${String(s).padStart(2, '0')}:${String(f).padStart(2, '0')}`, X1 - 20, 222, 20, { w: 500, col: WH, al: 'right', ls: 1.5 }); c.restore();
+}
+let MORPH = null;   // card quads at 10.0 → bars
+const BX = [430, 550, 670, 790, 910, 1030], BV = [0.3, 0.42, 0.38, 0.58, 0.7, 0.88], BASEY = 800, BW = 76;
+function morphInit() {
+  const st = ringState(10.0), list = [];
+  for (let i = 0; i < 6; i++) {
+    const g = cardGeo(i, st), q = [[-180, -320], [180, -320], [180, 320], [-180, 320]].map(([u, v]) => proj(cardP(g, st, u, v)));
+    list.push({ i, q, vis: visible(g, st), z: tiltP(g.C, st)[2], cx: (q[0][0] + q[1][0] + q[2][0] + q[3][0]) / 4 });
+  }
+  [...list].sort((p, q) => p.cx - q.cx).forEach((o, k) => { o.bar = k; });
+  list.sort((p, q) => q.z - p.z); return list;
+}
+function content(t) {
+  if (t < 8.0 || t >= 10.5) return;
+  if (t < 8.5) {
+    const u = E(t, 8.0, 8.42, eio), x = lerp(885, CARD.x, u), y = lerp(500, CARD.y, u), w = lerp(150, CARD.w, u), h = lerp(150, CARD.h, u);
+    RR(x, y, w, h, lerp(14, 28, u), mix(PU, GR, E(t, 8.05, 8.35, eio)));
+    heart(x + w / 2, y + h / 2 + 3, 64 * (1 - E(t, 8.0, 8.15, eio)), WH);
+    const ta = E(t, 8.2, 8.45); if (ta > 0) { alpha(ta); c.drawImage(TEX[0], x, y, w, h); c.globalAlpha = GA; }
+    return;
+  }
+  if (t < 10.0) { carousel(t); viewfinder(t); return; }
+  viewfinder(t);
+  if (!MORPH) MORPH = morphInit();
+  const u = E(t, 10.0, 10.42, eio), fill = mix(GR, WH, E(t, 10.08, 10.4, eio));
+  for (const o of MORPH) {
+    const k = o.bar, bx = BX[k] - BW / 2, R = [[bx, BASEY - 80], [bx + BW, BASEY - 80], [bx + BW, BASEY], [bx, BASEY]];
+    const q = o.q.map((p, j) => along(p, R[j], u));
+    poly(q, fill);
+    if (o.vis) texStrips2D(TEX[o.i], q, 1 - E(t, 10.0, 10.2));
+  }
+}
+
+// ---------- bar 6 · Performance Marketing (10–12) ----------
+const PANEL = [330, 230, 1260, 640, 24], PILL = [460, 245, 1000, 110, 55];
+const CHIPS = ['Google', 'Meta', 'Snapchat', 'TikTok', 'LinkedIn'];
+const barH = (t, k) => (t < 10.5 ? 80 : lerp(80, BV[k] * 400, spr(t - 10.5 - 0.04 * k, 16))) * (1 - E(t, 12.0 + 0.012 * k, 12.1 + 0.012 * k, eio));
+const LINEPTS = (t) => BX.map((x, k) => [x, BASEY - barH(t, k)]);
+function perfPanel(t) {
+  if (t < 10.28 || t >= 12.45) return;
+  let r = PANEL;
+  if (t < 10.62) { const u = E(t, 10.28, 10.62, eo), b = [BX[0] - BW / 2, BASEY - 80, BX[5] - BX[0] + BW, 80, 8]; r = b.map((v, i) => lerp(v, PANEL[i], u)); }
+  else if (t >= 12.0) { const u = E(t, 12.04, 12.42, eio); r = PANEL.map((v, i) => lerp(v, PILL[i], u)); }
+  RR(r[0], r[1], r[2], r[3], r[4], GR);
+}
+function perf(t) {
+  if (t < 10.5 || t >= 12.25) return;
+  const out = E(t, 12.0, 12.14, eio);
+  for (let k = 0; k < 6; k++) {
+    const h = barH(t, k); RR(BX[k] - BW / 2, BASEY - h, BW, h, 6, WH);
+    const lu = E(t, 10.55 + 0.03 * k, 10.8 + 0.03 * k) * (1 - out);
+    T('W' + (k + 1), BX[k], 838, 18, { w: 500, col: MU, al: 'center', a: lu, ls: 1 });
+  }
+  const hu = E(t, 10.5, 10.76, eo), hw = tw('Campaign performance', 32);
+  if (hu > 0) { c.save(); clipX(374 + (hw + 12) * out, 374 + (hw + 12) * hu); T('Campaign performance', 380, 302, 32); c.restore(); }
+  let cx = 1540;   // chips, right-aligned
+  for (let k = CHIPS.length - 1; k >= 0; k--) {
+    const wd = tw(CHIPS[k], 19, 500, 'Sat', 0.5) + 34, s = spr(t - 10.55 - 0.04 * (CHIPS.length - 1 - k), 22) * (1 - out);
+    const x = cx - wd;
+    if (s > 0) { c.save(); c.translate(x + wd / 2, 296); c.scale(s, s); c.translate(-(x + wd / 2), -296); RR(x, 276, wd, 40, 20, null, MU, 1.5, 0.7); T(CHIPS[k], x + 17, 302, 19, { w: 500, col: WH, ls: 0.5 }); c.restore(); }
+    cx = x - 10;
+  }
+  if (t >= 11.0 && t < 12.0) {   // the line through the bar tops
+    const P = LINEPTS(t), u = E(t, 11.0, 11.36, eio), seg = P.length - 1, d = u * seg, n = Math.floor(d);
+    const pts = P.slice(0, n + 1); if (n < seg) pts.push(along(P[n], P[n + 1], d - n));
+    poly(pts, null, PU, 4, 1, false);
+    for (let k = 0; k <= Math.min(n, seg); k++) circle(P[k][0], P[k][1], 7 * spr(t - 11.0 - (k / seg) * 0.36, 30), PU, WH, 2);
+  }
+  for (let k = 0; k < 2; k++) {   // the two numbers that matter, as directions only
+    const t0 = 11.5 + 0.08 * k, u = E(t, t0, t0 + 0.3, eo); if (u <= 0) continue;
+    const y = 380 + 230 * k, x = 1150 + 60 * (1 - u);
+    c.save(); clipX(1150 + 400 * out, 1560); RR(x, y, 390, 190, 18, OB);
+    T(k === 0 ? 'CPA' : 'ROAS', x + 36, y + 92, 64, { col: WH });
+    arrow(x + 36 + tw(k === 0 ? 'CPA' : 'ROAS', 64) + 44, y + 70, k === 0 ? -1 : 1, 46, k === 0 ? WH : PU, 7);
+    T(k === 0 ? 'Cost per acquisition' : 'Return on ad spend', x + 36, y + 146, 22, { w: 500, col: MU });
+    c.restore();
+  }
+}
+
+// ---------- bar 7 · SEO (12–14) ----------
+function resample(pts, n, closed = false) {
+  const P = closed ? [...pts, pts[0]] : pts, L = [0];
+  for (let i = 1; i < P.length; i++) L.push(L[i - 1] + Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]));
+  const out = [], tot = L[L.length - 1];
+  for (let k = 0; k < n; k++) {
+    const d = (tot * k) / (n - 1); let i = 1; while (i < L.length - 1 && L[i] < d) i++;
+    out.push(along(P[i - 1], P[i], (d - L[i - 1]) / Math.max(1e-6, L[i] - L[i - 1])));
+  }
+  return out;
+}
+const PILLPTS = (() => {   // the pill outline from its left end, clockwise
+  const [x, y, w, h] = PILL, r = h / 2, pts = [];
+  for (let i = 0; i <= 16; i++) { const a = Math.PI + (i / 16) * (Math.PI / 2); pts.push([x + r + r * Math.cos(a), y + r + r * Math.sin(a)]); }
+  for (let i = 0; i <= 32; i++) { const a = -Math.PI / 2 + (i / 32) * Math.PI; pts.push([x + w - r + r * Math.cos(a), y + r + r * Math.sin(a)]); }
+  for (let i = 0; i <= 16; i++) { const a = Math.PI / 2 + (i / 16) * (Math.PI / 2); pts.push([x + r + r * Math.cos(a), y + r + r * Math.sin(a)]); }
+  return resample(pts, 200, true);
+})();
+const SLOT = [410, 530, 650, 770], QUERY = 'best office chairs', SKW = [[340, 560], [290, 520], [380, 600]];
+function skelRow(y, k, a = 1) {
+  circle(500, y + 50, 17, MU, null, 0, 0.35 * a);
+  RR(540, y + 26, SKW[k][0], 16, 8, WH, null, 0, 0.75 * a); RR(540, y + 52, 180, 11, 5.5, MU, null, 0, 0.6 * a); RR(540, y + 72, SKW[k][1], 11, 5.5, MU, null, 0, 0.3 * a);
+}
+function brandRow(y, inner = 1) {
+  RR(460, y, 1000, 100, 18, OB, PU, 2);
+  if (inner > 0) { circle(500, y + 50, 17 * inner, PU); c.save(); clipRect(530, y, 600 * inner, 100); T('Your brand', 540, y + 48, 30, { col: WH }); c.restore(); }
+}
+function seo(t) {
+  if (t < 12.0 || t >= 14.25) return;
+  if (t < 12.45) { const u = E(t, 12.0, 12.42, eio), L = resample(LINEPTS(12.0), 200); poly(L.map((p, i) => along(p, PILLPTS[i], u)), null, PU, lerp(4, 3, u), 1, false); }
+  const sh = 1 - E(t, 14.0, 14.2, eio);   // the search box and other results fold away as the browser opens
+  if (t >= 12.45 && sh > 0) { c.save(); c.translate(960, 300); c.scale(sh, sh); c.translate(-960, -300); RR(...PILL, GR, PU, 3); c.restore(); }
+  if (sh > 0) {
+    c.save(); c.translate(960, 300); c.scale(sh, sh); c.translate(-960, -300);
+    const ms = spr(t - 12.3, 24);
+    if (ms > 0) { circle(522, 296, 16 * ms, null, WH, 3); line(534, 308, 534 + 12 * ms, 308 + 12 * ms, WH, 3); }
+    const n = t < 12.5 ? 0 : Math.min(QUERY.length, Math.floor((t - 12.5) / 0.0222) + 1), q = QUERY.slice(0, n);
+    T(q, 575, 313, 36, { w: 500, col: WH, ls: 0 });
+    const typing = t >= 12.5 && t < 12.95, on = typing || (t >= 12.3 && (t - 12.3) % 0.5 < 0.25);
+    if (t >= 12.3 && on) RR(575 + (q ? tw(q, 36, 500, 'Sat', 0) : 0) + 6, 278, 3, 44, 1.5, PU);
+    c.restore();
+  }
+  const climb = E(t, 13.5, 13.9, eio);
+  for (let k = 0; k < 3; k++) {
+    const t0 = 13.0 + 0.05 * k; if (t < t0) continue;
+    const u = E(t, t0, t0 + 0.28, eo), y = lerp(SLOT[k], SLOT[k + 1], E(t, 13.52 + 0.03 * k, 13.9, eio)) + 28 * (1 - u);
+    c.save(); c.translate(960, y + 50); c.scale(sh, sh); c.translate(-960, -(y + 50)); clipRect(440, SLOT[k] - 10, 1040, 520); skelRow(y, k, u); c.restore();
+  }
+  if (t >= 13.15 && t < 14.0) {
+    const u = E(t, 13.15, 13.43, eo), y = lerp(SLOT[3], SLOT[0], climb) + 28 * (1 - u);
+    c.save(); if (climb <= 0) clipRect(440, SLOT[3] - 10, 1040, 130); brandRow(y); c.restore();
+    T('yourbrand.com', 540, y + 80, 20, { w: 500, col: MU, ls: 0.5, a: u });
+  }
+}
+
+// ---------- bar 8 · Website Development & CRO (14–16) ----------
+const BROW = [310, 200, 1300, 720, 20], ROW0 = [460, 410, 1000, 100, 18];
+const CTA = [360, 598, 230, 62, 31], HERO = [1010, 350, 550, 310, 18];
+const PCARDS = [360, 770, 1180].map((x) => [x, 690, 380, 200, 16]);
+const NODES = [[960, 260], [1240, 540], [960, 820], [680, 540]], NLAB = ['Measure', 'Learn', 'Improve', 'Repeat'];
+function web(t) {
+  if (t < 14.0 || t >= 16.45) return;
+  const u = E(t, 14.0, 14.4, eio), mo = E(t, 16.0, 16.42, eio), gone = E(t, 16.0, 16.12, eio);
+  // the frame: result row → browser → (16.0) the analytics ring
+  let f = ROW0.map((v, i) => lerp(v, BROW[i], u));
+  if (mo > 0) f = BROW.map((v, i) => lerp(v, [680, 260, 560, 560, 280][i], mo));
+  const fillA = 1 - E(t, 16.0, 16.2, eio);
+  if (fillA > 0) RR(f[0], f[1], f[2], f[3], f[4], mix(OB, GR, u), null, 0, fillA);
+  RR(f[0], f[1], f[2], f[3], f[4], null, mo > 0 ? MU : mix(PU, MU, u), mo > 0 ? lerp(1.5, 2, mo) : lerp(2, 1.5, u), mo > 0 ? lerp(0.35, 0.5, mo) : lerp(1, 0.35, u));
+  if (t < 14.16) { const s = 1 - E(t, 14.0, 14.14, eio); circle(lerp(500, 500, u), 460, 17 * s, PU); c.save(); clipRect(530, 380, 600 * s, 120); T('Your brand', 540, 458, 30); c.restore(); }
+  // the address
+  const ux = E(t, 14.0, 14.4, eio), uw = tw('yourbrand.com', 20, 500, 'Sat', 0.5);
+  const ap = E(t, 14.22, 14.4, eo) * (1 - gone);
+  if (ap > 0) { RR(960 - 200 * ap, 222, 400 * ap, 40, 20, OB); }
+  if (gone < 1) T('yourbrand.com', lerp(540, 960 - uw / 2, ux), lerp(490, 249, ux), 20, { w: 500, col: MU, ls: 0.5, a: 1 - gone });
+  const dp = spr(t - 14.28, 24) * (1 - gone);
+  for (let i = 0; i < 3; i++) circle(342 + 24 * i, 242, 6 * dp, MU);
+  if (t >= 14.3) line(310, 282, 310 + 1300 * E(t, 14.3, 14.5, eo) * (1 - gone), 282, MU, 1.5, 0.25, 'butt');
+  // the page builds
+  const nv = E(t, 14.5, 14.7, eo) * (1 - gone);
+  if (nv > 0) { RR(360, 312, 120 * nv, 16, 8, WH); for (let i = 0; i < 4; i++) RR(1250 + 70 * i, 315, 50 * nv, 10, 5, MU, null, 0, 0.5); }
+  for (let i = 0; i < 2; i++) {
+    const t0 = 14.52 + 0.06 * i, hu = E(t, t0, t0 + 0.3, eo); if (hu <= 0 || gone >= 1) continue;
+    const y = 430 + 75 * i; c.save(); clipRect(350, y - 62 - 30 * gone, 700, 80); T(i === 0 ? 'Built for the way' : 'you work.', 360, y + 60 * (1 - hu) - 80 * gone, 64); c.restore();
+  }
+  const sb = E(t, 14.65, 14.9, eo) * (1 - gone);
+  if (sb > 0) { RR(360, 538, 420 * sb, 12, 6, MU, null, 0, 0.35); RR(360, 562, 320 * sb, 12, 6, MU, null, 0, 0.35); }
+  // hero image → the Measure node
+  const hi = E(t, 14.55, 14.85, eo);
+  if (hi > 0) {
+    const hr = mo > 0 ? HERO.map((v, i) => lerp(v, [NODES[0][0] - 18, NODES[0][1] - 18, 36, 36, 18][i], mo)) : HERO;
+    c.save(); if (mo <= 0) clipRect(HERO[0], HERO[1], HERO[2], HERO[3] * hi);
+    RR(hr[0], hr[1], hr[2], hr[3], hr[4], mix(WH, OB, mo), mo > 0 ? MU : null, 2, 1);
+    if (mo < 0.3) { const a = 1 - mo / 0.3; RR(1236, 392, 98, 118, 26, OB, null, 0, a); RR(1214, 518, 142, 34, 14, PU, null, 0, a); RR(1279, 552, 12, 56, 6, OB, null, 0, a); RR(1222, 604, 126, 12, 6, OB, null, 0, a); for (const x of [1230, 1285, 1340]) circle(x, 626, 8, OB, null, 0, a); }
+    c.restore();
+  }
+  // product cards → Learn, Improve, Repeat
+  for (let k = 0; k < 3; k++) {
+    const t0 = 15.0 + 0.06 * k, pu = E(t, t0, t0 + 0.32, eo); if (pu <= 0) continue;
+    const tgt = NODES[k + 1], r0 = PCARDS[k], rr = mo > 0 ? r0.map((v, i) => lerp(v, [tgt[0] - 18, tgt[1] - 18, 36, 36, 18][i], mo)) : [r0[0], r0[1] + 40 * (1 - pu), r0[2], r0[3], r0[4]];
+    c.save(); if (mo <= 0) clipRect(r0[0] - 2, r0[1] - 2, r0[2] + 4, r0[3] + 4);
+    RR(rr[0], rr[1], rr[2], rr[3], rr[4], OB, mo > 0 ? MU : null, 2, 1);
+    if (mo < 0.25) {
+      const a = 1 - mo / 0.25, x = rr[0], y = rr[1];
+      RR(x + 16, y + 16, 150, 168, 12, MU, null, 0, 0.18 * a); RR(x + 186, y + 40, 150, 14, 7, WH, null, 0, 0.8 * a); RR(x + 186, y + 68, 80, 12, 6, MU, null, 0, 0.6 * a);
+      RR(x + 186, y + 140, 110, 36, 18, null, WH, 1.5, 0.45 * a);
+    }
+    c.restore();
+  }
+  // the call to action → the analytics centre box
+  const cs = spr(t - 14.7, 22);
+  if (cs > 0) {
+    let r = CTA;
+    if (mo > 0) r = CTA.map((v, i) => lerp(v, [810, 470, 300, 140, 16][i], mo));
+    const k = mo > 0 ? 1 : lerp(0.7, 1, cs);
+    c.save(); c.translate(r[0] + r[2] / 2, r[1] + r[3] / 2); c.scale(k, k); c.translate(-(r[0] + r[2] / 2), -(r[1] + r[3] / 2));
+    RR(r[0], r[1], r[2], r[3], r[4], PU, null, 0, 1 - mo); if (mo > 0) RR(r[0], r[1], r[2], r[3], r[4], null, MU, 1.5, 0.3 * mo);
+    if (mo < 0.2) {
+      const la = 1 - mo / 0.2, roll = E(t, 15.5, 15.66, eio);
+      c.save(); clipRect(CTA[0], CTA[1], CTA[2], CTA[3]);
+      T('Buy now', 475, 637 - 50 * roll, 24, { col: WH, al: 'center', a: la });
+      if (roll > 0) { T('Done', 462, 637 + 50 * (1 - roll), 24, { col: WH, al: 'center', a: la }); check(500, 628 + 50 * (1 - roll), 18, WH, 4, E(t, 15.6, 15.78)); }
+      c.restore();
+    }
+    c.restore();
+  }
+  // the pointer
+  if (t >= 15.05 && gone < 1) {
+    const pu = E(t, 15.05, 15.45, eio), px = lerp(1660, 492, pu), py = lerp(1010, 640, pu);
+    const k = 1.5 * (1 - 0.15 * Math.sin(Math.PI * E(t, 15.5, 15.62, (x) => x))) * (1 - gone);
+    poly([[0, 0], [0, 24], [6, 18.5], [10.5, 28], [14, 26.5], [9.5, 17.5], [17, 17.5]].map(([x, y]) => [px + x * k, py + y * k]), WH, OB, 2);
+  }
+}
+
+// ---------- bar 9 · Analytics & Growth (16–18) ----------
+const LIT = [16.45, 16.75, 17.25, 17.75], ARC_T = [[16.5, 16.75], [17.0, 17.25], [17.5, 17.75], [17.75, 17.95]];
+const SPARK = [[835, 585], [877, 570], [919, 575], [961, 548], [1003, 540], [1045, 515], [1087, 496]];
+function analytics(t) {
+  if (t < 16.3 || t >= 18.45) return;
+  const ex = E(t, 18.0, 18.35, eio), lx = E(t, 18.0, 18.12, eio), r = lerp(280, 400, ex);
+  if (t >= 16.45 && t < 18.0) circle(960, 540, r, null, MU, 2, 0.5);
+  if (t >= 16.45 && t < 18.0) {   // arcs (a growing loop of purple); the gaps close just before the hand-over
+    const gap = 0.12 * (1 - E(t, 17.88, 18.0, eio));
+    for (let k = 0; k < 4; k++) {
+      const [a0, a1] = ARC_T[k], u = E(t, a0, a1, eio); if (u <= 0) continue;
+      const s0 = -Math.PI / 2 + (k * Math.PI) / 2 + gap, s1 = s0 + (Math.PI / 2 - 2 * gap) * u;
+      c.beginPath(); c.arc(960, 540, r, s0, s1); c.strokeStyle = PU; c.lineWidth = 5; c.lineCap = 'round'; alpha(1); c.stroke(); c.globalAlpha = GA;
+      if (u > 0.05 && gap > 0.03) { const ex2 = 960 + r * Math.cos(s1), ey = 540 + r * Math.sin(s1), d = s1 + Math.PI / 2;
+        const bx = Math.cos(d), by = Math.sin(d);
+        poly([[ex2 + bx * 4, ey + by * 4], [ex2 - bx * 12 + by * 8, ey - by * 12 - bx * 8], [ex2 - bx * 12 - by * 8, ey - by * 12 + bx * 8]], PU); }
+    }
+  }
+  if (t >= 16.45) for (let k = 0; k < 4; k++) {   // nodes
+    const ang = -Math.PI / 2 + (k * Math.PI) / 2, rr = lerp(280, 400, ex), x = 960 + rr * Math.cos(ang), y = 540 + rr * Math.sin(ang), s = 1 - ex;
+    const lit = spr(t - LIT[k], 26);
+    circle(x, y, 18 * s, mix(OB, PU, lit), mix(MU, PU, lit), 2);
+    circle(x, y, lerp(18, 28, lit) * s, null, WH, 2, lit * 0.9);
+  }
+  for (let k = 0; k < 4; k++) {   // labels
+    const u = E(t, 16.35 + 0.04 * k, 16.6 + 0.04 * k, eo); if (u <= 0) continue;
+    const lit = spr(t - LIT[k], 26), col = mix(MU, WH, lit), [x, y] = NODES[k], wl = tw(NLAB[k], 40);
+    let tx = x, ty = y, al = 'center';
+    if (k === 0) ty = y - 40; if (k === 2) ty = y + 68; if (k === 1) { tx = x + 42; ty = y + 14; al = 'left'; } if (k === 3) { tx = x - 42; ty = y + 14; al = 'right'; }
+    const x0 = al === 'left' ? tx : al === 'right' ? tx - wl : tx - wl / 2;
+    c.save(); clipX(x0 - 6 + (wl + 12) * lx, x0 - 6 + (wl + 12) * u); T(NLAB[k], tx, ty, 40, { col, al }); c.restore();
+  }
+  if (t >= 16.3) {   // the centre: a line that only goes up
+    const bs = 1 - E(t, 18.0, 18.2, eio);
+    if (t >= 16.45 && bs > 0) { c.save(); c.translate(960, 540); c.scale(bs, bs); c.translate(-960, -540); RR(810, 470, 300, 140, 16, null, MU, 1.5, 0.3); c.restore(); }
+    const pr = 0.25 * E(t, 16.3, 16.5, eo) + 0.25 * E(t, 16.75, 17.0, eo) + 0.25 * E(t, 17.25, 17.5, eo) + 0.25 * E(t, 17.75, 18.0, eo);
+    const P = SPARK.map(([x, y]) => [960 + (x - 960) * bs, 540 + (y - 540) * bs]), seg = P.length - 1, d = pr * seg, n = Math.floor(d);
+    const pts = P.slice(0, n + 1); if (n < seg) pts.push(along(P[n], P[n + 1], d - n));
+    if (bs > 0 && pts.length > 1) poly(pts, null, PU, 4 * bs, 1, false);
+    if (pr > 0 && bs > 0) T('Growth', 834, 503, 18, { w: 500, col: MU, ls: 1, a: bs });
+  }
+}
+
+// ---------- bar 10 · one system (18–20) ----------
+const RINGTXT = 'STRATEGY · BRANDING · SOCIAL MEDIA · CONTENT · PRODUCTION · PERFORMANCE · SEO · WEBSITES · ANALYTICS · ';
+let RING_ADV = [], RING_LS = 0;
+const RR_R = 400, RING_PX = 30;
+const CENTRE = [['Nine services.', 18.05], ['30 people.', 18.5], ['One goal.', 19.0], ['Yours.', 19.5]];
+const QM = [300, 365];
+function ringInit() {
+  const n = RINGTXT.length, wNo = [...RINGTXT].reduce((s, ch) => s + tw(ch, RING_PX, 700, 'Sat', 0), 0);
+  RING_LS = (2 * Math.PI * RR_R - wNo) / n; let acc = 0; RING_ADV = [];
+  for (const ch of RINGTXT) { const w = tw(ch, RING_PX, 700, 'Sat', 0); RING_ADV.push(acc + w / 2); acc += w + RING_LS; }
+}
+function systemGroup(t) {   // drawn around (0, 0)
+  const rot = -Math.PI / 2 + 0.5 * (t - 18.0), rev = E(t, 18.05, 18.45, eio);
+  circle(0, 0, lerp(280, 340, E(t, 18.0, 18.35, eio)), null, MU, lerp(2, 1.5, E(t, 18.0, 18.35)), lerp(0.5, 0.35, E(t, 18.0, 18.35)));
+  font(RING_PX, 700); c.textAlign = 'center'; c.textBaseline = 'alphabetic'; c.fillStyle = WH;
+  for (let i = 0; i < RINGTXT.length; i++) {
+    const frac = RING_ADV[i] / (2 * Math.PI * RR_R); if (frac > rev) break;
+    const a = rot + RING_ADV[i] / RR_R; c.save(); c.rotate(a + Math.PI / 2); alpha(0.92); c.fillText(RINGTXT[i], 0, -RR_R + 10); c.restore();
+  }
+  c.globalAlpha = GA;
+  if (rev < 1 && t >= 18.0) {   // the purple loop unwinds as the words write on
+    const a0 = rot + rev * 2 * Math.PI; c.beginPath(); c.arc(0, 0, lerp(280, RR_R, E(t, 18.0, 18.35, eio)), a0, rot + 2 * Math.PI); c.strokeStyle = PU; c.lineWidth = 5; c.lineCap = 'round'; c.stroke();
+  }
+  c.save(); clipRect(-380, -100, 760, 150);
+  for (let k = 0; k < CENTRE.length; k++) {
+    const [s, t0] = CENTRE[k], t1 = k < CENTRE.length - 1 ? CENTRE[k + 1][1] : 99; if (t < t0) continue;
+    const ui = E(t, t0, t0 + 0.28, eo), uo = E(t, t1, t1 + 0.22, eio); if (uo >= 1) continue;
+    T(s, 0, 28 + 90 * (1 - ui) - 110 * uo, 84, { col: k === 3 ? PU : WH, al: 'center' });
+  }
+  c.restore();
+}
+function oneSystem(t) {
+  if (t < 18.0 || t >= 20.32) return;
+  const u = E(t, 20.0, 20.3, eio), s = lerp(1, 0.015, E(t, 19.99, 20.27, eio));
+  c.save(); c.translate(lerp(960, QM[0], u), lerp(540, QM[1], u)); c.scale(s, s); systemGroup(t); c.restore();
+}
+
+// ---------- bars 11–12 · in their words (20–24) ----------
+// Verbatim excerpts from published client testimonials about work led by members of the Say Tamm team.
+const QUOTES = [
+  { s: 'Professional team with\nstrong execution.', key: ['strong', 'execution.'], who: 'K.S Furniture' },
+  { s: '…handled everything with precision.', key: ['precision.'], who: 'Musalli Jewelry' },
+  { s: '…a steady flow of high-quality leads.', key: ['high-quality', 'leads.'], who: 'Alqimma Equipment' },
+  { s: '…truly understands business needs.', key: ['business', 'needs.'], who: 'BITUMAT' },
+];
+const QX = 240, QY = 540, QPX = 84, QLH = 100, QMAX = 1440;
+const ATTR = 'Client words from projects led by members of the Say Tamm team, including work delivered at other agencies.';
+let QM_BOX = null;
+function quoteInit() {
+  const sp = tw(' ', QPX);
+  for (const q of QUOTES) {
+    q.words = []; let x = 0, ln = 0;
+    for (const w0 of q.s.replace('\n', ' \n ').split(' ')) {
+      if (w0 === '\n') { x = 0; ln++; continue; }
+      const w = w0, wd = tw(w, QPX);
+      if (x > 0 && x + wd > QMAX) { x = 0; ln++; }
+      q.words.push({ w, x: QX + x, ln, wd, key: q.key.includes(w) }); x += wd + sp;
+    }
+    q.lines = ln + 1;
+  }
+  font(300, 700); const m = SCR.measureText('“');
+  QM_BOX = { l: m.actualBoundingBoxLeft, r: m.actualBoundingBoxRight, a: m.actualBoundingBoxAscent, d: m.actualBoundingBoxDescent };
+}
+function qmark(x, y, s, col = PU) {   // the opening quote, centred on (x, y)
+  if (s <= 0.01) return;
+  const b = QM_BOX;
+  c.save(); c.translate(x, y); c.scale(s, s); T('“', -(b.r - b.l) / 2, (b.a - b.d) / 2, 300, { col }); c.restore();
+}
+function quotes(t) {
+  if (t < 20.0 || t >= 24.05) return;
+  // the quote mark: out of the collapsing ring; a nod on each new quote; squeezed into the cursor at the end
+  const qs = spr(t - 20.12, 20), nod = [21, 22, 23].reduce((a, t0) => a - 0.08 * Math.sin(Math.PI * E(t, t0, t0 + 0.2, (x) => x)), 1);
+  if (t < 23.85) qmark(QM[0], QM[1], qs * nod);
+  const au = E(t, 20.2, 20.5, eio), ao = E(t, 23.85, 24.0, eio), aw = tw(ATTR, 20, 500, 'Sat', 0.3);
+  if (au > 0 && ao < 1) { c.save(); clipX(QX - 4 + (aw + 8) * ao, QX - 4 + (aw + 8) * au); T(ATTR, QX, 905, 20, { w: 500, col: MU, ls: 0.3 }); c.restore(); }
+  for (let qi = 0; qi < 4; qi++) {
+    const q = QUOTES[qi], T0 = 20 + qi, t0 = T0 + (qi === 0 ? 0.14 : 0.04);
+    if (t < t0 || t >= T0 + 1.0) continue;
+    const hl = E(t, T0 + 0.5, T0 + 0.7, eio);
+    for (let ln = 0; ln < q.lines; ln++) {
+      const by = QY + QLH * ln; c.save(); clipRect(QX - 20, by - QPX - 10, QMAX + 60, QPX + 40);
+      q.words.forEach((wd, j) => {
+        if (wd.ln !== ln) return;
+        const ws = t0 + 0.045 * j, ui = E(t, ws, ws + 0.28, eo), uo = E(t, T0 + 0.84 + 0.01 * j, T0 + 0.94 + 0.01 * j, ei);
+        const y = by + (QPX + 20) * (1 - ui) - (QPX + 30) * uo;
+        T(wd.w, wd.x, y, QPX, { col: WH });
+        if (wd.key && hl > 0) { c.save(); clipX(wd.x - 2, wd.x - 2 + (wd.wd + 6) * hl); T(wd.w, wd.x, y, QPX, { col: PU }); c.restore(); }
+      });
+      c.restore();
+    }
+    const ny = QY + QLH * (q.lines - 1) + 88, nu = E(t, t0 + 0.2, t0 + 0.46, eo), no = E(t, T0 + 0.88, T0 + 0.99, ei);
+    c.save(); clipRect(QX - 10, ny - 40, 900, 54); T('— ' + q.who, QX, ny + 40 * (1 - nu) - 50 * no, 30, { w: 500, col: MU, ls: 0.3 }); c.restore();
+  }
+}
+
+// ---------- bar 13 · build (24–26) ----------
+const BWORDS = ['Strategy', 'Branding', 'Social', 'Content', 'Production', 'Performance', 'SEO', 'Websites', 'Analytics'];
+const BT = [24.0, 24.25, 24.5, 24.75, 25.0, 25.25, 25.375, 25.5, 25.625], BY = 600, BPX = 150;
+const AGE_Y = [0, -150, -262, -346, -410, -460], AGE_S = [1, 0.6, 0.42, 0.3, 0.22, 0.16], AGE_A = [1, 0.62, 0.32, 0.12, 0, 0];
+function build(t) {
+  if (t < 23.85 || t >= 26.0) return;
+  const ce = E(t, 25.75, 25.88, ei);   // the stack collapses into the cursor
+  for (let k = 0; k < BWORDS.length; k++) {
+    if (t < BT[k]) continue;
+    let age = 0; for (let j = k + 1; j < BWORDS.length; j++) age += spr(t - BT[j], 60);
+    const a = interp(AGE_A, age); if (a <= 0.01) continue;
+    const ent = spr(t - BT[k] - 0.025, 44); if (ent <= 0) continue;
+    const s = interp(AGE_S, age) * lerp(0.86, 1, ent), y = BY + interp(AGE_Y, age) + 90 * (1 - ent);
+    c.save(); c.translate(960, y - 0.36 * BPX * s); c.scale(s, s * (1 - ce)); T(BWORDS[k], 0, 0.36 * BPX, BPX, { col: mix(WH, MU, clamp(age)), al: 'center', a: a * clamp(ent * 3) }); c.restore();
+  }
+  // cursor: from the quote mark, to the end of the newest word, then the blade
+  const curK = BT.reduce((n, b, i) => (t >= b + 0.025 ? i : n), 0);
+  const endOf = (k) => 960 + (tw(BWORDS[k], BPX) * lerp(0.86, 1, spr(t - BT[k] - 0.025, 44))) / 2 + 26;
+  let cx = curK === 0 ? endOf(0) : lerp(endOf(curK - 1), endOf(curK), spr(t - BT[curK] - 0.025, 44)), cy = BY - 0.36 * BPX, len = 150, th = 14, ang = 0;
+  if (t < 24.02) {
+    const u = E(t, 23.85, 24.02, eio); cx = lerp(QM[0], endOf(0), u); cy = lerp(QM[1], BY - 0.36 * BPX, u);
+    qmark(cx, cy, (1 - u) * 1.0); const bw = 14 * u; RR(cx - bw / 2, cy - 75, bw, 150, 4, PU); return;
+  }
+  if (t >= 25.75) { const u = E(t, 25.76, 26.0, eio); cx = lerp(cx, 960, u); cy = lerp(cy, 540, u); len = lerp(150, 1800, u); th = lerp(14, 16, u); ang = (Math.PI / 4) * u; }
+  cursorBar(cx, cy, ang, len, th);
+}
+
+// ---------- bar 14 · the strongest moment (26–28) ----------
+function hero(t) {
+  if (t < 26.0 || t >= 28.0) return;
+  const s = 1150 * E(t, 26.0, 26.25, eo), kc = lerp(3060, -60, E(t, 27.5, 27.92, eio));   // open, then close
+  const k0 = 1500 - s * Math.SQRT2, k1 = 1500 + s * Math.SQRT2;
+  if (t < 27.5) poly(halfPoly(k0, k1), WH); else { c.save(); clipHalf(kc, -1); c.fillStyle = WH; c.fillRect(0, 0, W, H); c.restore(); }
+  const u = E(t, 27.5, 27.98, eio);
+  const sayPx = lerp(250, 150, u), sayY = lerp(500, ET.say, u), tamPx = lerp(250, 150, u), tamY = lerp(760, ET.tamm, u);
+  const slam = (t0) => lerp(1.32, 1, spr(t - t0, 26));
+  const drawSay = (col) => { if (t < 26.25) return; const k = slam(26.25); c.save(); c.translate(960, sayY - 0.36 * sayPx); c.scale(k, k); T('Say it.', 0, 0.36 * sayPx, sayPx, { col, al: 'center' }); c.restore(); };
+  if (t < 27.5) drawSay(OB); else { c.save(); clipHalf(kc, -1); drawSay(OB); c.restore(); c.save(); clipHalf(kc, 1); drawSay(WH); c.restore(); }
+  if (t >= 27.0) { const k = slam(27.0); c.save(); c.translate(960, tamY - 0.36 * tamPx); c.scale(k, k); T('Tamm it.', 0, 0.36 * tamPx, tamPx, { col: PU, al: 'center' }); c.restore(); }
+  // the cursor blinks after the last word said
+  if (t >= 26.5 && t < 27.65) {
+    const onTamm = t >= 27.0, wd = tw(onTamm ? 'Tamm it.' : 'Say it.', 250) * (onTamm ? slam(27.0) : 1), y = onTamm ? 760 : 500;
+    const on = (t - 26.5) % 0.25 < 0.15, sh = 1 - E(t, 27.5, 27.65, eio);
+    if (on || t >= 27.5) RR(960 + wd / 2 + 22, y - 190 * sh, 18, 240 * sh, 4, PU);
+  }
+  // the blades
+  const bladeAt = (k) => { const off = (k - 1500) / Math.SQRT2, cx = 960 + off * R2, cy = 540 + off * R2; blade(cx - 1300 * R2, cy + 1300 * R2, cx + 1300 * R2, cy - 1300 * R2, 16); };
+  if (t < 26.25) { bladeAt(k0); bladeAt(k1); }
+  if (t >= 27.5 && t < 27.95) bladeAt(kc);
+}
+
+// ---------- the HUD (drawn crisp, outside the motion blur) ----------
+const TICK = [[2.0, '01 / 09', 'Digital Marketing Strategy'], [4.0, '02 / 09', 'Branding & Identity'], [6.0, '03 / 09', 'Social Media Marketing'],
+  [8.0, '04 / 09', 'Content Marketing'], [9.0, '05 / 09', 'Media Production'], [10.0, '06 / 09', 'Performance Marketing'], [12.0, '07 / 09', 'SEO'],
+  [14.0, '08 / 09', 'Website Development & CRO'], [16.0, '09 / 09', 'Analytics & Growth'], [18.0, 'ALL NINE', 'One team'], [20.0, 'CLIENTS', 'In their words'], [23.85, '', '']];
+function hud(t) {
+  const on = E(t, 0.5, 0.82, eo) * (1 - E(t, 25.6, 25.86, eio));
+  if (on > 0) {
+    const L = 30 * on, I = 48;
+    for (const [x, y, sx, sy] of [[I, I, 1, 1], [W - I, I, -1, 1], [I, H - I, 1, -1], [W - I, H - I, -1, -1]]) { line(x, y, x + sx * L, y, MU, 2, 0.8, 'butt'); line(x, y, x, y + sy * L, MU, 2, 0.8, 'butt'); }
+    const lw = tw('SAY TAMM — WHAT WE DO', 18, 500, 'Sat', 3.5);
+    c.save(); clipX(92, 92 + (lw + 10) * on); T('SAY TAMM — WHAT WE DO', 96, 1000, 18, { w: 500, col: MU, ls: 3.5 }); c.restore();
+    const bpmW = tw('120 BPM', 18, 500, 'Sat', 3);
+    c.save(); clipX(1828 - (bpmW + 90) * on, 1830);
+    T('120 BPM', 1824, 106, 18, { w: 500, col: MU, al: 'right', ls: 3 });
+    const b = Math.floor(t / BEAT + 1e-6) % 4;
+    for (let i = 0; i < 4; i++) { const x = 1824 - bpmW - 26 - (3 - i) * 16; if (i === b) RR(x - 4, 96, 9, 9, 1.5, WH); else RR(x - 4, 96, 9, 9, 1.5, null, MU, 1.2, 0.8); }
+    c.restore();
+    const s = Math.floor(t + 1e-6), f = Math.floor((t - s) * 60 + 1e-6), tc = `00:${String(s).padStart(2, '0')}:${String(f).padStart(2, '0')}`;
+    c.save(); clipX(1828 - 120 * on, 1830); for (let i = 0; i < tc.length; i++) T(tc[i], 1824 - (tc.length - i) * 12.5 + 6, 1000, 18, { w: 500, col: MU, al: 'center' }); c.restore();
+  }
+  // the ticker: number and service name roll on each change
+  for (let k = 0; k < TICK.length - 1; k++) {
+    const [t0, num, name] = TICK[k], t1 = TICK[k + 1][0]; if (t < t0 || t >= t1 + 0.3) continue;
+    const ui = E(t, t0, t0 + 0.3, eio), uo = E(t, t1, t1 + 0.3, eio);
+    c.save(); clipRect(90, 82, 900, 30); T(num, 96, 106 + 32 * (1 - ui) - 32 * uo, 18, { w: 500, col: MU, ls: 3 }); c.restore();
+    c.save(); clipRect(90, 116, 900, 66); T(name, 96, 164 + 66 * (1 - ui) - 66 * uo, 44, { col: WH }); c.restore();
+  }
+}
+
+// ---------- frame ----------
+const FAST = [[0, 0.46], [1.58, 2.36], [3.48, 4.46], [5.86, 6.46], [6.48, 6.88], [7.96, 8.46], [8.98, 9.42], [9.48, 9.92], [9.98, 10.46], [11.98, 12.46],
+  [13.48, 13.92], [13.98, 14.46], [15.02, 15.5], [15.98, 16.46], [17.98, 18.46], [19.98, 20.46], [23.82, 26.3], [26.98, 27.2], [27.46, 28.46]];
+const K = (t) => (FAST.some(([a, b]) => t >= a && t < b) ? 8 : 3);
+function scene(t) {
+  hook(t); strategy(t); branding(t); social(t); perfPanel(t); content(t); perf(t); seo(t); web(t); analytics(t); oneSystem(t); quotes(t); build(t); hero(t); endTitle(t);
+}
+function frame(t) {
+  t = ((t % DUR) + DUR) % DUR;
+  const k = K(t);
+  ACC.globalCompositeOperation = 'source-over'; ACC.globalAlpha = 1; ACC.clearRect(0, 0, W, H);
+  for (let i = 0; i < k; i++) {
+    const tt = k === 1 ? t : Math.min(DUR - 1e-6, Math.max(0, t + (i / (k - 1) - 0.5) / 180));
+    SCR.setTransform(1, 0, 0, 1, 0, 0); SCR.globalAlpha = 1; SCR.clearRect(0, 0, W, H); c = SCR; GA = 1;
+    scene(tt);
+    ACC.globalCompositeOperation = 'lighter'; ACC.globalAlpha = 1 / k; ACC.drawImage(SCR.canvas, 0, 0);
+  }
+  ACC.globalCompositeOperation = 'source-over'; ACC.globalAlpha = 1;
+  MAIN.globalAlpha = 1; MAIN.fillStyle = OB; MAIN.fillRect(0, 0, W, H); MAIN.drawImage(ACC.canvas, 0, 0);
+  c = MAIN; GA = 1; hud(t); c = SCR;
+}
+window.seek = (t) => { frame(t); return true; };
+
+// ---------- the score (120 BPM, A minor; a kick on every beat, a hit on every scene change, a riser into the last bar) ----------
+window.renderAudio = async () => {
+  const SR = 48000, A = new OfflineAudioContext(2, Math.round(SR * DUR), SR);
+  const OUT = A.createGain(); OUT.gain.value = 0.7; OUT.connect(A.destination);   // no compressor here: its look-ahead would delay every hit; mastering happens in mix.py
+  const NB = A.createBuffer(1, SR * 2, SR); { const d = NB.getChannelData(0); let s = 1234567; for (let i = 0; i < d.length; i++) { s = (s * 1103515245 + 12345) & 0x7fffffff; d[i] = s / 0x3fffffff - 1; } }
+  const env = (g, t, att, peak, dec) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(peak, t + att); g.gain.exponentialRampToValueAtTime(0.0001, t + att + dec); };
+  const route = (node, pan) => { if (pan) { const p = A.createStereoPanner(); p.pan.value = pan; node.connect(p).connect(OUT); } else node.connect(OUT); };
+  function osc(type, f0, f1, t, dec, peak, att = 0.002, pan = 0, lp = 0) {
+    const o = A.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + Math.max(0.02, dec * 0.5));
+    const g = A.createGain(); env(g, t, att, peak, dec); let n = o;
+    if (lp) { const f = A.createBiquadFilter(); f.type = 'lowpass'; f.frequency.setValueAtTime(lp, t); f.frequency.exponentialRampToValueAtTime(Math.max(120, lp / 5), t + dec); n = n.connect(f); }
+    route(n.connect(g), pan); o.start(t); o.stop(t + att + dec + 0.05);
+  }
+  function noise(t, dec, type, freq, q, peak, att = 0.001, pan = 0, f1 = 0) {
+    const s = A.createBufferSource(); s.buffer = NB; const f = A.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(freq, t); if (f1) f.frequency.exponentialRampToValueAtTime(f1, t + att + dec); f.Q.value = q;
+    const g = A.createGain(); env(g, t, att, peak, dec); route(s.connect(f).connect(g), pan); s.start(t, (t * 0.731) % 1.4); s.stop(t + att + dec + 0.05);
+  }
+  const kick = (t, p = 0.95) => { osc('sine', 165, 44, t, 0.36, p); noise(t, 0.014, 'highpass', 2600, 0.7, 0.16 * p); };
+  const clap = (t, p = 0.36) => { for (const d of [0, 0.011, 0.023]) noise(t + d, 0.012, 'bandpass', 1400, 0.9, p); noise(t + 0.03, 0.16, 'bandpass', 1250, 0.8, p * 0.8); };
+  const hat = (t, p = 0.09, pan = 0.18) => noise(t, 0.035, 'highpass', 7600, 0.7, p, 0.001, pan);
+  const tick = (t, p = 0.16, f = 3800) => { noise(t, 0.011, 'bandpass', f, 2.2, p); osc('square', f / 2, f / 2, t, 0.008, 0.02); };
+  const whoosh = (t, d, f0 = 300, f1 = 3200, p = 0.22) => noise(t, d * 0.45, 'bandpass', f0, 1.4, p, d * 0.55, 0, f1);
+  const CHORD = { A: [220, 261.63, 329.63], F: [174.61, 220, 261.63], C: [196, 261.63, 329.63], G: [196, 246.94, 293.66], E: [164.81, 207.65, 246.94] };
+  const ROOT = { A: 55, F: 43.65, C: 65.41, G: 49, E: 41.2 };
+  const PROG = ['A', 'F', 'C', 'G', 'A', 'F', 'C', 'G', 'A', 'F', 'C', 'G', 'E', 'A', 'A'];
+  const stab = (t, ch, p = 0.07, dec = 0.42) => { CHORD[ch].forEach((f, i) => { for (const dt of [-0.004, 0.004]) osc('sawtooth', f * (1 + dt), f * (1 + dt), t, dec, p, 0.003, i === 0 ? -0.35 : i === 2 ? 0.35 : 0, 3400); }); };
+  const bass = (t, f, p = 0.3) => { osc('sawtooth', f, f, t, 0.2, p, 0.004, 0, 700); osc('sine', f, f, t, 0.22, p * 0.9, 0.004); };
+  const inGap = (t) => t >= 25.45 && t < 26.0;
+  for (let b = 0; b < DUR / BEAT; b++) {
+    const t = b * BEAT, bar = Math.floor(t / 2);
+    if (!inGap(t) && !(t >= 26.0 && t < 26.1)) kick(t);
+    if (b % 2 === 1 && !inGap(t)) clap(t);
+    if (!inGap(t + 0.25) && !(t >= 25.0 && t < 26.0)) { hat(t + 0.25, 0.11); bass(t + 0.25, ROOT[PROG[bar]]); }
+    if (t >= 2.0 && !(t >= 25.0 && t < 26.0)) { hat(t + 0.125, 0.045, -0.25); hat(t + 0.375, 0.045, -0.25); }
+  }
+  for (let k = 0; k <= 12; k++) stab(2 * k, PROG[k], k === 0 ? 0.05 : 0.075); stab(9.0, 'F', 0.045, 0.3);
+  // typing, UI, transitions
+  for (let i = 0; i < 7; i++) tick(0.5 + i * 0.05, 0.13, 3200);
+  for (let i = 0; i < 15; i++) tick(1.0 + i * 0.028, 0.15, 4200);
+  for (let i = 0; i < 18; i++) tick(12.5 + i * 0.0222, 0.12, 4600);
+  whoosh(0.0, 0.38, 2400, 500); whoosh(1.58, 0.2, 400, 4200, 0.3); noise(1.75, 0.18, 'highpass', 1800, 0.7, 0.28);
+  osc('sine', 620, 1240, 7.0, 0.09, 0.3); tick(15.5, 0.3, 2600); osc('sine', 1800, 1800, 15.5, 0.05, 0.12);
+  for (const t of [3.5, 5.0, 8.5, 9.5, 13.5]) whoosh(t, 0.3, 500, 2600, 0.12);
+  whoosh(19.98, 0.32, 600, 5200, 0.26);
+  for (const t of [21, 22, 23]) { tick(t, 0.16, 2200); osc('sine', 330, 330, t, 0.25, 0.08); }
+  BT.forEach((t, i) => { tick(t, 0.2, 2400 + 260 * i); osc('triangle', 440 * Math.pow(2, i / 12), 440 * Math.pow(2, i / 12), t, 0.09, 0.07); });
+  // the riser into the last bar
+  { const s = A.createBufferSource(); s.buffer = NB; s.loop = true; const f = A.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 1.1;
+    f.frequency.setValueAtTime(380, 24); f.frequency.exponentialRampToValueAtTime(8200, 25.98);
+    const g = A.createGain(); g.gain.setValueAtTime(0.0001, 24); g.gain.exponentialRampToValueAtTime(0.5, 25.97); g.gain.linearRampToValueAtTime(0, 26.0);
+    s.connect(f).connect(g).connect(OUT); s.start(24); s.stop(26.01);
+    const o = A.createOscillator(); o.type = 'sawtooth'; o.frequency.setValueAtTime(110, 24); o.frequency.exponentialRampToValueAtTime(880, 25.98);
+    const lf = A.createBiquadFilter(); lf.type = 'lowpass'; lf.frequency.setValueAtTime(500, 24); lf.frequency.exponentialRampToValueAtTime(5200, 25.98);
+    const og = A.createGain(); og.gain.setValueAtTime(0.0001, 24); og.gain.exponentialRampToValueAtTime(0.1, 25.97); og.gain.linearRampToValueAtTime(0, 26.0);
+    o.connect(lf).connect(og).connect(OUT); o.start(24); o.stop(26.01); }
+  whoosh(25.74, 0.26, 300, 6000, 0.3);
+  // the impact, the two slams, the closing sweep, the end chord
+  osc('sine', 82, 30, 26.0, 1.1, 1.0); noise(26.0, 0.9, 'lowpass', 1600, 0.7, 0.42, 0.002, 0, 220); stab(26.0, 'A', 0.12, 1.3);
+  for (const t of [26.25, 27.0]) { osc('sine', 150, 48, t, 0.26, 0.85); noise(t, 0.08, 'bandpass', 1900, 0.9, 0.42); }
+  whoosh(27.46, 0.46, 5200, 500, 0.3);
+  [220, 261.63, 329.63, 493.88].forEach((f, i) => osc('triangle', f, f, 28.0, 0.85, 0.06, 0.01, (i - 1.5) * 0.3));
+  whoosh(27.98, 0.36, 3000, 600, 0.16);
+  const buf = await A.startRendering();
+  let pk = 0; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) pk = Math.max(pk, Math.abs(d[i])); }
+  const g = 0.89 / Math.max(pk, 1e-6), n = buf.length, ab = new ArrayBuffer(44 + n * 4), v = new DataView(ab);
+  const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + n * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true);
+  v.setUint32(24, SR, true); v.setUint32(28, SR * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); ws(36, 'data'); v.setUint32(40, n * 4, true);
+  const L = buf.getChannelData(0), Rr = buf.getChannelData(1); let o = 44;
+  for (let i = 0; i < n; i++) { for (const d of [L, Rr]) { const s = Math.max(-1, Math.min(1, d[i] * g)); v.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true); o += 2; } }
+  const u8 = new Uint8Array(ab); let bin = ''; for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+
+// ---------- start ----------
+window.ready = (async () => {
+  await Promise.all(['500 40px Sat', '700 40px Sat'].map((f) => document.fonts.load(f, 'Aa'))
+    .concat(['600 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول'))));
+  await document.fonts.ready;
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
+  TX = 960 - tw(GROW, TP) / 2; W_GROW = tw(GROW, TP); W_LAB = tw('THE BRIEF', 22, 500, 'Sat', 4);
+  W_AR = tw(AR, 42, 600, 'Plex', 0); W_SUB = tw(SUB, 24, 500, 'Sat', 1.2);
+  buildTextures(); ringInit(); quoteInit();
+  frame(0); return true;
+})();
+</script></body></html>
