@@ -67,10 +67,10 @@ def page(cls, inner, label=None):
     pages.append(f'<section class="pg {cls}">{inner}{foot}</section>')
 
 QS = ['Who are you?', 'What do you actually do?', 'How do you work?', 'Show me the work.', 'Who trusts you?', 'What happens next?']
-def divider(i, strip):
+def divider(i, strip, kick=None, q=None):
     tiles = ''.join(f'<img src="{img(s, 700)}" alt="">' for s in strip)
-    page('div', f'''<div class="strip" aria-hidden="true">{tiles}</div><div class="div-text"><p class="kick">Question {i + 1} of 6</p>
-<h2 class="q">“{esc(QS[i])}”</h2></div><div class="blade" aria-hidden="true"></div>''')
+    page('div', f'''<div class="strip" aria-hidden="true">{tiles}</div><div class="div-text"><p class="kick">{kick or f'Question {i + 1} of 6'}</p>
+<h2 class="q">{esc(q) if q else '“' + esc(QS[i]) + '”'}</h2></div><div class="blade" aria-hidden="true"></div>''')
 
 # 1 · cover: a wall of the work
 mosaic = ['sp_012', 'cp_altopiano1', 'sp_027', 'sp_019', 'cp_xiaomi1', 'sp_015', 'cp_jora1', 'sp_002', 'cp_alia', 'sp_013', 'cp_music', 'sp_020']
@@ -117,41 +117,45 @@ STEPS = [('Strategy', 'Where growth will come from, and the number each channel 
 page('how', '<p class="kick">How we work</p><h2 class="xl">Four disciplines.<br>One connected plan.</h2><ol class="chain">' +
      ''.join(f'<li><b>{a}</b><span>{esc(b)}</span></li>' for a, b in STEPS) +
      '</ol><p class="lead small">Every campaign starts with a clear direction and ends with measurable learning — judged on the same business number, not activity for its own sake.</p>', 'How we work')
+JIMG = ['stk_brief', 'stk_prep', 'stk_idea', 'stk_production', 'stk_content', 'stk_media', 'stk_seo', 'stk_reporting']
 J = [('Brief', 'The goal in one sentence, and the questions behind it.'), ('Preparation', 'Market and competitors, the audience, positioning, the plan.'),
      ('Idea', 'One idea strong enough to carry the whole campaign.'), ('Production', 'Shot and built for the platform it will run on.'),
      ('Content', 'A language for every platform, in Arabic and English.'), ('Media', 'Hooks tested, budget moved toward what is working.'),
      ('SEO', 'Found by the people already searching.'), ('Reporting', 'Reports that end with the next decision.')]
 page('journey', '<p class="kick">Working with us</p><h2>From the brief to the next decision.</h2><ol class="jr">' +
-     ''.join(f'<li><span class="jn">{i + 1}</span><b>{a}</b><span>{esc(b)}</span></li>' for i, (a, b) in enumerate(J)) + '</ol>', 'Client journey')
+     ''.join(f'<li><figure><img src="{img(JIMG[i], 700)}" alt=""><span class="jn">{i + 1}</span></figure><b>{a}</b><span>{esc(b)}</span></li>' for i, (a, b) in enumerate(J)) + '</ol>', 'Client journey')
 
 # Q4 — show me the work
 divider(3, ['sp_014', 'cp_gig', 'sp_018', 'cp_music', 'sp_029'])
 WORK = [   # (industry, what we made, description, brands, images, layout)
     ('Automotive', 'Model posts and launch teasers', 'Posts for three SUV and sedan models, each built on one short Arabic line, plus a “coming soon” teaser set against the Riyadh skyline.', 'Chery Saudi', ['sp_012', 'sp_013', 'sp_014'], 'tri'),
-    ('Consumer electronics', 'Product launches and social', 'Launch posts for tablets, phones and wearables, written for Arabic feeds and built around one benefit each.', 'Xiaomi · POCO', ['cp_xiaomi1', 'cp_xiaomi2', 'cp_poco'], 'stack'),
+    ('Consumer electronics', 'Product launches and social', 'Launch posts for tablets, phones and wearables, written for Arabic feeds and built around one benefit each.', 'Xiaomi · POCO', ['post_xiaomi1_1', 'post_xiaomi1_0', 'post_xiaomi2_0', 'post_poco_1', 'post_xiaomi2_1', 'post_xiaomi2_2', 'post_poco_0', 'post_xiaomi1_2', 'post_poco_2'], 'ge'),
     ('Home appliances', 'Locally made appliances, in real homes', 'Washing machines, refrigerators and freezers placed in real Saudi rooms, with “made in Saudi” at the centre of every line.', 'Zahid Electra', ['sp_015', 'sp_016', 'sp_017'], 'tri'),
-    ('Food & hospitality', 'Restaurant and hotel content', 'Day and night moods for an Italian restaurant, street-food photography and branding for a burger concept, and seasonal hotel offers.', 'Altopiano · JORA · Marriott', ['cp_altopiano1', 'cp_jora1', 'cp_marriott'], 'stack'),
+    ('Food & hospitality', 'Restaurant and hotel content', 'Day and night moods for an Italian restaurant, street-food photography and branding for a burger concept, and a Chinese restaurant’s opening season.', 'Altopiano · JORA · Havenue', ['alto4k_d', 'alto4k_a', 'post_havenue_0', 'post_jora1_1', 'post_alto1_5', 'post_jora2_4', 'post_alto2_2', 'post_jora1_0', 'post_havenue_1', 'post_jora2_2', 'post_alto1_4', 'post_jora2_5', 'post_alto2_3', 'post_jora1_2'], 'gf'),
     ('Fashion & beauty', 'Campaigns, labels and product photography', 'A one-promise campaign look — your size, your style — plus labels, product photography and a fashion identity.', 'niimee · Beauty Lab · Somavie · Alia', ['sp_018', 'sp_019', 'sp_025'], 'tri'),
     ('Technology & software', 'Platform-native social for business', 'Gaming-PC posts in Saudi dialect, and clear, product-led social for software, content and IT services brands.', 'Tech Hive · Siyaq · Fatora Plus · TECSPRO', ['sp_027', 'cp_siyaq', 'cp_fatora'], 'mix'),
     ('Construction & industry', 'Building materials and equipment', 'Industrial products shown at the scale of the sites they are used on, with one technical benefit per post.', 'BITUMAT · DC BLOCK · SIEFCO · Alqimma', ['sp_003', 'cp_dcblock', 'cp_siefco'], 'mix'),
-    ('Real estate & services', 'Identities, brand manuals and social', 'Bilingual identities, icon systems and brand manuals, from a property developer to a home-cleaning service.', 'Urban · Clean Basket', ['cp_urban', 'sp_021', 'cp_cleanbasket_social'], 'mix'),
 ]
 for n, (sector, title, desc, brand, ims, layout) in enumerate(WORK, 1):
-    figs = ''.join(f'<figure><img src="{img(s, 1100)}" alt="{esc(sector)}"></figure>' for s in ims)
+    figs = ''.join(f'<figure><img src="{img(s, 1100 if s.startswith(("alto4k", "cp_", "sp_")) else 640, 88)}" alt="{esc(sector)}"></figure>' for s in ims)
     page('work ' + layout, f'''<div class="wtext"><p class="kick">Industry {n:02d} / {len(WORK):02d}</p><h2 class="brand">{esc(sector)}</h2><p class="wt">{esc(title)}</p>
 <p class="wd">{esc(desc)}</p><p class="wb">{esc(brand)}</p></div><div class="wimgs">{figs}</div>''', 'Show me the work')
 
-# results: one featured case, then the grid
+# case studies: their own separator inside question 4
+divider(3, ['stk_cs_cart', 'stk_cs_parcel', 'stk_cs_calc', 'stk_cs_shop', 'stk_cs_pay'], 'Case studies', 'The work, measured.')
 ks = CASES['ks-furniture']
 page('case', f'''<div class="ctext"><p class="kick">Results · {esc(ks["sector"])}</p><h2 class="brand">{esc(ks["client"])}</h2><p class="wt">{esc(ks["headline"])}</p>
 <dl class="cdl"><dt>Challenge</dt><dd>{esc(ks["challenge"])}</dd><dt>Strategy</dt><dd>{esc(ks["strategy"])}</dd></dl></div>
-<div class="kpis">{''.join(f'<div class="kpi{" a" if k.get("accent") else ""}"><b>{esc(k["value"])}</b><span>{esc(k["label"])}</span></div>' for k in ks["kpis"])}</div>''', 'Results')
-SHOW = ['muriya', 'fashion-beauty-scale', 'electronics-q4', 'bio-group', 'damac-paramount', 'qnb-ramadan']
-cells = ''
-for s in SHOW:
-    c = CASES[s]; k = c['kpis'][0]; rest = ' · '.join(f'{x["value"]} {x["label"].lower()}' for x in c['kpis'][1:3])
-    cells += f'<div class="cc"><span class="cs">{esc(c["sector"])}</span><b class="cv">{esc(k["value"])}</b><span class="cl">{esc(k["label"])}</span><h3>{esc(c["client"])}</h3><p>{esc(c["headline"])}</p><span class="cr">{esc(rest)}</span></div>'
-page('cases', f'<p class="kick">More results</p><h2>Judged on the number that matters to each business.</h2><div class="cgrid">{cells}</div><p class="note">ROAS is revenue divided by ad spend, not profit. Platform-attributed figures are labelled as such.</p>', 'Results')
+<div class="kimgs"><img src="{img('stk_ks_cushion', 900)}" alt=""><img src="{img('stk_ks_lamp', 900)}" alt=""></div><div class="kpis">{''.join(f'<div class="kpi{" a" if k.get("accent") else ""}"><b>{esc(k["value"])}</b><span>{esc(k["label"])}</span></div>' for k in ks["kpis"])}</div>''', 'Results')
+SHOW = [('muriya', 'stk_cs_city'), ('fashion-beauty-scale', 'stk_cs_unbox'), ('electronics-q4', 'stk_cs_shop'),
+        ('bio-group', 'stk_cs_cart'), ('damac-paramount', 'stk_cs_dubai'), ('qnb-ramadan', 'stk_cs_pay')]
+for part, head in ((SHOW[:3], 'Judged on the number that matters to each business.'), (SHOW[3:], 'Different goals. The same discipline.')):
+    cells = ''
+    for slug, pic in part:
+        c = CASES[slug]; k = c['kpis'][0]; rest = ' · '.join(f'{x["value"]} {x["label"].lower()}' for x in c['kpis'][1:3])
+        cells += (f'<div class="cc"><figure><img src="{img(pic, 800)}" alt=""></figure><div class="ccb"><span class="cs">{esc(c["sector"])}</span>'
+                  f'<b class="cv">{esc(k["value"])}</b><span class="cl">{esc(k["label"])}</span><h3>{esc(c["client"])}</h3><p>{esc(c["headline"])}</p><span class="cr">{esc(rest)}</span></div></div>')
+    page('cases', f'<p class="kick">More results</p><h2>{head}</h2><div class="cgrid">{cells}</div><p class="note">ROAS is revenue divided by ad spend, not profit. Platform-attributed figures are labelled as such. Photography: stock, for illustration.</p>', 'Results')
 
 # Q5 — who trusts you
 divider(4, ['sp_010', 'cp_sedra', 'sp_004', 'cp_yap', 'sp_006'])

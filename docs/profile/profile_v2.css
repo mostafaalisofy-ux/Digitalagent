@@ -178,3 +178,30 @@ cite { font-style:normal; font-size:1cqw; color:var(--mu); letter-spacing:.08em;
 .sky .rt { fill:none; stroke:var(--mu); stroke-width:1.2; stroke-dasharray:3 6; opacity:.6; }
 .sky .pin { fill:var(--pu); }
 .close .sky.faint { position:absolute; left:0; right:0; bottom:0; width:100%; height:9cqw; z-index:1; opacity:.35; margin:0; }
+
+/* v2.2 · journey pictures, post grids, case pictures */
+.journey .jr { gap:2.2cqw 2cqw; }
+.jr li { border-top:0; padding-top:0; gap:.5cqw; align-content:start; }
+.jr figure { margin:0 0 .6cqw; position:relative; aspect-ratio:16/8.4; border-radius:.8cqw; overflow:hidden; background:var(--gr); }
+.jr figure img { width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.85) brightness(.82); }
+.jr figure .jn { position:absolute; left:.9cqw; bottom:.5cqw; font-size:3.2cqw; color:transparent; -webkit-text-stroke:1.5px var(--wh); }
+.jr li:last-child figure .jn { -webkit-text-stroke-color:var(--wh); }
+.jr li:last-child figure { box-shadow:inset 0 0 0 2px var(--pu); }
+.jr li:last-child figure img { filter:saturate(.85) brightness(.82); }
+.ge .wimgs { grid-template-columns:repeat(4,1fr); grid-template-rows:repeat(3,1fr); gap:.8cqw; }
+.ge figure:first-child { grid-column:span 2; grid-row:span 2; }
+.gf .wimgs { grid-template-columns:repeat(6,1fr); grid-template-rows:repeat(3,1fr); gap:.7cqw; }
+.gf figure:nth-child(1) { grid-column:span 2; grid-row:span 2; }
+.gf figure:nth-child(2) { grid-column:span 2; }
+.ge figure, .gf figure { border-radius:.6cqw; }
+.case { grid-template-columns:1.05fr .55fr .9fr; gap:2.4cqw; }
+.kimgs { display:grid; grid-template-rows:1fr 1fr; gap:1cqw; min-height:0; }
+.kimgs img { width:100%; height:100%; object-fit:cover; border-radius:1cqw; display:block; min-height:0; }
+.cases .cgrid { grid-template-columns:repeat(3,1fr); gap:1.6cqw; }
+.cc { padding:0; overflow:hidden; gap:0; }
+.cc figure { margin:0; aspect-ratio:16/8; overflow:hidden; }
+.cc figure img { width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.85); }
+.ccb { padding:1.4cqw 1.8cqw 1.8cqw; display:grid; gap:.4cqw; }
+.case .kpi.a b { font-size:5cqw; white-space:nowrap; }
+.case .kpi b { font-size:3.4cqw; white-space:nowrap; }
+.case .kpi { padding:1.6cqw; }
