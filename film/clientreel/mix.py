@@ -5,7 +5,7 @@ import os, subprocess, sys
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')); D = os.path.join(ROOT, 'handover/launch-film/clientreel')
 run = lambda *a: subprocess.run(list(a), capture_output=True, text=True)
 pre, mas = os.path.join(D, 'ClientReel_Score.wav'), os.path.join(D, 'ClientReel_master.wav')
-pic, out = os.path.join(D, 'ClientReel_picture.mp4'), os.path.join(D, 'SayTamm_ClientWork_AR_9x16.mp4')
+pic, out = os.path.join(D, 'ClientReel_v2_picture.mp4'), os.path.join(D, 'SayTamm_ClientWork_v2_AR_9x16.mp4')
 lufs = lambda f: float([l for l in run('ffmpeg', '-hide_banner', '-i', f, '-af', 'ebur128', '-f', 'null', '-').stderr.splitlines() if l.strip().startswith('I:')][-1].split()[1])
 G = -14.0 - lufs(pre) + 0.4
 for _ in range(5):
@@ -16,6 +16,6 @@ for _ in range(5):
     G += -14.0 - I
 r = run('ffmpeg', '-y', '-v', 'error', '-i', pic, '-i', mas, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '320k', '-shortest', '-movflags', '+faststart', out)
 if r.returncode: sys.exit(r.stderr)
-for name, t in (("cover.jpg", "3.20"), ("cover_end.jpg", "22.00")):
+for name, t in (("cover.jpg", "6.40"), ("cover_end.jpg", "35.50")):
     run('ffmpeg', '-y', '-v', 'error', '-ss', t, '-i', out, '-frames:v', '1', '-q:v', '2', os.path.join(D, name))
 print('wrote', out, f'{I:.1f} LUFS')
