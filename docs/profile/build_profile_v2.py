@@ -145,17 +145,17 @@ for n, (sector, title, desc, brand, ims, layout) in enumerate(WORK, 1):
 divider(3, ['stk_cs_cart', 'stk_cs_parcel', 'stk_cs_calc', 'stk_cs_shop', 'stk_cs_pay'], 'Case studies', 'The work, measured.')
 ks = CASES['ks-furniture']
 page('case', f'''<div class="ctext"><p class="kick">Results · {esc(ks["sector"])}</p><h2 class="brand">{esc(ks["client"])}</h2><p class="wt">{esc(ks["headline"])}</p>
-<dl class="cdl"><dt>Challenge</dt><dd>{esc(ks["challenge"])}</dd><dt>Strategy</dt><dd>{esc(ks["strategy"])}</dd></dl></div>
+<dl class="cdl"><dt>Challenge</dt><dd>{esc(ks["challenge"])}</dd><dt>Strategy</dt><dd>{esc(ks["strategy"])}</dd><dt>How it was measured</dt><dd class="src">{esc(ks["note"])}</dd></dl></div>
 <div class="kimgs"><img src="{img('stk_ks_cushion', 900)}" alt=""><img src="{img('stk_ks_lamp', 900)}" alt=""></div><div class="kpis">{''.join(f'<div class="kpi{" a" if k.get("accent") else ""}"><b>{esc(k["value"])}</b><span>{esc(k["label"])}</span></div>' for k in ks["kpis"])}</div>''', 'Results')
-SHOW = [('muriya', 'stk_cs_city'), ('fashion-beauty-scale', 'stk_cs_unbox'), ('electronics-q4', 'stk_cs_shop'),
-        ('bio-group', 'stk_cs_cart'), ('damac-paramount', 'stk_cs_dubai'), ('qnb-ramadan', 'stk_cs_pay')]
-for part, head in ((SHOW[:3], 'Judged on the number that matters to each business.'), (SHOW[3:], 'Different goals. The same discipline.')):
-    cells = ''
-    for slug, pic in part:
-        c = CASES[slug]; k = c['kpis'][0]; rest = ' · '.join(f'{x["value"]} {x["label"].lower()}' for x in c['kpis'][1:3])
-        cells += (f'<div class="cc"><figure><img src="{img(pic, 800)}" alt=""></figure><div class="ccb"><span class="cs">{esc(c["sector"])}</span>'
-                  f'<b class="cv">{esc(k["value"])}</b><span class="cl">{esc(k["label"])}</span><h3>{esc(c["client"])}</h3><p>{esc(c["headline"])}</p><span class="cr">{esc(rest)}</span></div></div>')
-    page('cases', f'<p class="kick">More results</p><h2>{head}</h2><div class="cgrid">{cells}</div><p class="note">ROAS is revenue divided by ad spend, not profit. Platform-attributed figures are labelled as such. Photography: stock, for illustration.</p>', 'Results')
+# owner, 2026-11-25: cases older than 2021 or sourced from another agency's published study are removed; figures approved for the profile
+SHOW = [('fashion-beauty-scale', 'stk_cs_unbox'), ('electronics-q4', 'stk_cs_shop')]
+cells = ''
+for slug, pic in SHOW:
+    c = CASES[slug]; k = c['kpis'][0]; rest = ' · '.join(f'{x["value"]} {x["label"][:1].lower() + x["label"][1:] if x["label"][1:2].islower() else x["label"]}' for x in c['kpis'][1:3])
+    cells += (f'<div class="cc"><figure><img src="{img(pic, 1000)}" alt=""></figure><div class="ccb"><span class="cs">{esc(c["sector"])} · {esc(c["period"])}</span>'
+              f'<b class="cv">{esc(k["value"])}</b><span class="cl">{esc(k["label"])}</span><h3>{esc(c["client"])}</h3><p>{esc(c["headline"])}</p><span class="cr">{esc(rest)}</span>'
+              f'<span class="src">{esc(c["evidence"]["measured"]["en"])}</span></div></div>')
+page('cases two', f'<p class="kick">More results</p><h2>Judged on the number that matters to each business.</h2><div class="cgrid">{cells}</div><p class="note">ROAS is revenue divided by ad spend, not profit. Photography: stock, for illustration.</p>', 'Results')
 
 # Q5 — who trusts you
 divider(4, ['sp_010', 'cp_sedra', 'sp_004', 'cp_yap', 'sp_006'])

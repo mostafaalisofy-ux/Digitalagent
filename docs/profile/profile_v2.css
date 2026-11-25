@@ -205,3 +205,13 @@ cite { font-style:normal; font-size:1cqw; color:var(--mu); letter-spacing:.08em;
 .case .kpi.a b { font-size:5cqw; white-space:nowrap; }
 .case .kpi b { font-size:3.4cqw; white-space:nowrap; }
 .case .kpi { padding:1.6cqw; }
+.cases.two .cgrid { grid-template-columns:1fr 1fr; gap:2.4cqw; }
+.cases.two .cc figure { aspect-ratio:16/6.4; }
+.cases.two .cv { font-size:4.6cqw; }
+.cases.two .cc h3 { font-size:1.7cqw; } .cases.two .cc p { font-size:1.15cqw; }
+.cc .src, .cdl .src { font-size:.92cqw; color:var(--mu); line-height:1.45; border-top:1px solid var(--line); padding-top:.7cqw; margin-top:.6cqw; }
+.cases.two .cc figure { aspect-ratio:16/5; }
+.cases.two .cgrid { margin-top:2cqw; }
+.cases.two .note { margin-top:1.2cqw; }
+.cases.two { padding-bottom:8cqw; }
+.cases.two .cc figure { aspect-ratio:16/4.4; }
