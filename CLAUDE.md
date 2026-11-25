@@ -26,13 +26,13 @@ SayTamm is a digital marketing & performance agency. This repo holds the website
 - `docs/LAUNCH_VIDEO_PLAN.html`: the current launch video plan (12 ideas with storyboards, 30-day calendar, action plan, owner decisions). This is the plan to execute next.
 - `docs/` launch playbook and 14-day content book (v2), decision log, open questions, approval registers.
 - `film/<name>/`: one folder per film, each with a README. Pattern: `prep.py` (footage to JPEG sequences), `plan.py`/`timing.json`, `film.html` (canvas film with `window.seek(t)` and `window.renderAudio()`), `render.mjs` (Playwright → ffmpeg, 60 fps, 2 sub-frames blended), `render_parallel.sh` (4 workers, frame-count guard, retry), `mix.py` (VO cut to phrases, ducked score, master −14 LUFS / −1 dBTP).
-- Films so far: the-dot, one-push, infinite, dictionary, roas (The Ratio v2–v5), intro (Tamm character), reel / reel2 (showreel), services (16:9 + 9:16), receipt (EN + Arabic store-owner cut).
+- Films so far: the-dot, one-push, infinite, dictionary, roas (The Ratio v2–v5), intro (Tamm character), reel / reel2 (showreel), services (16:9 + 9:16), receipt (EN + Arabic store-owner cut), money2 («قاموس الفلوس» v2), whatwedo («Said. Done.», 16:9 motion piece of the nine services with client lines, loops).
 - `handover/` is not in git (it is in `.git/info/exclude`): rendered masters, stock clips, VO takes and sequences live there. On a new machine it is empty, so re-download stock (Pexels IDs are in each `prep.py`) and copy the VO takes in before re-rendering an old film.
 
 ## Next steps (from the plan)
 
 1. Teasers «قولها» (V01): done in another session; the owner supplied the three masters (`handover/launch-film/teasers/`). Their source is not in this repo.
-2. «قاموس الفلوس» (V05): episodes 01–04 built in `film/money/` (ROAS, CPA, AOV, CR). Next episodes from the plan: new vs returning customer, the Boost button, wasted spend, CTR alone.
+2. «قاموس الفلوس» (V05): episodes 01–04 built; v2 (real stock, colour, VO cues) is `film/money2/`, v1 (type only) is `film/money/`. Episodes 02–04 still need their VO takes (`film/money2/VO_SCRIPTS.md`). Next episodes from the plan: new vs returning customer, the Boost button, wasted spend, CTR alone.
 3. Filming days for the human series (The Relay, Meet the 30, founder, sketches) need the owner's footage and consent; use the owner's folders on this machine for any material they point to.
 4. Owner decisions still open: launch date, who appears on camera, publishing our own ad numbers and the test budget, the CTA, dialect per platform, campaign line (D-023), Tamm character reference, client approvals (OQ-32).
 
