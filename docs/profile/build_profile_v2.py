@@ -5,7 +5,7 @@ site/public/clients (official client logos). Founder not named. Satoshi loads fr
 Owner, 2026-11-25: all IP and client approvals are in place for every supplied material; the old agency name is never shown.
 Usage (repo root): python3 docs/profile/build_profile_v2.py <out.html>"""
 import base64, html, io, json, os, re, sys
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')); HERE = os.path.dirname(os.path.abspath(__file__))
 A = os.path.join(ROOT, 'handover/profile/assets'); OUT = sys.argv[1]
@@ -13,11 +13,15 @@ SVC = json.load(open(os.path.join(HERE, 'services_en.json'), encoding='utf-8'))
 CASES = {c['slug']: c for c in json.load(open(os.path.join(HERE, 'cases_en.json'), encoding='utf-8'))}
 esc = html.escape
 _cache = {}
-def img(name, w=1400, q=78):
-    key = (name, w)
+PRINT = os.environ.get('PROFILE_PRINT') == '1'   # print master: larger, higher-quality images (never upscaled past the source)
+def img(name, w=1400, q=78, sat=None):
+    if PRINT: w, q = int(w * 1.8), 92
+    key = (name, w, sat)
     if key not in _cache:
         p = name if os.path.isabs(name) else os.path.join(A, name + '.jpg')
-        im = Image.open(p).convert('RGB'); im.thumbnail((w, w)); b = io.BytesIO(); im.save(b, 'JPEG', quality=q, optimize=True)
+        im = Image.open(p).convert('RGB'); im.thumbnail((w, w))
+        if sat is not None: im = ImageEnhance.Color(im).enhance(sat)   # baked in, so the PDF keeps vector pages (no CSS filters)
+        b = io.BytesIO(); im.save(b, 'JPEG', quality=q, optimize=True)
         _cache[key] = 'data:image/jpeg;base64,' + base64.b64encode(b.getvalue()).decode()
     return _cache[key]
 def png(name, w=900):
@@ -68,7 +72,7 @@ def page(cls, inner, label=None):
 
 QS = ['Who are you?', 'What do you actually do?', 'How do you work?', 'Show me the work.', 'Who trusts you?', 'What happens next?']
 def divider(i, strip, kick=None, q=None):
-    tiles = ''.join(f'<img src="{img(s, 700)}" alt="">' for s in strip)
+    tiles = ''.join(f'<img src="{img(s, 700, sat=.6)}" alt="">' for s in strip)
     page('div', f'''<div class="strip" aria-hidden="true">{tiles}</div><div class="div-text"><p class="kick">{kick or f'Question {i + 1} of 6'}</p>
 <h2 class="q">{esc(q) if q else '“' + esc(QS[i]) + '”'}</h2></div><div class="blade" aria-hidden="true"></div>''')
 
