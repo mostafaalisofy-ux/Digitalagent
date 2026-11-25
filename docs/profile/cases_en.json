@@ -1,0 +1,509 @@
+[
+ {
+  "slug": "fashion-beauty-scale",
+  "tier": 1,
+  "client": "Fashion & beauty e‑commerce brands",
+  "sector": "E-commerce · Fashion & beauty",
+  "market": "Egypt",
+  "period": "10 Mar – 30 May 2022",
+  "channels": [
+   "Meta"
+  ],
+  "services": [
+   "performance-marketing"
+  ],
+  "headline": "Two online stores grew purchase volume in a single quarter while keeping return on ad spend high.",
+  "context": "Two fashion and beauty brands selling through their own online stores in Egypt, with Meta as the paid channel for the campaign period.",
+  "objective": "Grow online purchase volume quickly for both stores without letting return on ad spend fall as budgets rose.",
+  "challenge": "Scaling spend quickly usually lowers the return on each additional pound. The plan had to grow volume without that drop.",
+  "strategy": "Concentrate budget on middle- and bottom-of-funnel audiences with purchase intent, and build creative to be tested rather than simply published.",
+  "execution": "Twelve Meta campaigns on the larger account. Budget was moved daily toward the ad sets producing purchases and away from those that were not.",
+  "outcome": "Account A returned 13.84× on EGP 535K of spend across 82 days; account B returned 8.91×.",
+  "kpis": [
+   {
+    "value": "13.84×",
+    "label": "ROAS · account A",
+    "accent": true
+   },
+   {
+    "value": "27,703",
+    "label": "Purchases · account A"
+   },
+   {
+    "value": "8.91×",
+    "label": "ROAS · account B"
+   },
+   {
+    "value": "6,930",
+    "label": "Purchases · account B"
+   }
+  ],
+  "bar": {
+   "spend": 534833,
+   "result": 7403781,
+   "unit": {
+    "en": "EGP",
+    "ar": "جنيه"
+   },
+   "spendLabel": {
+    "en": "Ad spend · A",
+    "ar": "الإنفاق · A"
+   },
+   "resultLabel": {
+    "en": "Purchase value · A",
+    "ar": "قيمة المشتريات · A"
+   }
+  },
+  "note": "ROAS and purchase value are Meta-attributed.",
+  "visual": {
+   "kind": "photo",
+   "caption": {
+    "en": "Product and lifestyle photography from the team’s fashion e-commerce work.",
+    "ar": "تصوير منتجات وأسلوب حياة من أعمال الفريق في تجارة الأزياء الإلكترونية."
+   },
+   "images": [
+    {
+     "src": "/work/fashion-01.webp",
+     "w": 641,
+     "h": 963,
+     "alt": {
+      "en": "Fashion campaign photography: model in a sports jacket outdoors",
+      "ar": "تصوير حملة أزياء: عارضة بسترة رياضية في الخارج"
+     }
+    },
+    {
+     "src": "/work/fashion-02.webp",
+     "w": 549,
+     "h": 824,
+     "alt": {
+      "en": "Product photography: lacing white sneakers at sunset",
+      "ar": "تصوير منتج: ربط حذاء رياضي أبيض وقت الغروب"
+     }
+    },
+    {
+     "src": "/work/fashion-03.webp",
+     "w": 548,
+     "h": 824,
+     "alt": {
+      "en": "Lifestyle photography: sportswear towel on a wooden chair",
+      "ar": "تصوير أسلوب حياة: منشفة رياضية على كرسي خشبي"
+     }
+    },
+    {
+     "src": "/work/fashion-04.webp",
+     "w": 549,
+     "h": 400,
+     "alt": {
+      "en": "Studio photography: model in a light-blue shirt and headscarf",
+      "ar": "تصوير استوديو: عارضة بقميص أزرق فاتح وحجاب"
+     }
+    },
+    {
+     "src": "/work/fashion-05.webp",
+     "w": 549,
+     "h": 381,
+     "alt": {
+      "en": "Product photography: running shoe mid-stride outdoors",
+      "ar": "تصوير منتج: حذاء جري أثناء الحركة في الخارج"
+     }
+    }
+   ]
+  },
+  "evidence": {
+   "source": {
+    "en": "Meta Ads Manager report in the campaign deck",
+    "ar": "تقرير Meta Ads Manager في ملف الحملة"
+   },
+   "status": "pending",
+   "measured": {
+    "en": "Return on ad spend = Meta-attributed purchase value ÷ ad spend, per ad account.",
+    "ar": "العائد على الإنفاق = قيمة المشتريات المنسوبة من Meta ÷ الإنفاق الإعلاني، لكل حساب."
+   },
+   "open": {
+    "en": "Original Ads Manager exports (the deck screenshots are not clean evidence); client approval to publish.",
+    "ar": "ملفات Ads Manager الأصلية (لقطات الشاشة في الملف ليست دليلاً كافياً)؛ وموافقة العميل على النشر."
+   }
+  }
+ },
+ {
+  "slug": "ks-furniture",
+  "tier": 1,
+  "client": "K.S Furniture",
+  "sector": "E-commerce · Furniture & décor",
+  "market": "Saudi Arabia",
+  "period": "Aug – early Oct 2024 · Saudi National Day",
+  "channels": [
+   "Google",
+   "Instagram",
+   "Snapchat"
+  ],
+  "services": [
+   "performance-marketing",
+   "digital-marketing-strategy"
+  ],
+  "headline": "A crowded national season, driven by product offers rather than deep discounts.",
+  "context": "A Saudi furniture and décor retailer selling online, going into Saudi National Day, one of the busiest and most discount-heavy retail periods of the year.",
+  "objective": "Raise return on ad spend from 4 to 7 over the National Day season, without relying on deep discounts.",
+  "challenge": "Competitors were running much larger discounts, and the plan ruled out both heavy discounting and influencers, keeping the budget for the ad platforms themselves.",
+  "strategy": "Win on product, not price: introduce new hero products, rearrange the online store around high-demand items, and pair high-value pieces with complementary lower-priced ones to raise basket value. Discounts stayed under 20%, and the budget was weighted 90/10 toward conversion over awareness.",
+  "execution": "Campaigns started in August, ahead of the season, across Google, Instagram and Snapchat, with targeted abandoned-cart retargeting. Daily monitoring and adjustments kept campaigns out of the learning phase through National Day and into early October.",
+  "outcome": "Return on ad spend rose from 4 to 10, against a target of 7. The store recorded SAR 1.09M in sales over the period from a SAR 100K media budget (Google 40K, Instagram 40K, Snapchat 20K): 507 orders, 15–20 a day, with 446 first-time customers.",
+  "kpis": [
+   {
+    "value": "4× → 10×",
+    "label": "ROAS, start → result (target 7×)",
+    "accent": true
+   },
+   {
+    "value": "507",
+    "label": "Orders"
+   },
+   {
+    "value": "15–20",
+    "label": "Orders a day"
+   },
+   {
+    "value": "446",
+    "label": "First-time customers"
+   }
+  ],
+  "bar": {
+   "spend": 100000,
+   "result": 1086534,
+   "unit": {
+    "en": "SAR",
+    "ar": "ريال"
+   },
+   "spendLabel": {
+    "en": "Media budget",
+    "ar": "الميزانية الإعلانية"
+   },
+   "resultLabel": {
+    "en": "Total store sales",
+    "ar": "إجمالي مبيعات المتجر"
+   }
+  },
+  "note": "Store sales are total sales for the period from the store platform, not only sales attributed to ads.",
+  "visual": null,
+  "evidence": {
+   "source": {
+    "en": "Agency case study, with the store platform’s sales dashboard for the period",
+    "ar": "دراسة حالة من الوكالة، مع لوحة مبيعات منصة المتجر للفترة"
+   },
+   "status": "pending",
+   "measured": {
+    "en": "ROAS as reported in the case study (4 at the start, 10 at the end, against a target of 7). Total store sales, orders and new customers from the store platform’s dashboard, set against the total media budget.",
+    "ar": "العائد كما ورد في دراسة الحالة (4 في البداية و10 في النهاية مقابل مستهدف 7). وإجمالي مبيعات المتجر والطلبات والعملاء الجدد من لوحة منصة المتجر، مقابل إجمالي الميزانية الإعلانية."
+   },
+   "open": {
+    "en": "Client approval to publish; the ad-platform export confirming ROAS; confirmation of the 2024 campaign year.",
+    "ar": "موافقة العميل على النشر؛ وملف المنصات الإعلانية الذي يؤكد العائد؛ وتأكيد أن الحملة كانت في 2024."
+   }
+  }
+ },
+ {
+  "slug": "qnb-ramadan",
+  "tier": 1,
+  "client": "QNB Al Ahli",
+  "sector": "Banking · Media partnership",
+  "market": "Egypt",
+  "period": "Ramadan 2015",
+  "channels": [
+   "Filfan",
+   "FilGoal",
+   "Facebook",
+   "Google Display"
+  ],
+  "services": [
+   "digital-marketing-strategy",
+   "performance-marketing"
+  ],
+  "headline": "Every Ramadan series in one place, sponsored by one bank.",
+  "context": "QNB Al Ahli wanted to promote m.visa, its mobile payment service, during Ramadan, when audiences in Egypt gather around the season’s TV series.",
+  "objective": "Build awareness and traffic for the bank’s m.visa service during Ramadan.",
+  "challenge": "Sponsorship of individual Ramadan series was sold out, and priced far above the budget.",
+  "strategy": "Instead of sponsoring one series, own the whole category: a single destination for every Ramadan series, carrying the bank’s name.",
+  "execution": "A partnership with the entertainment portal Filfan to build “Ramadan Series Sponsored by QNB”, with traffic driven to it from FilGoal, Facebook and Google Display.",
+  "outcome": "7M video views, 25M impressions and 50K clicks through to m.visa over Ramadan 2015.",
+  "kpis": [
+   {
+    "value": "7M",
+    "label": "Video views",
+    "accent": true
+   },
+   {
+    "value": "25M",
+    "label": "Impressions"
+   },
+   {
+    "value": "50K",
+    "label": "Clicks to m.visa"
+   }
+  ],
+  "note": "Awareness and traffic metrics. No sales figures are claimed for this campaign.",
+  "visual": {
+   "kind": "screen",
+   "caption": {
+    "en": "The campaign as it ran: the sponsored series hub on Filfan, and the FilGoal mobile placement.",
+    "ar": "الحملة كما ظهرت: منصة المسلسلات على فيلفان، والإعلان على فيلجول للجوال."
+   },
+   "images": [
+    {
+     "src": "/work/qnb-ramadan-desktop.webp",
+     "w": 1536,
+     "h": 918,
+     "alt": {
+      "en": "Filfan desktop page: Ramadan series hub sponsored by QNB",
+      "ar": "صفحة فيلفان: منصة مسلسلات رمضان برعاية QNB"
+     }
+    },
+    {
+     "src": "/work/qnb-ramadan-mobile.webp",
+     "w": 549,
+     "h": 1031,
+     "alt": {
+      "en": "FilGoal mobile page with the QNB Ramadan placement",
+      "ar": "صفحة فيلجول على الجوال مع إعلان QNB الرمضاني"
+     }
+    }
+   ]
+  },
+  "evidence": {
+   "source": {
+    "en": "Campaign case-study deck prepared by the project lead (2019)",
+    "ar": "ملف دراسة الحالة الذي أعده قائد المشروع (2019)"
+   },
+   "status": "pending",
+   "measured": {
+    "en": "Platform-reported views, impressions and clicks for the Ramadan 2015 flight.",
+    "ar": "مشاهدات وظهور ونقرات مُبلّغ عنها من المنصات لفترة رمضان 2015."
+   },
+   "open": {
+    "en": "Confirmation that the bank’s name may be published with these figures.",
+    "ar": "تأكيد إمكانية نشر اسم البنك مع هذه الأرقام."
+   }
+  }
+ },
+ {
+  "slug": "muriya",
+  "tier": 1,
+  "client": "Muriya",
+  "sector": "Real estate · Lead generation",
+  "market": "Oman",
+  "period": null,
+  "channels": [
+   "Meta"
+  ],
+  "services": [
+   "performance-marketing"
+  ],
+  "headline": "High-value homes sold through paid social, optimised for buyers rather than leads.",
+  "context": "An Omani real estate developer selling high-value residential units.",
+  "objective": "Sell high-value residential units through paid social.",
+  "challenge": "Reach buyers ready to commit to a high-value purchase — not just people willing to leave a phone number.",
+  "strategy": "Judge the campaign by units sold rather than by cost per lead.",
+  "execution": "Qualified-lead campaigns on Meta.",
+  "outcome": "13 units sold and $1.51M in revenue from $18.2K of ad spend.",
+  "kpis": [
+   {
+    "value": "13",
+    "label": "Units sold",
+    "accent": true
+   },
+   {
+    "value": "$1.51M",
+    "label": "Revenue from units sold"
+   },
+   {
+    "value": "$18.2K",
+    "label": "Ad spend"
+   }
+  ],
+  "bar": {
+   "spend": 18216,
+   "result": 1510000,
+   "unit": {
+    "en": "USD",
+    "ar": "دولار"
+   },
+   "spendLabel": {
+    "en": "Ad spend",
+    "ar": "الإنفاق الإعلاني"
+   },
+   "resultLabel": {
+    "en": "Revenue",
+    "ar": "الإيرادات"
+   }
+  },
+  "visual": null,
+  "evidence": {
+   "source": {
+    "en": "Published agency case study",
+    "ar": "دراسة حالة منشورة لوكالة"
+   },
+   "status": "pending",
+   "measured": {
+    "en": "Value of units sold to buyers who came through the campaign, against ad spend.",
+    "ar": "قيمة الوحدات المباعة لمشترين جاؤوا عبر الحملة، مقابل الإنفاق الإعلاني."
+   },
+   "open": {
+    "en": "Campaign period; how sales were matched to campaign leads; client approval.",
+    "ar": "فترة الحملة؛ وطريقة ربط المبيعات بعملاء الحملة؛ وموافقة العميل."
+   }
+  }
+ },
+ {
+  "slug": "electronics-q4",
+  "tier": 1,
+  "client": "Electronics e‑commerce brand",
+  "sector": "E-commerce · Electronics",
+  "market": "Egypt",
+  "period": "1 Oct 2021 – 18 Jan 2022",
+  "channels": [
+   "Meta"
+  ],
+  "services": [
+   "performance-marketing"
+  ],
+  "headline": "A high-ticket peak season built on purchase intent, not volume.",
+  "context": "An Egyptian online retailer of high-ticket electronics, going into the fourth-quarter peak season.",
+  "objective": "Grow high-value orders through the Q4 peak season.",
+  "challenge": "High-ticket products, a minimal budget and the busiest season of the year.",
+  "strategy": "Spend only where purchase intent was already visible: middle- and bottom-of-funnel audiences.",
+  "execution": "Meta campaigns focused on middle- and bottom-of-funnel audiences throughout the season.",
+  "outcome": "$897K in Meta-attributed purchase value from 747 orders, at $1,201 per order.",
+  "kpis": [
+   {
+    "value": "$897K",
+    "label": "Purchase value",
+    "accent": true
+   },
+   {
+    "value": "747",
+    "label": "Orders"
+   },
+   {
+    "value": "$1,201",
+    "label": "Average order value"
+   }
+  ],
+  "note": "Meta-attributed. The platform-reported ROAS for this period is not shown until it is confirmed from the original export.",
+  "visual": null,
+  "evidence": {
+   "source": {
+    "en": "Meta Ads Manager report in the campaign deck",
+    "ar": "تقرير Meta Ads Manager في ملف الحملة"
+   },
+   "status": "pending",
+   "measured": {
+    "en": "Meta-attributed purchase value and purchases; average order value = value ÷ purchases.",
+    "ar": "قيمة المشتريات وعددها كما تنسبها Meta؛ متوسط الطلب = القيمة ÷ عدد المشتريات."
+   },
+   "open": {
+    "en": "Original Ads Manager export; client approval.",
+    "ar": "ملف Ads Manager الأصلي؛ وموافقة العميل."
+   }
+  }
+ },
+ {
+  "slug": "bio-group",
+  "tier": 2,
+  "client": "Bio-Group",
+  "sector": "Retail → E-commerce",
+  "market": null,
+  "period": null,
+  "channels": [
+   "Meta",
+   "Google"
+  ],
+  "services": [
+   "performance-marketing"
+  ],
+  "headline": "An offline retailer’s return on ad spend doubled within two weeks of launching online.",
+  "context": "An established offline retailer moving into online sales for the first time.",
+  "objective": "Launch online sales for an established offline retailer and improve return on ad spend quickly.",
+  "challenge": "No online sales history to learn from, so early decisions had to be made on very little data.",
+  "strategy": "Run for conversion from day one, and let early purchase data decide where the budget goes.",
+  "execution": "Conversion campaigns on Meta and Google.",
+  "outcome": "ROAS rose from 2× to 4× within two weeks, across 2,970 purchases.",
+  "kpis": [
+   {
+    "value": "2× → 4×",
+    "label": "ROAS, launch → week two",
+    "accent": true
+   },
+   {
+    "value": "2,970",
+    "label": "Purchases"
+   },
+   {
+    "value": "2.78%",
+    "label": "Conversion rate"
+   }
+  ],
+  "visual": null,
+  "evidence": {
+   "source": {
+    "en": "Published agency case study",
+    "ar": "دراسة حالة منشورة لوكالة"
+   },
+   "status": "pending",
+   "measured": {
+    "en": "Platform-reported ROAS at launch compared with ROAS after two weeks.",
+    "ar": "العائد المُبلّغ من المنصات عند الإطلاق مقارنة بالعائد بعد أسبوعين."
+   },
+   "open": {
+    "en": "Market, year and platform export; client approval.",
+    "ar": "السوق والسنة وملف المنصة؛ وموافقة العميل."
+   }
+  }
+ },
+ {
+  "slug": "damac-paramount",
+  "tier": 2,
+  "client": "DAMAC · Paramount Tower",
+  "sector": "Real estate · Lead generation",
+  "market": "UAE",
+  "period": null,
+  "channels": [
+   "Meta"
+  ],
+  "services": [
+   "performance-marketing"
+  ],
+  "headline": "Qualified leads for a limited-time offer, at a low cost per lead.",
+  "context": "DAMAC was marketing a limited-time offer on residences at Paramount Tower in the UAE.",
+  "objective": "Generate qualified buyer leads for a limited-time Paramount Tower offer.",
+  "challenge": "A short offer window, where lead quality mattered more than volume.",
+  "strategy": "Tune lead-generation campaigns for qualification rather than raw lead count.",
+  "execution": "Lead-generation campaigns on Meta for the offer period.",
+  "outcome": "Leads at $8 each, with 15% qualifying as genuine prospects.",
+  "kpis": [
+   {
+    "value": "$8",
+    "label": "Cost per lead",
+    "accent": true
+   },
+   {
+    "value": "15%",
+    "label": "Qualified-lead rate"
+   }
+  ],
+  "visual": null,
+  "evidence": {
+   "source": {
+    "en": "Published agency case study",
+    "ar": "دراسة حالة منشورة لوكالة"
+   },
+   "status": "pending",
+   "measured": {
+    "en": "Cost per lead and the share of leads that qualified, as stated in the case study.",
+    "ar": "تكلفة العميل ونسبة العملاء المؤهلين، كما وردت في دراسة الحالة."
+   },
+   "open": {
+    "en": "Period, lead volume and baseline; permission to name DAMAC.",
+    "ar": "الفترة وعدد العملاء وخط الأساس؛ وإذن ذكر اسم داماك."
+   }
+  }
+ }
+]
