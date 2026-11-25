@@ -1,0 +1,132 @@
+[
+ {
+  "n": "01",
+  "name": "Strategy & Consulting",
+  "value": "Decide where growth will come from before budget is spent: the audience, the offer, the channels and the number each one must deliver.",
+  "s": [
+   {
+    "name": "Digital Marketing Strategy",
+    "summary": "A written plan that ties every channel and every riyal to a business objective.",
+    "inc": [
+     "Market and competitor research in each market you compete in, from Saudi Arabia and the Gulf to the wider region",
+     "High-value customer profile, in Arabic and English buying behaviour",
+     "Positioning statement and value proposition",
+     "Messaging framework",
+     "Channel priority plan and budget allocation model",
+     "Go-to-market sequencing and seasonal planning, such as Ramadan and National Day",
+     "A written marketing plan with a 90-day roadmap"
+    ]
+   }
+  ]
+ },
+ {
+  "n": "02",
+  "name": "Creative & Content",
+  "value": "Brand, content and production made for the platforms your customers use — and built to be tested against results, not just approved.",
+  "s": [
+   {
+    "name": "Branding & Identity",
+    "summary": "Positioning first, design second — Arabic and English developed together.",
+    "inc": [
+     "Brand strategy: market and competitor analysis, positioning and differentiation",
+     "Naming and tagline, when needed",
+     "Messaging and tone-of-voice guidelines",
+     "Logo, variations and visual identity system",
+     "Brand guidelines and asset library"
+    ]
+   },
+   {
+    "name": "Social Media Marketing",
+    "summary": "Platform-native content and community management, measured by what it moves.",
+    "inc": [
+     "Channel audits, audience and competitor analysis",
+     "Social strategy and monthly content calendars built around each market’s cultural moments",
+     "Bilingual design, copy and short-form video",
+     "Community management in Arabic and English",
+     "Influencer and creator campaigns, with results reporting",
+     "Monthly performance report"
+    ]
+   },
+   {
+    "name": "Content Marketing",
+    "summary": "Content that earns attention and moves buyers toward a decision.",
+    "inc": [
+     "Content plan built around the questions buyers ask before they decide",
+     "Bilingual campaign and product content, written natively in Arabic and English, including local dialects such as Saudi and Gulf Arabic where they suit the brand",
+     "One clear message per piece: a product benefit, a service or an offer",
+     "Seasonal and occasion content, such as Ramadan, Saudi National Day and Founding Day",
+     "A review of what each piece moved, feeding the next content plan"
+    ]
+   },
+   {
+    "name": "Media Production",
+    "summary": "Photography, video and motion produced for the feed it will run in.",
+    "inc": [
+     "Product photography",
+     "Short-form video for feed and story formats",
+     "Motion and animated social formats",
+     "Campaign key visuals and packaging presentation visuals",
+     "Each piece produced for its platform and aspect ratio (1:1, 4:5, 9:16)"
+    ]
+   }
+  ]
+ },
+ {
+  "n": "03",
+  "name": "Media & Performance",
+  "value": "Paid media planned, bought and optimised against sales, leads and revenue — with budget moved toward what is working.",
+  "s": [
+   {
+    "name": "Performance Marketing",
+    "summary": "Paid search and paid social, planned, tested and scaled against revenue — not reach.",
+    "inc": [
+     "Google Ads: Search, Display, Shopping and YouTube, in Arabic and English",
+     "Meta: Facebook and Instagram, with creative tested before budgets scale",
+     "Snapchat and TikTok",
+     "LinkedIn for B2B lead generation",
+     "Cross-platform retargeting and A/B testing of copy, creative and landing pages",
+     "Lead-generation campaigns, including real estate"
+    ]
+   }
+  ]
+ },
+ {
+  "n": "04",
+  "name": "Digital & Technology",
+  "value": "The website, search presence and tracking that turn attention into enquiries — and show clearly what worked.",
+  "s": [
+   {
+    "name": "SEO",
+    "summary": "Be found by buyers who are already searching, in Arabic and English.",
+    "inc": [
+     "Technical review of site structure, speed and indexing",
+     "Arabic and English keyword research focused on buying intent",
+     "On-page optimisation of titles, content and internal links",
+     "Bilingual setup: separate Arabic and English pages, correctly linked for search engines",
+     "Monthly report on organic visibility and the enquiries it brings"
+    ]
+   },
+   {
+    "name": "Website Development & CRO",
+    "summary": "Fast, bilingual websites built to turn visits into enquiries and sales.",
+    "inc": [
+     "Bilingual websites and landing pages, built right-to-left and left-to-right",
+     "Fast, lightweight builds with a clean structure for search",
+     "Pages built around one objective, a clear offer and a short path to contact",
+     "Enquiry forms and buttons ready for conversion tracking",
+     "A/B testing of landing pages and offers"
+    ]
+   },
+   {
+    "name": "Analytics & Growth",
+    "summary": "Tracking you can trust, and reports that end with the next decision.",
+    "inc": [
+     "A measurement plan: the number each channel is accountable for",
+     "Tracking set-up and checks for website and ad-platform conversions",
+     "Reports that separate platform-attributed results from total business results",
+     "Regular performance reviews that end with the next budget decision"
+    ]
+   }
+  ]
+ }
+]
