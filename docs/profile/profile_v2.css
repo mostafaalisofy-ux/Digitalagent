@@ -156,3 +156,25 @@ cite { font-style:normal; font-size:1cqw; color:var(--mu); letter-spacing:.08em;
 .nx span { font-size:1cqw; color:var(--pu-ink); font-weight:700; } .nx b { font-size:2cqw; } .nx p { font-size:1.2cqw; color:var(--mu); line-height:1.5; }
 
 @media print { html, body { background:var(--ob); } .deck { gap:0; padding:0; } .pg { border-radius:0; box-shadow:none; break-after:page; width:100%; } }
+
+/* v2.1 · industries, Tamm, markets skyline */
+.wb { font-size:1.05cqw; color:var(--mu); letter-spacing:.06em; text-transform:uppercase; font-weight:700; border-top:1px solid var(--line); padding-top:1cqw; margin-top:1.6cqw; }
+.index { position:relative; }
+.tamm-hero { position:absolute; left:20cqw; bottom:0; height:38cqw; width:auto; pointer-events:none; }
+.index .side { position:absolute; right:7cqw; bottom:6cqw; width:43%; max-width:none; z-index:1; }
+.about h2.xl { max-width:64%; }
+.about-grid { max-width:66%; }
+.tcard { position:absolute; margin:0; top:6cqw; right:7cqw; width:21cqw; height:30cqw; border-radius:1cqw; overflow:hidden; background:var(--gr); }
+.tcard img { width:100%; height:100%; object-fit:cover; display:block; }
+.tcard figcaption { position:absolute; left:0; right:0; bottom:0; padding:3cqw 1.4cqw 1.2cqw; font-size:1.05cqw; color:var(--wh); background:linear-gradient(transparent, rgba(9,9,13,.92)); }
+.next h2.xl { max-width:60%; }
+.tcard.wel { top:5cqw; height:28cqw; width:20cqw; }
+.tcard.wel img { object-position:50% 30%; }
+.sky { display:block; width:100%; height:auto; margin-top:auto; overflow:visible; }
+.glance .sky { max-height:19cqw; }
+.glance .facts { margin-top:2.4cqw; }
+.sky .lm { fill:none; stroke:var(--mu); stroke-width:1.5; stroke-linejoin:round; stroke-linecap:round; opacity:.75; }
+.sky .lm .f { fill:var(--ob); }
+.sky .rt { fill:none; stroke:var(--mu); stroke-width:1.2; stroke-dasharray:3 6; opacity:.6; }
+.sky .pin { fill:var(--pu); }
+.close .sky.faint { position:absolute; left:0; right:0; bottom:0; width:100%; height:9cqw; z-index:1; opacity:.35; margin:0; }
