@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ar"><head><meta charset="utf-8"><title>Qolha Tammat</title>
+<style>
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-700-normal.woff2); font-weight: 700; }
+  html, body { margin: 0; background: #09090D; overflow: hidden; } canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+'use strict';
+// «قولها… تمّت» — 9:16, Arabic, Plex only, 120 BPM, 38 s.
+// Tamm opens and closes; four briefs, each answered by real client work (Altopiano 4K production, Zahid Electra 3D motion,
+// Clean Basket 2D motion, Exodus travel content) and stamped «تمّت». window.seek(t) is async (footage frames load on demand).
+const W = 1080, H = 1920, BEAT = 0.5, DUR = 38;
+window.DUR_S = DUR;
+const PU = '#6C35FF', OB = '#09090D', GR = '#17171E', WH = '#F5F3FA', MU = '#96939F', LI = '#C9C6D2';
+const SEQ = '__SEQ__', SEQN = __SEQN__;
+const c = document.getElementById('c').getContext('2d');
+const clamp = (x, a = 0, b = 1) => (x < a ? a : x > b ? b : x), lerp = (a, b, u) => a + (b - a) * u, inv = (a, b, x) => clamp((x - a) / (b - a));
+const eo = (u) => (u >= 1 ? 1 : 1 - Math.pow(2, -10 * u)), eio = (u) => (u <= 0 ? 0 : u >= 1 ? 1 : u < 0.5 ? Math.pow(2, 20 * u - 10) / 2 : (2 - Math.pow(2, -20 * u + 10)) / 2);
+const spr = (x, w = 18) => (x <= 0 ? 0 : 1 - (1 + w * x) * Math.exp(-w * x));
+const E = (t, a, b, f = eo) => f(inv(a, b, t));
+const CACHE = new Map();
+function frameImg(id, k) {
+  k = Math.max(1, Math.min(SEQN[id], k)); const key = id + '/' + k;
+  if (!CACHE.has(key)) { const im = new Image(); im.src = `${SEQ}/${id}/${String(k).padStart(3, '0')}.jpg`; CACHE.set(key, im.decode().then(() => im)); if (CACHE.size > 120) CACHE.delete(CACHE.keys().next().value); }
+  return CACHE.get(key);
+}
+function font(px, w, latin) { c.font = `${w} ${px}px ${latin ? 'PlexL' : 'Plex, PlexL'}`; c.direction = latin ? 'ltr' : 'rtl'; }
+function T(s, x, y, px, { w = 700, col = WH, al = 'center', a = 1, latin = false } = {}) {
+  if (a <= 0 || !s) return;
+  font(px, w, latin); c.textAlign = al; c.fillStyle = col; c.globalAlpha = a; c.fillText(s, x, y); c.globalAlpha = 1; c.direction = 'ltr';
+}
+const tw = (s, px, w = 700, latin = false) => { font(px, w, latin); const v = c.measureText(s).width; c.direction = 'ltr'; return v; };
+const RR = (x, y, w, h, r, fill, a = 1) => { if (w <= 0 || h <= 0) return; c.beginPath(); c.roundRect(x, y, w, h, Math.min(r, w / 2, h / 2)); c.globalAlpha = a; c.fillStyle = fill; c.fill(); c.globalAlpha = 1; };
+const bg = (col = OB) => { c.fillStyle = col; c.fillRect(0, 0, W, H); };
+let SYMBOL;
+async function clip(id, lt, x, y, w, h, r = 0, { speed = 1, dim = 0, zoom = 1 } = {}) {
+  if (w < 2 || h < 2) return;
+  const im = await frameImg(id, Math.floor(Math.max(0, lt) * speed * 30) + 1);
+  const s = Math.max(w / im.width, h / im.height) * zoom, dw = im.width * s, dh = im.height * s;
+  c.save(); c.beginPath(); c.roundRect(x, y, w, h, r); c.clip();
+  c.drawImage(im, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+  if (dim) { c.fillStyle = OB; c.globalAlpha = dim; c.fillRect(x, y, w, h); c.globalAlpha = 1; }
+  c.restore();
+}
+function line(s, y, px, t0, t, o = {}) {   // kinetic line: rises into its band on a spring
+  const u = spr(t - t0, 20); if (u <= 0) return;
+  c.save(); c.beginPath(); c.rect(0, y - px * 1.15, W, px * 1.6); c.clip(); T(s, o.x ?? W / 2, y + px * 1.3 * (1 - u), px, o); c.restore();
+}
+function topShade(a = 0.8) { const g = c.createLinearGradient(0, 160, 0, 560); g.addColorStop(0, `rgba(9,9,13,${a})`); g.addColorStop(1, 'rgba(9,9,13,0)'); c.fillStyle = g; c.fillRect(0, 160, W, 400); }
+function botShade(a = 0.88, y0 = 1180) { const g = c.createLinearGradient(0, y0, 0, 1760); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(1, `rgba(9,9,13,${a})`); c.fillStyle = g; c.fillRect(0, y0, W, H - y0); }
+
+// ---------- the four briefs ----------
+const CH = [
+  { a: 3.5, b: 15.5, n: '01', svc: 'الإنتاج والتصوير', client: 'Altopiano', brief: 'أكل يبان زي طعمه.', stamp: 13.2 },
+  { a: 15.5, b: 22.0, n: '02', svc: 'موشن 3D', client: 'Zahid Electra', brief: 'المنتج يشرح نفسه.', stamp: 20.2 },
+  { a: 22.0, b: 27.0, n: '03', svc: 'موشن 2D', client: 'Clean Basket', brief: 'الفكرة كلها في ضغطة.', stamp: 25.2 },
+  { a: 27.0, b: 31.5, n: '04', svc: 'محتوى وسوشيال', client: 'Exodus', brief: 'رحلة تتحكي في ثواني.', stamp: 30.0 }];
+const BLADES = [3.5, 15.5, 22.0, 27.0, 31.5, 33.5];
+const BRIEF_LEN = 1.0;
+
+function bubble(s, t0, t) {   // the client's message: arrives like a chat bubble, sender side (right)
+  const u = spr(t - t0, 16); if (u <= 0) return;
+  const px = 62, w = Math.min(940, tw(s, px) + 120), h = 210, x = W - 70 - w, y = 820;
+  c.save(); c.translate(W - 70, y + h); c.scale(lerp(0.6, 1, u), lerp(0.6, 1, u)); c.translate(-(W - 70), -(y + h)); c.globalAlpha = clamp(u * 1.4);
+  RR(x, y, w, h, 46, WH); c.beginPath(); c.moveTo(W - 70, y + h - 46); c.lineTo(W - 70, y + h + 26); c.lineTo(W - 130, y + h); c.closePath(); c.fillStyle = WH; c.fill();
+  T('البريف', W - 130, y + 66, 32, { al: 'right', col: MU, w: 500 }); T(s, W - 130, y + 158, px, { al: 'right', col: OB });
+  c.restore();
+}
+function stamp(ch, t) {   // «تمّت» + service and client
+  const u = spr(t - ch.stamp, 20); if (u <= 0) return;
+  botShade(0.92, 1150);
+  const px = 72, w = tw('تمّت', px) + 170, h = 128, cx = W / 2, cy = 1430;
+  c.save(); c.translate(cx, cy); c.scale(u, u); c.rotate(-0.035 * (1 - u));
+  RR(-w / 2, -h / 2, w, h, h / 2, PU); T('تمّت', 34, px * 0.36, px, { col: WH });
+  c.strokeStyle = WH; c.lineWidth = 11; c.lineCap = 'round'; c.lineJoin = 'round'; c.beginPath();
+  const k = E(t, ch.stamp + 0.1, ch.stamp + 0.35); const x0 = -w / 2 + 50;
+  c.moveTo(x0, 2); c.lineTo(x0 + 18 * Math.min(1, k * 2), 2 + 18 * Math.min(1, k * 2)); if (k > 0.5) c.lineTo(x0 + 18 + 34 * (k - 0.5) * 2, 20 - 40 * (k - 0.5) * 2); c.stroke();
+  c.restore();
+  T(ch.svc, W / 2, 1585, 46, { a: E(t, ch.stamp + 0.2, ch.stamp + 0.45) });
+  T(ch.client, W / 2, 1650, 38, { w: 500, col: LI, latin: true, a: E(t, ch.stamp + 0.3, ch.stamp + 0.55) });
+}
+function label(ch, t) {   // chapter counter, top safe zone
+  const u = E(t, ch.a + BRIEF_LEN, ch.a + BRIEF_LEN + 0.35); if (u <= 0) return;
+  topShade(0.7);
+  T(ch.svc, 1000, 300, 40, { al: 'right', a: u });
+  T(`${ch.n} / 04`, 80, 300, 30, { al: 'left', latin: true, w: 500, col: LI, a: u });
+  for (let k = 0; k < 4; k++) RR(80 + k * 235, 330, 220, 7, 3.5, k < Number(ch.n) ? PU : WH, k < Number(ch.n) ? u : 0.25 * u);
+}
+async function briefScene(ch, id, t, lt = 0) {
+  await clip(id, lt, 0, 0, W, H, 0, { dim: 0.78 });
+  T(`${ch.n}`, W / 2, 640, 40, { latin: true, w: 500, col: LI, a: E(t, ch.a, ch.a + 0.3) });
+  bubble(ch.brief, ch.a + 0.1, t);
+}
+
+// 01 · Altopiano: thirteen beats of 4K production
+const CUTS = [['a_salt', 1], ['a_flame', 1], ['a_steak', 0.5], ['a_pizza', 1], ['a_oil', 1], ['a_pasta', 1], ['a_pour', 1], ['a_choc', 1], ['a_spoon', 0.5]];
+async function altopiano(t) {
+  const ch = CH[0];
+  if (t < ch.a + 1.5) { await briefScene(ch, 'a_facade', t, t - ch.a); return; }
+  if (t < 13.0) {
+    let t0 = 5.0;
+    for (const [id, d] of CUTS) { if (t < t0 + d) { const lt = t - t0; await clip(id, lt, 0, 0, W, H, 0, { zoom: lerp(1.08, 1.0, eo(lt / d)) }); break; } t0 += d; }
+    label(ch, t); return;
+  }
+  await clip('a_plate', t - 13.0, 0, 0, W, H, 0, { speed: 0.9, zoom: lerp(1.0, 1.06, inv(13, 15.5, t)) });
+  label(ch, t); stamp(ch, t);
+}
+// 02 · Zahid Electra: product motion, square, on obsidian
+async function zahid(t) {
+  const ch = CH[1];
+  if (t < ch.a + BRIEF_LEN) { await briefScene(ch, 'z_wash', t, 0); return; }
+  bg();
+  const box = (id, lt, a0) => clip(id, lt, 0, 420, W, W, 0, { zoom: lerp(1.04, 1.0, E(t, a0, a0 + 0.6)) });
+  if (t < 18.0) await box('z_wash', t - 16.5 + 1.2, 16.5); else if (t < 19.5) await box('z_fridge', t - 18.0 + 1.5, 18.0); else await box('z_rpm', t - 19.5 + 0.6, 19.5);
+  label(ch, t); stamp(ch, t);
+}
+// 03 · Clean Basket: the app story at 2.4×
+async function cleanbasket(t) {
+  const ch = CH[2];
+  if (t < ch.a + BRIEF_LEN) { await briefScene(ch, 'c_app', t, 1.5); return; }
+  await clip('c_app', t - 23.0, 0, 0, W, H, 0, { speed: 2.4 });
+  label(ch, t); stamp(ch, t);
+}
+// 04 · Exodus: travel content
+async function exodus(t) {
+  const ch = CH[3];
+  if (t < ch.a + BRIEF_LEN) { await briefScene(ch, 'e_nile', t, 0.4); return; }
+  if (t < 29.0) await clip('e_nile', t - 28.0, 0, 0, W, H, 0, { zoom: lerp(1.06, 1.0, inv(28, 29, t)) });
+  else if (t < 30.0) await clip('e_sphinx', t - 29.0, 0, 0, W, H, 0, { zoom: lerp(1.06, 1.0, inv(29, 30, t)) });
+  else await clip('e_dog', t - 30.0 + 2.2, 0, 0, W, H);
+  label(ch, t); stamp(ch, t);
+}
+// all four, then the line
+async function grid(t) {
+  bg();
+  const G = [['a_plate', 1.2], ['z_rpm', 2.6], ['c_app', 6.5], ['e_dog', 4.0]], gw = 400, gh = 560, gx = (W - 2 * gw - 30) / 2, gy = 300;
+  for (let i = 0; i < 4; i++) {
+    const s = spr(t - 31.5 - i * 0.12, 18); if (s <= 0) continue;
+    const x = gx + (i % 2) * (gw + 30), y = gy + Math.floor(i / 2) * (gh + 30), w = gw * s, h = gh * s;
+    await clip(G[i][0], G[i][1] + (t - 31.5), x + (gw - w) / 2, y + (gh - h) / 2, w, h, 24);
+  }
+  line('قلتوها…', 1610, 96, 32.0, t);
+  line('وتمّت.', 1750, 112, 32.5, t, { col: PU });
+}
+// Tamm closes, then the end card
+async function outro(t) {
+  if (t < 35.0) {
+    await clip('tamm_b', t - 33.5, 0, 0, W, H); botShade(0.92, 1100);
+    line('قولها.', 1520, 150, 33.7, t); line('وإحنا نخلّيها تمّت.', 1680, 70, 34.1, t, { col: LI, w: 500 }); return;
+  }
+  bg();
+  const u = E(t, 35.0, 35.45), h = 210, w = (h * 600) / 721;
+  c.drawImage(SYMBOL, W / 2 - w / 2 + 220 * (1 - u), 560 - 220 * (1 - u), w, h);
+  line('قول. تم.', 1000, 120, 35.3, t);
+  T('وكالة تسويق رقمي وأداء', W / 2, 1100, 40, { w: 500, col: MU, a: E(t, 35.7, 36.0) });
+  T('saytamm.com', W / 2, 1180, 38, { w: 500, a: E(t, 35.7, 36.0), latin: true });
+  T('مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.', W / 2, 1540, 26, { w: 500, col: MU, a: E(t, 35.9, 36.3) });
+  T('البريفات في الفيلم صياغة توضيحية.', W / 2, 1590, 24, { w: 500, col: MU, a: E(t, 35.9, 36.3) });
+}
+async function intro(t) {
+  await clip('tamm_a', t, 0, 0, W, H); botShade(0.92, 1100);
+  line('قولها.', 1520, 150, 0.3, t); line('وسيبها علينا.', 1680, 76, 1.3, t, { col: LI, w: 500 });
+}
+async function sceneAt(t) {
+  if (t < 3.5) return intro(t);
+  if (t < 15.5) return altopiano(t); if (t < 22.0) return zahid(t); if (t < 27.0) return cleanbasket(t); if (t < 31.5) return exodus(t);
+  if (t < 33.5) return grid(t); return outro(t);
+}
+async function draw(t) {
+  await sceneAt(t);
+  for (const t0 of BLADES) {   // the 45° blade sweeps up-left and leaves the next scene behind it
+    const u = E(t, t0 - 0.22, t0 + 0.06, eio); if (u <= 0 || u >= 1) continue;
+    const k = lerp(H + W + 60, -60, u);
+    c.save(); c.beginPath(); c.moveTo(k + 9000, -9000); c.lineTo(-9000, k + 9000); c.lineTo(9000, 9000); c.closePath(); c.clip();
+    await sceneAt(t0 + 0.001); c.restore();
+    c.strokeStyle = PU; c.lineWidth = 26; c.lineCap = 'round'; c.beginPath(); c.moveTo(k + 300, -300); c.lineTo(k - H - 300, H + 300); c.stroke();
+  }
+}
+window.seek = async (t) => { await draw(Math.max(0, Math.min(DUR - 1e-4, t))); return true; };
+
+window.renderAudio = async () => {
+  const SRATE = 48000, A = new OfflineAudioContext(2, Math.round(SRATE * DUR), SRATE), OUT = A.createGain(); OUT.gain.value = 0.7; OUT.connect(A.destination);
+  const NB = A.createBuffer(1, SRATE * 2, SRATE); { const d = NB.getChannelData(0); let s = 424242; for (let i = 0; i < d.length; i++) { s = (s * 1103515245 + 12345) & 0x7fffffff; d[i] = s / 0x3fffffff - 1; } }
+  const env = (g, t, at, pk, dec) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + at); g.gain.exponentialRampToValueAtTime(0.0001, t + at + dec); };
+  const route = (n, pan) => { if (pan) { const p = A.createStereoPanner(); p.pan.value = pan; n.connect(p).connect(OUT); } else n.connect(OUT); };
+  function osc(type, f0, f1, t, dec, pk, at = 0.002, pan = 0, lp = 0) {
+    const o = A.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + Math.max(0.02, dec * 0.5));
+    const g = A.createGain(); env(g, t, at, pk, dec); let n = o;
+    if (lp) { const f = A.createBiquadFilter(); f.type = 'lowpass'; f.frequency.setValueAtTime(lp, t); f.frequency.exponentialRampToValueAtTime(Math.max(120, lp / 5), t + dec); n = n.connect(f); }
+    route(n.connect(g), pan); o.start(t); o.stop(t + at + dec + 0.05);
+  }
+  function noise(t, dec, type, fr, q, pk, at = 0.001, pan = 0, f1 = 0) {
+    const s = A.createBufferSource(); s.buffer = NB; const f = A.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(fr, t); if (f1) f.frequency.exponentialRampToValueAtTime(f1, t + at + dec); f.Q.value = q;
+    const g = A.createGain(); env(g, t, at, pk, dec); route(s.connect(f).connect(g), pan); s.start(t, (t * 0.731) % 1.4); s.stop(t + at + dec + 0.05);
+  }
+  const CHORD = { A: [220, 261.63, 329.63], F: [174.61, 220, 261.63], C: [196, 261.63, 329.63], G: [196, 246.94, 293.66], E: [164.81, 207.65, 246.94] }, ROOT = { A: 55, F: 43.65, C: 65.41, G: 49, E: 41.2 };
+  const prog = (bar) => (bar === 16 ? 'E' : bar >= 17 ? 'A' : ['A', 'F', 'C', 'G'][bar % 4]);
+  const stab = (t, ch, p = 0.075, dec = 0.42) => CHORD[ch].forEach((f, i) => { for (const dt of [-0.004, 0.004]) osc('sawtooth', f * (1 + dt), f * (1 + dt), t, dec, p, 0.003, (i - 1) * 0.35, 3400); });
+  const intro = (t) => t < 3.5, brief = (t) => CH.some((ch) => t >= ch.a + 0.02 && t < ch.a + BRIEF_LEN - 0.02), outro = (t) => t >= 35.0, gap = (t) => t >= 34.0 && t < 35.0;
+  for (let b = 0; b < DUR / BEAT; b++) {
+    const t = b * BEAT, bar = Math.floor(t / 2);
+    if (outro(t) || gap(t)) continue;
+    const soft = intro(t) || brief(t);
+    osc('sine', 165, 44, t, 0.36, soft ? (b % 2 ? 0 : 0.6) : 0.95); noise(t, 0.014, 'highpass', 2600, 0.7, soft ? 0.06 : 0.15);
+    if (!soft && b % 2 === 1) { for (const d of [0, 0.011, 0.023]) noise(t + d, 0.012, 'bandpass', 1400, 0.9, 0.32); noise(t + 0.03, 0.16, 'bandpass', 1250, 0.8, 0.26); }
+    noise(t + 0.25, 0.035, 'highpass', 7600, 0.7, 0.1, 0.001, 0.18); const f = ROOT[prog(bar)];
+    osc('sawtooth', f, f, t + 0.25, 0.2, soft ? 0.18 : 0.3, 0.004, 0, 700); osc('sine', f, f, t + 0.25, 0.22, 0.27, 0.004);
+    if (!soft) { noise(t + 0.125, 0.03, 'highpass', 8000, 0.7, 0.04, 0.001, -0.25); noise(t + 0.375, 0.03, 'highpass', 8000, 0.7, 0.04, 0.001, -0.25); }
+  }
+  for (const t of BLADES) { noise(t - 0.24, 0.12, 'bandpass', 500, 1.2, 0.26, 0.14, 0, 5200); stab(t, prog(Math.floor(t / 2)), 0.085); }
+  for (const ch of CH) {   // the bubble pops, the stamp lands
+    osc('sine', 880, 1320, ch.a + 0.1, 0.12, 0.12, 0.004); osc('sine', 1320, 1320, ch.a + 0.2, 0.15, 0.08, 0.004);
+    osc('sine', 120, 50, ch.stamp, 0.3, 0.7); noise(ch.stamp, 0.08, 'bandpass', 2200, 1.0, 0.25); stab(ch.stamp, prog(Math.floor(ch.stamp / 2)), 0.07, 0.6);
+  }
+  { let t0 = 5.0; for (const [, d] of CUTS) { noise(t0, 0.05, 'bandpass', 2600, 1.2, 0.14); t0 += d; } }
+  for (const t of [16.5, 18.0, 19.5, 28.0, 29.0, 30.0]) noise(t, 0.05, 'bandpass', 2600, 1.2, 0.14);
+  { const s = A.createBufferSource(); s.buffer = NB; s.loop = true; const f = A.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 1.1; f.frequency.setValueAtTime(380, 33.0); f.frequency.exponentialRampToValueAtTime(8000, 34.98);
+    const g = A.createGain(); g.gain.setValueAtTime(0.0001, 33.0); g.gain.exponentialRampToValueAtTime(0.4, 34.97); g.gain.linearRampToValueAtTime(0, 35.0); s.connect(f).connect(g).connect(OUT); s.start(33.0); s.stop(35.01); }
+  osc('sine', 82, 30, 35.0, 1.1, 1.0); stab(35.0, 'A', 0.1, 1.2); stab(36.0, 'A', 0.07, 1.6);
+  [220, 261.63, 329.63, 493.88].forEach((f, i) => osc('triangle', f, f, 35.4, 1.9, 0.06, 0.01, (i - 1.5) * 0.3));
+  const buf = await A.startRendering();
+  let pk = 0; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) pk = Math.max(pk, Math.abs(d[i])); }
+  const g = 0.89 / pk, n = buf.length, ab = new ArrayBuffer(44 + n * 4), v = new DataView(ab), ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + n * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true);
+  v.setUint32(24, SRATE, true); v.setUint32(28, SRATE * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); ws(36, 'data'); v.setUint32(40, n * 4, true);
+  const L = buf.getChannelData(0), R = buf.getChannelData(1); let o = 44;
+  for (let i = 0; i < n; i++) for (const d of [L, R]) { const s = Math.max(-1, Math.min(1, d[i] * g)); v.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true); o += 2; }
+  const u8 = new Uint8Array(ab); let bin = ''; for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+window.ready = (async () => {
+  await Promise.all(['500 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول')).concat(['500 40px PlexL', '700 40px PlexL'].map((f) => document.fonts.load(f, 'Aa'))));
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
+  await window.seek(0); return true;
+})();
+</script></body></html>
