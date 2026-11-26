@@ -18,7 +18,7 @@ export const UI = {
       caseSuffix: 'Case study | SayTamm',
     },
     nav: { about: 'About', work: 'Work', services: 'Services', contact: 'Contact', cta: 'Start a project', switch: 'العربية', switchLabel: 'Switch to Arabic', menu: 'Menu', close: 'Close', home: 'SayTamm — home' },
-    preview: 'Preview build · content and figures pending final approval',
+    preview: 'Preview build · not yet live',
     hero: {
       eyebrow: 'Digital marketing & performance agency',
       l1: 'Say it.', l2: 'Tamm it.',
@@ -64,7 +64,7 @@ export const UI = {
       caseSuffix: 'دراسة حالة | قول تم',
     },
     nav: { about: 'من نحن', work: 'أعمالنا', services: 'خدماتنا', contact: 'تواصل معنا', cta: 'ابدأ مشروعك', switch: 'English', switchLabel: 'التبديل إلى الإنجليزية', menu: 'القائمة', close: 'إغلاق', home: 'قول تم — الرئيسية' },
-    preview: 'نسخة معاينة · المحتوى والأرقام بانتظار الاعتماد النهائي',
+    preview: 'نسخة معاينة · لم يُطلق الموقع بعد',
     hero: {
       eyebrow: 'وكالة تسويق رقمي وأداء',
       l1: 'قول.', l2: 'تم.',

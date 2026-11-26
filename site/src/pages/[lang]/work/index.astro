@@ -2,7 +2,8 @@
 // Work index: every case as an editorial row → its full case page.
 import Base from '../../../layouts/Base.astro';
 import PageHero from '../../../components/PageHero.astro';
-import FinalCta from '../../../components/home/FinalCta.astro';
+import End from '../../../components/v1/End.astro';
+import Industries from '../../../components/v1/Industries.astro';
 import WorkWall from '../../../components/work/WorkWall.astro';
 import { CASES, showFigures, isPending } from '../../../data/cases';
 import { staticLangPaths, caseHref } from '../../../i18n/paths';
@@ -17,7 +18,7 @@ const r = h(lang).results;
 ---
 <Base lang={lang} page="work" title={d.meta.workTitle} description={d.meta.workDesc}>
   <PageHero eyebrow={d.workPage.eyebrow} title={d.workPage.title} intro={d.workPage.intro} image={{ name: 'work-hero', w: 2352, h: 952 }} />
-  <WorkWall lang={lang} />
+  <Industries lang={lang} stacked />
   <section class="section idx" aria-label={d.workPage.eyebrow}>
     <div class="container">
       <p class="idx__label">{d.workPage.label}</p>
@@ -48,7 +49,8 @@ const r = h(lang).results;
       <p class="idx__note">{r.note}</p>
     </div>
   </section>
-  <FinalCta lang={lang} />
+  <WorkWall lang={lang} />
+  <End lang={lang} />
 </Base>
 <style>
   .idx__label { font-size: var(--fs-small); color: var(--text-muted); max-width: 72ch; }

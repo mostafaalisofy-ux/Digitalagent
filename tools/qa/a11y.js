@@ -57,7 +57,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
     const ctx = await br.newContext({ reducedMotion: 'reduce', viewport: { width: 1440, height: 900 } });
     const page = await ctx.newPage();
     await page.goto(`${BASE}/${lang}/`, { waitUntil: 'networkidle' });
-    const st = await page.evaluate(() => ['.hero__mark .logo__blade', '.hero__title .line > span', '.hero__sub'].map((s) => { const e = document.querySelector(s); const cs = getComputedStyle(e); return cs.opacity + '|' + cs.transform; }));
+    const st = await page.evaluate(() => ['.vh__tamm', '.vh__title .line > span', '.vh__sub'].map((s) => { const e = document.querySelector(s); const cs = getComputedStyle(e); return cs.opacity + '|' + cs.transform; }));
     ok(st.every((x) => x.startsWith('1|') && (x.endsWith('none') || x.endsWith('matrix(1, 0, 0, 1, 0, 0)'))), `${lang} reduced motion: ${st.join(' ; ')}`);
     await ctx.close();
   }

@@ -9,7 +9,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
   const p = await ctx.newPage();
   const checked = new Set();
   for (const lang of ['en', 'ar']) {
-    for (const start of [`/${lang}/`, `/${lang}/work/`, `/${lang}/about/`, `/${lang}/services/`, `/${lang}/work/qnb-ramadan/`]) {
+    for (const start of [`/${lang}/`, `/${lang}/work/`, `/${lang}/about/`, `/${lang}/services/`, `/${lang}/work/ks-furniture/`]) {
       await p.goto(B + start);
       const links = await p.evaluate(() => [...new Set([...document.querySelectorAll('a[href^="/"]')].map((a) => a.getAttribute('href').split('#')[0].split('?')[0]))]);
       for (const l of links) {
@@ -27,11 +27,11 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
     const alt = lang === 'en' ? 'ar' : 'en';
     await p.goto(`${B}/${lang}/privacy/`);
     ok(await p.getAttribute('.hdr__lang', 'href') === `/${alt}/privacy/`, `${lang} language switch → equivalent privacy page`);
-    ok(await p.locator('.pv__draft').count() === 1, `${lang} privacy notice carries the draft label`);
+    ok(await p.locator('.pv__draft').count() === 0, `${lang} privacy notice: legal review confirmed, no draft label`);
     ok(await p.locator(`footer a[href="/${lang}/privacy/"]`).count() === 1, `${lang} footer links to the privacy notice`);
-    await p.goto(`${B}/${lang}/work/muriya/`);
-    ok(await p.getAttribute('.hdr__lang', 'href') === `/${alt}/work/muriya/`, 'language switch → equivalent case page');
-    ok(await p.getAttribute('link[rel=canonical]', 'href') === `https://www.saytamm.com/${lang}/work/muriya/`, 'canonical');
+    await p.goto(`${B}/${lang}/work/ks-furniture/`);
+    ok(await p.getAttribute('.hdr__lang', 'href') === `/${alt}/work/ks-furniture/`, 'language switch → equivalent case page');
+    ok(await p.getAttribute('link[rel=canonical]', 'href') === `https://www.saytamm.com/${lang}/work/ks-furniture/`, 'canonical');
     ok((await p.locator('link[hreflang]').count()) === 3, 'hreflang en/ar/x-default');
     ok(await p.evaluate(() => document.documentElement.lang + document.documentElement.dir) === lang + (lang === 'ar' ? 'rtl' : 'ltr'), 'lang/dir');
     ok((await p.locator('meta[name=robots][content*=noindex]').count()) === 1, 'staging noindex');
@@ -90,9 +90,9 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
     ok((await p.locator('#e-phone').innerText()) === '' && (await p.locator('#e-website').innerText()) === '', `${lang} valid phone/website accepted`);
   }
   await p.goto(`${B}/en/`);
-    ok((await p.locator('.clw__item').count()) === 58, 'staging: one client list, 47 logos + 11 names (owner 2026-11-05)');
+    ok((await p.locator('.clw__item').count()) === 77, 'staging: one client list, 77 entries (owner logo collection, QNB removed D-026)');
   ok((await p.locator('#brands').count()) === 0, 'no separate team-experience section');
-  ok((await p.locator('.clw__tag').count()) === 8, 'exactly 8 government bodies tagged permission-pending (7 logos + Saudi GEA)');
+  ok((await p.locator('.clw__tag').count()) === 11, 'exactly 11 government bodies tagged permission-pending in staging (hidden in production)');
     // production build is checked separately (indexable, no pending figures)
   console.log(`${pass} passed, ${fail} failed (${checked.size} unique internal links)`);
   await br.close();
