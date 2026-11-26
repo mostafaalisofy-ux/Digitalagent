@@ -182,34 +182,13 @@ export const V1: Record<string, [number, number]> = {
   555
  ],
  "stk_brief": [1200, 800],
- "stk_prep": [
-  506,
-  900
- ],
- "stk_idea": [
-  900,
-  475
- ],
- "stk_production": [
-  506,
-  900
- ],
- "stk_content": [
-  900,
-  506
- ],
- "stk_media": [
-  506,
-  900
- ],
- "stk_seo": [
-  900,
-  506
- ],
- "stk_reporting": [
-  506,
-  900
- ],
+ "stk_prep": [960, 640],
+ "stk_idea": [960, 640],
+ "stk_production": [960, 640],
+ "stk_content": [960, 640],
+ "stk_media": [960, 640],
+ "stk_seo": [960, 640],
+ "stk_reporting": [960, 640],
  "stk_cs_unbox": [1200, 800],
  "stk_cs_shop": [1200, 800],
  "stk_ks_cushion": [1200, 800],

@@ -18,8 +18,7 @@ jobs = {}   # name → max px
 for m in D['mosaic']: jobs[m] = 720
 for w in D['WORK']:
     for im in w[4]: jobs[im] = 1400 if im.startswith(('alto4k', 'sp_', 'cp_')) else 640
-for j in D['JIMG']:
-    if j != 'stk_brief': jobs[j] = 900   # stk_brief and the case pictures (stk_cs_*, stk_ks_cushion) are owner-generated, placed by hand
+# the eight journey pictures (stk_*) and the case pictures are owner-generated photography (2026-11-26), placed by hand
 # tamm_capcard, tamm_welcomecard, tamm_404 and hero_tamm_* are owner-generated key visuals (2026-11-26), placed by hand: never overwritten here
 jobs['tamm_hero'] = 900
 
