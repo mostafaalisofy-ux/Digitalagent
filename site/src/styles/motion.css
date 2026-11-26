@@ -4,7 +4,7 @@
    Muted text is darkened for contrast on light (the dark-theme muted #96939F is 2.9:1 on Soft White).
    Every motion below is switched off under prefers-reduced-motion.
    ========================================================================== */
-:root[data-theme='light'] {
+:root[data-st-theme='light'] {
   --bg: #F5F3FA;
   --surface: #FFFFFF;
   --text: #2A2833;
@@ -18,26 +18,26 @@
   --lav2: #E2D8FF;
   color-scheme: light;
 }
-:root[data-theme='light'] .logo__t[fill='#FFFFFF'] { fill: #0A0A0D; }   /* the approved signature-on-light variant (D-007) */
-:root[data-theme='light'] .btn:not(.btn--primary) { --btn-fill: var(--c-obsidian); --btn-fill-fg: var(--c-white); }
-:root[data-theme='light'] .btn--primary { --btn-fill: var(--c-obsidian); --btn-fill-fg: var(--c-white); }
-:root[data-theme='light'] .hdr.is-solid { background: rgb(245 243 250 / 0.9) !important; }
-:root[data-theme='light'] .preview-bar { background: #fff !important; color: var(--text) !important; }
-:root[data-theme='light'] .field select option { background: #fff; }
-:root[data-theme='light'] .section--surface { background: #fff; }
+:root[data-st-theme='light'] .logo__t[fill='#FFFFFF'] { fill: #0A0A0D; }   /* the approved signature-on-light variant (D-007) */
+:root[data-st-theme='light'] .btn:not(.btn--primary) { --btn-fill: var(--c-obsidian); --btn-fill-fg: var(--c-white); }
+:root[data-st-theme='light'] .btn--primary { --btn-fill: var(--c-obsidian); --btn-fill-fg: var(--c-white); }
+:root[data-st-theme='light'] .hdr.is-solid { background: rgb(245 243 250 / 0.9) !important; }
+:root[data-st-theme='light'] .preview-bar { background: #fff !important; color: var(--text) !important; }
+:root[data-st-theme='light'] .field select option { background: #fff; }
+:root[data-st-theme='light'] .section--surface { background: #fff; }
 /* hero stage: a lavender room instead of a graphite one */
-:root[data-theme='light'] .stage { background: radial-gradient(120% 90% at 70% 8%, #fff 0, var(--lav) 55%, var(--lav2) 100%) !important; box-shadow: 0 30px 70px rgb(40 18 110 / .14) !important; }
-:root[data-theme='light'] .stage__floor { background: radial-gradient(closest-side, rgb(40 20 90 / .28), transparent) !important; }
-:root[data-theme='light'] .stage__tamm { filter: drop-shadow(0 24px 30px rgb(40 18 110 / .25)) !important; }
-:root[data-theme='light'] .stage__bubble { background: #fff !important; box-shadow: 0 10px 30px rgb(40 18 110 / .12); }
-:root[data-theme='light'] .stage__chip { background: rgb(255 255 255 / .92) !important; border-color: var(--line) !important; box-shadow: 0 8px 20px rgb(40 18 110 / .08); }
+:root[data-st-theme='light'] .stage { background: radial-gradient(120% 90% at 70% 8%, #fff 0, var(--lav) 55%, var(--lav2) 100%) !important; box-shadow: 0 30px 70px rgb(40 18 110 / .14) !important; }
+:root[data-st-theme='light'] .stage__floor { background: radial-gradient(closest-side, rgb(40 20 90 / .28), transparent) !important; }
+:root[data-st-theme='light'] .stage__tamm { filter: drop-shadow(0 24px 30px rgb(40 18 110 / .25)) !important; }
+:root[data-st-theme='light'] .stage__bubble { background: #fff !important; box-shadow: 0 10px 30px rgb(40 18 110 / .12); }
+:root[data-st-theme='light'] .stage__chip { background: rgb(255 255 255 / .92) !important; border-color: var(--line) !important; box-shadow: 0 8px 20px rgb(40 18 110 / .08); }
 /* page heros: the dark key visuals become framed pictures, not a dark wash */
-:root[data-theme='light'] .ph__blade { fill: var(--lav) !important; }
-:root[data-theme='light'] .ph__img img { opacity: 1 !important; }
+:root[data-st-theme='light'] .ph__blade { fill: var(--lav) !important; }
+:root[data-st-theme='light'] .ph__img img { opacity: 1 !important; }
 /* client logo wall keeps its dark tiles (several logos are light artwork); framed so it reads as one block */
-:root[data-theme='light'] .clw__list { border-radius: 18px; overflow: hidden; }
-:root[data-theme='light'] .reel__film, :root[data-theme='light'] .svcs__film, :root[data-theme='light'] .studio__frame { box-shadow: 0 30px 70px rgb(40 18 110 / .16); }
-:root[data-theme='light'] .studio__play { background: #fff !important; }
+:root[data-st-theme='light'] .clw__list { border-radius: 18px; overflow: hidden; }
+:root[data-st-theme='light'] .reel__film, :root[data-st-theme='light'] .svcs__film, :root[data-st-theme='light'] .studio__frame { box-shadow: 0 30px 70px rgb(40 18 110 / .16); }
+:root[data-st-theme='light'] .studio__play { background: #fff !important; }
 
 /* — scroll progress: a thin purple line under the header — */
 .progress { position: fixed; inset-inline: 0; top: 0; height: 3px; z-index: 90; pointer-events: none; transform-origin: 0 50%; transform: scaleX(var(--p, 0)); background: var(--accent); }
@@ -81,11 +81,11 @@
 }
 
 /* light: page heros that carry a dark key visual stay a dark band (white type over the scene), like a film panel on the page */
-:root[data-theme='light'] .ph:has(.ph__img) { --text: #F5F3FA; --text-strong: #F5F3FA; --text-muted: #C9C6D2; --line: rgb(245 243 250 / .12); background: #0b0a10; color: var(--text); }
-:root[data-theme='light'] .ph:has(.ph__img) .ph__img img { opacity: .8 !important; }
-:root[data-theme='light'] .ph:has(.ph__img) .ph__blade { fill: var(--c-graphite) !important; }
+:root[data-st-theme='light'] .ph:has(.ph__img) { --text: #F5F3FA; --text-strong: #F5F3FA; --text-muted: #C9C6D2; --line: rgb(245 243 250 / .12); background: #0b0a10; color: var(--text); }
+:root[data-st-theme='light'] .ph:has(.ph__img) .ph__img img { opacity: .8 !important; }
+:root[data-st-theme='light'] .ph:has(.ph__img) .ph__blade { fill: var(--c-graphite) !important; }
 /* light: client tiles get an edge so white logo plates do not dissolve into the page */
-:root[data-theme='light'] .cl__tile, :root[data-theme='light'] .cl__mtile { background: #fff !important; box-shadow: inset 0 0 0 1px var(--line); }
+:root[data-st-theme='light'] .cl__tile, :root[data-st-theme='light'] .cl__mtile { background: #fff !important; box-shadow: inset 0 0 0 1px var(--line); }
 
 /* the logo drift runs left to right in both languages (an RTL flex row would drift out of view) */
 .cl__marq { direction: ltr; }
