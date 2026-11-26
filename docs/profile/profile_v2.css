@@ -102,7 +102,7 @@ p { margin:0; }
 .wtext { display:flex; flex-direction:column; }
 .brand { font-size:3.4cqw; line-height:1.02; max-width:none; }
 .wt { font-size:1.3cqw; color:var(--pu-ink); font-weight:700; margin-top:1.2cqw; }
-.wd { font-size:1.25cqw; color:var(--li); line-height:1.6; margin-top:auto; }
+.wtext .wb { margin-top:auto; }   /* owner, 2026-11-26: no industry descriptions */
 .wimgs { display:grid; gap:1cqw; min-height:0; }
 .wimgs figure { margin:0; overflow:hidden; border-radius:1cqw; background:var(--gr); min-height:0; }
 .wimgs img { width:100%; height:100%; object-fit:cover; display:block; }

@@ -32,7 +32,6 @@ const c = v1(lang).work;
         <div class="ind__text">
           <h3>{x.name[lang]}</h3>
           <p class="ind__made">{x.made[lang]}</p>
-          <p class="ind__desc">{x.desc[lang]}</p>
           <p class="ind__brands latin">{x.brands}</p>
         </div>
         <div class="ind__imgs">
@@ -82,7 +81,6 @@ const c = v1(lang).work;
   .ind__text { display: grid; gap: var(--s-3); align-content: start; }
   .ind__text h3 { font-size: var(--fs-h2); line-height: 1.08; }
   .ind__made { color: var(--accent-text); font-weight: 700; font-size: var(--fs-small); }
-  .ind__desc { color: var(--text-muted); max-width: 40ch; }
   .ind__brands { font-size: var(--fs-caption); letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); font-weight: 700; border-top: 1px solid var(--line); padding-top: var(--s-3); }
   .ind__imgs { display: grid; gap: 10px; }
   .ind__imgs figure { margin: 0; overflow: hidden; border-radius: 10px; background: var(--surface); min-height: 0; }
@@ -101,7 +99,7 @@ const c = v1(lang).work;
   @media (min-width: 1024px) {
     .ind__panel { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: stretch; min-height: 560px; }
     .ind__text { grid-column: 1 / span 4; }
-    .ind__desc { margin-top: auto; }
+    .ind__brands { margin-top: auto; }
     .ind__imgs { grid-column: 5 / -1; }
     .ind--tri .ind__imgs figure { aspect-ratio: auto; height: 560px; }
     .ind--mix .ind__imgs { aspect-ratio: auto; height: 560px; }

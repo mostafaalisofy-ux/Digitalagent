@@ -409,7 +409,6 @@ for n, (sector, title, desc, brand, ims, layout) in enumerate(WORK, 1):
     sl = new(); kick(sl, f'Industry {n:02d} / {len(WORK):02d}')
     T(sl, 6.4, 7.6, 26.2, 8, sector, 3.4, bold=True, head=True, sp=-.025, ls=1.05, name='Industry')
     T(sl, 6.4, 16.2, 26.2, 3, title, 1.3, 'ink', bold=True, ls=1.3, name='What we made')
-    T(sl, 6.4, 34, 26.2, 10.6, desc, 1.25, 'li', ls=1.6, anchor='b', name='Description')
     line(sl, 6.4, 45.6, 32.6, 45.6)
     T(sl, 6.4, 46.6, 26.2, 2.6, brand, 1.05, 'mu', bold=True, sp=.06, caps=True, name='Brands')
     small = layout in ('ge', 'gf')

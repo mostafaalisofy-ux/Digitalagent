@@ -151,7 +151,7 @@ WORK = [   # (industry, what we made, description, brands, images, layout)
 for n, (sector, title, desc, brand, ims, layout) in enumerate(WORK, 1):
     figs = ''.join(f'<figure><img src="{img(s, 1100 if s.startswith(("alto4k", "cp_", "sp_")) else 640, 88)}" alt="{esc(sector)}"></figure>' for s in ims)
     page('work ' + layout, f'''<div class="wtext"><p class="kick">Industry {n:02d} / {len(WORK):02d}</p><h2 class="brand">{esc(sector)}</h2><p class="wt">{esc(title)}</p>
-<p class="wd">{esc(desc)}</p><p class="wb">{esc(brand)}</p></div><div class="wimgs">{figs}</div>''', 'Show me the work')
+<p class="wb">{esc(brand)}</p></div><div class="wimgs">{figs}</div>''', 'Show me the work')
 
 # case studies: their own separator inside question 4
 divider(3, ['stk_cs_cart', 'stk_cs_parcel', 'stk_cs_calc', 'stk_cs_shop', 'stk_cs_pay'], 'Case studies', 'The work, measured.')
