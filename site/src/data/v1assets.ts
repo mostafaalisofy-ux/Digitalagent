@@ -181,10 +181,7 @@ export const V1: Record<string, [number, number]> = {
   1384,
   555
  ],
- "stk_brief": [
-  506,
-  900
- ],
+ "stk_brief": [1200, 800],
  "stk_prep": [
   506,
   900
@@ -213,18 +210,9 @@ export const V1: Record<string, [number, number]> = {
   506,
   900
  ],
- "stk_cs_unbox": [
-  527,
-  1000
- ],
- "stk_cs_shop": [
-  562,
-  1000
- ],
- "stk_ks_cushion": [
-  562,
-  1000
- ],
+ "stk_cs_unbox": [1200, 800],
+ "stk_cs_shop": [1200, 800],
+ "stk_ks_cushion": [1200, 800],
  "tamm_capcard": [900, 1350],
  "tamm_welcomecard": [740, 941],
  "tamm_hero": [
