@@ -43,5 +43,8 @@ a[f0:, :, 3] = (a[f0:, :, 3] * np.linspace(1, 0, H - f0)[:, None]).astype('uint8
 Image.fromarray(a).save(os.path.join(OUT, 'tamm_hero.png'), optimize=True)
 
 # framed shots: the cap still, and the welcome gesture from the vertical clip
-Image.open(os.path.join(ROOT, 'handover/launch-film/intro/src/tamm_cap.webp')).convert('RGB').save(os.path.join(OUT, 'tamm_capcard.jpg'), quality=90)
-os.system(f'ffmpeg -v error -y -ss 9.6 -i "{ROOT}/handover/launch-film/intro/src/tamm_vertical.mp4" -frames:v 1 -q:v 2 "{OUT}/tamm_welcomecard.jpg"')
+# 2026-11-26: tamm_capcard and tamm_welcomecard are now the owner-generated key visuals; never overwrite them
+if not os.path.exists(os.path.join(OUT, 'tamm_capcard.jpg')):
+    Image.open(os.path.join(ROOT, 'handover/launch-film/intro/src/tamm_cap.webp')).convert('RGB').save(os.path.join(OUT, 'tamm_capcard.jpg'), quality=90)
+if not os.path.exists(os.path.join(OUT, 'tamm_welcomecard.jpg')):
+    os.system(f'ffmpeg -v error -y -ss 9.6 -i "{ROOT}/handover/launch-film/intro/src/tamm_vertical.mp4" -frames:v 1 -q:v 2 "{OUT}/tamm_welcomecard.jpg"')

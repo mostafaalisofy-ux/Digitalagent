@@ -72,8 +72,9 @@ def page(cls, inner, label=None):
 
 QS = ['Who are you?', 'What do you actually do?', 'How do you work?', 'Show me the work.', 'Who trusts you?', 'What happens next?']
 def divider(i, strip, kick=None, q=None):
-    tiles = ''.join(f'<img src="{img(s, 700, sat=.6)}" alt="">' for s in strip)
-    page('div', f'''<div class="strip" aria-hidden="true">{tiles}</div><div class="div-text"><p class="kick">{kick or f'Question {i + 1} of 6'}</p>
+    one = len(strip) == 1
+    tiles = ''.join(f'<img src="{img(s, 1600 if one else 700, 82 if one else 78, sat=None if one else .6)}" alt="">' for s in strip)
+    page('div' + (' one' if one else ''), f'''<div class="strip{' one' if one else ''}" aria-hidden="true">{tiles}</div><div class="div-text"><p class="kick">{kick or f'Question {i + 1} of 6'}</p>
 <h2 class="q">{esc(q) if q else '“' + esc(QS[i]) + '”'}</h2></div><div class="blade" aria-hidden="true"></div>''')
 
 # 1 · cover: a wall of the work
@@ -85,7 +86,7 @@ page('cover', f'''<div class="mosaic" aria-hidden="true">{''.join(f'<img src="{i
 # 2 · six questions
 page('index', '<p class="kick">This profile</p><h2 class="xl">Six questions.<br>Straight answers.</h2><ol class="qlist">' +
      ''.join(f'<li><span>{i + 1:02d}</span>{esc(q)}</li>' for i, q in enumerate(QS)) +
-     f'</ol><img class="tamm-hero" src="{png("tamm_hero", 1000)}" alt="Tamm, the SayTamm character"><p class="side">Every new client asks the same six questions. This is our answer to each, in order.</p>', 'Contents')
+     f'</ol><img class="kbg" src="{img("tamm_key_ar", 1600, 84)}" alt="Tamm, the SayTamm character"><p class="side">Every new client asks the same six questions. This is our answer to each, in order.</p>', 'Contents')
 
 # Q1 — who are you
 divider(0, ['sp_013', 'sp_019', 'cp_altopiano2', 'sp_028', 'cp_jora2'])
@@ -93,8 +94,13 @@ page('about', f'''<p class="kick">Who we are</p><h2 class="xl">A digital marketi
 <div class="about-grid"><p class="lead">SayTamm brings strategy, creative, media and technology together under one connected approach to growth.</p>
 <div class="name"><span class="ar" lang="ar">قول تم</span><p>In everyday Gulf Arabic, <i>“qul tamm”</i> is what you hear when a request is as good as done. You tell us the goal; we take responsibility for getting there.</p></div></div>
 <figure class="tcard"><img src="{img('tamm_capcard', 900)}" alt="Tamm"><figcaption>Tamm, our character. He says it; the team Tamms it.</figcaption></figure>''', 'Who we are')
-FACTS = [('2021', 'Founded'), ('30', 'People on the team'), ('15+', 'Years of founder-led digital marketing leadership'),
-         ('200+', 'Brands in the founder’s track record'), ('20+', 'Industries'), ('5', 'Markets: Saudi Arabia, UAE, Kuwait, Oman, Egypt')]
+WHY = 'We worked inside this industry long enough to see the same gap again and again: between what a client actually needs and what their agency delivers, made wider by slow answers and by marketing that is not tied to a clear goal. So we built SayTamm to close it.'
+MV = [('Our mission', 'To close the gap between what a business needs and what its marketing delivers: fast, direct communication, and work built around one business number.'),
+      ('Our vision', 'To make «Tamm» the standard brands in the region expect from their marketing: every brief answered quickly, every campaign judged by what it moves.')]
+page('why', '<p class="kick">Why we started</p><p class="story">' + esc(WHY) + '</p><div class="mv">' +
+     ''.join(f'<div><b>{esc(a)}</b><p>{esc(b)}</p></div>' for a, b in MV) + '</div>', 'Why we started')
+# owner, 2026-11-26: no founder facts in the profile; company facts only
+FACTS = [('2021', 'Founded'), ('30', 'People on the team'), ('20+', 'Industries in the team’s track record'), ('5', 'Markets: Saudi Arabia, UAE, Kuwait, Oman, Egypt')]
 page('glance', '<p class="kick">At a glance</p>' + skyline() + '<div class="facts">' + ''.join(f'<div class="fact"><b>{v}</b><span>{esc(k)}</span></div>' for v, k in FACTS) +
      '</div><p class="note">Markets are where the team has delivered work, not office locations.</p>', 'At a glance')
 VALUES = [('Clarity', 'Plain plans, plain reports, one message per piece.'), ('Ownership', 'We own the outcome we agreed, not just the task.'),
@@ -107,11 +113,13 @@ page('philo', '<p class="kick">What we believe</p><h2 class="xl">Marketing shoul
 divider(1, ['sp_009', 'cp_siyaq', 'sp_021', 'cp_electra2', 'sp_024'])
 cards = ''.join(f'<div class="sv"><span class="dn">{d["n"]}</span><b>{esc(s["name"])}</b><span>{esc(s["summary"])}</span></div>' for d in SVC for s in d['s'])
 page('nine', f'<p class="kick">What we do</p><h2>Nine services. <em>One objective.</em></h2><div class="svgrid">{cards}</div>', 'Services')
-for pair in (SVC[:2], SVC[2:]):
+DIMG = ['tamm_strategy', 'tamm_creative', 'tamm_media', 'tamm_digital']
+for pi, pair in enumerate((SVC[:2], SVC[2:])):
     cols = ''
-    for d in pair:
+    for di, d in enumerate(pair):
         items = ''.join(f'<li><b>{esc(s["name"])}</b>{"".join(f"<span>{esc(i)}</span>" for i in s["inc"][:3])}</li>' for s in d['s'])
-        cols += f'<div class="dcol"><span class="dbig">{d["n"]}</span><h3>{esc(d["name"])}</h3><p class="dval">{esc(d["value"])}</p><ul>{items}</ul></div>'
+        cols += (f'<div class="dcol"><div class="dhead"><figure class="dimg"><img src="{img(DIMG[pi * 2 + di], 900, 84)}" alt="Tamm, {esc(d["name"])}"></figure>'
+                 f'<div><span class="dn2">{d["n"]}</span><h3>{esc(d["name"])}</h3><p class="dval">{esc(d["value"])}</p></div></div><ul>{items}</ul></div>')
     page('discs', f'<p class="kick">Inside each discipline</p><div class="dcols">{cols}</div>', 'Disciplines')
 
 # Q3 — how do you work
@@ -130,7 +138,7 @@ page('journey', '<p class="kick">Working with us</p><h2>From the brief to the ne
      ''.join(f'<li><figure><img src="{img(JIMG[i], 700)}" alt=""><span class="jn">{i + 1}</span></figure><b>{a}</b><span>{esc(b)}</span></li>' for i, (a, b) in enumerate(J)) + '</ol>', 'Client journey')
 
 # Q4 — show me the work
-divider(3, ['sp_014', 'cp_gig', 'sp_018', 'cp_music', 'sp_029'])
+divider(3, ['tamm_gallery'])
 WORK = [   # (industry, what we made, description, brands, images, layout)
     ('Automotive', 'Model posts and launch teasers', 'Posts for three SUV and sedan models, each built on one short Arabic line, plus a “coming soon” teaser set against the Riyadh skyline.', 'Chery Saudi', ['sp_012', 'sp_013', 'sp_014'], 'tri'),
     ('Consumer electronics', 'Product launches and social', 'Launch posts for tablets, phones and wearables, written for Arabic feeds and built around one benefit each.', 'Xiaomi · POCO', ['post_xiaomi1_1', 'post_xiaomi1_0', 'post_xiaomi2_0', 'post_poco_1', 'post_xiaomi2_1', 'post_xiaomi2_2', 'post_poco_0', 'post_xiaomi1_2', 'post_poco_2'], 'ge'),

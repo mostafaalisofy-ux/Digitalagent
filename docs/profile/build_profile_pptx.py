@@ -32,8 +32,8 @@ for node in ast.walk(tree):
         DIVS.append([ast.literal_eval(a) for a in node.args])
 SVC = json.load(open(os.path.join(HERE, 'services_en.json'), encoding='utf-8'))
 CASES = {c['slug']: c for c in json.load(open(os.path.join(HERE, 'cases_en.json'), encoding='utf-8'))}
-QS, FACTS, VALUES, STEPS, J, JIMG, WORK, QUOTES, NEXT, SHOW, MOSAIC = (D[k] for k in
-    ('QS', 'FACTS', 'VALUES', 'STEPS', 'J', 'JIMG', 'WORK', 'QUOTES', 'NEXT', 'SHOW', 'mosaic'))
+QS, FACTS, VALUES, STEPS, J, JIMG, WORK, QUOTES, NEXT, SHOW, MOSAIC, WHY, MV, DIMG = (D[k] for k in
+    ('QS', 'FACTS', 'VALUES', 'STEPS', 'J', 'JIMG', 'WORK', 'QUOTES', 'NEXT', 'SHOW', 'mosaic', 'WHY', 'MV', 'DIMG'))
 
 # ---------- units: everything in cqw (1 = 1% of slide width), like the HTML ----------
 SW, SH = 12192000, 6858000; U = SW / 100; H = 56.25
@@ -257,9 +257,14 @@ def mosaic(sl, names, alpha=None):
 
 def divider(strip, kicktxt, q):
     sl = new()
-    for i, n in enumerate(strip): P(sl, n, i * 20, 0, 20, H, alpha=.28, gray=True, maxpx=900, pname=f'Background {i + 1}')
-    o = R(sl, 0, 0, 100, H, fill='ob', name='Shade (gradient)'); grad(o, [(0, .92), (.45, .85), (1, .6)])
-    T(sl, 6.4, 0, 78, H, [[(kicktxt, {'size': 1.05, 'color': 'mu', 'bold': True, 'sp': .18, 'caps': True})],
+    one = len(strip) == 1
+    if one:
+        P(sl, strip[0], 36, 0, 64, H, maxpx=1600, pname='Key visual')
+        o = R(sl, 36, 0, 30, H, fill='ob', name='Shade (gradient)'); grad(o, [(0, 1), (.35, .75), (1, 0)])
+    else:
+        for i, n in enumerate(strip): P(sl, n, i * 20, 0, 20, H, alpha=.28, gray=True, maxpx=900, pname=f'Background {i + 1}')
+        o = R(sl, 0, 0, 100, H, fill='ob', name='Shade (gradient)'); grad(o, [(0, .92), (.45, .85), (1, .6)])
+    T(sl, 6.4, 0, 44 if one else 78, H, [[(kicktxt, {'size': 1.05, 'color': 'mu', 'bold': True, 'sp': .18, 'caps': True})],
                           [(q, {'size': 7.4, 'bold': True, 'head': True, 'sp': -.04})]], anchor='m', ls=.98, before=1.2, name='Question')
     R(sl, 102.3 - 1.3, 51.6 - 15, 2.6, 30, fill='pu', radius=1.3, rot=45, name='Blade')
     return sl
@@ -271,16 +276,15 @@ T(sl, 6.4, 24.4, 60, 20, [[('Say it.', {})], [('Tamm it.', {'color': 'pu'})]], 1
 T(sl, 6.4, 45.6, 34, 4.6, 'A digital marketing & performance agency built to move brands forward.', 1.6, 'li', ls=1.35, name='Positioning')
 
 # 2 contents
-sl = new(); kick(sl, 'This profile')
-T(sl, 6.4, 7.6, 42, 12, [[('Six questions.', {})], [('Straight answers.', {})]], 4.8, bold=True, head=True, sp=-.025, ls=1.02, name='Title')
+sl = new(); P(sl, 'tamm_key_ar', 0, 0, 100, H, maxpx=1600, pname='Key visual (Tamm)')
+T(sl, 53.2, 5.6, 40, 1.6, 'This profile', 1.05, 'mu', bold=True, sp=.18, caps=True, name='Kicker')
+T(sl, 53.2, 7.6, 42, 11, [[('Six questions.', {})], [('Straight answers.', {})]], 3.8, bold=True, head=True, sp=-.025, ls=1.02, name='Title')
 for i, q in enumerate(QS):
-    yy = 12.5 + i * 5.1
+    yy = 18.4 + i * 4.5
     T(sl, 53.2, yy, 3, 4, f'{i + 1:02d}', 1, 'ink', bold=True, anchor='m', name=f'Number {i + 1}')
-    T(sl, 56.6, yy, 37, 4, q, 2.1, anchor='m', name=f'Question {i + 1}')
-    line(sl, 53.2, yy + 4.6, 93.6, yy + 4.6)
-hero = prep('tamm_hero', 1000); hw, hh = Image.open(hero).size
-P(sl, 'tamm_hero', 20, H - 38, 38 * hw / hh, 38, fit='none', maxpx=1000, pname='Tamm (character)')
-T(sl, 53.2, 45.4, 40, 3, 'Every new client asks the same six questions. This is our answer to each, in order.', 1.35, 'mu', ls=1.4, name='Side note')
+    T(sl, 56.6, yy, 37, 4, q, 1.9, anchor='m', name=f'Question {i + 1}')
+    line(sl, 53.2, yy + 4.1, 93.6, yy + 4.1)
+T(sl, 53.2, 46.4, 40, 3, 'Every new client asks the same six questions. This is our answer to each, in order.', 1.35, 'mu', ls=1.4, name='Side note')
 footer(sl, 'Contents')
 
 def page_div(i):
@@ -300,12 +304,21 @@ o = R(sl, 72, 26, 21, 10, fill='ob', name='Card shade'); grad(o, [(0, 0), (1, .9
 T(sl, 73.4, 32.6, 18.2, 3, 'Tamm, our character. He says it; the team Tamms it.', 1.05, anchor='b', ls=1.3, name='Card caption')
 footer(sl, 'Who we are')
 
+sl = new(); kick(sl, 'Why we started')
+T(sl, 6.4, 7.6, 80, 18, WHY, 3.1, ls=1.3, sp=-.01, name='Why we started')
+for i, (a, b) in enumerate(MV):
+    x = 6.4 + i * 44.6
+    R(sl, x, 34.4, 42.6, 15.2, radius=1, name=f'{a} card')
+    T(sl, x + 2.2, 36.6, 38, 1.6, a, 1.05, 'ink', bold=True, sp=.14, caps=True, name=a)
+    T(sl, x + 2.2, 39.2, 38, 9, b, 1.6, ls=1.45, name=f'{a} text')
+footer(sl, 'Why we started')
+
 sl = new(); kick(sl, 'At a glance'); skyline(sl, 17.5, 8.2, 65)
 for i, (v, k) in enumerate(FACTS):
-    c, r = i % 3, i // 3; x = 6.4 + c * 30.07; yy = 26.6 + r * 12
-    line(sl, x, yy, x + 27.07, yy)
-    T(sl, x, yy + .9, 27, 7, v, 7, 'pu' if i == 0 else 'wh', bold=True, head=True, sp=-.04, ls=.9, name=f'Fact {i + 1}')
-    T(sl, x, yy + 7.9, 22, 3, k, 1.2, 'mu', ls=1.3, name=f'Fact {i + 1} label')
+    x = 6.4 + i * 22.3; yy = 32
+    line(sl, x, yy, x + 20.3, yy)
+    T(sl, x, yy + .9, 21, 7, v, 7, 'pu' if i == 0 else 'wh', bold=True, head=True, sp=-.04, ls=.9, name=f'Fact {i + 1}')
+    T(sl, x, yy + 7.9, 19, 4, k, 1.2, 'mu', ls=1.3, name=f'Fact {i + 1} label')
 T(sl, 6.4, 50.2, 60, 1.6, 'Markets are where the team has delivered work, not office locations.', 1, 'mu', name='Note')
 footer(sl, 'At a glance')
 
@@ -332,18 +345,19 @@ for d in SVC:
         T(sl, x + 1.6, yy + 4.6, 25.2, 2.8, s_['summary'], 1.05, 'mu', ls=1.4, name='Summary')
         k += 1
 footer(sl, 'Services')
-for pair in (SVC[:2], SVC[2:]):
+for pi, pair in enumerate((SVC[:2], SVC[2:])):
     sl = new(); kick(sl, 'Inside each discipline')
     for j, d in enumerate(pair):
         x = 6.4 + j * 45.6
-        T(sl, x, 7.6, 20, 6, [[(d['n'], {'outline': 'line', 'ow': 1.2})]], 6, bold=True, head=True, ls=.85, name='Discipline number')
-        T(sl, x, 13.8, 41.6, 3, d['name'], 2.5, bold=True, head=True, name='Discipline')
-        T(sl, x, 17.4, 41.6, 4.4, d['value'], 1.25, 'li', ls=1.5, name='Discipline value')
+        P(sl, DIMG[pi * 2 + j], x, 7.6, 15, 10, radius=.8, maxpx=900, pname=f'Tamm, {d["name"]}')
+        T(sl, x + 16.8, 7.8, 10, 1.4, d['n'], 1, 'ink', bold=True, name='Discipline number')
+        T(sl, x + 16.8, 9.4, 24.8, 3, d['name'], 2.05, bold=True, head=True, name='Discipline')
+        T(sl, x + 16.8, 12.4, 24.8, 5.6, d['value'], 1.1, 'li', ls=1.4, name='Discipline value')
         paras = []
         for s_ in d['s']:
             paras.append([(s_['name'], {'size': 1.35, 'bold': True, 'head': True})])
             for inc in s_['inc'][:3]: paras.append([(inc, {'size': 1, 'color': 'mu'})])
-        tb = T(sl, x, 22.8, 41.6, 27, paras, 1, ls=1.35, name='Services and scope')
+        tb = T(sl, x, 20.6, 41.6, 29, paras, 1, ls=1.35, name='Services and scope')
         for p in tb.text_frame.paragraphs:
             if p.runs and p.runs[0].font.bold: p.space_before = PT(1.1)
         tb.text_frame.paragraphs[0].space_before = 0

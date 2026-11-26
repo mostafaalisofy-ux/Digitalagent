@@ -172,7 +172,7 @@ cite { font-style:normal; font-size:1cqw; color:var(--mu); letter-spacing:.08em;
 .tcard.wel img { object-position:50% 30%; }
 .sky { display:block; width:100%; height:auto; margin-top:auto; overflow:visible; }
 .glance .sky { max-height:19cqw; }
-.glance .facts { margin-top:2.4cqw; }
+.glance .facts { margin-top:2.4cqw; grid-template-columns:repeat(4,1fr); }
 .sky .lm { fill:none; stroke:var(--mu); stroke-width:1.5; stroke-linejoin:round; stroke-linecap:round; opacity:.75; }
 .sky .lm .f { fill:var(--ob); }
 .sky .rt { fill:none; stroke:var(--mu); stroke-width:1.2; stroke-dasharray:3 6; opacity:.6; }
@@ -219,3 +219,26 @@ cite { font-style:normal; font-size:1cqw; color:var(--mu); letter-spacing:.08em;
 .lg { position:relative; }
 .lg img { position:absolute; inset:.7cqw; width:calc(100% - 1.4cqw); height:calc(100% - 1.4cqw); object-fit:contain; }
 .logos.dark .lg img { inset:1cqw; width:calc(100% - 2cqw); height:calc(100% - 2cqw); }
+
+/* v2.2 · key visuals (owner-generated Tamm), why we started, no founder facts */
+.index { grid-template-columns:47% 1fr; grid-template-rows:auto auto 1fr auto; }
+.index > .kick, .index > h2, .index > .qlist, .index > .side { grid-column:2; position:relative; z-index:1; }
+.index > h2 { grid-row:2; } .index > .qlist { grid-row:3; align-self:center; } .index .qlist li { padding:.95cqw 0; }
+.index .side { position:relative; right:auto; bottom:auto; grid-row:4; width:auto; max-width:40ch; margin-top:1.4cqw; }
+.kbg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+.why { justify-content:flex-start; }
+.story { font-size:3.1cqw; line-height:1.3; font-weight:500; max-width:80cqw; letter-spacing:-.01em; margin:0; text-wrap:pretty; }
+.mv { display:grid; grid-template-columns:1fr 1fr; gap:2cqw; margin-top:auto; }
+.mv div { background:var(--gr); border-radius:1cqw; padding:2.2cqw; display:grid; gap:1cqw; align-content:start; }
+.mv b { font-size:1.05cqw; letter-spacing:.14em; text-transform:uppercase; color:var(--pu-ink); }
+.mv p { margin:0; font-size:1.6cqw; line-height:1.45; }
+.dcol { grid-template-rows:auto 1fr; gap:1.6cqw; }
+.dhead { display:grid; grid-template-columns:15cqw 1fr; gap:1.8cqw; align-items:center; }
+.dimg { margin:0; aspect-ratio:3/2; border-radius:.8cqw; overflow:hidden; background:var(--gr); }
+.dimg img { width:100%; height:100%; object-fit:cover; object-position:20% 50%; display:block; }
+.dn2 { display:block; font-size:1cqw; font-weight:700; color:var(--pu-ink); margin-bottom:.5cqw; }
+.dhead h3 { margin-bottom:.6cqw; } .dhead .dval { margin:0; font-size:1.15cqw; }
+.strip.one { left:36%; grid-template-columns:1fr; opacity:1; }
+.strip.one img { object-position:42% 50%; }
+.div.one::before { background:linear-gradient(90deg, var(--ob) 36%, rgba(9,9,13,.75) 46%, rgba(9,9,13,.1) 70%, rgba(9,9,13,0)); }
+.div.one .q { max-width:44cqw; }
