@@ -13,10 +13,11 @@ SayTamm is a digital marketing & performance agency. This repo holds the website
 ## Rules that never bend
 
 - **Facts.** Never invent facts or numbers. Approved company facts only: founded 2021 · 30 people on the team · 15+ years of founder leadership · 200+ brands in the founder's track record · 20+ industries · 5 markets in the team's track record (experience, not offices). No "first", "fastest", "leading", guaranteed results, offices, awards, certifications or partnerships.
-- **Case figures** (`site/src/data/cases.ts`) are all `status: 'pending'` (OQ-32: original platform exports and client approval). Copy them verbatim with their source note, never publish them before approval, and never call ROAS "profit" (ROAS = revenue ÷ ad spend). Team track-record wording: "Results from projects led by members of the SayTamm team, including work delivered at other agencies." / «مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.»
+- **Case figures** (`site/src/data/cases.ts`): three cases remain (K.S Furniture, fashion & beauty, electronics Q4) and are `approved` by the owner (D-025, D-026). Copy them verbatim with their measurement note, and never call ROAS "profit" (ROAS = revenue ÷ ad spend). QNB and the pre-2021 / third-party cases are removed and stay out. Team track-record wording: "Results from projects led by members of the SayTamm team, including work delivered at other agencies." / «مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.»
 - **Names.** Never name previous agencies (the owner has full rights to use Steps material, but never with the Steps logo or name). Government bodies stay hidden. Never publish the 57357 targeting detail. Never call SayTamm a "Saudi agency"; the line is "A digital marketing & performance agency".
 - **Brand.** Logo from the original SVG/PNG files in `brand/production/logo/` only, never redrawn. Obsidian #09090D, Graphite #17171E, Soft White #F5F3FA, Muted #96939F, Electric Purple #6C35FF as an accent at 10% of the frame or less. No glow, neon or particles. Satoshi for English, IBM Plex Sans Arabic for Arabic.
 - **Satoshi** font files are never committed or uploaded (`site/public/fonts/satoshi/` is git-ignored; put the files there by hand on a new machine). Any output that embeds Satoshi stays internal until the licence is confirmed. Arabic-only films use Plex only.
+- **Tamm** (the character, files in `handover/launch-film/intro/src`, cut-outs in `docs/profile/prep_tamm.py`) is part of the SayTamm identity (D-026) and appears in the profile and the website.
 - **People.** No AI-generated people presented as real. Stock footage: hands only, no faces; no Mixkit "Restricted" clips; no flags or other brands' billboards. Real team members appear only with written consent.
 - **Voice.** ElevenLabs takes need a paid plan for commercial use and a native-speaker review before publishing. If ElevenLabs answers "Free generations are busy", start no other generation in that turn; retry later.
 - Arabic copy is written natively (never line-by-line translation): «» quotes, the Arabic comma, Western digits.
@@ -35,7 +36,7 @@ SayTamm is a digital marketing & performance agency. This repo holds the website
 1. Teasers «قولها» (V01): done in another session; the owner supplied the three masters (`handover/launch-film/teasers/`). Their source is not in this repo.
 2. «قاموس الفلوس» (V05): episodes 01–04 built; v2 (real stock, colour, VO cues) is `film/money2/`, v1 (type only) is `film/money/`. Episodes 02–04 still need their VO takes (`film/money2/VO_SCRIPTS.md`). Next episodes from the plan: new vs returning customer, the Boost button, wasted spend, CTR alone.
 3. Filming days for the human series (The Relay, Meet the 30, founder, sketches) need the owner's footage and consent; use the owner's folders on this machine for any material they point to.
-4. Owner decisions still open: launch date, who appears on camera, publishing our own ad numbers and the test budget, the CTA, dialect per platform, campaign line (D-023), Tamm character reference, client approvals (OQ-32).
+4. Owner decisions still open: launch date, who appears on camera, publishing our own ad numbers and the test budget, the CTA, dialect per platform, campaign line (D-023), client approvals for any new case.
 
 ## Setting up a new machine
 

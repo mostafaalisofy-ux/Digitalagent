@@ -9,3 +9,13 @@
 # Language roots without the trailing slash
 /en              /en/            301
 /ar              /ar/            301
+
+# Case studies removed on 2026-11-25 (D-026): send old links to the work page
+/en/work/qnb-ramadan/      /en/work/   301
+/ar/work/qnb-ramadan/      /ar/work/   301
+/en/work/muriya/           /en/work/   301
+/ar/work/muriya/           /ar/work/   301
+/en/work/bio-group/        /en/work/   301
+/ar/work/bio-group/        /ar/work/   301
+/en/work/damac-paramount/  /en/work/   301
+/ar/work/damac-paramount/  /ar/work/   301

@@ -26,8 +26,7 @@ export const BRANDS: Brand[] = [
   { name: 'Juhayna', sector: S.fnb },
   { name: 'Toyota', sector: S.auto },
   { name: 'BYD', sector: S.auto },
-  { name: 'DAMAC', sector: S.realEstate, caseSlug: 'damac-paramount' },
-  { name: 'QNB', sector: S.banking, caseSlug: 'qnb-ramadan' },
+  { name: 'DAMAC', sector: S.realEstate },
   { name: 'Radisson Blu', sector: S.hospitality },
   { name: 'Saudi GEA', sector: S.government, permission: 'pending' }, // government entity: display permission outstanding (OQ-39)
 ];

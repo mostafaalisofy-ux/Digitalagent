@@ -1,8 +1,9 @@
 // Team track record (Category C, docs/PORTFOLIO_AND_CASE_STUDIES.md). Legal rights: D-002, D-009.
 // Every figure comes from a received source document and has been arithmetic-checked, but none is
-// approved for publication yet: original platform exports are still needed (OQ-32). So every case
-// carries `evidence.status: 'pending'`. Pending figures render in staging (with a visible
-// "pending confirmation" tag) and are WITHHELD from the production build (see `showFigures`).
+// approved for publication yet: original platform exports are still needed (OQ-32). Owner, 2026-11-25
+// (D-026): the three remaining cases are confirmed for publication (`status: 'approved'`); cases dated
+// before 2021 or taken from another agency's published study were removed. A `pending` case still
+// renders only in staging (see `showFigures`).
 // Never add a figure, date or claim here that is not in a source document.
 // Wording rule: ROAS is revenue ÷ ad spend. It is not profit — never describe a result as
 // "profitable" without financial evidence (margins, costs) from the client.
@@ -65,7 +66,7 @@ export const CASES: Case[] = [
       { src: '/work/fashion-04.webp', w: 549, h: 400, alt: { en: 'Studio photography: model in a light-blue shirt and headscarf', ar: 'تصوير استوديو: عارضة بقميص أزرق فاتح وحجاب' } },
       { src: '/work/fashion-05.webp', w: 549, h: 381, alt: { en: 'Product photography: running shoe mid-stride outdoors', ar: 'تصوير منتج: حذاء جري أثناء الحركة في الخارج' } },
     ] },
-    evidence: { source: META_REPORT, status: 'pending',
+    evidence: { source: META_REPORT, status: 'approved',
       measured: { en: 'Return on ad spend = Meta-attributed purchase value ÷ ad spend, per ad account.', ar: 'العائد على الإنفاق = قيمة المشتريات المنسوبة من Meta ÷ الإنفاق الإعلاني، لكل حساب.' },
       open: { en: 'Original Ads Manager exports (the deck screenshots are not clean evidence); client approval to publish.', ar: 'ملفات Ads Manager الأصلية (لقطات الشاشة في الملف ليست دليلاً كافياً)؛ وموافقة العميل على النشر.' } },
   },
@@ -95,62 +96,9 @@ export const CASES: Case[] = [
       spendLabel: { en: 'Media budget', ar: 'الميزانية الإعلانية' }, resultLabel: { en: 'Total store sales', ar: 'إجمالي مبيعات المتجر' } },
     note: { en: 'Store sales are total sales for the period from the store platform, not only sales attributed to ads.', ar: 'مبيعات المتجر هي إجمالي المبيعات للفترة من منصة المتجر، وليست المبيعات المنسوبة للإعلانات فقط.' },
     visual: null,
-    evidence: { source: { en: 'Agency case study, with the store platform’s sales dashboard for the period', ar: 'دراسة حالة من الوكالة، مع لوحة مبيعات منصة المتجر للفترة' }, status: 'pending',
+    evidence: { source: { en: 'Agency case study, with the store platform’s sales dashboard for the period', ar: 'دراسة حالة من الوكالة، مع لوحة مبيعات منصة المتجر للفترة' }, status: 'approved',
       measured: { en: 'ROAS as reported in the case study (4 at the start, 10 at the end, against a target of 7). Total store sales, orders and new customers from the store platform’s dashboard, set against the total media budget.', ar: 'العائد كما ورد في دراسة الحالة (4 في البداية و10 في النهاية مقابل مستهدف 7). وإجمالي مبيعات المتجر والطلبات والعملاء الجدد من لوحة منصة المتجر، مقابل إجمالي الميزانية الإعلانية.' },
       open: { en: 'Client approval to publish; the ad-platform export confirming ROAS; confirmation of the 2024 campaign year.', ar: 'موافقة العميل على النشر؛ وملف المنصات الإعلانية الذي يؤكد العائد؛ وتأكيد أن الحملة كانت في 2024.' } },
-  },
-  {
-    slug: 'qnb-ramadan', tier: 1,
-    client: { en: 'QNB Al Ahli', ar: 'QNB الأهلي' },
-    sector: { en: 'Banking · Media partnership', ar: 'بنوك · شراكة إعلامية' },
-    market: { en: 'Egypt', ar: 'مصر' },
-    period: { en: 'Ramadan 2015', ar: 'رمضان 2015' },
-    channels: ['Filfan', 'FilGoal', 'Facebook', 'Google Display'], services: ['digital-marketing-strategy', 'performance-marketing'],
-    headline: { en: 'Every Ramadan series in one place, sponsored by one bank.', ar: 'كل مسلسلات رمضان في مكان واحد، برعاية بنك واحد.' },
-    context: { en: 'QNB Al Ahli wanted to promote m.visa, its mobile payment service, during Ramadan, when audiences in Egypt gather around the season’s TV series.', ar: 'أراد بنك QNB الأهلي الترويج لخدمة الدفع عبر الجوال m.visa خلال رمضان، حين يجتمع الجمهور في مصر حول مسلسلات الموسم.' },
-    objective: { en: 'Build awareness and traffic for the bank’s m.visa service during Ramadan.', ar: 'بناء الوعي وجذب الزيارات لخدمة m.visa من البنك خلال رمضان.' },
-    challenge: { en: 'Sponsorship of individual Ramadan series was sold out, and priced far above the budget.', ar: 'رعاية المسلسلات الرمضانية الفردية كانت مباعة مسبقاً، وبأسعار تفوق الميزانية بكثير.' },
-    strategy: { en: 'Instead of sponsoring one series, own the whole category: a single destination for every Ramadan series, carrying the bank’s name.', ar: 'بدلاً من رعاية مسلسل واحد، امتلاك الفئة كلها: وجهة واحدة لكل مسلسلات رمضان تحمل اسم البنك.' },
-    execution: { en: 'A partnership with the entertainment portal Filfan to build “Ramadan Series Sponsored by QNB”, with traffic driven to it from FilGoal, Facebook and Google Display.', ar: 'شراكة مع بوابة فيلفان الترفيهية لبناء منصة «مسلسلات رمضان برعاية QNB»، وتوجيه الزيارات إليها من فيلجول وفيسبوك وشبكة Google الإعلانية.' },
-    outcome: { en: '7M video views, 25M impressions and 50K clicks through to m.visa over Ramadan 2015.', ar: '7 ملايين مشاهدة، و25 مليون ظهور، و50 ألف نقرة إلى m.visa خلال رمضان 2015.' },
-    kpis: [
-      { value: '7M', label: { en: 'Video views', ar: 'مشاهدة فيديو' }, accent: true },
-      { value: '25M', label: { en: 'Impressions', ar: 'ظهور' } },
-      { value: '50K', label: { en: 'Clicks to m.visa', ar: 'نقرة إلى m.visa' } },
-    ],
-    note: { en: 'Awareness and traffic metrics. No sales figures are claimed for this campaign.', ar: 'مؤشرات وعي وزيارات، ولا تُنسب إلى هذه الحملة أي أرقام مبيعات.' },
-    visual: { kind: 'screen', caption: { en: 'The campaign as it ran: the sponsored series hub on Filfan, and the FilGoal mobile placement.', ar: 'الحملة كما ظهرت: منصة المسلسلات على فيلفان، والإعلان على فيلجول للجوال.' }, images: [
-      { src: '/work/qnb-ramadan-desktop.webp', w: 1536, h: 918, alt: { en: 'Filfan desktop page: Ramadan series hub sponsored by QNB', ar: 'صفحة فيلفان: منصة مسلسلات رمضان برعاية QNB' } },
-      { src: '/work/qnb-ramadan-mobile.webp', w: 549, h: 1031, alt: { en: 'FilGoal mobile page with the QNB Ramadan placement', ar: 'صفحة فيلجول على الجوال مع إعلان QNB الرمضاني' } },
-    ] },
-    evidence: { source: { en: 'Campaign case-study deck prepared by the project lead (2019)', ar: 'ملف دراسة الحالة الذي أعده قائد المشروع (2019)' }, status: 'pending',
-      measured: { en: 'Platform-reported views, impressions and clicks for the Ramadan 2015 flight.', ar: 'مشاهدات وظهور ونقرات مُبلّغ عنها من المنصات لفترة رمضان 2015.' },
-      open: { en: 'Confirmation that the bank’s name may be published with these figures.', ar: 'تأكيد إمكانية نشر اسم البنك مع هذه الأرقام.' } },
-  },
-  {
-    slug: 'muriya', tier: 1,
-    client: { en: 'Muriya', ar: 'موريا' },
-    sector: { en: 'Real estate · Lead generation', ar: 'عقارات · توليد العملاء' },
-    market: { en: 'Oman', ar: 'عُمان' },
-    period: null, channels: ['Meta'], services: ['performance-marketing'],
-    headline: { en: 'High-value homes sold through paid social, optimised for buyers rather than leads.', ar: 'وحدات سكنية عالية القيمة بيعت عبر إعلانات التواصل، بالتركيز على المشترين لا على العملاء المحتملين.' },
-    context: { en: 'An Omani real estate developer selling high-value residential units.', ar: 'مطوّر عقاري عُماني يبيع وحدات سكنية عالية القيمة.' },
-    objective: { en: 'Sell high-value residential units through paid social.', ar: 'بيع وحدات سكنية عالية القيمة عبر الإعلانات على منصات التواصل.' },
-    challenge: { en: 'Reach buyers ready to commit to a high-value purchase — not just people willing to leave a phone number.', ar: 'الوصول إلى مشترين جاهزين لقرار شراء كبير، لا مجرد أشخاص يتركون رقم هاتف.' },
-    strategy: { en: 'Judge the campaign by units sold rather than by cost per lead.', ar: 'تقييم الحملة بعدد الوحدات المباعة، لا بتكلفة العميل المحتمل.' },
-    execution: { en: 'Qualified-lead campaigns on Meta.', ar: 'حملات Meta لجذب عملاء مؤهلين.' },
-    outcome: { en: '13 units sold and $1.51M in revenue from $18.2K of ad spend.', ar: 'بيع 13 وحدة وإيرادات بقيمة 1.51 مليون دولار من إنفاق إعلاني قدره 18.2 ألف دولار.' },
-    kpis: [
-      { value: '13', label: { en: 'Units sold', ar: 'وحدة مباعة' }, accent: true },
-      { value: '$1.51M', label: { en: 'Revenue from units sold', ar: 'إيرادات الوحدات المباعة' } },
-      { value: '$18.2K', label: { en: 'Ad spend', ar: 'الإنفاق الإعلاني' } },
-    ],
-    bar: { spend: 18216, result: 1510000, unit: { en: 'USD', ar: 'دولار' },
-      spendLabel: { en: 'Ad spend', ar: 'الإنفاق الإعلاني' }, resultLabel: { en: 'Revenue', ar: 'الإيرادات' } },
-    visual: null,
-    evidence: { source: PUBLISHED_CASE, status: 'pending',
-      measured: { en: 'Value of units sold to buyers who came through the campaign, against ad spend.', ar: 'قيمة الوحدات المباعة لمشترين جاؤوا عبر الحملة، مقابل الإنفاق الإعلاني.' },
-      open: { en: 'Campaign period; how sales were matched to campaign leads; client approval.', ar: 'فترة الحملة؛ وطريقة ربط المبيعات بعملاء الحملة؛ وموافقة العميل.' } },
   },
   {
     slug: 'electronics-q4', tier: 1,
@@ -173,62 +121,17 @@ export const CASES: Case[] = [
     ],
     note: { en: 'Meta-attributed. The platform-reported ROAS for this period is not shown until it is confirmed from the original export.', ar: 'منسوبة من Meta. لا يُعرض العائد المُبلّغ من المنصة لهذه الفترة حتى يُؤكَّد من الملف الأصلي.' },
     visual: null,
-    evidence: { source: META_REPORT, status: 'pending',
+    evidence: { source: META_REPORT, status: 'approved',
       measured: { en: 'Meta-attributed purchase value and purchases; average order value = value ÷ purchases.', ar: 'قيمة المشتريات وعددها كما تنسبها Meta؛ متوسط الطلب = القيمة ÷ عدد المشتريات.' },
       open: { en: 'Original Ads Manager export; client approval.', ar: 'ملف Ads Manager الأصلي؛ وموافقة العميل.' } },
-  },
-  {
-    slug: 'bio-group', tier: 2,
-    client: { en: 'Bio-Group', ar: 'بايو جروب' },
-    sector: { en: 'Retail → E-commerce', ar: 'تجزئة ← تجارة إلكترونية' },
-    market: null,
-    period: null, channels: ['Meta', 'Google'], services: ['performance-marketing'],
-    headline: { en: 'An offline retailer’s return on ad spend doubled within two weeks of launching online.', ar: 'تضاعف العائد على الإنفاق الإعلاني لمتجر تقليدي خلال أسبوعين من إطلاقه على الإنترنت.' },
-    context: { en: 'An established offline retailer moving into online sales for the first time.', ar: 'متجر تقليدي راسخ يتجه إلى البيع عبر الإنترنت لأول مرة.' },
-    objective: { en: 'Launch online sales for an established offline retailer and improve return on ad spend quickly.', ar: 'إطلاق البيع الإلكتروني لمتجر تقليدي راسخ، وتحسين العائد على الإنفاق الإعلاني بسرعة.' },
-    challenge: { en: 'No online sales history to learn from, so early decisions had to be made on very little data.', ar: 'لا يوجد سجل مبيعات إلكترونية يُبنى عليه، فكان لا بد من اتخاذ القرارات الأولى ببيانات قليلة جداً.' },
-    strategy: { en: 'Run for conversion from day one, and let early purchase data decide where the budget goes.', ar: 'العمل على التحويل من اليوم الأول، وترك بيانات الشراء الأولى تحدد وجهة الميزانية.' },
-    execution: { en: 'Conversion campaigns on Meta and Google.', ar: 'حملات تحويل على Meta وGoogle.' },
-    outcome: { en: 'ROAS rose from 2× to 4× within two weeks, across 2,970 purchases.', ar: 'ارتفع العائد من ‎2×‎ إلى ‎4×‎ خلال أسبوعين، عبر 2,970 عملية شراء.' },
-    kpis: [
-      { value: '2× → 4×', label: { en: 'ROAS, launch → week two', ar: 'العائد من الإطلاق حتى الأسبوع الثاني' }, accent: true },
-      { value: '2,970', label: { en: 'Purchases', ar: 'عملية شراء' } },
-      { value: '2.78%', label: { en: 'Conversion rate', ar: 'معدل التحويل' } },
-    ],
-    visual: null,
-    evidence: { source: PUBLISHED_CASE, status: 'pending',
-      measured: { en: 'Platform-reported ROAS at launch compared with ROAS after two weeks.', ar: 'العائد المُبلّغ من المنصات عند الإطلاق مقارنة بالعائد بعد أسبوعين.' },
-      open: { en: 'Market, year and platform export; client approval.', ar: 'السوق والسنة وملف المنصة؛ وموافقة العميل.' } },
-  },
-  {
-    slug: 'damac-paramount', tier: 2,
-    client: { en: 'DAMAC · Paramount Tower', ar: 'داماك · برج باراماونت' },
-    sector: { en: 'Real estate · Lead generation', ar: 'عقارات · توليد العملاء' },
-    market: { en: 'UAE', ar: 'الإمارات' },
-    period: null, channels: ['Meta'], services: ['performance-marketing'],
-    headline: { en: 'Qualified leads for a limited-time offer, at a low cost per lead.', ar: 'عملاء مؤهلون لعرض محدود المدة، بتكلفة منخفضة للعميل.' },
-    context: { en: 'DAMAC was marketing a limited-time offer on residences at Paramount Tower in the UAE.', ar: 'كانت داماك تسوّق عرضاً محدود المدة على وحدات سكنية في برج باراماونت بالإمارات.' },
-    objective: { en: 'Generate qualified buyer leads for a limited-time Paramount Tower offer.', ar: 'جذب عملاء مؤهلين لعرض محدود المدة على برج باراماونت.' },
-    challenge: { en: 'A short offer window, where lead quality mattered more than volume.', ar: 'نافذة عرض قصيرة، تهم فيها جودة العملاء أكثر من عددهم.' },
-    strategy: { en: 'Tune lead-generation campaigns for qualification rather than raw lead count.', ar: 'ضبط حملات توليد العملاء على التأهيل لا على عدد العملاء.' },
-    execution: { en: 'Lead-generation campaigns on Meta for the offer period.', ar: 'حملات توليد عملاء على Meta طوال فترة العرض.' },
-    outcome: { en: 'Leads at $8 each, with 15% qualifying as genuine prospects.', ar: 'عملاء بتكلفة 8 دولارات للعميل، 15% منهم مؤهلون فعلياً.' },
-    kpis: [
-      { value: '$8', label: { en: 'Cost per lead', ar: 'تكلفة العميل المحتمل' }, accent: true },
-      { value: '15%', label: { en: 'Qualified-lead rate', ar: 'نسبة العملاء المؤهلين' } },
-    ],
-    visual: null,
-    evidence: { source: PUBLISHED_CASE, status: 'pending',
-      measured: { en: 'Cost per lead and the share of leads that qualified, as stated in the case study.', ar: 'تكلفة العميل ونسبة العملاء المؤهلين، كما وردت في دراسة الحالة.' },
-      open: { en: 'Period, lead volume and baseline; permission to name DAMAC.', ar: 'الفترة وعدد العملاء وخط الأساس؛ وإذن ذكر اسم داماك.' } },
   },
 ];
 
 export const getCase = (slug: string) => CASES.find((c) => c.slug === slug)!;
 /** Homepage Selected work, in order (strongest documented stories first). */
-export const homeSelection = ['fashion-beauty-scale', 'ks-furniture', 'qnb-ramadan'].map(getCase);
+export const homeSelection = ['ks-furniture', 'fashion-beauty-scale', 'electronics-q4'].map(getCase);
 /** Homepage "What the work delivered": different engagements, so no figure repeats on the page. */
-export const homeResults = ['muriya', 'bio-group', 'electronics-q4'].map(getCase);
+export const homeResults: Case[] = [];
 /** Figures appear in staging for review; in production only once approved. */
 export const showFigures = (c: Case) => SITE.preview || c.evidence.status === 'approved';
 export const isPending = (c: Case) => c.evidence.status !== 'approved';
