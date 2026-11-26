@@ -18,6 +18,15 @@ const named = visibleBrands().filter((b) => b.logo);
 const moreTitle = lang === 'ar' ? 'ومن عملائنا أيضاً' : 'Also among our clients';
 ---
 <section class="section cl" id="clients" aria-labelledby="cl-title">
+  <div class="cl__marq" aria-hidden="true">
+    {[0, 1].map((row) => (
+      <div class:list={['cl__track', { 'cl__track--rev': row === 1 }]}>
+        {[...list, ...list].filter((_, i) => i % 2 === row || list.length < 8).map((c) => (
+          <span class:list={['cl__mtile', { 'cl__tile--fill': c.fill }]} style={c.tile ? `background:${c.tile}` : undefined}><img src={((lang === 'ar' && c.logoAr) || c.logo)!.src} alt="" loading="lazy" decoding="async" /></span>
+        ))}
+      </div>
+    ))}
+  </div>
   <div class="container cl__grid">
     <header class="cl__head">
       <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
@@ -82,6 +91,16 @@ const moreTitle = lang === 'ar' ? 'ومن عملائنا أيضاً' : 'Also amo
   .cl__name { font-size: var(--fs-caption); font-weight: 500; color: var(--text-strong); line-height: 1.35; }
   .cl__sector { color: var(--text-muted); font-weight: 400; }
   /* logo wall: reverse (light) logos as supplied, on graphite, never recoloured */
+  /* v1.1 motion: two logo rows drift in opposite directions above the list; paused on hover; still under reduced motion */
+  .cl__marq { display: grid; gap: 12px; margin-bottom: var(--s-8); overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .cl__track { display: flex; gap: 12px; width: max-content; animation: cl-marq 60s linear infinite; }
+  .cl__track--rev { animation-direction: reverse; animation-duration: 70s; }
+  .cl__marq:hover .cl__track { animation-play-state: paused; }
+  .cl__mtile { position: relative; flex: 0 0 auto; width: 168px; aspect-ratio: 16 / 10; background: var(--c-soft-white); overflow: hidden; clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%); }
+  .cl__mtile img { position: absolute; inset: 16% 18%; width: 64%; height: 68%; object-fit: contain; }
+  .cl__mtile.cl__tile--fill img { inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  @keyframes cl-marq { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .cl__track { animation: none; } }
   .clw { grid-column: 1 / -1; display: grid; gap: var(--s-4); margin-top: var(--s-6); }
   .clw__h { font-size: var(--fs-small); font-weight: 500; color: var(--text-muted); }
   .clw__n { color: var(--accent-text); margin-inline-start: var(--s-2); }

@@ -57,8 +57,8 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
     const ctx = await br.newContext({ reducedMotion: 'reduce', viewport: { width: 1440, height: 900 } });
     const page = await ctx.newPage();
     await page.goto(`${BASE}/${lang}/`, { waitUntil: 'networkidle' });
-    const st = await page.evaluate(() => ['.vh__tamm', '.vh__title .line > span', '.vh__sub'].map((s) => { const e = document.querySelector(s); const cs = getComputedStyle(e); return cs.opacity + '|' + cs.transform; }));
-    ok(st.every((x) => x.startsWith('1|') && (x.endsWith('none') || x.endsWith('matrix(1, 0, 0, 1, 0, 0)'))), `${lang} reduced motion: ${st.join(' ; ')}`);
+    const st = await page.evaluate(() => ['.stage__tamm', '.vh__title .line > span', '.vh__sub'].map((s) => { const e = document.querySelector(s); const cs = getComputedStyle(e); return cs.opacity + '|' + cs.transform; }));
+    ok(st.every((x, i) => x.startsWith('1|') && (i === 0 || x.endsWith('none') || x.endsWith('matrix(1, 0, 0, 1, 0, 0)'))), `${lang} reduced motion: ${st.join(' ; ')}`);   // Tamm keeps his static centring translate
     await ctx.close();
   }
   console.log(`${pass} passed, ${fail} failed`);

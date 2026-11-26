@@ -94,6 +94,26 @@ const jsonLd = [{
     addEventListener('resize', onScroll, { passive: true });
     check();
 
+    // In-view video (v1.1): muted loops play only while at least ~40% on screen and pause when they leave, so a page of
+    // films costs nothing off screen. Same rAF position check as the reveals (clip-path frames would fool IO).
+    // Reduced motion: nothing autoplays; the studio buttons still play with sound on request.
+    const vids = [...document.querySelectorAll<HTMLVideoElement>('video.js-inview')];
+    if (vids.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      let vt = false;
+      const vcheck = () => {
+        vt = false;
+        for (const v of vids) {
+          const r = v.getBoundingClientRect(), vis = Math.max(0, Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)) / (r.height || 1);
+          const hvis = Math.max(0, Math.min(r.right, innerWidth) - Math.max(r.left, 0)) / (r.width || 1);
+          if (vis > 0.4 && hvis > 0.5) { if (v.paused) { v.preload = 'auto'; v.play().catch(() => {}); } } else if (!v.paused) v.pause();
+        }
+      };
+      const vs = () => { if (!vt) { vt = true; requestAnimationFrame(vcheck); } };
+      addEventListener('scroll', vs, { passive: true }); addEventListener('resize', vs, { passive: true });
+      document.querySelectorAll('.studio__row').forEach((r) => r.addEventListener('scroll', vs, { passive: true }));
+      vcheck();
+    }
+
     // Analytics readiness: data-track="event_name" + data-* params → dataLayer (no tags fire here)
     document.addEventListener('click', (ev) => {
       const el = (ev.target as HTMLElement).closest<HTMLElement>('[data-track]');

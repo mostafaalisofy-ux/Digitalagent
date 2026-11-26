@@ -5,9 +5,10 @@ import { DISCIPLINES } from '../../data/services';
 import { type Lang } from '../../config/site';
 import { href } from '../../i18n/paths';
 import { h } from '../../i18n/home';
+import { v1 } from '../../i18n/v1';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-const d = h(lang).services;
+const d = h(lang).services; const film = v1(lang).motion.svcFilm;
 ---
 <section class="section section--surface svcs" id="services" aria-labelledby="svcs-title">
   <div class="container">
@@ -18,6 +19,10 @@ const d = h(lang).services;
       </div>
       <p class="svcs__intro" data-reveal>{d.intro}</p>
     </header>
+    <figure class="svcs__film" data-reveal>
+      <video class="js-inview" muted loop playsinline preload="none" poster="/media/services.jpg" src="/media/services.mp4" aria-label={film}></video>
+      <figcaption>{film}</figcaption>
+    </figure>
     <ol role="list" class="disc">
       {DISCIPLINES.map((g) => (
         <li class="disc__row" data-reveal>
@@ -41,6 +46,11 @@ const d = h(lang).services;
   .svcs .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
   .svcs__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); }
   .svcs__intro { color: var(--text); font-size: var(--fs-lead); max-width: 40ch; align-self: end; }
+  .svcs__film { margin: var(--s-8) 0 0; position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 16px; background: #000;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 48px), calc(100% - 48px) 100%, 0 100%); }
+  .svcs__film video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .svcs__film figcaption { position: absolute; inset-block-start: 16px; inset-inline-start: 18px; font-size: var(--fs-caption); font-weight: 700; color: var(--text-strong);
+    background: rgb(9 9 13 / .6); padding: 6px 12px; border-radius: 999px; backdrop-filter: blur(6px); }
   .disc { margin-top: var(--s-9); border-top: 1px solid var(--line-strong); }
   .disc__row { display: grid; grid-template-columns: auto 1fr; gap: var(--s-3) var(--s-4); padding-block: var(--s-6); border-bottom: 1px solid var(--line); }
   .disc__n { color: var(--accent-text); font-size: var(--fs-small); font-weight: 700; padding-top: 0.5em; }

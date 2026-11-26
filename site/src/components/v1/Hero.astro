@@ -1,23 +1,18 @@
 ---
-// v1.0 hero (owner 2026-11-26): a full-bleed studio scene of Tamm leaning on the purple 45° blade (owner-generated
-// key visual, no text in the image). The website copy is real HTML over the empty side of the scene.
-// English: Tamm on the right, copy on the left. Arabic: a separate render with Tamm on the left (never a mirrored
-// image, so the "T" on Tamm reads correctly), copy on the right. Phone: portrait render, Tamm above, copy below.
+// v1.1 hero (owner 2026-11-26: «mix our version with the motion version»). Copy on one side, a live stage on the other:
+// the 45° blade cuts in, Tamm rises onto the floor and leans toward the pointer, his speech bubble cycles three lines,
+// and the four disciplines pop in around him. Tamm is a cut-out (never mirrored); the grid flips in Arabic.
+// Reduced motion: everything is shown in its final state, the bubble stays on its last line.
 import { type Lang } from '../../config/site';
 import { href } from '../../i18n/paths';
 import { t } from '../../i18n/ui';
 import { v1 } from '../../i18n/v1';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-const d = t(lang).hero; const c = v1(lang);
-const desk = lang === 'ar' ? '/v1/hero_tamm_ar.webp' : '/v1/hero_tamm_en.webp';
+const d = t(lang).hero; const c = v1(lang); const m = c.motion;
 ---
 <section class="vh" aria-labelledby="vh-title">
-  <picture class="vh__bg">
-    <source media="(max-width: 767px)" srcset="/v1/hero_tamm_m.webp" width="1024" height="1536" />
-    <img src={desk} width="1672" height="941" alt={c.tammAlt} decoding="async" fetchpriority="high" />
-  </picture>
-  <div class="container vh__in">
+  <div class="container vh__grid">
     <div class="vh__copy">
       <p class="eyebrow" data-reveal style="--delay:80ms"><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
       <h1 class="vh__title" id="vh-title" data-reveal-group>
@@ -30,20 +25,39 @@ const desk = lang === 'ar' ? '/v1/hero_tamm_ar.webp' : '/v1/hero_tamm_en.webp';
         <a class="link-diag" href={href(lang, 'work')} data-track="cta_click" data-cta-id="explore_work" data-cta-location="hero">{d.cta2}</a>
       </div>
     </div>
+    <div class="stage" id="stage" aria-hidden="true">
+      <span class="stage__blade"></span>
+      <span class="stage__floor"></span>
+      <img class="stage__tamm" id="stageTamm" src="/media/tamm-cut.webp" width="472" height="941" alt="" decoding="async" fetchpriority="high" />
+      <p class="stage__bubble" id="stageBubble" data-lines={JSON.stringify(m.bubble)} set:html={m.bubble[0]} />
+      {m.chips.map((ch, i) => <span class={`stage__chip stage__chip--${i + 1}`}>{ch}</span>)}
+    </div>
   </div>
 </section>
 
+<script>
+  // Tamm leans toward the pointer; his bubble cycles. Both stop when the tab is hidden or motion is reduced.
+  const st = document.getElementById('stage'); const tm = document.getElementById('stageTamm'); const bb = document.getElementById('stageBubble');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (st && tm && bb && !still) {
+    const lines: string[] = JSON.parse(bb.dataset.lines || '[]'); let i = 0;
+    st.parentElement!.addEventListener('pointermove', (e) => {
+      const r = st.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+      tm.style.transform = `translateX(-50%) translate(${(x * 14).toFixed(1)}px, ${(y * 8).toFixed(1)}px) rotate(${(x * 3).toFixed(2)}deg)`;
+      st.style.setProperty('--px', x.toFixed(3)); st.style.setProperty('--py', y.toFixed(3));
+    });
+    st.parentElement!.addEventListener('pointerleave', () => { tm.style.transform = ''; st.style.setProperty('--px', '0'); st.style.setProperty('--py', '0'); });
+    setInterval(() => {
+      if (document.hidden || !lines.length) return;
+      i = (i + 1) % lines.length; bb.classList.remove('is-pop'); void bb.offsetWidth; bb.innerHTML = lines[i]; bb.classList.add('is-pop');
+    }, 2600);
+  }
+</script>
+
 <style>
-  .vh { position: relative; overflow: hidden; isolation: isolate; background: #0b0a10; min-height: min(calc(100svh - 110px), 900px); display: grid; align-items: center; }
-  .vh__bg { position: absolute; inset: 0; z-index: -1; }
-  .vh__bg img { width: 100%; height: 100%; object-fit: cover; object-position: 100% 60%; }
-  :global([dir='rtl']) .vh__bg img { object-position: 0% 60%; }
-  /* keeps the copy side calm on very wide or short screens where the scene is cropped */
-  .vh::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-    background: linear-gradient(90deg, rgb(11 10 16 / .55) 0%, rgb(11 10 16 / .15) 45%, transparent 60%); }
-  :global([dir='rtl']) .vh::after { background: linear-gradient(270deg, rgb(11 10 16 / .55) 0%, rgb(11 10 16 / .15) 45%, transparent 60%); }
-  .vh__in { padding-block: var(--s-7, 72px); }
-  .vh__copy { display: grid; gap: var(--s-5); max-width: min(40rem, 52%); }
+  .vh { position: relative; overflow: hidden; isolation: isolate; padding-block: var(--s-7, 72px) var(--s-8, 96px); }
+  .vh__grid { display: grid; gap: var(--s-7); align-items: center; }
+  .vh__copy { display: grid; gap: var(--s-5); }
   .vh .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
   .vh__title { font-size: min(var(--fs-mega), 15vh); line-height: .88; letter-spacing: -0.05em; font-weight: 700; }
   .vh__title .line { display: block; }
@@ -51,16 +65,43 @@ const desk = lang === 'ar' ? '/v1/hero_tamm_ar.webp' : '/v1/hero_tamm_en.webp';
   :global([dir='rtl']) .vh__title { line-height: 1.05; letter-spacing: 0; font-size: min(var(--fs-mega), 12vh); }
   .vh__sub { font-size: var(--fs-lead); max-width: 36ch; line-height: 1.5; }
   .vh__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-6); }
-  /* phone: portrait scene, Tamm in the top half, the copy on the dark floor below */
-  @media (max-width: 767px) {
-    .vh { min-height: 0; align-items: end; }
-    .vh__bg img { object-position: 50% 0%; }
-    :global([dir='rtl']) .vh__bg img { object-position: 50% 0%; }
-    .vh::after { background: linear-gradient(180deg, transparent 52%, rgb(11 10 16 / .7) 68%); }
-    :global([dir='rtl']) .vh::after { background: linear-gradient(180deg, transparent 52%, rgb(11 10 16 / .7) 68%); }
-    .vh__in { padding-top: 118vw; padding-bottom: var(--s-6); }
-    .vh__copy { max-width: none; gap: var(--s-4); }
-    .vh__title { font-size: clamp(3.2rem, 15vw, 5.5rem); }
+
+  /* the stage: graphite room, the blade cuts in, Tamm rises */
+  .stage { --px: 0; --py: 0; position: relative; aspect-ratio: 5 / 6; width: 100%; max-width: 560px; justify-self: center; border-radius: 36px; overflow: hidden; isolation: isolate;
+    background: radial-gradient(120% 90% at 70% 8%, #26252f 0, #17171e 52%, #0f0f15 100%); box-shadow: inset 0 0 0 1px var(--line); }
+  .stage__blade { position: absolute; z-index: -1; left: 50%; top: -20%; width: 15%; height: 150%; border-radius: 28px; background: var(--accent);
+    transform: translateX(calc(-50% + var(--px) * -18px)) rotate(45deg) scaleY(0); animation: vh-cut 1.1s .25s var(--ease-out) forwards; }
+  @keyframes vh-cut { to { transform: translateX(calc(-50% + var(--px) * -18px)) rotate(45deg) scaleY(1); } }
+  .stage__floor { position: absolute; inset: auto 18% 6% 18%; height: 22px; border-radius: 50%; background: radial-gradient(closest-side, rgb(0 0 0 / .55), transparent); }
+  .stage__tamm { position: absolute; bottom: 5%; left: 50%; height: 86%; width: auto; transform: translateX(-50%); transition: transform .25s ease-out;
+    filter: drop-shadow(0 24px 30px rgb(0 0 0 / .45)); animation: vh-rise .9s .1s var(--ease-out) both; }
+  @keyframes vh-rise { from { opacity: 0; translate: 0 40px; } }
+  .stage__bubble { position: absolute; top: 8%; inset-inline-start: 6%; max-width: 54%; margin: 0; background: var(--c-soft-white); color: var(--c-obsidian);
+    border-radius: 20px; padding: 12px 18px; font-weight: 700; font-size: clamp(1.05rem, 1.6vw, 1.45rem); line-height: 1.25;
+    animation: vh-pop .5s .9s cubic-bezier(.2, 1.4, .4, 1) both; }
+  .stage__bubble::after { content: ''; position: absolute; bottom: -8px; inset-inline-start: 32px; width: 18px; height: 18px; background: inherit; transform: rotate(45deg); border-radius: 3px; }
+  .stage__bubble :global(b) { color: var(--accent); }
+  .stage__bubble.is-pop { animation: vh-pop .45s cubic-bezier(.2, 1.4, .4, 1) both; }
+  @keyframes vh-pop { from { opacity: 0; transform: scale(.6); } }
+  .stage__chip { position: absolute; display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; background: rgb(23 23 30 / .88);
+    border: 1px solid var(--line-strong); color: var(--text-strong); font-size: var(--fs-caption); font-weight: 700; backdrop-filter: blur(6px);
+    animation: vh-pop .5s cubic-bezier(.2, 1.4, .4, 1) both; translate: calc(var(--px) * 10px) calc(var(--py) * 6px); }
+  .stage__chip::before { content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--accent); transform: rotate(45deg); }
+  .stage__chip--1 { inset-inline-end: 6%; top: 34%; animation-delay: 1.1s; }
+  .stage__chip--2 { inset-inline-start: 5%; top: 52%; animation-delay: 1.25s; }
+  .stage__chip--3 { inset-inline-end: 7%; top: 67%; animation-delay: 1.4s; }
+  .stage__chip--4 { inset-inline-start: 8%; bottom: 12%; animation-delay: 1.55s; }
+  @media (min-width: 1024px) {
+    .vh { min-height: min(calc(100svh - 110px), 900px); display: grid; align-items: center; }
+    .vh__grid { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: var(--s-8); }
   }
-  @media (min-width: 768px) and (max-width: 1023px) { .vh__copy { max-width: 58%; } .vh__title { font-size: clamp(3.4rem, 9vw, 6rem); } }
+  @media (max-width: 767px) {
+    .vh { padding-block: var(--s-6) var(--s-7); }
+    .vh__title { font-size: clamp(3.2rem, 15vw, 5.5rem); }
+    .stage { max-width: 440px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stage__blade { animation: none; transform: translateX(-50%) rotate(45deg); }
+    .stage__tamm, .stage__bubble, .stage__chip { animation: none; }
+  }
 </style>

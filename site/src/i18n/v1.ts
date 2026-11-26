@@ -72,6 +72,12 @@ export const QUOTES: { q: string; who: string }[] = [
 const COPY = {
   en: {
     tammAlt: 'Tamm, the SayTamm character, pointing at the work',
+    motion: { bubble: ['Tell us the goal.', 'We take it from there.', 'Say it… <b>Tamm.</b>'], chips: ['Strategy', 'Creative', 'Media', 'Technology'],
+      reel: 'Showreel', reelTitle: 'Four briefs. Four times done.', reelNote: 'Real client work: Altopiano, Zahid Electra, Clean Basket, Exodus. The briefs are illustrative.',
+      soundOn: 'Turn sound on', soundOff: 'Mute', svcFilm: 'The nine services, in motion',
+      studio: { eyebrow: 'Made in our studio', title: 'Short films we write, design and animate in-house.', body: 'Tap one to play it with sound.', play: 'Play with sound', pause: 'Pause', prev: 'Previous', next: 'Next',
+        films: [['ep-01_discounts', 'They told you… 01 · Discounts'], ['ep-02_prettypicture', 'They told you… 02 · The pretty picture'], ['ep-03_budget', 'They told you… 03 · Budget'], ['ep-04_audience', 'They told you… 04 · Audience'],
+          ['sector-food', 'Food & hospitality · Altopiano'], ['sector-homeappliances', 'Home appliances · Zahid Electra'], ['sector-electronics', 'Consumer electronics · Tech Hive'], ['sector-apps', 'Apps & services · Clean Basket'], ['sector-travel', 'Travel & tourism · Exodus']] } },
     who: { eyebrow: 'Who we are', title: 'A digital marketing & performance agency built to move brands forward.',
       lead: 'SayTamm brings strategy, creative, media and technology together under one connected approach to growth.',
       storyTitle: 'Why we started',
@@ -91,6 +97,12 @@ const COPY = {
   },
   ar: {
     tammAlt: 'تم، شخصية قول تم، يشير إلى الأعمال',
+    motion: { bubble: ['قل لنا الهدف.', 'والباقي علينا.', 'قولها… <b>تم.</b>'], chips: ['الاستراتيجية', 'الإبداع', 'الإعلانات', 'التقنية'],
+      reel: 'ريل الأعمال', reelTitle: 'أربعة بريفات. أربع مرات تمّت.', reelNote: 'أعمال حقيقية لعملائنا: Altopiano وZahid Electra وClean Basket وExodus. البريفات صياغة توضيحية.',
+      soundOn: 'شغّل الصوت', soundOff: 'اكتم الصوت', svcFilm: 'الخدمات التسع، بالحركة',
+      studio: { eyebrow: 'من استوديو قول تم', title: 'أفلام قصيرة نكتبها ونصمّمها ونحرّكها داخل الفريق.', body: 'اضغط على أي فيلم لتشغيله بالصوت.', play: 'شغّل بالصوت', pause: 'إيقاف', prev: 'السابق', next: 'التالي',
+        films: [['ep-01_discounts', 'قالوا لك… 01 · الخصومات'], ['ep-02_prettypicture', 'قالوا لك… 02 · الصورة الحلوة'], ['ep-03_budget', 'قالوا لك… 03 · الميزانية'], ['ep-04_audience', 'قالوا لك… 04 · الجمهور'],
+          ['sector-food', 'المطاعم والضيافة · Altopiano'], ['sector-homeappliances', 'الأجهزة المنزلية · Zahid Electra'], ['sector-electronics', 'الإلكترونيات · Tech Hive'], ['sector-apps', 'الأبلكيشنز والخدمات · Clean Basket'], ['sector-travel', 'السفر والسياحة · Exodus']] } },
     who: { eyebrow: 'من نحن', title: 'وكالة تسويق رقمي وأداء، تحوّل الأفكار إلى تأثير.',
       lead: 'في قول تم، نجمع الاستراتيجية والإبداع والإعلانات والتقنية في منظومة واحدة. نفهم أهداف الأعمال، ونبني خطط التسويق، ونحوّلها إلى تنفيذ واضح ونتائج قابلة للقياس.',
       storyTitle: 'لماذا بدأنا',

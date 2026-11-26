@@ -1,5 +1,6 @@
 ---
 // Homepage v1.0 (D-026, docs/WEBSITE_V1_PLAN.md): follows the 2026 company profile.
+// v1.1 (owner 2026-11-26, mix with the motion version): live hero stage, showreel band, services film, studio carousel, logo drift.
 // Owner order (2026-11-26): hero → who we are (mission, vision) → services → case studies → working with us →
 // clients and their logos → brief. Work by industry lives on /work.
 import Base from '../../layouts/Base.astro';
@@ -7,6 +8,8 @@ import Hero from '../../components/v1/Hero.astro';
 import Who from '../../components/v1/Who.astro';
 import Cases from '../../components/v1/Cases.astro';
 import Journey from '../../components/v1/Journey.astro';
+import Showreel from '../../components/v1/Showreel.astro';
+import Studio from '../../components/v1/Studio.astro';
 import HomeServices from '../../components/home/HomeServices.astro';
 import Clients from '../../components/home/Clients.astro';
 import End from '../../components/v1/End.astro';
@@ -19,9 +22,11 @@ const d = t(lang);
 ---
 <Base lang={lang} page="home" title={d.meta.homeTitle} description={d.meta.homeDesc}>
   <Hero lang={lang} />
+  <Showreel lang={lang} />
   <Who lang={lang} />
   <HomeServices lang={lang} />
   <Cases lang={lang} />
+  <Studio lang={lang} />
   <Journey lang={lang} />
   <Clients lang={lang} />
   <End lang={lang} />

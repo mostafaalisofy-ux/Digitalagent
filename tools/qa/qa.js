@@ -23,10 +23,10 @@ async function settle(page) {
       const errs = [];
       page.on('console', (m) => m.type() === 'error' && errs.push(m.text()));
       page.on('pageerror', (e) => errs.push(e.message));
-      page.on('requestfailed', (r) => errs.push('FAIL ' + r.url()));
+      page.on('requestfailed', (r) => { if (!/\.mp4(\?|$)/.test(r.url())) errs.push('FAIL ' + r.url()); });   // a video range request aborted by pause is not an error
       const res = await page.goto(BASE + p, { waitUntil: 'networkidle' });
       await page.waitForTimeout(1500);
-      const first = await page.evaluate(() => { const c = document.querySelector('.hero .btn--primary'); if (!c) return null; const b = c.getBoundingClientRect(); return { bottom: b.bottom, hidden: getComputedStyle(c.closest('[data-reveal]') || c).opacity !== '1' }; });
+      const first = await page.evaluate(() => { const c = document.querySelector('.vh .btn--primary, .hero .btn--primary'); if (!c) return null; const b = c.getBoundingClientRect(); return { bottom: b.bottom, hidden: getComputedStyle(c.closest('[data-reveal]') || c).opacity !== '1' }; });
       await settle(page);
       // lazy images below the fold may still be downloading after the scroll: give them up to 5 s
       // The home work wall (.wm__track) is a horizontally clipped marquee: its lazy tiles load as they slide in,
@@ -42,8 +42,8 @@ async function settle(page) {
       });
       const r = await page.evaluate(() => {
         const over = document.documentElement.scrollWidth - innerWidth;
-        const imgs = [...document.images].filter((i) => i.offsetParent && !i.closest('.wm__track') && (!i.complete || !i.naturalWidth)).map((i) => i.src);
-        const cta = document.querySelector('.hero .btn--primary');
+        const imgs = [...document.images].filter((i) => i.offsetParent && !i.closest('.wm__track') && !i.closest('.cl__marq') && (!i.complete || !i.naturalWidth)).map((i) => i.src);
+        const cta = document.querySelector('.vh .btn--primary, .hero .btn--primary');
         const ctaBottom = cta ? cta.getBoundingClientRect().bottom : null;
         const ctaHidden = cta ? getComputedStyle(cta.closest('[data-reveal]') || cta).opacity !== '1' : false;
         return { over, imgs, ctaBottom, ctaHidden };

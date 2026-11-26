@@ -1,0 +1,92 @@
+---
+// v1.1 studio: the in-house 9:16 films (the Tamm series «قالوا لك…» and the five sector reels) in a snap carousel.
+// Each plays muted on loop while it is on screen; the button replays it from the start with sound (one at a time).
+import { type Lang } from '../../config/site';
+import { v1 } from '../../i18n/v1';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = v1(lang).motion.studio;
+---
+<section class="section studio" id="studio" aria-labelledby="studio-title">
+  <div class="container">
+    <header class="studio__head">
+      <div class="studio__headl">
+        <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{s.eyebrow}</p>
+        <h2 class="studio__title" id="studio-title" data-reveal>{s.title}</h2>
+      </div>
+      <div class="studio__side" data-reveal>
+        <p>{s.body}</p>
+        <div class="studio__nav">
+          <button type="button" class="js-prev" aria-label={s.prev}><span aria-hidden="true">‹</span></button>
+          <button type="button" class="js-next" aria-label={s.next}><span aria-hidden="true">›</span></button>
+        </div>
+      </div>
+    </header>
+  </div>
+  <ul role="list" class="studio__row" tabindex="0" aria-label={s.eyebrow}>
+    {s.films.map(([id, title]) => (
+      <li class="studio__item">
+        <figure>
+          <div class="studio__frame">
+            <video class="js-inview" muted loop playsinline preload="none" poster={`/media/studio/${id}-${lang}.jpg`} src={`/media/studio/${id}-${lang}.mp4`} aria-label={title}></video>
+            <button type="button" class="studio__play" data-play={s.play} data-pause={s.pause}><span aria-hidden="true" class="studio__ico"></span><span class="studio__lbl">{s.play}</span></button>
+          </div>
+          <figcaption>{title}</figcaption>
+        </figure>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<script>
+  const row = document.querySelector<HTMLElement>('.studio__row');
+  if (row) {
+    const rtl = document.documentElement.dir === 'rtl';
+    const step = (d: number) => { const w = row.querySelector<HTMLElement>('.studio__item')?.offsetWidth ?? 300; row.scrollBy({ left: d * (w + 16) * (rtl ? -1 : 1), behavior: 'smooth' }); };
+    document.querySelector('.studio .js-prev')?.addEventListener('click', () => step(-1));
+    document.querySelector('.studio .js-next')?.addEventListener('click', () => step(1));
+    row.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') step(rtl ? -1 : 1); if (e.key === 'ArrowLeft') step(rtl ? 1 : -1); });
+    row.querySelectorAll<HTMLButtonElement>('.studio__play').forEach((b) => {
+      const v = b.parentElement!.querySelector('video')!; const lbl = b.querySelector('.studio__lbl')!;
+      b.addEventListener('click', () => {
+        const on = v.muted || v.paused;
+        row.querySelectorAll<HTMLVideoElement>('video').forEach((o) => { if (o !== v && !o.muted) { o.muted = true; const ob = o.parentElement!.querySelector<HTMLButtonElement>('.studio__play')!; ob.classList.remove('is-on'); ob.querySelector('.studio__lbl')!.textContent = ob.dataset.play!; } });
+        if (on) { v.muted = false; v.currentTime = 0; v.play(); } else { v.muted = true; }
+        b.classList.toggle('is-on', on); lbl.textContent = on ? b.dataset.pause! : b.dataset.play!;
+      });
+    });
+  }
+</script>
+
+<style>
+  .studio { overflow: hidden; }
+  .studio__head { display: grid; gap: var(--s-5); margin-bottom: var(--s-7); }
+  .studio__headl { display: grid; gap: var(--s-4); }
+  .studio .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .studio__title { font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--track-tight); max-width: 18ch; }
+  .studio__side { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--s-4); color: var(--text-muted); }
+  .studio__nav { display: flex; gap: 8px; }
+  .studio__nav button { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line-strong); background: transparent; color: var(--text-strong); font-size: 1.4rem; cursor: pointer; }
+  :global([dir='rtl']) .studio__nav span { display: inline-block; transform: scaleX(-1); }
+  .studio__nav button:hover { border-color: var(--text-muted); }
+  .studio__row { list-style: none; margin: 0; display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    padding: 4px max(var(--margin), calc((100vw - var(--container)) / 2 + var(--margin))) 12px; scroll-padding-inline: max(var(--margin), calc((100vw - var(--container)) / 2 + var(--margin))); }
+  .studio__row::-webkit-scrollbar { display: none; }
+  .studio__item { flex: 0 0 clamp(220px, 24vw, 300px); scroll-snap-align: start; }
+  .studio__item figure { margin: 0; display: grid; gap: 12px; }
+  .studio__frame { position: relative; aspect-ratio: 9 / 16; border-radius: 22px; overflow: hidden; background: #000;
+    clip-path: polygon(0 0, calc(100% - 36px) 0, 100% 36px, 100% 100%, 0 100%); transition: transform var(--d-3, .3s) var(--ease-out); }
+  .studio__frame:hover { transform: translateY(-4px); }
+  .studio__item video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .studio__item figcaption { font-size: var(--fs-small); font-weight: 700; color: var(--text-strong); }
+  .studio__play { position: absolute; inset: auto 12px 12px 12px; min-height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border-radius: 999px;
+    border: 0; background: var(--c-soft-white); color: var(--c-obsidian); font: 700 var(--fs-small) / 1 var(--font); cursor: pointer; }
+  .studio__ico { width: 0; height: 0; border-block: 7px solid transparent; border-inline-start: 11px solid currentColor; }
+  :global([dir='rtl']) .studio__ico { border-inline-start: 0; border-inline-end: 11px solid currentColor; }
+  .studio__play.is-on .studio__ico { width: 11px; height: 12px; border: 0; border-inline: 4px solid currentColor; }
+  @media (min-width: 1024px) {
+    .studio__head { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: end; }
+    .studio__headl { grid-column: 1 / span 7; }
+    .studio__side { grid-column: 9 / -1; }
+  }
+</style>
