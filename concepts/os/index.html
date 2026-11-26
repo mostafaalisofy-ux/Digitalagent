@@ -1,0 +1,353 @@
+<title>Tamm OS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;700&display=swap">
+<style>
+/* Option D, «Tamm OS»: the agency as an operating system. A desktop on obsidian; every section is an app in a window
+   (draggable on desktop, a full-screen sheet on phones). Deliberately one look, dark, in the brand palette:
+   Obsidian ground, Graphite windows, Soft White ink, Muted secondary, Electric Purple for focus and the blade only. */
+:root {
+  --ob: #09090D; --gr: #17171E; --gr2: #20202A; --ink: #F5F3FA; --mu: #96939F; --line: rgb(245 243 250 / .1); --line2: rgb(245 243 250 / .18);
+  --pu: #6C35FF; --pi: #A78BFA;
+  --font: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { background: var(--ob); color: var(--ink); font: 400 15px/1.6 var(--font); overflow: hidden; -webkit-font-smoothing: antialiased; }
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--pu); outline-offset: 2px; border-radius: 8px; }
+
+/* wallpaper: the blade, huge, and the line in outline */
+.desk { position: fixed; inset: 0; overflow: hidden; background: radial-gradient(120% 90% at 80% 10%, #16141f 0, var(--ob) 60%); }
+.desk::before { content: ""; position: absolute; width: 22vmin; height: 170vmax; inset-inline-end: 18vw; top: -40vmax; background: linear-gradient(var(--pu), #3b1d99); border-radius: 6vmin; transform: rotate(45deg); opacity: .9; }
+.wall { position: absolute; inset-inline-start: max(28px, env(safe-area-inset-left, 0px)); bottom: 84px; font-weight: 700; font-size: clamp(64px, 13vw, 210px); line-height: .9; letter-spacing: -.04em; color: transparent; -webkit-text-stroke: 1.5px rgb(245 243 250 / .14); pointer-events: none; white-space: nowrap; }
+[dir="rtl"] .wall { letter-spacing: 0; line-height: 1.15; }
+
+/* top bar */
+.bar { position: fixed; inset: 0 0 auto; z-index: 100002; height: calc(34px + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px)); display: flex; align-items: center; gap: 14px; background: rgb(9 9 13 / .72); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); font-size: 13px; }
+.bar img { height: 18px; width: auto; }
+.bar b { font-weight: 700; }
+.bar .sp { flex: 1; }
+.bar button { background: none; border: 1px solid var(--line2); border-radius: 999px; padding: 2px 12px; cursor: pointer; font-size: 12.5px; }
+.bar .clock { font-variant-numeric: tabular-nums; color: var(--mu); direction: ltr; }
+
+/* desktop icons */
+.icons { position: fixed; top: 54px; inset-inline-start: max(18px, env(safe-area-inset-left, 0px)); z-index: 5; display: grid; grid-auto-flow: column; grid-template-rows: repeat(5, 104px); gap: 6px 14px; }
+.ico { width: 96px; border: 0; background: none; cursor: pointer; display: grid; justify-items: center; gap: 6px; padding: 8px 4px; border-radius: 14px; color: var(--ink); }
+.ico:hover, .ico:focus-visible { background: rgb(245 243 250 / .07); }
+.ico .g { width: 54px; height: 54px; border-radius: 15px; background: var(--gr2); border: 1px solid var(--line2); display: grid; place-items: center; position: relative; overflow: hidden; box-shadow: 0 10px 24px rgb(0 0 0 / .35); }
+.ico .g svg { width: 26px; height: 26px; stroke: var(--ink); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ico .g.hot { background: var(--pu); border-color: var(--pu); }
+.ico span { font-size: 12.5px; line-height: 1.25; text-align: center; text-shadow: 0 1px 6px #000; }
+
+/* dock */
+.dock { position: fixed; z-index: 100001; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); display: flex; gap: 8px; padding: 8px; border-radius: 22px; background: rgb(23 23 30 / .78); border: 1px solid var(--line2); backdrop-filter: blur(16px); }
+.dock button { position: relative; width: 46px; height: 46px; border-radius: 13px; border: 1px solid var(--line2); background: var(--gr2); cursor: pointer; display: grid; place-items: center; transition: transform .18s; }
+.dock button:hover { transform: translateY(-6px) scale(1.12); }
+.dock button svg { width: 22px; height: 22px; stroke: var(--ink); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.dock button.hot { background: var(--pu); border-color: var(--pu); }
+.dock button.open::after { content: ""; position: absolute; bottom: -6px; left: 50%; width: 5px; height: 5px; border-radius: 2px; background: var(--ink); transform: translateX(-50%) rotate(45deg); }
+.dock .tip { position: absolute; bottom: 58px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 12px; background: var(--gr); border: 1px solid var(--line2); padding: 3px 10px; border-radius: 8px; opacity: 0; pointer-events: none; transition: opacity .15s; }
+.dock button:hover .tip { opacity: 1; }
+
+/* windows */
+.win { position: fixed; z-index: 100; display: flex; flex-direction: column; min-width: 300px; max-width: calc(100vw - 24px); max-height: calc(100vh - 120px); background: var(--gr); border: 1px solid var(--line2); border-radius: 18px; box-shadow: 0 40px 90px rgb(0 0 0 / .55), 0 0 0 1px rgb(0 0 0 / .4); overflow: hidden; animation: open .28s cubic-bezier(.2,.9,.3,1.2); }
+.win.focus { border-color: rgb(167 139 250 / .55); }
+.win.min { display: none; }
+@keyframes open { from { transform: scale(.92) translateY(10px); opacity: 0; } }
+.tb { flex: none; display: flex; align-items: center; gap: 10px; height: 44px; padding-inline: 14px 8px; background: var(--gr2); border-bottom: 1px solid var(--line); cursor: grab; user-select: none; touch-action: none; }
+.tb:active { cursor: grabbing; }
+.tb .t { font-weight: 500; font-size: 13.5px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tb .t i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: var(--pu); transform: rotate(45deg); margin-inline-end: 8px; }
+.tb button { width: 30px; height: 30px; border-radius: 9px; border: 0; background: transparent; cursor: pointer; display: grid; place-items: center; color: var(--mu); font-size: 18px; line-height: 1; }
+.tb button:hover { background: rgb(245 243 250 / .08); color: var(--ink); }
+.tb .back { display: none; }
+.wb { overflow: auto; padding: 20px; min-height: 0; }
+.wb h2 { margin: 0 0 6px; font-size: 26px; line-height: 1.2; letter-spacing: -.02em; text-wrap: balance; }
+[dir="rtl"] .wb h2 { letter-spacing: 0; line-height: 1.4; }
+.wb p { margin: 0 0 10px; color: #D8D5E0; max-width: 62ch; }
+.wb .mu { color: var(--mu); font-size: 13px; }
+.wb .lab { font-size: 12px; color: var(--mu); letter-spacing: .06em; margin: 16px 0 6px; }
+[dir="rtl"] .wb .lab { letter-spacing: 0; }
+
+/* about */
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 14px 0; }
+.facts div { background: var(--ob); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; }
+.facts b { display: block; font-size: 28px; line-height: 1.1; direction: ltr; text-align: start; font-variant-numeric: tabular-nums; }
+[dir="rtl"] .facts b { text-align: end; }
+.facts div:first-child b { color: var(--pi); }
+.facts span { font-size: 12px; color: var(--mu); }
+.mv { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.mv div { background: var(--ob); border-radius: 14px; padding: 12px; border: 1px solid var(--line); }
+.mv b { display: block; font-size: 12px; color: var(--pi); margin-bottom: 4px; }
+
+/* services: two panes */
+.split { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 14px; }
+.side { display: grid; gap: 4px; align-content: start; }
+.side button { text-align: start; border: 0; background: transparent; border-radius: 10px; padding: 9px 10px; cursor: pointer; font-size: 14px; color: var(--mu); }
+.side button[aria-selected="true"] { background: var(--ob); color: var(--ink); box-shadow: inset 3px 0 0 var(--pu); }
+[dir="rtl"] .side button[aria-selected="true"] { box-shadow: inset -3px 0 0 var(--pu); }
+.files { display: grid; gap: 8px; }
+.file { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; background: var(--ob); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.file .fi { width: 34px; height: 40px; border-radius: 6px; background: var(--gr2); border: 1px solid var(--line2); position: relative; }
+.file .fi::after { content: ""; position: absolute; inset: 8px 9px auto; height: 3px; background: var(--pu); border-radius: 2px; box-shadow: 0 7px 0 var(--line2), 0 14px 0 var(--line2); }
+.file b { display: block; font-size: 14.5px; }
+.file span { font-size: 13px; color: var(--mu); }
+
+/* player */
+.player { background: #000; border-radius: 12px; overflow: hidden; aspect-ratio: 16 / 9; position: relative; }
+.player.v { aspect-ratio: 9 / 16; max-height: 62vh; margin: 0 auto; }
+.player video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ctrl { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+.btn { border: 1px solid var(--line2); background: var(--gr2); border-radius: 999px; min-height: 38px; padding: 0 14px; cursor: pointer; font-weight: 500; font-size: 13.5px; }
+.btn.pri { background: var(--pu); border-color: var(--pu); color: #fff; }
+.reels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.reel { border: 0; padding: 0; background: none; cursor: pointer; text-align: start; display: grid; gap: 6px; }
+.reel img { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 12px; border: 1px solid var(--line); transition: transform .2s; }
+.reel:hover img { transform: translateY(-3px); }
+.reel span { font-size: 12px; color: var(--mu); line-height: 1.35; }
+
+/* sheet */
+.sheet { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.sheet th, .sheet td { border: 1px solid var(--line); padding: 8px 10px; text-align: start; vertical-align: top; }
+.sheet th { background: var(--gr2); font-weight: 500; color: var(--mu); font-size: 12px; position: sticky; top: 0; }
+.sheet td.n { font-weight: 700; color: var(--pi); font-size: 18px; direction: ltr; unicode-bidi: isolate; white-space: nowrap; }
+.sheet tr { cursor: pointer; } .sheet tbody tr:hover td { background: rgb(245 243 250 / .04); }
+.sheet tr.sel td { background: rgb(108 53 255 / .12); }
+.tbl { overflow-x: auto; border-radius: 10px; }
+.cell { background: var(--ob); border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-top: 12px; }
+.cell .fx { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; color: var(--pi); direction: ltr; text-align: start; margin-bottom: 6px; }
+
+/* gallery */
+.gal { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+.gal div { aspect-ratio: 4 / 3; background: #fff; border-radius: 10px; display: grid; place-items: center; }
+.gal img { width: 72%; height: 62%; object-fit: contain; }
+
+/* mail */
+.mail { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.mail label { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 8px; padding: 6px 12px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--mu); }
+.mail input, .mail textarea { border: 0; background: transparent; padding: 8px 0; outline: none; color: var(--ink); min-width: 0; }
+.mail textarea { min-height: 120px; resize: vertical; padding: 12px; border-bottom: 1px solid var(--line); }
+.mail .to { direction: ltr; unicode-bidi: isolate; color: var(--ink); user-select: all; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.chips button { border: 1px solid var(--line2); background: transparent; border-radius: 999px; padding: 4px 10px; cursor: pointer; font-size: 12.5px; }
+.chips button[aria-pressed="true"] { background: var(--ink); color: var(--ob); }
+.mail .foot { display: flex; gap: 8px; align-items: center; padding: 10px 12px; flex-wrap: wrap; }
+.out { white-space: pre-wrap; font-size: 13.5px; background: var(--ob); border-radius: 10px; padding: 10px; margin-top: 10px; border: 1px dashed var(--line2); }
+
+/* Tamm, the assistant */
+.tamm { position: fixed; z-index: 60; bottom: 76px; inset-inline-end: max(14px, env(safe-area-inset-right, 0px)); display: flex; align-items: flex-end; gap: 8px; pointer-events: none; }
+.tamm img { width: 92px; height: auto; filter: drop-shadow(0 16px 22px rgb(0 0 0 / .5)); pointer-events: auto; cursor: pointer; animation: float 5s ease-in-out infinite; }
+@keyframes float { 50% { transform: translateY(-8px); } }
+.tamm .say { max-width: 240px; background: var(--ink); color: var(--ob); border-radius: 16px; padding: 10px 14px; font-weight: 500; font-size: 13.5px; line-height: 1.4; pointer-events: auto; box-shadow: 0 14px 30px rgb(0 0 0 / .4); animation: pop .4s cubic-bezier(.2,1.4,.4,1); }
+.tamm .say b { color: var(--pu); }
+@keyframes pop { from { transform: scale(.7); opacity: 0; } }
+
+/* boot */
+.boot { position: fixed; inset: 0; z-index: 2000; background: var(--ob); display: grid; place-items: center; transition: opacity .4s; }
+.boot.out { opacity: 0; pointer-events: none; }
+.boot .in { display: grid; justify-items: center; gap: 22px; }
+.boot img { height: 96px; animation: pop .7s cubic-bezier(.2,1.4,.4,1); }
+.boot .pb { width: 180px; height: 4px; border-radius: 4px; background: var(--gr2); overflow: hidden; }
+.boot .pb i { display: block; height: 100%; width: 0; background: var(--pu); animation: load 1.2s .2s ease forwards; }
+@keyframes load { to { width: 100%; } }
+.boot small { color: var(--mu); font-size: 13px; }
+
+/* phones: a home screen, apps open as sheets */
+@media (max-width: 760px) {
+  .icons { inset-inline: max(14px, env(safe-area-inset-left, 0px)); top: 58px; grid-auto-flow: row; grid-template-rows: none; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 4px; }
+  .ico { width: auto; }
+  .wall { font-size: 21vw; bottom: 120px; }
+  .win { inset: calc(34px + env(safe-area-inset-top, 0px)) 0 0 0 !important; width: auto !important; height: auto !important; max-width: none; max-height: none; border-radius: 18px 18px 0 0; animation: sheet .3s cubic-bezier(.2,.9,.3,1); }
+  @keyframes sheet { from { transform: translateY(40px); opacity: 0; } }
+  .tb { cursor: default; } .tb .back { display: grid; } .tb .mn { display: none; }
+  .split { grid-template-columns: minmax(0, 1fr); } .side { grid-auto-flow: column; overflow-x: auto; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .mv { grid-template-columns: minmax(0, 1fr); }
+  .reels { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tamm img { width: 70px; } .tamm .say { max-width: 200px; font-size: 12.5px; }
+  .dock button:hover { transform: none; }
+  body.has-win .tamm, body.has-win .dock { display: none; }
+  .sheet th:nth-child(2), .sheet td:nth-child(2), .sheet th:nth-child(3), .sheet td:nth-child(3) { display: none; }
+  .win { z-index: 100003 !important; }
+  .mail label { grid-template-columns: 84px 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="boot" id="boot" aria-hidden="true"><div class="in"><img src="media/symbol-white-purple.svg" alt=""><div class="pb"><i></i></div><small id="bootTxt"></small></div></div>
+<div class="desk" aria-hidden="true"><div class="wall" id="wall"></div></div>
+<header class="bar">
+  <img src="media/symbol-white-purple.svg" alt="SayTamm" width="15" height="18">
+  <b id="osName">Tamm OS</b><span id="barHint" style="color:var(--mu)"></span>
+  <span class="sp"></span>
+  <button type="button" id="lang"></button>
+  <span class="clock" id="clock"></span>
+</header>
+<nav class="icons" id="icons" aria-label="Apps"></nav>
+<div id="wins"></div>
+<div class="tamm" id="tamm"><div class="say" id="tammSay" role="status"></div><img src="media/tamm-cut.webp" alt="Tamm" id="tammImg"></div>
+<nav class="dock" id="dock" aria-label="Dock"></nav>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+"use strict";
+const D = JSON.parse(document.getElementById('data').textContent);
+const I = { // line icons (stroke only)
+  about: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.2-3.6 3.9-5.4 7-5.4s5.8 1.8 7 5.4"/></svg>',
+  svc: '<svg viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3z"/></svg>',
+  reel: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9.5v5l4.5-2.5z"/></svg>',
+  studio: '<svg viewBox="0 0 24 24"><rect x="4" y="3" width="7" height="12" rx="1.5"/><rect x="13" y="9" width="7" height="12" rx="1.5"/></svg>',
+  num: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11M15 9v11"/></svg>',
+  cl: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  mail: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
+  read: '<svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M9 11h6M9 15h6"/></svg>',
+};
+const T = {
+  ar: { lang: 'English', hint: 'اضغط على أي أيقونة', boot: 'قولها… جارٍ تشغيل تم', wall: 'قول. تم.',
+    apps: { about: 'من نحن', svc: 'الخدمات', reel: 'ريل الأعمال', studio: 'الاستوديو', num: 'الأرقام', cl: 'العملاء', mail: 'ابدأ مشروعاً', read: 'اقرأني' },
+    tips: ['أهلاً، أنا <b>تم</b>. افتح أي برنامج، أو اضغط عليّ لنبدأ مشروعك.', 'جرّب «الأرقام»: كل رقم يذكر كيف قيس.', 'في «الاستوديو» أفلامنا القصيرة، شغّلها بالصوت.', 'قولها… <b>تم.</b>'],
+    close: 'إغلاق', min: 'تصغير', back: 'رجوع',
+    whoH: 'وكالة تسويق رقمي وأداء، تحوّل الأفكار إلى تأثير.', whoP: 'في قول تم، نجمع الاستراتيجية والإبداع والإعلانات والتقنية في منظومة واحدة. نفهم أهداف الأعمال، ونبني خطط التسويق، ونحوّلها إلى تنفيذ واضح ونتائج قابلة للقياس.',
+    facts: [['2021', 'سنة التأسيس'], ['30', 'شخصًا في الفريق'], ['20+', 'قطاعًا في سجل الفريق'], ['5', 'أسواق في سجل الفريق']],
+    svcH: 'تسع خدمات. هدف واحد.', svcP: 'أربعة تخصصات تعمل كخطة واحدة.',
+    reelH: 'أربعة بريفات. أربع مرات تمّت.', reelP: 'أعمال حقيقية لعملائنا: Altopiano وZahid Electra وClean Basket وExodus. البريفات صياغة توضيحية.', sound: 'شغّل الصوت', mute: 'اكتم الصوت', replay: 'من البداية',
+    studioH: 'أفلام قصيرة من داخل الفريق.', studioP: 'اختر فيلماً لتشغيله بالصوت.', backList: 'كل الأفلام',
+    films: [['ep-01_discounts', 'قالوا لك… الخصومات'], ['ep-02_prettypicture', 'قالوا لك… الصورة الحلوة'], ['ep-03_budget', 'قالوا لك… الميزانية'], ['ep-04_audience', 'قالوا لك… الجمهور'], ['sector-food', 'المطاعم · Altopiano'], ['sector-homeappliances', 'الأجهزة المنزلية · Zahid Electra'], ['sector-electronics', 'الإلكترونيات · Tech Hive'], ['sector-apps', 'الأبلكيشنز · Clean Basket'], ['sector-travel', 'السفر · Exodus']],
+    numH: 'العمل، بالأرقام.', numP: 'اضغط على أي صف لترى كيف قيس الرقم. العائد على الإنفاق الإعلاني (ROAS) هو الإيراد مقسومًا على الإنفاق، وليس ربحًا.', cols: ['العميل', 'القطاع', 'الفترة', 'الرقم', 'ما يقيسه'], measured: 'كيف قيس الرقم',
+    clH: 'عملاء وثقوا بفريق قول تم.',
+    mailH: 'أخبرنا بالهدف. والباقي علينا.', to: 'إلى', from: 'من', co: 'الشركة', subj: 'الموضوع', subjV: 'مشروع جديد', goals: ['مبيعات أكثر', 'عملاء محتملون مؤهَّلون', 'إطلاق علامة أو إعادة بنائها', 'شيء آخر'], body: 'أخبرنا أكثر…', prep: 'جهّز الرسالة', copy: 'انسخ', copied: 'نُسخت', need: 'اكتب اسمك حتى نعرف لمن نرد.', note: 'انسخ الرسالة وأرسلها من بريدك.',
+    mailT: (o) => `مرحباً فريق قول تم،\n\nأنا ${o.n}${o.c ? ' من ' + o.c : ''}.\nالهدف: ${o.g || '—'}\n\n${o.m || ''}\n`,
+    readH: 'اقرأني', read: ['هذه نسخة تجريبية للمراجعة، وليست الموقع المنشور.', 'مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.', 'السعودية ومصر والإمارات، إلى جانب أعمال في الكويت وعُمان: أسواق يعرفها الفريق، لا مكاتب.', 'info@saytamm.com · saytamm.com'] },
+  en: { lang: 'العربية', hint: 'Click any icon', boot: 'Say it… starting Tamm', wall: 'Say it. Tamm it.',
+    apps: { about: 'About', svc: 'Services', reel: 'Showreel', studio: 'Studio', num: 'Numbers', cl: 'Clients', mail: 'Start a project', read: 'Read me' },
+    tips: ['Hi, I’m <b>Tamm</b>. Open any app, or click me to start a project.', 'Try “Numbers”: every figure says how it was measured.', '“Studio” has our short films. Play them with sound.', 'Say it… <b>Tamm it.</b>'],
+    close: 'Close', min: 'Minimise', back: 'Back',
+    whoH: 'A digital marketing & performance agency built to move brands forward.', whoP: 'SayTamm brings strategy, creative, media and technology together under one connected approach to growth.',
+    facts: [['2021', 'Founded'], ['30', 'People on the team'], ['20+', 'Industries in the team’s track record'], ['5', 'Markets in the team’s track record']],
+    svcH: 'Nine services. One objective.', svcP: 'Four disciplines working as one plan.',
+    reelH: 'Four briefs. Four times done.', reelP: 'Real client work: Altopiano, Zahid Electra, Clean Basket, Exodus. The briefs are illustrative.', sound: 'Turn sound on', mute: 'Mute', replay: 'From the start',
+    studioH: 'Short films, made in-house.', studioP: 'Pick a film to play it with sound.', backList: 'All films',
+    films: [['ep-01_discounts', 'They told you… Discounts'], ['ep-02_prettypicture', 'They told you… The pretty picture'], ['ep-03_budget', 'They told you… Budget'], ['ep-04_audience', 'They told you… Audience'], ['sector-food', 'Food · Altopiano'], ['sector-homeappliances', 'Home appliances · Zahid Electra'], ['sector-electronics', 'Electronics · Tech Hive'], ['sector-apps', 'Apps · Clean Basket'], ['sector-travel', 'Travel · Exodus']],
+    numH: 'The work, measured.', numP: 'Click a row to see how the figure was measured. ROAS is revenue divided by ad spend, not profit.', cols: ['Client', 'Sector', 'Period', 'Figure', 'What it measures'], measured: 'How it was measured',
+    clH: 'Clients who trusted the SayTamm team.',
+    mailH: 'Tell us the goal. We take it from there.', to: 'To', from: 'From', co: 'Company', subj: 'Subject', subjV: 'A new project', goals: ['More sales', 'More qualified leads', 'Launch or rebuild a brand', 'Something else'], body: 'Tell us a little more…', prep: 'Prepare message', copy: 'Copy', copied: 'Copied', need: 'Add your name so we know who to reply to.', note: 'Copy the message and send it from your email.',
+    mailT: (o) => `Hello SayTamm,\n\nI’m ${o.n}${o.c ? ' from ' + o.c : ''}.\nGoal: ${o.g || '—'}\n\n${o.m || ''}\n`,
+    readH: 'Read me', read: ['This is a review preview, not the live site.', 'Results from projects led by members of the SayTamm team, including work delivered at other agencies.', 'Saudi Arabia, Egypt and the UAE, with work in Kuwait and Oman: markets the team knows first-hand, not offices.', 'info@saytamm.com · saytamm.com'] },
+};
+const ORDER = ['about', 'svc', 'reel', 'studio', 'num', 'cl', 'mail', 'read'];
+const SIZE = { about: [640, 600], svc: [720, 520], reel: [760, 560], studio: [640, 640], num: [820, 520], cl: [620, 520], mail: [560, 600], read: [420, 340] };
+let L = 'ar'; try { L = localStorage.getItem('tos-lang') || 'ar'; } catch (e) {}
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const k = (o) => o[L];
+const phone = () => matchMedia('(max-width: 760px)').matches;
+const W = {}; let Z = 100, cascade = 0, disc = 0, sel = 1, film = null, goal = '';
+
+const BODY = {
+  about: () => { const t = T[L], w = D.who[L]; return `<h2>${esc(t.whoH)}</h2><p>${esc(t.whoP)}</p>
+    <div class="facts">${t.facts.map(([v, l]) => `<div><b>${v}</b><span>${esc(l)}</span></div>`).join('')}</div>
+    <div class="lab">${esc(w.storyTitle)}</div><p>${esc(w.story)}</p>
+    <div class="mv"><div><b>${esc(w.mission[0])}</b>${esc(w.mission[1])}</div><div><b>${esc(w.vision[0])}</b>${esc(w.vision[1])}</div></div>
+    <p class="mu" style="margin-top:12px">${esc(w.name)}</p>`; },
+  svc: () => { const t = T[L], d = D.discs[disc]; return `<h2>${esc(t.svcH)}</h2><p class="mu">${esc(t.svcP)}</p>
+    <div class="split"><div class="side" role="tablist">${D.discs.map((x, i) => `<button type="button" role="tab" data-d="${i}" aria-selected="${i === disc}">${esc(k(x.name))}</button>`).join('')}</div>
+    <div class="files"><p>${esc(k(d.value))}</p>${d.services.map((s) => `<div class="file"><span class="fi"></span><div><b>${esc(k(s.name))}</b><span>${esc(k(s.summary))}</span></div></div>`).join('')}</div></div>`; },
+  reel: () => { const t = T[L]; return `<h2>${esc(t.reelH)}</h2><p class="mu">${esc(t.reelP)}</p>
+    <div class="player"><video autoplay muted loop playsinline poster="media/showreel-${L}.jpg" src="media/showreel-${L}.mp4"></video></div>
+    <div class="ctrl"><button class="btn pri" type="button" data-sound>${t.sound}</button><button class="btn" type="button" data-replay>${t.replay}</button></div>`; },
+  studio: () => { const t = T[L];
+    if (film !== null) { const [id, cap] = t.films[film]; return `<div class="ctrl" style="margin:0 0 10px"><button class="btn" type="button" data-list>← ${t.backList}</button><span class="mu">${esc(cap)}</span></div>
+      <div class="player v"><video autoplay playsinline controls poster="media/studio/${id}-${L}.jpg" src="media/studio/${id}-${L}.mp4"></video></div>`; }
+    return `<h2>${esc(t.studioH)}</h2><p class="mu">${esc(t.studioP)}</p><div class="reels">${t.films.map(([id, cap], i) => `<button class="reel" type="button" data-f="${i}"><img src="media/studio/${id}-${L}.jpg" alt="" loading="lazy"><span>${esc(cap)}</span></button>`).join('')}</div>`; },
+  num: () => { const t = T[L], c = D.cases[sel]; return `<h2>${esc(t.numH)}</h2><p class="mu">${esc(t.numP)}</p>
+    <div class="tbl"><table class="sheet"><thead><tr>${t.cols.map((x) => `<th>${x}</th>`).join('')}</tr></thead><tbody>${D.cases.map((x, i) => `<tr data-r="${i}" class="${i === sel ? 'sel' : ''}" tabindex="0"><td>${esc(k(x.client))}</td><td>${esc(k(x.sector))}</td><td>${esc(k(x.period))}</td><td class="n">${esc(x.kpis[0].value)}</td><td>${esc(k(x.kpis[0].label))}</td></tr>`).join('')}</tbody></table></div>
+    <div class="cell"><div class="fx">=${esc(c.kpis.map((x) => x.value).join(' · '))}</div><b>${esc(k(c.client))}</b><p>${esc(k(c.headline))}</p>
+    <p class="mu">${c.kpis.slice(1).map((x) => `${esc(x.value)} ${esc(k(x.label))}`).join(' · ')}</p><div class="lab">${t.measured}</div><p class="mu">${esc(k(c.measured))}${c.note ? ' ' + esc(k(c.note)) : ''}</p></div>
+    <p class="mu" style="margin-top:10px">${esc(T[L].read[1])}</p>`; },
+  cl: () => `<h2>${esc(T[L].clH)}</h2><div class="gal" style="margin-top:12px">${D.clients.map((c) => `<div title="${esc(k(c.name))}"><img src="media${(L === 'ar' && c.logoAr) || c.logo}" alt="${esc(k(c.name))}" loading="lazy"></div>`).join('')}</div>`,
+  mail: () => { const t = T[L]; return `<h2>${esc(t.mailH)}</h2><form class="mail" id="mf" novalidate style="margin-top:12px">
+    <label>${t.to}<span class="to">info@saytamm.com</span></label>
+    <label for="mn">${t.from}<input id="mn" autocomplete="name"></label>
+    <label for="mc">${t.co}<input id="mc" autocomplete="organization"></label>
+    <label>${t.subj}<span>${t.subjV}</span></label>
+    <div class="chips" role="group">${t.goals.map((g) => `<button type="button" data-g="${esc(g)}" aria-pressed="${g === goal}">${esc(g)}</button>`).join('')}</div>
+    <textarea id="mb" placeholder="${esc(t.body)}"></textarea>
+    <div class="foot"><button class="btn pri" type="submit">${t.prep}</button><span class="mu">${t.note}</span></div></form>
+    <div class="out" id="mo" hidden></div><div class="ctrl" id="mcp" hidden><button class="btn" type="button" data-copy>${t.copy}</button></div>`; },
+  read: () => `<h2>${esc(T[L].readH)}</h2>${T[L].read.map((x, i) => `<p class="${i === 3 ? '' : 'mu'}"${i === 3 ? ' style="direction:ltr;unicode-bidi:isolate;user-select:all"' : ''}>${esc(x)}</p>`).join('')}`,
+};
+
+function chrome(id) {
+  const t = T[L];
+  return `<div class="tb" data-drag><button class="back" type="button" data-x aria-label="${t.back}">${L === 'ar' ? '→' : '←'}</button><span class="t"><i></i>${esc(t.apps[id])}</span>
+    <button class="mn" type="button" data-m aria-label="${t.min}">–</button><button type="button" data-x aria-label="${t.close}">×</button></div><div class="wb">${BODY[id]()}</div>`;
+}
+function open(id) {
+  if (W[id]) { W[id].classList.remove('min'); focus(W[id]); return; }
+  const el = document.createElement('section'); el.className = 'win'; el.dataset.app = id; el.setAttribute('aria-label', T[L].apps[id]);
+  const [w, h] = SIZE[id], vw = innerWidth, vh = innerHeight;
+  const ww = Math.min(w, vw - 24), hh = Math.min(h, vh - 130);
+  const x = Math.max(12, Math.min(vw - ww - 12, (vw - ww) / 2 + (cascade % 5) * 28 - 56)), y = Math.max(46, Math.min(vh - hh - 80, 70 + (cascade % 5) * 26));
+  cascade++;
+  Object.assign(el.style, { left: x + 'px', top: y + 'px', width: ww + 'px', height: hh + 'px' });
+  el.innerHTML = chrome(id); $('wins').append(el); W[id] = el; wire(el); focus(el); dock();
+  if (id === 'mail') tamm(2);
+}
+function close(id) { const el = W[id]; if (!el) return; el.querySelectorAll('video').forEach((v) => v.pause()); el.remove(); delete W[id]; if (id === 'studio') film = null; dock(); }
+function focus(el) { document.querySelectorAll('.win').forEach((w) => w.classList.remove('focus')); el.classList.add('focus'); el.style.zIndex = ++Z; }
+function refresh(id) { const el = W[id]; if (!el) return; const wb = el.querySelector('.wb'), y = wb.scrollTop; el.innerHTML = chrome(id); wire(el); el.querySelector('.wb').scrollTop = y; }
+function wire(el) {
+  const id = el.dataset.app, t = T[L];
+  el.addEventListener('pointerdown', () => focus(el));
+  el.querySelectorAll('[data-x]').forEach((b) => b.addEventListener('click', () => close(id)));
+  el.querySelector('[data-m]').addEventListener('click', () => { el.classList.add('min'); el.querySelectorAll('video').forEach((v) => v.pause()); dock(); });
+  const tb = el.querySelector('[data-drag]');
+  tb.addEventListener('pointerdown', (e) => {
+    if (phone() || e.target.closest('button')) return;
+    const sx = e.clientX, sy = e.clientY, ox = el.offsetLeft, oy = el.offsetTop; tb.setPointerCapture(e.pointerId);
+    const mv = (ev) => { el.style.left = Math.max(-el.offsetWidth + 120, Math.min(innerWidth - 120, ox + ev.clientX - sx)) + 'px'; el.style.top = Math.max(36, Math.min(innerHeight - 60, oy + ev.clientY - sy)) + 'px'; };
+    const up = () => { tb.removeEventListener('pointermove', mv); tb.removeEventListener('pointerup', up); };
+    tb.addEventListener('pointermove', mv); tb.addEventListener('pointerup', up);
+  });
+  el.querySelectorAll('[data-d]').forEach((b) => b.addEventListener('click', () => { disc = +b.dataset.d; refresh(id); }));
+  el.querySelectorAll('[data-r]').forEach((r) => { const go = () => { sel = +r.dataset.r; refresh(id); }; r.addEventListener('click', go); r.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); }); });
+  el.querySelectorAll('[data-f]').forEach((b) => b.addEventListener('click', () => { film = +b.dataset.f; refresh(id); }));
+  el.querySelector('[data-list]')?.addEventListener('click', () => { film = null; refresh(id); });
+  const v = el.querySelector('.player video');
+  el.querySelector('[data-sound]')?.addEventListener('click', (e) => { v.muted = !v.muted; if (!v.muted) v.play().catch(() => {}); e.currentTarget.textContent = v.muted ? t.sound : t.mute; });
+  el.querySelector('[data-replay]')?.addEventListener('click', () => { v.currentTime = 0; v.play().catch(() => {}); });
+  el.querySelectorAll('[data-g]').forEach((b) => b.addEventListener('click', () => { goal = b.dataset.g; el.querySelectorAll('[data-g]').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); }));
+  const f = el.querySelector('#mf');
+  if (f) {
+    f.addEventListener('submit', (e) => { e.preventDefault(); const n = el.querySelector('#mn'); if (!n.value.trim()) { n.setCustomValidity(t.need); n.reportValidity(); return; }
+      const out = el.querySelector('#mo'); out.textContent = t.mailT({ n: n.value.trim(), c: el.querySelector('#mc').value.trim(), g: goal, m: el.querySelector('#mb').value.trim() }); out.hidden = false; el.querySelector('#mcp').hidden = false; tamm(3); });
+    el.querySelector('#mn').addEventListener('input', (e) => e.target.setCustomValidity(''));
+    el.querySelector('[data-copy]').addEventListener('click', async (e) => { const out = el.querySelector('#mo'); try { await navigator.clipboard.writeText(out.textContent); e.currentTarget.textContent = t.copied; } catch (err) { const r = document.createRange(); r.selectNodeContents(out); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } });
+  }
+}
+function dock() {
+  const t = T[L]; document.body.classList.toggle('has-win', Object.values(W).some((w) => !w.classList.contains('min')));
+  $('dock').innerHTML = ['about', 'reel', 'studio', 'num', 'mail'].map((id) => `<button type="button" data-o="${id}" class="${id === 'mail' ? 'hot' : ''} ${W[id] ? 'open' : ''}" aria-label="${t.apps[id]}">${I[id]}<span class="tip">${esc(t.apps[id])}</span></button>`).join('');
+}
+let tipI = 0, tipT;
+function tamm(i) { clearTimeout(tipT); if (i !== undefined) tipI = i; $('tammSay').innerHTML = T[L].tips[tipI % T[L].tips.length]; $('tammSay').style.animation = 'none'; void $('tammSay').offsetWidth; $('tammSay').style.animation = ''; tipT = setTimeout(() => tamm(tipI + 1), 7000); }
+
+function render() {
+  const t = T[L]; document.documentElement.lang = L; document.documentElement.dir = L === 'ar' ? 'rtl' : 'ltr';
+  $('lang').textContent = t.lang; $('barHint').textContent = '· ' + t.hint; $('wall').textContent = t.wall; if ($('bootTxt')) $('bootTxt').textContent = t.boot;
+  $('icons').innerHTML = ORDER.map((id) => `<button class="ico" type="button" data-o="${id}"><span class="g${id === 'mail' ? ' hot' : ''}">${I[id]}</span><span>${esc(t.apps[id])}</span></button>`).join('');
+  Object.keys(W).forEach(refresh); dock(); tamm(tipI);
+}
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-o]'); if (b) open(b.dataset.o); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const top = [...document.querySelectorAll('.win:not(.min)')].sort((a, b) => b.style.zIndex - a.style.zIndex)[0]; if (top) close(top.dataset.app); } });
+$('tammImg').addEventListener('click', () => open('mail'));
+$('lang').addEventListener('click', () => { L = L === 'ar' ? 'en' : 'ar'; try { localStorage.setItem('tos-lang', L); } catch (e) {} render(); });
+const clock = () => { $('clock').textContent = new Date().toLocaleTimeString(L === 'ar' ? 'ar-EG-u-nu-latn' : 'en-GB', { hour: '2-digit', minute: '2-digit' }); };
+setInterval(clock, 15000); clock();
+render();
+// boot: a short start-up, then the About window opens on desktops so the first frame already says who we are
+const boot = () => { $('boot').classList.add('out'); setTimeout(() => $('boot').remove(), 450); if (!phone()) open('about'); };
+if (matchMedia('(prefers-reduced-motion: reduce)').matches) boot(); else setTimeout(boot, 1500);
+</script>
