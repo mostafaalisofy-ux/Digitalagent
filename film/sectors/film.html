@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ar"><head><meta charset="utf-8"><title>Sector reel</title>
+<style>
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-700-normal.woff2); font-weight: 700; }
+  html, body { margin: 0; background: #09090D; overflow: hidden; } canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+'use strict';
+// Sector reels — 9:16, Arabic, Plex only, 120 BPM, 16 s. One engine, five sectors (sectors.json, injected as CFG):
+// hook (2 s) → the client's real work cut on the beat with short captions (2–13.8 s) → client + what was made → end card.
+// window.seek(t) is async (footage frames load on demand).
+const CFG = __CFG__;
+const W = 1080, H = 1920, BEAT = 0.5, DUR = 16;
+window.DUR_S = DUR;
+const PU = '#6C35FF', OB = '#09090D', GR = '#17171E', WH = '#F5F3FA', MU = '#96939F', LI = '#C9C6D2';
+const SEQ = '__SEQ__', SEQN = __SEQN__;
+const c = document.getElementById('c').getContext('2d');
+const clamp = (x, a = 0, b = 1) => (x < a ? a : x > b ? b : x), lerp = (a, b, u) => a + (b - a) * u, inv = (a, b, x) => clamp((x - a) / (b - a));
+const eo = (u) => (u >= 1 ? 1 : 1 - Math.pow(2, -10 * u)), eio = (u) => (u <= 0 ? 0 : u >= 1 ? 1 : u < 0.5 ? Math.pow(2, 20 * u - 10) / 2 : (2 - Math.pow(2, -20 * u + 10)) / 2);
+const spr = (x, w = 18) => (x <= 0 ? 0 : 1 - (1 + w * x) * Math.exp(-w * x));
+const E = (t, a, b, f = eo) => f(inv(a, b, t));
+const CACHE = new Map();
+function frameImg(id, k) {
+  k = Math.max(1, Math.min(SEQN[id], k)); const key = id + '/' + k;
+  if (!CACHE.has(key)) { const im = new Image(); im.src = `${SEQ}/${id}/${String(k).padStart(3, '0')}.jpg`; CACHE.set(key, im.decode().then(() => im)); if (CACHE.size > 120) CACHE.delete(CACHE.keys().next().value); }
+  return CACHE.get(key);
+}
+function font(px, w, latin) { c.font = `${w} ${px}px ${latin ? 'PlexL' : 'Plex, PlexL'}`; c.direction = latin ? 'ltr' : 'rtl'; }
+function T(s, x, y, px, { w = 700, col = WH, al = 'center', a = 1, latin = false } = {}) {
+  if (a <= 0 || !s) return;
+  font(px, w, latin); c.textAlign = al; c.fillStyle = col; c.globalAlpha = a; c.fillText(s, x, y); c.globalAlpha = 1; c.direction = 'ltr';
+}
+const tw = (s, px, w = 700, latin = false) => { font(px, w, latin); const v = c.measureText(s).width; c.direction = 'ltr'; return v; };
+const RR = (x, y, w, h, r, fill, a = 1) => { if (w <= 0 || h <= 0) return; c.beginPath(); c.roundRect(x, y, w, h, Math.min(r, w / 2, h / 2)); c.globalAlpha = a; c.fillStyle = fill; c.fill(); c.globalAlpha = 1; };
+const bg = (col = OB) => { c.fillStyle = col; c.fillRect(0, 0, W, H); };
+let SYMBOL;
+async function clip(id, lt, x, y, w, h, r = 0, { speed = 1, dim = 0, zoom = 1 } = {}) {
+  if (w < 2 || h < 2) return;
+  const im = await frameImg(id, Math.floor(Math.max(0, lt) * speed * 30) + 1);
+  const s = Math.max(w / im.width, h / im.height) * zoom, dw = im.width * s, dh = im.height * s;
+  c.save(); c.beginPath(); c.roundRect(x, y, w, h, r); c.clip();
+  c.drawImage(im, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+  if (dim) { c.fillStyle = OB; c.globalAlpha = dim; c.fillRect(x, y, w, h); c.globalAlpha = 1; }
+  c.restore();
+}
+function line(s, y, px, t0, t, o = {}) {   // kinetic line: rises into its band on a spring
+  const u = spr(t - t0, 20); if (u <= 0) return;
+  c.save(); c.beginPath(); c.rect(0, y - px * 1.15, W, px * 1.6); c.clip(); T(s, o.x ?? W / 2, y + px * 1.3 * (1 - u), px, o); c.restore();
+}
+function topShade(a = 0.8) { const g = c.createLinearGradient(0, 160, 0, 560); g.addColorStop(0, `rgba(9,9,13,${a})`); g.addColorStop(1, 'rgba(9,9,13,0)'); c.fillStyle = g; c.fillRect(0, 160, W, 400); }
+function botShade(a = 0.88, y0 = 1180) { const g = c.createLinearGradient(0, y0, 0, 1760); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(1, `rgba(9,9,13,${a})`); c.fillStyle = g; c.fillRect(0, y0, W, H - y0); }
+
+// ---------- the reel ----------
+const CUT0 = 2.0, CLIENT = 12.0, END = 13.8, BLADES = [CUT0, END];
+const CUTS = []; { let t0 = CUT0; for (const [id, d, off = 0, mode = '', speed = 1] of CFG.cuts) { CUTS.push({ id, t0, d, off, mode, speed }); t0 += d; } }
+function topShade(a = 0.8) { const g = c.createLinearGradient(0, 160, 0, 560); g.addColorStop(0, `rgba(9,9,13,${a})`); g.addColorStop(1, 'rgba(9,9,13,0)'); c.fillStyle = g; c.fillRect(0, 160, W, 400); }
+function botShade(a = 0.88, y0 = 1180) { const g = c.createLinearGradient(0, y0, 0, 1760); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(1, `rgba(9,9,13,${a})`); c.fillStyle = g; c.fillRect(0, y0, W, H - y0); }
+async function shot(k, lt, o = {}) {
+  const s = CUTS[k];
+  if (s.mode === 'sq') { bg(); await clip(s.id, s.off + lt, 0, 420, W, W, 0, { speed: s.speed, zoom: lerp(1.04, 1.0, eo(lt / 0.6)), ...o }); return; }
+  await clip(s.id, s.off + lt, 0, 0, W, H, 0, { speed: s.speed, zoom: s.d < 3 ? lerp(1.07, 1.0, eo(lt / s.d)) : 1, ...o });
+}
+function sectorTag(t, a) {   // top safe zone: the sector and the progress of the reel
+  topShade(0.7);
+  T(CFG.sector, 1000, 300, 40, { al: 'right', a });
+  T('قطاع', 80, 300, 30, { al: 'left', w: 500, col: LI, a });
+  RR(80, 330, 920, 7, 3.5, WH, 0.25 * a); RR(80, 330, 920 * clamp((t - CUT0) / (END - CUT0)), 7, 3.5, PU, a);
+}
+function caption(t) {
+  if (t >= CLIENT) return;
+  let cur = null; for (const cp of CFG.caps) if (t >= cp[0]) cur = cp; if (!cur) return;
+  botShade(0.85, 1250); line(cur[1], 1620, 64, cur[0] + 0.05, t);
+}
+function clientCard(t) {
+  if (t < CLIENT) return;
+  botShade(0.94, 1050);
+  T('عمل لـ', W / 2, 1330, 36, { w: 500, col: LI, a: E(t, CLIENT, CLIENT + 0.3) });
+  line(CFG.client, 1450, 96, CLIENT + 0.1, t, { latin: true });
+  const px = 36, gap = 20, ws = CFG.chips.map((x) => tw(x, px) + 64), tot = ws.reduce((a, b) => a + b, 0) + gap * (ws.length - 1);
+  let x = W / 2 + tot / 2;   // RTL: first chip on the right
+  CFG.chips.forEach((ch, i) => {
+    const u = spr(t - CLIENT - 0.35 - i * 0.12, 22), w = ws[i], cx = x - w / 2; x -= w + gap; if (u <= 0) return;
+    c.save(); c.translate(cx, 1600); c.scale(u, u); RR(-w / 2, -38, w, 76, 38, i === 0 ? PU : GR); T(ch, 0, 13, px, { col: WH }); c.restore();
+  });
+}
+async function hook(t) {
+  await shot(0, 0.2, { dim: 0.82 });
+  T(CFG.sector, W / 2, 700, 44, { w: 500, col: LI, a: E(t, 0.05, 0.35) });
+  line(CFG.hook[0], 900, 96, 0.2, t); line(CFG.hook[1], 1040, 110, 0.75, t, { col: PU });
+}
+function outro(t) {
+  bg();
+  const u = E(t, END, END + 0.45), h = 210, w = (h * 600) / 721;
+  c.drawImage(SYMBOL, W / 2 - w / 2 + 220 * (1 - u), 560 - 220 * (1 - u), w, h);
+  line('قول. تم.', 1000, 120, END + 0.3, t);
+  T('وكالة تسويق رقمي وأداء', W / 2, 1100, 40, { w: 500, col: MU, a: E(t, END + 0.6, END + 0.9) });
+  T('saytamm.com', W / 2, 1180, 38, { w: 500, a: E(t, END + 0.6, END + 0.9), latin: true });
+  T('مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.', W / 2, 1560, 26, { w: 500, col: MU, a: E(t, END + 0.8, END + 1.2) });
+}
+async function sceneAt(t) {
+  if (t < CUT0) return hook(t);
+  if (t >= END) return outro(t);
+  const k = Math.max(0, CUTS.findIndex((s) => t < s.t0 + s.d));
+  await shot(k, t - CUTS[k].t0);
+  sectorTag(t, E(t, CUT0, CUT0 + 0.35)); caption(t); clientCard(t);
+}
+async function draw(t) {
+  await sceneAt(t);
+  for (const t0 of BLADES) {   // the 45° blade sweeps up-left and leaves the next scene behind it
+    const u = E(t, t0 - 0.22, t0 + 0.06, eio); if (u <= 0 || u >= 1) continue;
+    const k = lerp(H + W + 60, -60, u);
+    c.save(); c.beginPath(); c.moveTo(k + 9000, -9000); c.lineTo(-9000, k + 9000); c.lineTo(9000, 9000); c.closePath(); c.clip();
+    await sceneAt(t0 + 0.001); c.restore();
+    c.strokeStyle = PU; c.lineWidth = 26; c.lineCap = 'round'; c.beginPath(); c.moveTo(k + 300, -300); c.lineTo(k - H - 300, H + 300); c.stroke();
+  }
+}
+window.seek = async (t) => { await draw(Math.max(0, Math.min(DUR - 1e-4, t))); return true; };
+
+window.renderAudio = async () => {
+  const SRATE = 48000, A = new OfflineAudioContext(2, Math.round(SRATE * DUR), SRATE), OUT = A.createGain(); OUT.gain.value = 0.7; OUT.connect(A.destination);
+  const NB = A.createBuffer(1, SRATE * 2, SRATE); { const d = NB.getChannelData(0); let s = 424242; for (let i = 0; i < d.length; i++) { s = (s * 1103515245 + 12345) & 0x7fffffff; d[i] = s / 0x3fffffff - 1; } }
+  const env = (g, t, at, pk, dec) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + at); g.gain.exponentialRampToValueAtTime(0.0001, t + at + dec); };
+  const route = (n, pan) => { if (pan) { const p = A.createStereoPanner(); p.pan.value = pan; n.connect(p).connect(OUT); } else n.connect(OUT); };
+  function osc(type, f0, f1, t, dec, pk, at = 0.002, pan = 0, lp = 0) {
+    const o = A.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + Math.max(0.02, dec * 0.5));
+    const g = A.createGain(); env(g, t, at, pk, dec); let n = o;
+    if (lp) { const f = A.createBiquadFilter(); f.type = 'lowpass'; f.frequency.setValueAtTime(lp, t); f.frequency.exponentialRampToValueAtTime(Math.max(120, lp / 5), t + dec); n = n.connect(f); }
+    route(n.connect(g), pan); o.start(t); o.stop(t + at + dec + 0.05);
+  }
+  function noise(t, dec, type, fr, q, pk, at = 0.001, pan = 0, f1 = 0) {
+    const s = A.createBufferSource(); s.buffer = NB; const f = A.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(fr, t); if (f1) f.frequency.exponentialRampToValueAtTime(f1, t + at + dec); f.Q.value = q;
+    const g = A.createGain(); env(g, t, at, pk, dec); route(s.connect(f).connect(g), pan); s.start(t, (t * 0.731) % 1.4); s.stop(t + at + dec + 0.05);
+  }
+  const CHORD = { A: [220, 261.63, 329.63], F: [174.61, 220, 261.63], C: [196, 261.63, 329.63], G: [196, 246.94, 293.66], E: [164.81, 207.65, 246.94] }, ROOT = { A: 55, F: 43.65, C: 65.41, G: 49, E: 41.2 };
+  const stab = (t, ch, p = 0.075, dec = 0.42) => CHORD[ch].forEach((f, i) => { for (const dt of [-0.004, 0.004]) osc('sawtooth', f * (1 + dt), f * (1 + dt), t, dec, p, 0.003, (i - 1) * 0.35, 3400); });
+  const prog = (bar) => (bar >= 7 ? 'A' : bar === 6 ? 'E' : ['A', 'F', 'C', 'G'][bar % 4]);
+  for (let b = 0; b < DUR / BEAT; b++) {
+    const t = b * BEAT, bar = Math.floor(t / 2);
+    if (t >= END - 0.5) continue;
+    const soft = t < CUT0;
+    osc('sine', 165, 44, t, 0.36, soft ? (b % 2 ? 0 : 0.6) : 0.95); noise(t, 0.014, 'highpass', 2600, 0.7, soft ? 0.06 : 0.15);
+    if (!soft && b % 2 === 1) { for (const d of [0, 0.011, 0.023]) noise(t + d, 0.012, 'bandpass', 1400, 0.9, 0.32); noise(t + 0.03, 0.16, 'bandpass', 1250, 0.8, 0.26); }
+    noise(t + 0.25, 0.035, 'highpass', 7600, 0.7, 0.1, 0.001, 0.18); const f = ROOT[prog(bar)];
+    osc('sawtooth', f, f, t + 0.25, 0.2, soft ? 0.18 : 0.3, 0.004, 0, 700); osc('sine', f, f, t + 0.25, 0.22, 0.27, 0.004);
+    if (!soft) { noise(t + 0.125, 0.03, 'highpass', 8000, 0.7, 0.04, 0.001, -0.25); noise(t + 0.375, 0.03, 'highpass', 8000, 0.7, 0.04, 0.001, -0.25); }
+  }
+  noise(CUT0 - 0.24, 0.12, 'bandpass', 500, 1.2, 0.26, 0.14, 0, 5200); stab(CUT0, 'C', 0.085);
+  for (const s of CUTS.slice(1)) noise(s.t0, 0.05, 'bandpass', 2600, 1.2, 0.14);
+  for (const cp of CFG.caps) noise(cp[0] + 0.05, 0.04, 'bandpass', 3600, 1.4, 0.08);
+  osc('sine', 120, 50, CLIENT, 0.3, 0.7); noise(CLIENT, 0.08, 'bandpass', 2200, 1.0, 0.25); stab(CLIENT, 'G', 0.07, 0.6);
+  { const s = A.createBufferSource(); s.buffer = NB; s.loop = true; const f = A.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 1.1; f.frequency.setValueAtTime(380, END - 1.5); f.frequency.exponentialRampToValueAtTime(8000, END - 0.02);
+    const g = A.createGain(); g.gain.setValueAtTime(0.0001, END - 1.5); g.gain.exponentialRampToValueAtTime(0.4, END - 0.03); g.gain.linearRampToValueAtTime(0, END); s.connect(f).connect(g).connect(OUT); s.start(END - 1.5); s.stop(END + 0.01); }
+  osc('sine', 82, 30, END, 1.1, 1.0); stab(END, 'A', 0.1, 1.2); stab(END + 1.0, 'A', 0.07, 1.2);
+  [220, 261.63, 329.63, 493.88].forEach((f, i) => osc('triangle', f, f, END + 0.4, 1.6, 0.06, 0.01, (i - 1.5) * 0.3));
+const buf = await A.startRendering();
+  let pk = 0; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) pk = Math.max(pk, Math.abs(d[i])); }
+  const g = 0.89 / pk, n = buf.length, ab = new ArrayBuffer(44 + n * 4), v = new DataView(ab), ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + n * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true);
+  v.setUint32(24, SRATE, true); v.setUint32(28, SRATE * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); ws(36, 'data'); v.setUint32(40, n * 4, true);
+  const L = buf.getChannelData(0), R = buf.getChannelData(1); let o = 44;
+  for (let i = 0; i < n; i++) for (const d of [L, R]) { const s = Math.max(-1, Math.min(1, d[i] * g)); v.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true); o += 2; }
+  const u8 = new Uint8Array(ab); let bin = ''; for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+window.ready = (async () => {
+  await Promise.all(['500 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول')).concat(['500 40px PlexL', '700 40px PlexL'].map((f) => document.fonts.load(f, 'Aa'))));
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
+  await window.seek(0); return true;
+})();
+</script></body></html>
