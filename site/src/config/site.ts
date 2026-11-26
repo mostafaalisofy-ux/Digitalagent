@@ -16,6 +16,8 @@ export const SITE = {
    *  Only `npm run build:production` (PUBLIC_STAGE=production) produces an indexable site —
    *  run it only for the authorised launch. */
   preview: import.meta.env.PUBLIC_STAGE !== 'production',
+  /** v1.2 (owner 2026-11-26): a light build for review — `PUBLIC_THEME=light npm run build`. Dark stays the default. */
+  theme: (import.meta.env.PUBLIC_THEME === 'light' ? 'light' : 'dark') as 'light' | 'dark',
 } as const;
 
 export const LOCALES = ['en', 'ar'] as const;

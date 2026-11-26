@@ -3,6 +3,7 @@ import '@fontsource/ibm-plex-sans-arabic/400.css';
 import '@fontsource/ibm-plex-sans-arabic/500.css';
 import '@fontsource/ibm-plex-sans-arabic/700.css';
 import '../styles/global.css';
+import '../styles/motion.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE, DIR, type Lang } from '../config/site';
@@ -37,7 +38,7 @@ const jsonLd = [{
 }, ...schema];
 ---
 <!doctype html>
-<html lang={lang} dir={DIR[lang]}>
+<html lang={lang} dir={DIR[lang]} data-theme={SITE.theme}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -63,7 +64,7 @@ const jsonLd = [{
   <meta property="og:locale:alternate" content={lang === 'ar' ? 'en_US' : 'ar_SA'} />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content={new URL(`/og/saytamm-og-${lang}.png`, SITE.url).href} />
-  <meta name="theme-color" content="#09090D" />
+  <meta name="theme-color" content={SITE.theme === 'light' ? '#F5F3FA' : '#09090D'} />
   <link rel="icon" href="/brand/SayTamm_Symbol_Signature_Black-Purple.svg" type="image/svg+xml" media="(prefers-color-scheme: light)" />
   <link rel="icon" href="/brand/SayTamm_Symbol_Signature_White-Purple.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)" />
   {lang === 'en' && <link rel="preload" href="/fonts/satoshi/Satoshi-700.woff2" as="font" type="font/woff2" crossorigin />}
@@ -112,6 +113,56 @@ const jsonLd = [{
       addEventListener('scroll', vs, { passive: true }); addEventListener('resize', vs, { passive: true });
       document.querySelectorAll('.studio__row').forEach((r) => r.addEventListener('scroll', vs, { passive: true }));
       vcheck();
+    }
+
+    // v1.2 motion layer (styles/motion.css). Everything here is skipped under reduced motion.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      // scroll progress
+      const bar = document.createElement('div'); bar.className = 'progress'; bar.setAttribute('aria-hidden', 'true'); document.body.append(bar);
+      // section titles rise word by word (split on spaces, so Arabic words keep their shaping)
+      document.querySelectorAll<HTMLElement>('main h2[data-reveal]').forEach((h) => {
+        if (h.querySelector('.w') || h.children.length) return;
+        const words = (h.textContent || '').trim().split(/\s+/);
+        h.innerHTML = words.map((w, i) => `<span class="w" style="--i:${i}">${w.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span>`).join(' ');
+      });
+      // the blade wipe on framed pictures
+      const wipes = [...document.querySelectorAll<HTMLElement>('.cs__card img, .jr figure, .studio__frame')];
+      wipes.forEach((el) => el.setAttribute('data-wipe', ''));
+      // figures count up once, keeping their prefix, suffix, decimals and separators
+      const counts = [...document.querySelectorAll<HTMLElement>('.who__facts dt, .cs__fig bdi')].map((el) => ({ el, txt: el.textContent || '', done: false }));
+      const countUp = (o: { el: HTMLElement; txt: string }) => {
+        const m = o.txt.match(/^([^\d]*)([\d,]+(?:\.\d+)?)(.*)$/); if (!m) return;
+        const raw = m[2].replace(/,/g, ''), dec = (raw.split('.')[1] || '').length, end = parseFloat(raw), t0 = performance.now(), D = 1400;
+        const tick = (now: number) => {
+          const u = Math.min(1, (now - t0) / D), e = 1 - Math.pow(2, -10 * u), v = end * e;
+          let n = v.toFixed(dec); if (m[2].includes(',')) n = Number(n).toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+          o.el.textContent = u >= 1 ? o.txt : m[1] + n + m[3]; if (u < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      };
+      const stage = document.getElementById('stage');
+      let mt = false;
+      const motion = () => {
+        mt = false;
+        const h = document.documentElement, max = h.scrollHeight - innerHeight; bar.style.setProperty('--p', String(max > 0 ? scrollY / max : 0));
+        for (const el of wipes) if (!el.classList.contains('is-wiped') && el.getBoundingClientRect().top < innerHeight * 0.92 && el.getBoundingClientRect().left < innerWidth) el.classList.add('is-wiped');
+        for (const o of counts) if (!o.done && o.el.getBoundingClientRect().top < innerHeight * 0.9) { o.done = true; countUp(o); }
+        if (stage) stage.style.translate = `0 ${Math.min(120, scrollY * 0.12).toFixed(1)}px`;   // the stage drifts as the page scrolls
+      };
+      const mm = () => { if (!mt) { mt = true; requestAnimationFrame(motion); } };
+      addEventListener('scroll', mm, { passive: true }); addEventListener('resize', mm, { passive: true });
+      document.querySelectorAll('.studio__row').forEach((r) => r.addEventListener('scroll', mm, { passive: true }));
+      motion();
+      // primary buttons lean toward the pointer
+      document.querySelectorAll<HTMLElement>('.btn--primary').forEach((b) => {
+        b.addEventListener('pointermove', (e) => { const r = b.getBoundingClientRect(); b.style.translate = `${((e.clientX - r.left) / r.width - 0.5) * 10}px ${((e.clientY - r.top) / r.height - 0.5) * 8}px`; });
+        b.addEventListener('pointerleave', () => { b.style.translate = ''; });
+      });
+      // studio cards tilt toward the pointer
+      document.querySelectorAll<HTMLElement>('.studio__frame').forEach((f) => {
+        f.addEventListener('pointermove', (e) => { const r = f.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5; f.style.transform = `perspective(900px) rotateY(${x * 10}deg) rotateX(${-y * 8}deg) translateY(-4px)`; });
+        f.addEventListener('pointerleave', () => { f.style.transform = ''; });
+      });
     }
 
     // Analytics readiness: data-track="event_name" + data-* params → dataLayer (no tags fire here)

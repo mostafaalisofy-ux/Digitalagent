@@ -1,0 +1,93 @@
+/* ==========================================================================
+   v1.2 — the light theme and the extra motion layer (owner 2026-11-26: «more animation, light colours, not black»).
+   Light = Soft White ground, white surfaces, Obsidian ink, Electric Purple still only for the blade, actions and key data.
+   Muted text is darkened for contrast on light (the dark-theme muted #96939F is 2.9:1 on Soft White).
+   Every motion below is switched off under prefers-reduced-motion.
+   ========================================================================== */
+:root[data-theme='light'] {
+  --bg: #F5F3FA;
+  --surface: #FFFFFF;
+  --text: #2A2833;
+  --text-strong: #09090D;
+  --text-muted: #5E5A6A;
+  --accent-text: #5523E0;
+  --line: rgb(9 9 13 / 0.09);
+  --line-strong: rgb(9 9 13 / 0.18);
+  --focus: #5523E0;
+  --lav: #EEE8FF;
+  --lav2: #E2D8FF;
+  color-scheme: light;
+}
+:root[data-theme='light'] .logo__t[fill='#FFFFFF'] { fill: #0A0A0D; }   /* the approved signature-on-light variant (D-007) */
+:root[data-theme='light'] .btn:not(.btn--primary) { --btn-fill: var(--c-obsidian); --btn-fill-fg: var(--c-white); }
+:root[data-theme='light'] .btn--primary { --btn-fill: var(--c-obsidian); --btn-fill-fg: var(--c-white); }
+:root[data-theme='light'] .hdr.is-solid { background: rgb(245 243 250 / 0.9) !important; }
+:root[data-theme='light'] .preview-bar { background: #fff !important; color: var(--text) !important; }
+:root[data-theme='light'] .field select option { background: #fff; }
+:root[data-theme='light'] .section--surface { background: #fff; }
+/* hero stage: a lavender room instead of a graphite one */
+:root[data-theme='light'] .stage { background: radial-gradient(120% 90% at 70% 8%, #fff 0, var(--lav) 55%, var(--lav2) 100%) !important; box-shadow: 0 30px 70px rgb(40 18 110 / .14) !important; }
+:root[data-theme='light'] .stage__floor { background: radial-gradient(closest-side, rgb(40 20 90 / .28), transparent) !important; }
+:root[data-theme='light'] .stage__tamm { filter: drop-shadow(0 24px 30px rgb(40 18 110 / .25)) !important; }
+:root[data-theme='light'] .stage__bubble { background: #fff !important; box-shadow: 0 10px 30px rgb(40 18 110 / .12); }
+:root[data-theme='light'] .stage__chip { background: rgb(255 255 255 / .92) !important; border-color: var(--line) !important; box-shadow: 0 8px 20px rgb(40 18 110 / .08); }
+/* page heros: the dark key visuals become framed pictures, not a dark wash */
+:root[data-theme='light'] .ph__blade { fill: var(--lav) !important; }
+:root[data-theme='light'] .ph__img img { opacity: 1 !important; }
+/* client logo wall keeps its dark tiles (several logos are light artwork); framed so it reads as one block */
+:root[data-theme='light'] .clw__list { border-radius: 18px; overflow: hidden; }
+:root[data-theme='light'] .reel__film, :root[data-theme='light'] .svcs__film, :root[data-theme='light'] .studio__frame { box-shadow: 0 30px 70px rgb(40 18 110 / .16); }
+:root[data-theme='light'] .studio__play { background: #fff !important; }
+
+/* — scroll progress: a thin purple line under the header — */
+.progress { position: fixed; inset-inline: 0; top: 0; height: 3px; z-index: 90; pointer-events: none; transform-origin: 0 50%; transform: scaleX(var(--p, 0)); background: var(--accent); }
+[dir='rtl'] .progress { transform-origin: 100% 50%; }
+
+/* — headings rise word by word — */
+.js h2[data-reveal] .w { display: inline-block; opacity: 0; transform: translateY(.55em) rotate(2deg); transition: opacity .6s var(--ease-out), transform .8s var(--ease-out); transition-delay: calc(var(--i) * 55ms); }
+.js h2[data-reveal].is-in .w { opacity: 1; transform: none; }
+.js h2[data-reveal].is-in, .js h2[data-reveal] { opacity: 1 !important; transform: none !important; }
+
+/* — the blade wipe: framed media open along the 45° diagonal when they arrive — */
+.js [data-wipe] { clip-path: polygon(0 0, 0 0, 0 0); transition: clip-path 1.1s var(--ease-out); }
+.js [data-wipe].is-wiped { clip-path: polygon(-50% -50%, 150% -50%, 150% 150%, -50% 150%); }
+[dir='rtl'].js [data-wipe] { clip-path: polygon(100% 0, 100% 0, 100% 0); }
+[dir='rtl'].js [data-wipe].is-wiped { clip-path: polygon(-50% -50%, 150% -50%, 150% 150%, -50% 150%); }
+
+/* — kinetic brand band — */
+.ticker { direction: ltr; position: relative; overflow: hidden; padding-block: clamp(18px, 3vw, 34px); border-block: 1px solid var(--line); background: var(--surface); }
+.ticker__row { display: flex; gap: 48px; width: max-content; animation: tk 38s linear infinite; font-weight: 700; font-size: clamp(2.4rem, 1.4rem + 4vw, 5.6rem); line-height: 1; letter-spacing: -0.03em; white-space: nowrap; }
+.ticker__row--rev { animation-direction: reverse; animation-duration: 46s; margin-top: 10px; }
+.ticker__row span { display: inline-flex; align-items: center; gap: 48px; }
+.ticker__row .o { color: transparent; -webkit-text-stroke: 1.5px var(--text-strong); }
+.ticker__row .b { width: .34em; height: 1.1em; background: var(--accent); border-radius: 6px; transform: rotate(45deg); display: inline-block; }
+@keyframes tk { to { transform: translateX(-50%); } }
+.ticker:hover .ticker__row { animation-play-state: paused; }
+
+/* — the hero breathes: Tamm floats, the chips drift — */
+.stage__tamm { animation: vh-rise .9s .1s var(--ease-out) both, tamm-float 5.5s 1.2s ease-in-out infinite; }
+@keyframes tamm-float { 50% { translate: 0 -10px; } }
+.stage__chip { animation-name: vh-pop, chip-drift; animation-duration: .5s, 6s; animation-timing-function: cubic-bezier(.2, 1.4, .4, 1), ease-in-out; animation-iteration-count: 1, infinite; animation-fill-mode: both, none; }
+@keyframes chip-drift { 50% { transform: translateY(-6px); } }
+
+/* — studio cards tilt toward the pointer — */
+.studio__frame { transform-style: preserve-3d; will-change: transform; }
+
+@media (prefers-reduced-motion: reduce) {
+  .progress { display: none; }
+  .js h2[data-reveal] .w { opacity: 1; transform: none; transition: none; }
+  .js [data-wipe] { clip-path: none !important; transition: none; }
+  .ticker__row, .stage__tamm, .stage__chip { animation: none !important; }
+}
+
+/* light: page heros that carry a dark key visual stay a dark band (white type over the scene), like a film panel on the page */
+:root[data-theme='light'] .ph:has(.ph__img) { --text: #F5F3FA; --text-strong: #F5F3FA; --text-muted: #C9C6D2; --line: rgb(245 243 250 / .12); background: #0b0a10; color: var(--text); }
+:root[data-theme='light'] .ph:has(.ph__img) .ph__img img { opacity: .8 !important; }
+:root[data-theme='light'] .ph:has(.ph__img) .ph__blade { fill: var(--c-graphite) !important; }
+/* light: client tiles get an edge so white logo plates do not dissolve into the page */
+:root[data-theme='light'] .cl__tile, :root[data-theme='light'] .cl__mtile { background: #fff !important; box-shadow: inset 0 0 0 1px var(--line); }
+
+/* the logo drift runs left to right in both languages (an RTL flex row would drift out of view) */
+.cl__marq { direction: ltr; }
+.ticker__row > span > span { unicode-bidi: isolate; }
+[dir='rtl'] .ticker__row > span > span { direction: rtl; }

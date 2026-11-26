@@ -1,0 +1,14 @@
+---
+// v1.2: a kinetic brand band between sections: the line and the name, outlined and solid, with the 45° blade between,
+// in two rows drifting in opposite directions. Decorative (the same words are on the page as text).
+import { type Lang } from '../../config/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const A = lang === 'ar' ? ['قول.', 'تم.', 'قول تم'] : ['Say it.', 'Tamm it.', 'SayTamm'];
+const B = lang === 'ar' ? ['الاستراتيجية', 'الإبداع', 'الإعلانات', 'الأداء'] : ['Strategy', 'Creative', 'Media', 'Performance'];
+const R1 = Array.from({ length: 8 }, () => A).flat(); const R2 = Array.from({ length: 8 }, () => B).flat();
+---
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__row">{R1.map((x, i) => <span><span class={i % 2 ? 'o' : ''}>{x}</span><i class="b"></i></span>)}</div>
+  <div class="ticker__row ticker__row--rev">{R2.map((x, i) => <span><span class={i % 2 ? '' : 'o'}>{x}</span><i class="b"></i></span>)}</div>
+</div>
