@@ -1,0 +1,49 @@
+---
+// v1.0: the client journey in eight steps, each with a picture (hands-only stock, Pexels licence).
+// A line fills along the steps as the section scrolls (scroll-driven where supported; static otherwise).
+import { type Lang } from '../../config/site';
+import { v1, JOURNEY } from '../../i18n/v1';
+import { V1, v1src } from '../../data/v1assets';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = v1(lang).journey;
+---
+<section class="section section--surface jr" aria-labelledby="jr-title">
+  <div class="container">
+    <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{c.eyebrow}</p>
+    <h2 class="jr__title" id="jr-title" data-reveal>{c.title}</h2>
+    <div class="jr__line" aria-hidden="true"><span></span></div>
+    <ol class="jr__list">
+      {JOURNEY.map((s, i) => (
+        <li data-reveal style={`--delay:${(i % 4) * 80}ms`}>
+          <figure><img src={v1src(s.img)} width={V1[s.img][0]} height={V1[s.img][1]} alt="" loading="lazy" decoding="async" /><span class="jr__n latin" aria-hidden="true">{i + 1}</span></figure>
+          <h3>{s.title[lang]}</h3>
+          <p>{s.text[lang]}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+<style>
+  .jr .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .jr__title { font-size: var(--fs-h1); line-height: 1.05; letter-spacing: var(--track-tight); margin-top: var(--s-3); }
+  :global([dir='rtl']) .jr__title { letter-spacing: 0; line-height: 1.25; }
+  .jr__line { height: 2px; background: var(--line); margin-block: var(--s-6) var(--s-5); overflow: hidden; }
+  .jr__line span { display: block; height: 100%; background: var(--accent); width: 100%; transform-origin: left; }
+  :global([dir='rtl']) .jr__line span { transform-origin: right; }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .jr__line span { animation: fill linear both; animation-timeline: view(); animation-range: entry 20% cover 70%; }
+      @keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    }
+  }
+  .jr__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--s-4); }
+  .jr__list li { display: grid; gap: var(--s-2); align-content: start; }
+  .jr__list figure { position: relative; margin: 0 0 var(--s-2); border-radius: 10px; overflow: hidden; aspect-ratio: 16 / 9; background: var(--bg); }
+  .jr__list img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.85) brightness(.8); }
+  .jr__n { position: absolute; inset-inline-start: 12px; bottom: 6px; font-size: 2.6rem; font-weight: 700; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px var(--c-soft-white); }
+  .jr__list li:last-child figure { box-shadow: inset 0 0 0 2px var(--accent); }
+  .jr__list h3 { font-size: var(--fs-h3); }
+  .jr__list p { color: var(--text-muted); font-size: var(--fs-small); }
+  @media (min-width: 1024px) { .jr__list { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+</style>

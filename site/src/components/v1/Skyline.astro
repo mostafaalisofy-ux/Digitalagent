@@ -1,0 +1,43 @@
+---
+// Markets skyline (Egypt: Giza pyramids, Cairo Tower · Saudi Arabia: Kingdom Centre, Al Faisaliah · UAE: Burj Khalifa,
+// Burj Al Arab, Dubai Frame). Line art drawn for SayTamm (same geometry as the company profile); no words, no flags.
+// Generated once from docs/profile/build_profile_pptx.py → sky_paths(). Never mirrored in RTL.
+interface Props { class?: string; label?: string }
+const { class: cls = '', label } = Astro.props;
+---
+<svg class={`sky ${cls}`} viewBox="0 -50 1200 296" preserveAspectRatio="xMidYMax meet" role={label ? 'img' : undefined} aria-label={label} aria-hidden={label ? undefined : 'true'}>
+  <path class="lm f" d="M372,240 L404,198 L436,240 Z"/>
+  <path class="lm" d="M404,198 L410,240"/>
+  <path class="lm f" d="M238,240 L312,156 L386,240 Z"/>
+  <path class="lm" d="M312,156 L330,240"/>
+  <path class="lm f" d="M40,240 L150,118 L262,240 Z"/>
+  <path class="lm" d="M150,118 L176,240"/>
+  <path class="lm" d="M470,240 L475,92 M490,240 L485,92 M474.0,92 L485.4,110 M474.6,110 L484.8,128 M475.2,128 L484.2,146 M475.8,146 L483.6,164 M476.4,164 L483.0,182 M477.0,182 L482.4,200 M477.6,200 L481.7,218 M478.3,218 L481.1,236 M475,92 L464,72 L496,72 L485,92 M462,72 V60 H498 V72 M480,60 V30"/>
+  <path class="lm" d="M598,240 V118 Q598,64 613,24 Q640,182 667,24 Q682,64 682,118 V240 M619,56 H661 M619,63 H661 M612,150 H668 M612,190 H668"/>
+  <path class="lm" d="M718,240 L734,88 M762,240 L746,88 M722,200 H758 M727,160 H753 M731,120 H749 M740,70 V28 M706,240 Q740,214 774,240"/>
+  <ellipse class="lm" cx="740" cy="80" rx="10" ry="10"/>
+  <path class="lm" d="M860,240 L860,204 L868,204 L868,166 L875,166 L875,128 L882,128 L882,92 L888,92 L888,60 L893,60 L893,34 L897,34 L900,-6 L900,-6 L903,34 L907,34 L907,60 L912,60 L912,92 L918,92 L918,128 L925,128 L925,166 L932,166 L932,204 L940,204 L940,240"/>
+  <path class="lm" d="M986,240 V40 M990,50 Q1074,96 1052,240 M990,50 V240 M992,79 L1025,79 M992,111 L1044,111 M992,151 L1054,151 M992,191 L1056,191 M986,74 H968"/>
+  <ellipse class="lm" cx="962" cy="74" rx="9" ry="3"/>
+  <path class="lm" d="M1092,240 V92 H1164 V240 M1106,240 V106 H1150 V240 M1106,99 H1150"/>
+  <path class="lm" d="M0,240 H1200"/>
+  <path class="rt" d="M150,96 Q395,-40 640,8 Q780,-38 900,-26"/>
+  <circle class="pin" cx="150" cy="96" r="5"/>
+  <circle class="pin" cx="640" cy="8" r="5"/>
+  <circle class="pin" cx="900" cy="-26" r="5"/>
+</svg>
+<style>
+  .sky { display: block; width: 100%; height: auto; overflow: visible; direction: ltr; }
+  .lm { fill: none; stroke: var(--text-muted); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: .8; }
+  .f { fill: var(--bg); }
+  .rt { fill: none; stroke: var(--text-muted); stroke-width: 1.2; stroke-dasharray: 3 6; opacity: .65; vector-effect: non-scaling-stroke; }
+  .pin { fill: var(--accent); }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .sky .lm, :global(.js) .sky .rt { stroke-dasharray: 1400; stroke-dashoffset: 1400; transition: stroke-dashoffset 2.4s var(--ease-out); }
+    :global(.js) .sky .rt { stroke-dasharray: 3 6; stroke-dashoffset: 0; opacity: 0; transition: opacity 1s 1.6s; }
+    :global(.js) .sky .pin { opacity: 0; transition: opacity .5s 2s; }
+    :global(.js) .is-in .sky .lm { stroke-dashoffset: 0; }
+    :global(.js) .is-in .sky .rt { opacity: .65; }
+    :global(.js) .is-in .sky .pin { opacity: 1; }
+  }
+</style>

@@ -1,0 +1,34 @@
+---
+// v1.0: client testimonials (owner holds written approval of the wording, D-025). Quotes stay in the client's
+// own language (English) on both language versions; the heading is localised.
+import { type Lang } from '../../config/site';
+import { v1, QUOTES } from '../../i18n/v1';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = v1(lang).quotes;
+---
+<section class="section qt" aria-labelledby="qt-title">
+  <div class="container">
+    <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{c.eyebrow}</p>
+    <h2 class="qt__title" id="qt-title" data-reveal>{c.title}</h2>
+    <div class="qt__grid">
+      {QUOTES.map((q, i) => (
+        <blockquote lang="en" dir="ltr" data-reveal style={`--delay:${(i % 3) * 80}ms`}>
+          <p>“{q.q}”</p>
+          <cite>{q.who}</cite>
+        </blockquote>
+      ))}
+    </div>
+  </div>
+</section>
+<style>
+  .qt .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .qt__title { font-size: var(--fs-h1); line-height: 1.05; letter-spacing: var(--track-tight); margin-top: var(--s-3); }
+  :global([dir='rtl']) .qt__title { letter-spacing: 0; line-height: 1.25; }
+  .qt__grid { display: grid; gap: var(--s-6) var(--s-5); margin-top: var(--s-6); }
+  blockquote { margin: 0; border-left: 3px solid var(--accent); padding-left: var(--s-4); display: grid; gap: var(--s-3); align-content: start; font-family: var(--font-en); text-align: left; }
+  blockquote p { font-size: var(--fs-lead); line-height: 1.45; font-weight: 500; }
+  cite { font-style: normal; font-size: var(--fs-caption); color: var(--text-muted); letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+  @media (min-width: 768px) { .qt__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1200px) { .qt__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+</style>

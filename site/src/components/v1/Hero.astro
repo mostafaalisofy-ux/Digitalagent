@@ -1,0 +1,77 @@
+---
+// v1.0 hero (D-026): the line on the left, a tilted wall of real client work on the right (as the 2026 profile
+// cover), and Tamm in front of the wall pointing at it. The mosaic drifts slowly; reduced motion: still.
+import { type Lang } from '../../config/site';
+import { href } from '../../i18n/paths';
+import { t } from '../../i18n/ui';
+import { v1 } from '../../i18n/v1';
+import { V1, v1src } from '../../data/v1assets';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t(lang).hero; const c = v1(lang);
+const MOSAIC = ['sp_012', 'cp_altopiano1', 'sp_027', 'sp_019', 'cp_xiaomi1', 'sp_015', 'cp_jora1', 'sp_002', 'cp_alia', 'sp_013', 'cp_music', 'sp_020'];
+const [tw, th] = V1['tamm_hero'];
+---
+<section class="vh" aria-labelledby="vh-title">
+  <div class="vh__wall" aria-hidden="true">
+    <div class="vh__grid">
+      {[...MOSAIC, ...MOSAIC.slice(0, 8)].map((m, i) => (
+        <img src={v1src(m)} width={V1[m][0]} height={V1[m][1]} alt="" loading={i < 8 ? 'eager' : 'lazy'} decoding="async" fetchpriority={i < 2 ? 'high' : undefined} />
+      ))}
+    </div>
+  </div>
+  <div class="vh__fade" aria-hidden="true"></div>
+  <div class="container vh__in">
+    <div class="vh__copy">
+      <p class="eyebrow" data-reveal style="--delay:80ms"><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
+      <h1 class="vh__title" id="vh-title" data-reveal-group>
+        <span class="line" style="--delay:160ms"><span>{d.l1}</span></span>
+        <span class="line vh__accent" style="--delay:280ms"><span>{d.l2}</span></span>
+      </h1>
+      <p class="vh__sub" data-reveal style="--delay:460ms">{d.sub}</p>
+      <div class="vh__ctas" data-reveal style="--delay:560ms">
+        <a class="btn btn--primary" href={href(lang, 'contact')} data-track="cta_click" data-cta-id="start_project" data-cta-location="hero">{d.cta}<span class="arrow" aria-hidden="true"></span></a>
+        <a class="link-diag" href={href(lang, 'work')} data-track="cta_click" data-cta-id="explore_work" data-cta-location="hero">{d.cta2}</a>
+      </div>
+    </div>
+  </div>
+  <img class="vh__tamm" src={v1src('tamm_hero')} width={tw} height={th} alt={c.tammAlt} decoding="async" fetchpriority="high" data-reveal style="--delay:360ms" />
+</section>
+
+<style>
+  .vh { position: relative; overflow: hidden; isolation: isolate; min-height: min(calc(100svh - 128px), 860px); display: grid; align-items: center; }
+  .vh__wall { position: absolute; z-index: -2; inset: -10% -6% -10% 46%; }
+  .vh__grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; transform: rotate(-8deg) scale(1.15); transform-origin: center; }
+  .vh__grid img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 10px; display: block; background: var(--surface); }
+  .vh__fade { position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, var(--bg) 38%, rgb(9 9 13 / .55) 62%, rgb(9 9 13 / .12)); }
+  :global([dir='rtl']) .vh__wall { inset: -10% 46% -10% -6%; }
+  :global([dir='rtl']) .vh__fade { background: linear-gradient(270deg, var(--bg) 38%, rgb(9 9 13 / .55) 62%, rgb(9 9 13 / .12)); }
+  .vh__in { position: relative; z-index: 2; padding-block: var(--s-6) var(--s-6); }
+  .vh__copy { display: grid; gap: var(--s-5); max-width: 40rem; }
+  .vh .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .vh__title { font-size: min(var(--fs-mega), 15vh); line-height: .88; letter-spacing: -0.05em; font-weight: 700; }
+  .vh__title .line { display: block; }
+  .vh__accent { color: var(--accent); }
+  :global([dir='rtl']) .vh__title { line-height: 1.05; letter-spacing: 0; font-size: min(var(--fs-mega), 12vh); }
+  .vh__sub { font-size: var(--fs-lead); max-width: 36ch; line-height: 1.5; }
+  .vh__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-6); }
+  .vh__tamm { position: absolute; z-index: 1; bottom: 0; inset-inline-start: 58%; height: min(56vh, 520px); width: auto; pointer-events: none;
+    filter: drop-shadow(0 24px 40px rgb(0 0 0 / .45)); }
+  @media (prefers-reduced-motion: no-preference) {
+    .vh__grid { animation: drift 40s linear infinite alternate; }
+    @keyframes drift { from { transform: rotate(-8deg) scale(1.15) translateY(0); } to { transform: rotate(-8deg) scale(1.15) translateY(-12%); } }
+  }
+  /* tablet and phone: the wall becomes a band above the line, Tamm stands at its foot */
+  @media (max-width: 1023px) {
+    .vh { min-height: 0; align-items: start; }
+    .vh__wall { position: relative; inset: auto; height: 30svh; margin-inline: -10%; overflow: hidden; }
+    :global([dir='rtl']) .vh__wall { inset: auto; }
+    .vh__grid { grid-template-columns: repeat(6, 1fr); gap: 8px; transform: rotate(-8deg) scale(1.1) translateY(-4%); animation: none; }
+    .vh__fade { background: linear-gradient(180deg, rgb(9 9 13 / .1) 0, rgb(9 9 13 / .35) 18svh, var(--bg) 30svh); }
+    :global([dir='rtl']) .vh__fade { background: linear-gradient(180deg, rgb(9 9 13 / .1) 0, rgb(9 9 13 / .35) 18svh, var(--bg) 30svh); }
+    .vh__in { padding-block: var(--s-3) var(--s-6); }
+    .vh__title { font-size: clamp(3.2rem, 15vw, 5.5rem); }
+    .vh__copy { gap: var(--s-4); }
+    .vh__tamm { top: calc(30svh - min(26svh, 230px)); bottom: auto; inset-inline-start: auto; inset-inline-end: 2%; height: min(26svh, 230px); }
+  }
+</style>

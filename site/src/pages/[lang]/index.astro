@@ -1,16 +1,18 @@
 ---
-// Homepage (final redesign brief): Hero → Selected work → Clients who trusted the SayTamm team (one list, owner 2026-11-05) → Services → How we work →
-// Results → About → Final CTA. Each section answers one question in the buyer's decision.
+// Homepage v1.0 (D-026, docs/WEBSITE_V1_PLAN.md): follows the 2026 company profile.
+// Hero (work wall + Tamm) → the name → work by industry → case studies → client journey → services →
+// clients → testimonials → markets + brief. Each section either shows the work, shows a measured number,
+// or moves the visitor to the brief.
 import Base from '../../layouts/Base.astro';
-import Hero from '../../components/home/Hero.astro';
-import SelectedWork from '../../components/home/SelectedWork.astro';
-import Clients from '../../components/home/Clients.astro';
-import WorkMarquee from '../../components/home/WorkMarquee.astro';
+import Hero from '../../components/v1/Hero.astro';
+import Name from '../../components/v1/Name.astro';
+import Industries from '../../components/v1/Industries.astro';
+import Cases from '../../components/v1/Cases.astro';
+import Journey from '../../components/v1/Journey.astro';
 import HomeServices from '../../components/home/HomeServices.astro';
-import Approach from '../../components/home/Approach.astro';
-import Results from '../../components/home/Results.astro';
-import HomeAbout from '../../components/home/HomeAbout.astro';
-import FinalCta from '../../components/home/FinalCta.astro';
+import Clients from '../../components/home/Clients.astro';
+import Quotes from '../../components/v1/Quotes.astro';
+import End from '../../components/v1/End.astro';
 import { staticLangPaths } from '../../i18n/paths';
 import { t } from '../../i18n/ui';
 import type { Lang } from '../../config/site';
@@ -20,14 +22,12 @@ const d = t(lang);
 ---
 <Base lang={lang} page="home" title={d.meta.homeTitle} description={d.meta.homeDesc}>
   <Hero lang={lang} />
-  {/* Story order (Sprint 3 brief): what SayTamm is → the work → capabilities → operating model →
-      evidence (direct clients, team experience, results) → about → contact */}
-  <SelectedWork lang={lang} />
-  <WorkMarquee lang={lang} />
+  <Name lang={lang} />
+  <Industries lang={lang} />
+  <Cases lang={lang} />
+  <Journey lang={lang} />
   <HomeServices lang={lang} />
-  <Approach lang={lang} />
   <Clients lang={lang} />
-  <Results lang={lang} />
-  <HomeAbout lang={lang} />
-  <FinalCta lang={lang} />
+  <Quotes lang={lang} />
+  <End lang={lang} />
 </Base>
