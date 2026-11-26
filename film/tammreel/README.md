@@ -26,3 +26,13 @@ bash film/tammreel/render_parallel.sh
 ```
 
 Output: `handover/launch-film/tammreel/SayTamm_QolhaTammat_AR_9x16.mp4`, `cover.jpg`, `cover_end.jpg`.
+
+**16:9 cut** (`film169.html`, same timing and score): the type column sits on the right (brief bubble that stays, then «تمّت», service and client),
+the vertical footage plays in two 9:16 panels on the left (Altopiano's cuts alternate between them), Zahid in a square, the four clips in a row
+for «قلتوها… وتمّت.», and Tamm full-frame at both ends. Render after the 9:16 one (it reuses the score):
+
+```bash
+bash film/tammreel/render_parallel.sh 169
+```
+
+Output: `SayTamm_QolhaTammat_AR_16x9.mp4`, `cover169.jpg`, `cover_end169.jpg`.
