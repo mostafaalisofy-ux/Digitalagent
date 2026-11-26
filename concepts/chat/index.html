@@ -1,0 +1,401 @@
+<title>SayTamm Thread</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;700&display=swap">
+<style>
+/* Option C, «the thread»: the whole site is one conversation. You say it, SayTamm answers with the work.
+   Layout: a quiet index rail on one side, one chat column on the other; the 45° blade is the only graphic device.
+   Brand palette only (Obsidian, Graphite, Soft White, Muted, Electric Purple as accent); IBM Plex Sans Arabic for both scripts. */
+:root {
+  --bg: #F5F3FA; --panel: #FFFFFF; --ink: #09090D; --soft: #2A2833; --muted: #5E5A6A; --line: rgb(9 9 13 / .1);
+  --me: #17171E; --me-ink: #F5F3FA; --them: #FFFFFF; --accent: #6C35FF; --accent-ink: #5523E0; --stage: #EEE8FF;
+  --shadow: 0 18px 50px rgb(40 18 110 / .10);
+  --font: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r: 26px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #09090D; --panel: #17171E; --ink: #F5F3FA; --soft: #D8D5E0; --muted: #96939F; --line: rgb(245 243 250 / .1);
+  --me: #F5F3FA; --me-ink: #09090D; --them: #17171E; --accent: #6C35FF; --accent-ink: #A78BFA; --stage: #1D1A2B;
+  --shadow: 0 18px 50px rgb(0 0 0 / .4); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #09090D; --panel: #17171E; --ink: #F5F3FA; --soft: #D8D5E0; --muted: #96939F; --line: rgb(245 243 250 / .1);
+  --me: #F5F3FA; --me-ink: #09090D; --them: #17171E; --accent: #6C35FF; --accent-ink: #A78BFA; --stage: #1D1A2B;
+  --shadow: 0 18px 50px rgb(0 0 0 / .4); color-scheme: dark; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font: 400 17px/1.7 var(--font); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+.logo-on-dark { display: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .logo-on-light { display: none; } :root:not([data-theme="light"]) .logo-on-dark { display: block; } }
+:root[data-theme="dark"] .logo-on-light { display: none; } :root[data-theme="dark"] .logo-on-dark { display: block; }
+
+/* header */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.top__in { max-width: 1240px; margin: 0 auto; padding: 12px max(16px, env(safe-area-inset-right, 0px)) 12px max(16px, env(safe-area-inset-left, 0px)); display: flex; align-items: center; gap: 14px; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+.brand img { height: 34px; width: auto; }
+.brand b { font-size: 17px; line-height: 1.1; display: block; }
+.status { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.status i { width: 8px; height: 8px; border-radius: 2px; background: var(--accent); transform: rotate(45deg); }
+.lang { margin-inline-start: auto; border: 1px solid var(--line); background: var(--panel); border-radius: 999px; min-height: 40px; padding: 0 16px; cursor: pointer; font-weight: 500; }
+
+/* page grid: index rail + thread */
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+@media (min-width: 1000px) { .wrap { grid-template-columns: 260px minmax(0, 760px); justify-content: space-between; } }
+.rail { display: none; }
+@media (min-width: 1000px) {
+  .rail { display: block; position: sticky; top: 96px; align-self: start; padding-block: 48px; }
+  .rail h2 { font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: .08em; margin: 0 0 14px; }
+  [dir="rtl"] .rail h2 { letter-spacing: 0; }
+  .rail ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: q; }
+  .rail a { display: grid; grid-template-columns: 28px 1fr; align-items: baseline; gap: 6px; padding: 9px 10px; border-radius: 12px; color: var(--muted); text-decoration: none; font-size: 15px; counter-increment: q; transition: background .2s, color .2s; }
+  .rail a::before { content: counter(q, decimal-leading-zero); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .rail a:hover { background: var(--panel); color: var(--ink); }
+  .rail a.on { color: var(--ink); background: var(--panel); box-shadow: inset 3px 0 0 var(--accent); }
+  [dir="rtl"] .rail a.on { box-shadow: inset -3px 0 0 var(--accent); }
+  .rail .meter { margin-top: 22px; height: 4px; border-radius: 4px; background: var(--line); overflow: hidden; }
+  .rail .meter b { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--accent); }
+}
+
+/* hero: you say it */
+.hero { padding-block: clamp(28px, 6vw, 72px) 24px; display: grid; gap: 28px; }
+.hero h1 { margin: 0; font-weight: 700; font-size: clamp(56px, 9.5vw, 128px); line-height: .95; letter-spacing: -.04em; text-wrap: balance; }
+[dir="rtl"] .hero h1 { letter-spacing: 0; line-height: 1.1; }
+.hero h1 .cut { position: relative; display: inline-block; }
+.hero h1 .cut::after { content: ""; position: absolute; inset-inline-start: -2%; top: 96%; width: 104%; height: .08em; background: var(--accent); transform: rotate(-12deg) scaleX(0); transform-origin: 0 50%; animation: slash .7s .5s cubic-bezier(.2,.8,.2,1) forwards; border-radius: 99px; }
+[dir="rtl"] .hero h1 .cut::after { transform-origin: 100% 50%; transform: rotate(12deg) scaleX(0); animation-name: slash-rtl; }
+@keyframes slash { to { transform: rotate(-12deg) scaleX(1); } }
+@keyframes slash-rtl { to { transform: rotate(12deg) scaleX(1); } }
+.hero .sub { color: var(--soft); max-width: 46ch; font-size: clamp(17px, 1.5vw, 20px); margin: 0; }
+.say { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: end; background: var(--panel); border: 1px solid var(--line); border-radius: 30px; padding: 10px; box-shadow: var(--shadow); }
+.say textarea { border: 0; background: transparent; resize: none; min-height: 60px; max-height: 160px; padding: 14px 16px; font-size: clamp(18px, 2vw, 22px); line-height: 1.4; outline: none; }
+.say button { width: 56px; height: 56px; border-radius: 50%; border: 0; background: var(--accent); color: #fff; cursor: pointer; display: grid; place-items: center; transition: transform .2s; }
+.say button:hover { transform: rotate(-8deg) scale(1.05); }
+.say button svg { width: 22px; height: 22px; }
+[dir="rtl"] .say button svg { transform: scaleX(-1); }
+.hint { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.hint button { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--soft); }
+.hint button:hover { border-color: var(--accent); color: var(--ink); }
+
+/* the thread */
+.thread { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; padding-bottom: 80px; }
+.hero, main { min-width: 0; }
+.msg > div { min-width: 0; }
+.msg.them .bub.wide { flex: 1 1 auto; }
+.day { text-align: center; font-size: 12px; color: var(--muted); padding: 18px 0 4px; }
+.msg { display: flex; gap: 12px; align-items: flex-end; }
+.msg.me { justify-content: flex-end; }
+.msg .av { flex: none; width: 42px; height: 42px; border-radius: 50%; overflow: hidden; background: var(--stage); border: 1px solid var(--line); }
+.msg .av img { width: 100%; height: 210%; object-fit: cover; object-position: 50% 0; }
+.bub { max-width: min(100%, 640px); min-width: 0; padding: 14px 18px; border-radius: var(--r); background: var(--them); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.msg.them .bub { border-end-start-radius: 8px; }
+.msg.me .bub { background: var(--me); color: var(--me-ink); border-color: transparent; border-end-end-radius: 8px; font-size: clamp(19px, 2.2vw, 24px); font-weight: 500; line-height: 1.35; padding: 14px 20px; box-shadow: none; }
+.bub.wide { width: 100%; max-width: 100%; }
+.meta { font-size: 12px; color: var(--muted); margin-top: 6px; display: flex; gap: 6px; align-items: center; }
+.msg.me .meta { color: color-mix(in srgb, var(--me-ink) 60%, transparent); justify-content: flex-end; }
+.tick { display: inline-block; width: 7px; height: 12px; border: solid var(--accent); border-width: 0 2.5px 2.5px 0; transform: rotate(45deg) translateY(-2px); }
+.bub h3 { margin: 2px 0 8px; font-size: clamp(24px, 3vw, 34px); line-height: 1.15; letter-spacing: -.02em; text-wrap: balance; }
+[dir="rtl"] .bub h3 { letter-spacing: 0; line-height: 1.35; }
+.bub p { margin: 0 0 10px; color: var(--soft); max-width: 62ch; }
+.bub p:last-child { margin-bottom: 0; }
+.typing { display: inline-flex; gap: 5px; padding: 16px 18px; }
+.typing i { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); animation: dot 1s infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes dot { 50% { transform: translateY(-5px); opacity: .5; } }
+.stamp { display: inline-flex; align-items: center; gap: 10px; background: var(--accent); color: #fff; font-weight: 700; border-radius: 999px; padding: 6px 16px 6px 12px; font-size: 18px; animation: pop .5s cubic-bezier(.2,1.4,.4,1) both; }
+.stamp .tick { border-color: #fff; }
+@keyframes pop { from { transform: scale(.6); opacity: 0; } }
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+@media (min-width: 640px) { .facts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.fact { border: 1px solid var(--line); border-radius: 18px; padding: 12px 14px; background: var(--bg); }
+.fact b { display: block; font-size: 32px; line-height: 1.1; font-variant-numeric: tabular-nums; direction: ltr; text-align: start; }
+[dir="rtl"] .fact b { text-align: end; }
+.fact:first-child b { color: var(--accent-ink); }
+.fact span { font-size: 13px; color: var(--muted); }
+
+/* services: quick replies */
+.qr { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 14px; }
+.qr button { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 8px 14px; cursor: pointer; font-weight: 500; font-size: 15px; transition: border-color .2s, background .2s, color .2s; }
+.qr button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.svc { display: grid; gap: 10px; }
+.svc .val { font-size: 17px; color: var(--ink); }
+.svc ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.svc li { display: grid; grid-template-columns: 14px 1fr; gap: 10px; align-items: baseline; padding: 10px 12px; border-radius: 14px; background: var(--bg); }
+.svc li::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: var(--accent); transform: rotate(45deg) translateY(-2px); }
+.svc li b { display: block; font-size: 16px; } .svc li span { color: var(--muted); font-size: 14px; }
+
+/* video bubbles */
+.film { position: relative; border-radius: 20px; overflow: hidden; background: #09090D; aspect-ratio: 16 / 9; max-width: 100%; }
+.film video, .note video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vbtn { position: absolute; inset-block-end: 12px; inset-inline-start: 12px; display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 16px; border-radius: 999px; border: 0; background: rgb(255 255 255 / .94); color: #09090D; font-weight: 600; font-size: 14px; cursor: pointer; }
+.vbtn i { width: 0; height: 0; border-block: 6px solid transparent; border-inline-start: 10px solid currentColor; }
+.vbtn.on i { width: 10px; height: 11px; border: 0; border-inline: 3.5px solid currentColor; }
+.notes { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 2px 10px; margin-top: 12px; scrollbar-width: thin; }
+.note { flex: 0 0 168px; scroll-snap-align: start; display: grid; gap: 6px; }
+.note .clip { position: relative; aspect-ratio: 9 / 16; border-radius: 18px; overflow: hidden; background: #09090D; }
+.note .vbtn { inset-inline: 8px; inset-block-end: 8px; justify-content: center; min-height: 36px; font-size: 13px; padding: 0 10px; }
+.note small { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+
+/* receipts */
+.receipts { display: grid; gap: 14px; margin-top: 12px; }
+.rcpt { position: relative; background: var(--bg); border-radius: 18px; padding: 18px 18px 16px; border: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent); }
+.rcpt::before, .rcpt::after { content: ""; position: absolute; top: 50%; width: 18px; height: 18px; border-radius: 50%; background: var(--them); border: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent); transform: translateY(-50%); }
+.rcpt::before { inset-inline-start: -10px; } .rcpt::after { inset-inline-end: -10px; }
+.rcpt .row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; font-size: 13px; color: var(--muted); }
+.rcpt h4 { margin: 8px 0 4px; font-size: 19px; }
+.rcpt .big { font-size: clamp(42px, 6vw, 64px); font-weight: 700; line-height: 1; color: var(--accent-ink); direction: ltr; unicode-bidi: isolate; display: block; margin: 10px 0 2px; font-variant-numeric: tabular-nums; }
+[dir="rtl"] .rcpt .big { text-align: right; }
+.rcpt .lab { font-size: 14px; color: var(--soft); }
+.rcpt .kp { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 12px 0; padding-top: 12px; border-top: 1px dashed var(--line); }
+.rcpt .kp div b { display: block; font-size: 22px; direction: ltr; unicode-bidi: isolate; }
+[dir="rtl"] .rcpt .kp div b { text-align: right; }
+.rcpt .kp div span { font-size: 13px; color: var(--muted); }
+.rcpt details { font-size: 13.5px; color: var(--muted); }
+.rcpt summary { cursor: pointer; color: var(--ink); font-weight: 500; min-height: 32px; display: flex; align-items: center; }
+.fine { font-size: 13px; color: var(--muted); margin-top: 12px; }
+
+/* clients: a sticker sheet */
+.stickers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+@media (min-width: 640px) { .stickers { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+.stk { aspect-ratio: 4 / 3; border-radius: 14px; background: #fff; display: grid; place-items: center; border: 1px solid var(--line); transition: transform .25s; }
+.stk:nth-child(3n+1) { transform: rotate(-1.4deg); } .stk:nth-child(4n+2) { transform: rotate(1.2deg); }
+.stk:hover { transform: rotate(0) scale(1.06); }
+.stk img { width: 70%; height: 62%; object-fit: contain; }
+
+/* composer */
+.form { display: grid; gap: 10px; margin-top: 12px; }
+.form .two { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 640px) { .form .two { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.form label { display: grid; gap: 5px; font-size: 13px; color: var(--muted); }
+.form input, .form textarea { width: 100%; border: 1px solid var(--line); background: var(--bg); border-radius: 14px; padding: 12px 14px; font-size: 16px; min-height: 48px; }
+.form textarea { min-height: 96px; resize: vertical; }
+.form input:focus, .form textarea:focus { outline: none; border-color: var(--accent); }
+.send { justify-self: start; border: 0; background: var(--accent); color: #fff; border-radius: 999px; min-height: 50px; padding: 0 24px; font-weight: 600; cursor: pointer; }
+.out { display: grid; gap: 10px; background: var(--bg); border-radius: 16px; padding: 14px; border: 1px solid var(--line); }
+.out pre { white-space: pre-wrap; margin: 0; font: 14.5px/1.6 var(--font); color: var(--ink); }
+.out .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.out button { border: 1px solid var(--line); background: var(--panel); border-radius: 999px; min-height: 42px; padding: 0 16px; cursor: pointer; font-weight: 500; }
+.mail { font-weight: 600; direction: ltr; unicode-bidi: isolate; user-select: all; }
+
+.end { padding-block: 40px 60px; border-top: 1px solid var(--line); }
+.end__in { max-width: 1240px; margin: 0 auto; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: space-between; align-items: end; }
+.end strong { font-size: clamp(40px, 7vw, 84px); line-height: 1; letter-spacing: -.03em; }
+[dir="rtl"] .end strong { letter-spacing: 0; line-height: 1.2; }
+.end strong em { font-style: normal; color: var(--accent); }
+.end small { color: var(--muted); font-size: 13px; max-width: 52ch; }
+
+/* the blade: a single 45° bar that slides along the page edge as the thread advances */
+.blade { position: fixed; z-index: 0; inset-inline-end: -60px; top: 0; width: 26px; height: 46vh; border-radius: 16px; background: var(--accent); transform: translateY(calc(var(--p, 0) * 70vh)) rotate(45deg); opacity: .9; pointer-events: none; }
+main, .top, .end { position: relative; z-index: 1; }
+@media (max-width: 999px) { .blade { display: none; } }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .hero h1 .cut::after { transform: rotate(-12deg) scaleX(1); } [dir="rtl"] .hero h1 .cut::after { transform: rotate(12deg) scaleX(1); } html { scroll-behavior: auto; } }
+</style>
+
+<div class="blade" aria-hidden="true"></div>
+<header class="top">
+  <div class="top__in">
+    <a class="brand" href="#hero" aria-label="SayTamm">
+      <img class="logo-on-light" src="media/symbol-black-purple.svg" alt="" width="28" height="34">
+      <img class="logo-on-dark" src="media/symbol-white-purple.svg" alt="" width="28" height="34">
+      <span><b data-t="brand"></b><span class="status"><i></i><span data-t="status"></span></span></span>
+    </a>
+    <button class="lang" id="lang" type="button"></button>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="rail" aria-label="Thread">
+    <h2 data-t="railH"></h2>
+    <ol id="railList"></ol>
+    <div class="meter"><b></b></div>
+  </nav>
+  <main>
+    <section class="hero" id="hero">
+      <h1><span class="cut" data-t="h1a"></span><br><span data-t="h1b"></span></h1>
+      <p class="sub" data-t="sub"></p>
+      <form class="say" id="say">
+        <label for="sayIn" class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)" data-t="sayLabel"></label>
+        <textarea id="sayIn" rows="1"></textarea>
+        <button type="submit" id="sayBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </form>
+      <div class="hint" id="hint"></div>
+      <div id="replyHere" class="thread" style="padding:0;gap:14px" aria-live="polite"></div>
+    </section>
+    <div class="thread" id="thread"></div>
+  </main>
+</div>
+
+<footer class="end">
+  <div class="end__in">
+    <strong><span data-t="tagA"></span> <em data-t="tagB"></em></strong>
+    <div style="display:grid;gap:6px">
+      <span><span class="mail">info@saytamm.com</span> · <span class="mail">saytamm.com</span></span>
+      <small data-t="foot"></small>
+    </div>
+  </div>
+</footer>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+"use strict";
+const D = JSON.parse(document.getElementById('data').textContent);
+const T = {
+  ar: { brand: 'قول تم', status: 'متصل الآن · وكالة تسويق رقمي وأداء', lang: 'English', railH: 'المحادثة',
+    h1a: 'قولها.', h1b: 'ونحن نُتمّها.', sub: 'اكتب هدفك كما تقوله لزميل. المحادثة تحت هي موقعنا كاملاً: من نحن، وماذا نقدّم، وما الذي أنجزناه، وكيف نبدأ.',
+    sayLabel: 'اكتب هدفك', ph: ['أريد مبيعات أكثر في الموسم…', 'أريد عملاء محتملين مؤهَّلين…', 'أريد إطلاق علامة جديدة…', 'أريد ظهوراً في نتائج البحث…'],
+    hint: 'أو اختر:', goals: ['مبيعات أكثر', 'عملاء محتملون مؤهَّلون', 'إطلاق علامة أو إعادة بنائها', 'شيء آخر'],
+    reply: (g) => `استلمنا: «${g}». هذا أول سطر في البريف. تابع المحادثة، وفي آخرها نكتب الرسالة معاً.`, done: 'تم',
+    now: 'الآن', today: 'اليوم', read: 'قُرئت',
+    q: ['من أنتم؟', 'ماذا تقدّمون؟', 'أرونا العمل.', 'وبالأرقام؟', 'من عمل معكم؟', 'كيف نبدأ؟'],
+    whoH: 'وكالة تسويق رقمي وأداء، تحوّل الأفكار إلى تأثير.', whoP: 'في قول تم، نجمع الاستراتيجية والإبداع والإعلانات والتقنية في منظومة واحدة. نفهم أهداف الأعمال، ونبني خطط التسويق، ونحوّلها إلى تنفيذ واضح ونتائج قابلة للقياس.',
+    facts: [['2021', 'سنة التأسيس'], ['30', 'شخصًا في الفريق'], ['20+', 'قطاعًا في سجل الفريق'], ['5', 'أسواق في سجل الفريق']],
+    svcH: 'تسع خدمات. هدف واحد.', svcP: 'أربعة تخصصات تعمل كخطة واحدة. اختر تخصصاً:',
+    workH: 'هذا ما نصنعه.', workP: 'أربعة بريفات، وأربع مرات «تمّت». أعمال حقيقية لعملائنا، والبريفات صياغة توضيحية.', play: 'شغّل بالصوت', pause: 'إيقاف', sound: 'شغّل الصوت', mute: 'اكتم الصوت',
+    notesP: 'ومن الاستوديو: أفلام قصيرة نكتبها ونصمّمها ونحرّكها داخل الفريق.',
+    films: [['ep-01_discounts', 'قالوا لك… الخصومات'], ['ep-02_prettypicture', 'قالوا لك… الصورة الحلوة'], ['ep-03_budget', 'قالوا لك… الميزانية'], ['ep-04_audience', 'قالوا لك… الجمهور'], ['sector-food', 'المطاعم · Altopiano'], ['sector-homeappliances', 'الأجهزة المنزلية · Zahid Electra'], ['sector-electronics', 'الإلكترونيات · Tech Hive'], ['sector-apps', 'الأبلكيشنز · Clean Basket'], ['sector-travel', 'السفر · Exodus']],
+    numH: 'العمل، بالأرقام.', numP: 'كل رقم يذكر ما يقيسه ومن أين جاء.', measured: 'كيف قيس الرقم',
+    roas: 'العائد على الإنفاق الإعلاني (ROAS) هو الإيراد مقسومًا على الإنفاق، وليس ربحًا.', track: 'مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.',
+    clH: 'عملاء وثقوا بفريق قول تم.', clP: 'من السيارات والضيافة إلى التجارة الإلكترونية والأغذية ومواد البناء.',
+    startH: 'أخبرنا بالهدف. والباقي علينا.', startP: 'نكتب رسالتك هنا، ثم ترسلها أنت إلى بريدنا.', fName: 'اسمك', fCo: 'الشركة', fGoal: 'ما الذي تريد تحريكه؟', fMsg: 'أخبرنا أكثر', fSend: 'جهّز رسالتي',
+    outH: 'رسالتك جاهزة. انسخها وأرسلها إلى:', copy: 'انسخ الرسالة', copied: 'نُسخت', need: 'اكتب اسمك حتى نعرف لمن نرد.',
+    mailT: (o) => `مرحباً فريق قول تم،\n\nأنا ${o.n}${o.c ? ' من ' + o.c : ''}.\nالهدف: ${o.g || '—'}\n\n${o.m || ''}\n`,
+    tagA: 'قول.', tagB: 'تم.', foot: 'نسخة تجريبية للمراجعة، ليست الموقع المنشور. السعودية ومصر والإمارات، إلى جانب أعمال في الكويت وعُمان: أسواق يعرفها الفريق، لا مكاتب.' },
+  en: { brand: 'SayTamm', status: 'Online · Digital marketing & performance agency', lang: 'العربية', railH: 'The thread',
+    h1a: 'Say it.', h1b: 'We’ll Tamm it.', sub: 'Type your goal the way you would tell a colleague. The conversation below is our whole site: who we are, what we do, what we have done and how we start.',
+    sayLabel: 'Type your goal', ph: ['We need more sales this season…', 'We need qualified leads…', 'We are launching a new brand…', 'We want to be found in search…'],
+    hint: 'Or pick one:', goals: ['More sales', 'More qualified leads', 'Launch or rebuild a brand', 'Something else'],
+    reply: (g) => `Got it: “${g}”. That is the first line of the brief. Read on, and at the end we write the message together.`, done: 'Tamm',
+    now: 'now', today: 'Today', read: 'Read',
+    q: ['Who are you?', 'What do you do?', 'Show me the work.', 'And the numbers?', 'Who have you worked with?', 'How do we start?'],
+    whoH: 'A digital marketing & performance agency built to move brands forward.', whoP: 'SayTamm brings strategy, creative, media and technology together under one connected approach to growth.',
+    facts: [['2021', 'Founded'], ['30', 'People on the team'], ['20+', 'Industries in the team’s track record'], ['5', 'Markets in the team’s track record']],
+    svcH: 'Nine services. One objective.', svcP: 'Four disciplines working as one plan. Pick one:',
+    workH: 'This is what we make.', workP: 'Four briefs, four times done. Real client work; the briefs are illustrative.', play: 'Play with sound', pause: 'Pause', sound: 'Turn sound on', mute: 'Mute',
+    notesP: 'And from the studio: short films we write, design and animate in-house.',
+    films: [['ep-01_discounts', 'They told you… Discounts'], ['ep-02_prettypicture', 'They told you… The pretty picture'], ['ep-03_budget', 'They told you… Budget'], ['ep-04_audience', 'They told you… Audience'], ['sector-food', 'Food · Altopiano'], ['sector-homeappliances', 'Home appliances · Zahid Electra'], ['sector-electronics', 'Electronics · Tech Hive'], ['sector-apps', 'Apps · Clean Basket'], ['sector-travel', 'Travel · Exodus']],
+    numH: 'The work, measured.', numP: 'Each figure says what it measures and where it comes from.', measured: 'How it was measured',
+    roas: 'ROAS is revenue divided by ad spend, not profit.', track: 'Results from projects led by members of the SayTamm team, including work delivered at other agencies.',
+    clH: 'Clients who trusted the SayTamm team.', clP: 'From automotive and hospitality to e-commerce, food and building materials.',
+    startH: 'Tell us the goal. We take it from there.', startP: 'We write your message here; you send it to our inbox.', fName: 'Your name', fCo: 'Company', fGoal: 'What do you want to move?', fMsg: 'Tell us a little more', fSend: 'Prepare my message',
+    outH: 'Your message is ready. Copy it and send it to:', copy: 'Copy message', copied: 'Copied', need: 'Add your name so we know who to reply to.',
+    mailT: (o) => `Hello SayTamm,\n\nI’m ${o.n}${o.c ? ' from ' + o.c : ''}.\nGoal: ${o.g || '—'}\n\n${o.m || ''}\n`,
+    tagA: 'Say it.', tagB: 'Tamm it.', foot: 'Review preview, not the live site. Saudi Arabia, Egypt and the UAE, with work in Kuwait and Oman: markets the team knows first-hand, not offices.' },
+};
+let L = 'ar'; try { L = localStorage.getItem('st-lang') || 'ar'; } catch (e) {}
+let goal = ''; let disc = 0;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const AV = '<span class="av"><img src="media/tamm-cut.webp" alt="" loading="lazy"></span>';
+const me = (txt, id) => `<div class="msg me" id="${id || ''}"><div><div class="bub">${esc(txt)}</div><div class="meta">${T[L].read} <span class="tick"></span></div></div></div>`;
+const them = (html, wide) => `<div class="msg them">${AV}<div class="bub${wide ? ' wide' : ''}">${html}</div></div>`;
+
+function render() {
+  const t = T[L]; document.documentElement.lang = L; document.documentElement.dir = L === 'ar' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t[el.dataset.t]; });
+  $('lang').textContent = t.lang;
+  $('hint').innerHTML = `<span>${t.hint}</span>` + t.goals.map((g, i) => `<button type="button" data-g="${i}">${esc(g)}</button>`).join('');
+  $('railList').innerHTML = t.q.map((q, i) => `<li><a href="#q${i}" data-i="${i}">${esc(q)}</a></li>`).join('');
+  const k = (o) => o[L];
+  let h = `<div class="day">${t.today}</div>`;
+  // 1 · who
+  h += me(t.q[0], 'q0') + them(`<h3>${esc(t.whoH)}</h3><p>${esc(t.whoP)}</p><div class="facts">${t.facts.map(([v, l]) => `<div class="fact"><b>${v}</b><span>${esc(l)}</span></div>`).join('')}</div>`, true);
+  // 2 · services
+  const d = D.discs[disc];
+  h += me(t.q[1], 'q1') + them(`<h3>${esc(t.svcH)}</h3><p>${esc(t.svcP)}</p><div class="qr" role="group">${D.discs.map((x, i) => `<button type="button" data-d="${i}" aria-pressed="${i === disc}">${esc(k(x.name))}</button>`).join('')}</div>
+    <div class="svc"><p class="val">${esc(k(d.value))}</p><ul>${d.services.map((s) => `<li><span><b>${esc(k(s.name))}</b><span>${esc(k(s.summary))}</span></span></li>`).join('')}</ul></div>`, true);
+  // 3 · work
+  h += me(t.q[2], 'q2') + them(`<h3>${esc(t.workH)}</h3><p>${esc(t.workP)}</p>
+    <div class="film"><video class="iv" muted loop playsinline preload="metadata" poster="media/showreel-${L}.jpg" src="media/showreel-${L}.mp4"></video><button type="button" class="vbtn" data-on="${t.sound}" data-off="${t.mute}"><i></i><span>${t.sound}</span></button></div>
+    <p style="margin-top:14px">${esc(t.notesP)}</p>
+    <div class="notes">${t.films.map(([id, cap]) => `<div class="note"><div class="clip"><video class="iv" muted loop playsinline preload="none" poster="media/studio/${id}-${L}.jpg" src="media/studio/${id}-${L}.mp4"></video><button type="button" class="vbtn" data-on="${t.play}" data-off="${t.pause}"><i></i><span>${t.play}</span></button></div><small>${esc(cap)}</small></div>`).join('')}</div>`, true);
+  // 4 · numbers: the approved cases, verbatim, as receipts
+  h += me(t.q[3], 'q3') + them(`<h3>${esc(t.numH)}</h3><p>${esc(t.numP)}</p><div class="receipts">${D.cases.map((c) => `<article class="rcpt">
+      <div class="row"><span>${esc(k(c.sector))}</span><span>${esc(k(c.period))}</span></div>
+      <span class="big">${esc(c.kpis[0].value)}</span><span class="lab">${esc(k(c.kpis[0].label))}</span>
+      <h4>${esc(k(c.client))}</h4><p>${esc(k(c.headline))}</p>
+      <div class="kp">${c.kpis.slice(1).map((x) => `<div><b>${esc(x.value)}</b><span>${esc(k(x.label))}</span></div>`).join('')}</div>
+      <details><summary>${t.measured}</summary><p>${esc(k(c.measured))}${c.note ? ' ' + esc(k(c.note)) : ''}</p></details></article>`).join('')}</div>
+    <p class="fine">${esc(t.roas)}<br>${esc(t.track)}</p>`, true);
+  // 5 · clients
+  h += me(t.q[4], 'q4') + them(`<h3>${esc(t.clH)}</h3><p>${esc(t.clP)}</p><div class="stickers">${D.clients.map((c) => `<div class="stk" title="${esc(k(c.name))}"><img src="media${(L === 'ar' && c.logoAr) || c.logo}" alt="${esc(k(c.name))}" loading="lazy"></div>`).join('')}</div>`, true);
+  // 6 · start
+  h += me(t.q[5], 'q5') + them(`<h3>${esc(t.startH)}</h3><p>${esc(t.startP)}</p>
+    <form class="form" id="brief" novalidate>
+      <div class="two"><label for="fn">${t.fName}<input id="fn" autocomplete="name"></label><label for="fc">${t.fCo}<input id="fc" autocomplete="organization"></label></div>
+      <label for="fg">${t.fGoal}<input id="fg" value="${esc(goal)}"></label>
+      <label for="fm">${t.fMsg}<textarea id="fm"></textarea></label>
+      <button class="send" type="submit">${t.fSend}</button>
+      <div class="out" id="out" hidden><b>${t.outH} <span class="mail">info@saytamm.com</span></b><pre id="outT"></pre><div class="row"><button type="button" id="copy">${t.copy}</button></div></div>
+    </form>`, true);
+  $('thread').innerHTML = h;
+  wire(); tick();
+}
+
+function wire() {
+  const t = T[L];
+  document.querySelectorAll('.qr button').forEach((b) => b.addEventListener('click', () => { disc = +b.dataset.d; const y = scrollY; render(); scrollTo(0, y); }));
+  document.querySelectorAll('.vbtn').forEach((b) => b.addEventListener('click', () => {
+    const v = b.parentElement.querySelector('video'); const on = v.muted || v.paused;
+    document.querySelectorAll('video').forEach((o) => { if (o !== v && !o.muted) { o.muted = true; const ob = o.parentElement.querySelector('.vbtn'); ob.classList.remove('on'); ob.querySelector('span').textContent = ob.dataset.on; } });
+    if (on) { v.muted = false; v.currentTime = 0; v.play().catch(() => {}); } else v.muted = true;
+    b.classList.toggle('on', on); b.querySelector('span').textContent = on ? b.dataset.off : b.dataset.on;
+  }));
+  $('brief').addEventListener('submit', (e) => {
+    e.preventDefault(); const n = $('fn').value.trim();
+    if (!n) { $('fn').setCustomValidity(t.need); $('fn').reportValidity(); return; }
+    $('outT').textContent = t.mailT({ n, c: $('fc').value.trim(), g: $('fg').value.trim(), m: $('fm').value.trim() }); $('out').hidden = false;
+  });
+  $('fn').addEventListener('input', () => $('fn').setCustomValidity(''));
+  $('copy').addEventListener('click', async () => {
+    const txt = $('outT').textContent;
+    try { await navigator.clipboard.writeText(txt); $('copy').textContent = t.copied; }
+    catch (e) { const r = document.createRange(); r.selectNodeContents($('outT')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+  });
+}
+
+// hero: you say it, Tamm answers
+let phI = 0, phC = 0, phDel = false;
+function typePh() {
+  const list = T[L].ph, el = $('sayIn'); if (document.activeElement === el || el.value) { setTimeout(typePh, 1200); return; }
+  const w = list[phI % list.length];
+  if (!phDel) { phC++; if (phC > w.length) { phDel = true; setTimeout(typePh, 1600); return; } }
+  else { phC--; if (phC <= 0) { phDel = false; phI++; } }
+  el.placeholder = w.slice(0, phC); setTimeout(typePh, phDel ? 28 : 55);
+}
+function say(g) {
+  g = g.trim(); if (!g) return; goal = g; const t = T[L];
+  const box = $('replyHere'); box.innerHTML = me(g) + `<div class="msg them" id="typing">${AV}<div class="bub typing" aria-label="…"><i></i><i></i><i></i></div></div>`;
+  setTimeout(() => {
+    const ty = $('typing'); if (!ty) return;
+    ty.outerHTML = them(`<span class="stamp"><span class="tick"></span>${t.done}</span><p style="margin-top:10px">${esc(t.reply(g))}</p>`);
+    const fg = $('fg'); if (fg) fg.value = g;
+  }, 1100);
+  $('sayIn').value = '';
+}
+$('say').addEventListener('submit', (e) => { e.preventDefault(); say($('sayIn').value); });
+$('sayIn').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); say($('sayIn').value); } });
+$('hint').addEventListener('click', (e) => { const b = e.target.closest('button[data-g]'); if (b) say(T[L].goals[+b.dataset.g]); });
+$('lang').addEventListener('click', () => { L = L === 'ar' ? 'en' : 'ar'; try { localStorage.setItem('st-lang', L); } catch (e) {} phC = 0; phDel = false; $('replyHere').innerHTML = ''; render(); });
+
+// scroll: rail state, the blade, videos that play only while on screen
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let tk = false;
+function tick() {
+  tk = false; const max = document.documentElement.scrollHeight - innerHeight, p = max > 0 ? scrollY / max : 0;
+  document.documentElement.style.setProperty('--p', p.toFixed(4));
+  let cur = 0; for (let i = 0; i < 6; i++) { const el = $('q' + i); if (el && el.getBoundingClientRect().top < innerHeight * 0.45) cur = i; }
+  document.querySelectorAll('.rail a').forEach((a) => a.classList.toggle('on', +a.dataset.i === cur));
+  if (!still) document.querySelectorAll('video.iv').forEach((v) => {
+    const r = v.getBoundingClientRect(), vy = Math.min(r.bottom, innerHeight) - Math.max(r.top, 0), vx = Math.min(r.right, innerWidth) - Math.max(r.left, 0);
+    if (vy > r.height * 0.45 && vx > r.width * 0.5) { if (v.paused) { v.preload = 'auto'; v.play().catch(() => {}); } } else if (!v.paused && v.muted) v.pause();
+  });
+}
+const onS = () => { if (!tk) { tk = true; requestAnimationFrame(tick); } };
+addEventListener('scroll', onS, { passive: true }); addEventListener('resize', onS, { passive: true });
+document.addEventListener('scroll', (e) => { if (e.target.classList && e.target.classList.contains('notes')) onS(); }, { capture: true, passive: true });
+render(); typePh();
+</script>
