@@ -1,0 +1,404 @@
+<title>Tamm Engine</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Option E, «Tamm Engine»: modern, AI-native, kinetic. A live field of 45° strokes (lines only: no particles, no glow) bends
+   around the pointer; a prompt bar streams a draft plan built only from SayTamm's real services; a 3D ring of the studio films;
+   figures that count and bars that grow. One dark look in the brand palette; Electric Purple for the blade and actions only.
+   Type: IBM Plex Sans Arabic for both scripts, IBM Plex Mono for the engine's output. */
+:root {
+  --ob: #09090D; --gr: #17171E; --gr2: #1F1F28; --ink: #F5F3FA; --soft: #D8D5E0; --mu: #96939F; --line: rgb(245 243 250 / .1); --line2: rgb(245 243 250 / .2);
+  --pu: #6C35FF; --pi: #A78BFA;
+  --sans: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--ob); color: var(--ink); font: 400 17px/1.65 var(--sans); overflow-x: clip; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--ob); }
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--pu); outline-offset: 3px; border-radius: 8px; }
+.in { max-width: 1240px; margin: 0 auto; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
+section { position: relative; }
+.eyebrow { font: 500 12.5px/1 var(--mono); color: var(--pi); letter-spacing: .08em; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
+.eyebrow::before { content: ""; width: 10px; height: 10px; background: var(--pu); border-radius: 2px; transform: rotate(45deg); }
+h2 { margin: 14px 0 0; font-weight: 700; font-size: clamp(36px, 5.2vw, 76px); line-height: 1.02; letter-spacing: -.035em; text-wrap: balance; }
+[dir="rtl"] h2 { letter-spacing: 0; line-height: 1.25; }
+.lead { color: var(--soft); max-width: 52ch; font-size: clamp(17px, 1.4vw, 20px); margin: 16px 0 0; }
+
+/* top */
+.nav { position: fixed; z-index: 50; top: env(safe-area-inset-top, 0px); inset-inline: 0; }
+.nav .in { display: flex; align-items: center; gap: 14px; padding-block: 14px; }
+.nav img { height: 32px; width: auto; }
+.nav b { font-size: 16px; }
+.nav .sp { flex: 1; }
+.nav a, .nav button { color: var(--ink); text-decoration: none; font-size: 14px; border: 1px solid var(--line2); border-radius: 999px; padding: 7px 14px; background: rgb(9 9 13 / .55); backdrop-filter: blur(10px); cursor: pointer; }
+.nav a.pri { background: var(--pu); border-color: var(--pu); }
+
+/* hero: the field */
+.hero { min-height: 640px; height: min(100svh, 980px); display: grid; align-items: center; overflow: hidden; margin-top: calc(-1 * env(safe-area-inset-top, 0px)); padding-top: calc(env(safe-area-inset-top, 0px) + 80px); }
+#field { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hero::after { content: ""; position: absolute; inset: 0; background: radial-gradient(70% 60% at 30% 50%, rgb(9 9 13 / .86), rgb(9 9 13 / .2) 70%, transparent); pointer-events: none; }
+[dir="rtl"] .hero::after { background: radial-gradient(70% 60% at 70% 50%, rgb(9 9 13 / .86), rgb(9 9 13 / .2) 70%, transparent); }
+.hero .in { position: relative; z-index: 2; width: 100%; display: grid; gap: 26px; }
+.hero h1 { margin: 0; font-weight: 700; font-size: clamp(64px, 11vw, 168px); line-height: .9; letter-spacing: -.045em; }
+[dir="rtl"] .hero h1 { letter-spacing: 0; line-height: 1.12; }
+.hero h1 .ln { display: block; overflow: hidden; padding-bottom: .04em; }
+.hero h1 .ch { display: inline-block; transform: translateY(105%); animation: up .9s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(var(--i) * 40ms + .2s); }
+.hero h1 .ln + .ln .ch { color: var(--pu); animation-delay: calc(var(--i) * 40ms + .55s); }
+@keyframes up { to { transform: none; } }
+.hero .lead { margin: 0; }
+
+/* the prompt */
+.prompt { display: grid; gap: 12px; max-width: 760px; }
+.pbar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 10px 10px 18px; border: 1px solid var(--line2); border-radius: 20px; background: rgb(23 23 30 / .8); backdrop-filter: blur(14px); transition: border-color .2s; }
+[dir="rtl"] .pbar { padding: 10px 18px 10px 10px; }
+.pbar:focus-within { border-color: var(--pi); }
+.pbar .spark { width: 14px; height: 14px; background: var(--pu); border-radius: 3px; transform: rotate(45deg); animation: spin 6s linear infinite; }
+@keyframes spin { to { transform: rotate(405deg); } }
+.pbar input { background: none; border: 0; outline: none; font-size: clamp(16px, 1.6vw, 19px); min-width: 0; padding: 10px 0; }
+.pbar button { border: 0; background: var(--pu); color: #fff; border-radius: 13px; min-height: 46px; padding: 0 18px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button { border: 1px solid var(--line2); background: transparent; border-radius: 999px; padding: 6px 12px; font-size: 13.5px; color: var(--soft); cursor: pointer; transition: border-color .2s, color .2s; }
+.chips button:hover { border-color: var(--pi); color: var(--ink); }
+
+/* the engine's answer */
+.answer { position: relative; z-index: 2; }
+.out { border: 1px solid var(--line2); border-radius: 20px; background: var(--gr); overflow: hidden; }
+.out .hd { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); font: 500 12.5px/1 var(--mono); color: var(--mu); }
+.out .hd i { width: 8px; height: 8px; border-radius: 2px; background: var(--pu); transform: rotate(45deg); }
+.out .hd .st { margin-inline-start: auto; color: var(--pi); }
+.out .bd { padding: 18px 18px 6px; font: 400 15px/1.75 var(--mono); color: var(--soft); white-space: pre-wrap; min-height: 140px; }
+[dir="rtl"] .out .bd { font-family: var(--sans); font-size: 16px; }
+.out .bd b { color: var(--ink); font-weight: 500; }
+.out .bd .k { color: var(--pi); }
+.caret { display: inline-block; width: .55em; height: 1.1em; background: var(--pi); vertical-align: -.2em; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.out .ft { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 12px 16px 16px; border-top: 1px solid var(--line); font-size: 13px; color: var(--mu); }
+.out .ft button { border: 1px solid var(--line2); background: var(--gr2); border-radius: 999px; min-height: 40px; padding: 0 14px; cursor: pointer; }
+.out .ft button.pri { background: var(--pu); border-color: var(--pu); color: #fff; }
+
+/* pipeline: four disciplines wired to one number */
+.pipe { padding-block: clamp(90px, 12vw, 160px); }
+.graph { margin-top: 48px; position: relative; display: grid; gap: 14px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.node { position: relative; border: 1px solid var(--line); background: var(--gr); border-radius: 20px; padding: 20px; min-height: 240px; display: grid; align-content: start; gap: 10px; transition: border-color .3s, transform .3s; }
+.node:hover { border-color: var(--pi); transform: translateY(-4px); }
+.node .n { font: 500 12px/1 var(--mono); color: var(--pi); }
+.node h3 { margin: 0; font-size: 21px; line-height: 1.25; }
+.node p { margin: 0; color: var(--mu); font-size: 14.5px; }
+.node ul { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 4px; font-size: 13px; color: var(--soft); }
+.node li::before { content: "— "; color: var(--pu); }
+.wire { position: absolute; inset: auto 0 -64px; height: 64px; pointer-events: none; }
+.wire svg { width: 100%; height: 100%; overflow: visible; }
+.wire path { fill: none; stroke: var(--line2); stroke-width: 1.5; }
+.wire path.flow { stroke: var(--pu); stroke-width: 2; stroke-dasharray: 10 14; animation: flow 1.6s linear infinite; }
+@keyframes flow { to { stroke-dashoffset: -48; } }
+.target { margin: 88px auto 0; width: fit-content; max-width: 100%; border: 1px solid var(--pi); border-radius: 999px; padding: 12px 22px; display: flex; align-items: center; gap: 12px; font-weight: 500; background: rgb(108 53 255 / .1); }
+.target i { width: 12px; height: 12px; background: var(--pu); border-radius: 3px; transform: rotate(45deg); }
+
+/* the ring of films */
+.ringsec { padding-block: clamp(80px, 10vw, 140px); overflow: hidden; }
+.stage3d { position: relative; height: 560px; margin-top: 30px; perspective: 1400px; perspective-origin: 50% 30%; touch-action: pan-y; cursor: grab; }
+.stage3d:active { cursor: grabbing; }
+.ring { position: absolute; left: 50%; top: 40px; width: 220px; height: 390px; transform-style: preserve-3d; transform: translateX(-50%) rotateY(var(--ry, 0deg)); }
+.card { position: absolute; inset: 0; border-radius: 18px; overflow: hidden; background: #000; border: 1px solid var(--line2); backface-visibility: hidden; }
+.card img, .card video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card .cap { position: absolute; inset: auto 0 0; padding: 30px 12px 12px; background: linear-gradient(transparent, rgb(9 9 13 / .92)); font-size: 13px; font-weight: 500; }
+.card .pl { position: absolute; top: 10px; inset-inline-end: 10px; width: 36px; height: 36px; border-radius: 50%; background: rgb(255 255 255 / .92); display: grid; place-items: center; border: 0; cursor: pointer; }
+.card .pl::after { content: ""; border-block: 6px solid transparent; border-inline-start: 10px solid #09090D; margin-inline-start: 3px; }
+.ringhint { text-align: center; color: var(--mu); font: 500 12.5px/1 var(--mono); }
+.viewer { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: rgb(9 9 13 / .9); backdrop-filter: blur(8px); padding: 20px; }
+.viewer video { max-height: 82vh; max-width: 100%; aspect-ratio: 9 / 16; border-radius: 18px; background: #000; }
+.viewer button { position: absolute; top: calc(16px + env(safe-area-inset-top, 0px)); inset-inline-end: 16px; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line2); background: var(--gr); font-size: 22px; cursor: pointer; }
+.reel { margin-top: 70px; position: relative; border-radius: 26px; overflow: hidden; aspect-ratio: 16 / 9; background: #000; clip-path: polygon(0 0, calc(100% - 70px) 0, 100% 70px, 100% 100%, 70px 100%, 0 calc(100% - 70px)); }
+.reel video { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(var(--rs, 1.08)); transition: transform .2s linear; }
+.reel button { position: absolute; inset-block-end: 18px; inset-inline-start: 18px; border: 0; border-radius: 999px; min-height: 44px; padding: 0 18px; background: rgb(255 255 255 / .94); color: #09090D; font-weight: 600; cursor: pointer; }
+
+/* numbers */
+.nums { padding-block: clamp(80px, 10vw, 140px); }
+.cases { display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 40px; }
+.case { border: 1px solid var(--line); background: var(--gr); border-radius: 22px; padding: 22px; display: grid; gap: 10px; align-content: start; }
+.case .m { font: 500 12px/1.4 var(--mono); color: var(--mu); }
+.case .big { font-size: clamp(44px, 5vw, 70px); font-weight: 700; line-height: 1; color: var(--pi); direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; }
+[dir="rtl"] .case .big { text-align: right; }
+.case .lb { font-size: 14px; color: var(--soft); }
+.case h3 { margin: 6px 0 0; font-size: 19px; }
+.case p { margin: 0; color: var(--mu); font-size: 14.5px; }
+.bars { display: grid; gap: 8px; margin-top: 6px; }
+.bar { display: grid; gap: 4px; font: 400 12px/1.3 var(--mono); color: var(--mu); }
+.bar .tr { height: 10px; border-radius: 6px; background: var(--gr2); overflow: hidden; }
+.bar .tr i { display: block; height: 100%; width: 0; border-radius: 6px; background: var(--ink); transition: width 1.4s cubic-bezier(.2,.8,.2,1); }
+.bar.r .tr i { background: var(--pu); }
+.case details { font-size: 13px; color: var(--mu); border-top: 1px solid var(--line); padding-top: 10px; }
+.case summary { cursor: pointer; color: var(--ink); font-weight: 500; }
+.fine { margin-top: 18px; font-size: 13.5px; color: var(--mu); max-width: 80ch; }
+
+/* clients plane */
+.clsec { padding-block: clamp(60px, 8vw, 120px); overflow: hidden; }
+.plane { margin-top: 40px; perspective: 1200px; }
+.plane .grid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 10px; transform: rotateX(28deg) rotateZ(-8deg) scale(1.08); transform-origin: 50% 0; transition: transform 1s cubic-bezier(.2,.8,.2,1); }
+.plane.flat .grid { transform: none; }
+.plane .grid div { aspect-ratio: 4 / 3; background: #fff; border-radius: 12px; display: grid; place-items: center; }
+.plane .grid img { width: 70%; height: 60%; object-fit: contain; }
+
+/* end */
+.endsec { padding-block: clamp(90px, 12vw, 170px); text-align: start; }
+.endsec .big { font-weight: 700; font-size: clamp(56px, 10vw, 150px); line-height: .95; letter-spacing: -.04em; }
+[dir="rtl"] .endsec .big { letter-spacing: 0; line-height: 1.15; }
+.endsec .big em { font-style: normal; color: var(--pu); }
+.endsec .row { display: flex; flex-wrap: wrap; gap: 14px 28px; margin-top: 28px; align-items: center; color: var(--soft); }
+.mail { direction: ltr; unicode-bidi: isolate; font-weight: 600; user-select: all; }
+.endsec small { display: block; margin-top: 24px; color: var(--mu); font-size: 13px; max-width: 70ch; }
+
+/* reveal: elements arrive by transform only; they are never hidden */
+.rv { transform: translateY(26px); transition: transform 1s cubic-bezier(.2,.8,.2,1); }
+.rv.on { transform: none; }
+
+@media (max-width: 900px) {
+  .graph { grid-template-columns: repeat(2, minmax(0, 1fr)); } .wire { display: none; } .target { margin-top: 28px; }
+  .cases { grid-template-columns: minmax(0, 1fr); }
+  .plane .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .stage3d { height: 470px; } .ring { width: 180px; height: 320px; }
+  .reel { clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px)); }
+}
+@media (max-width: 520px) {
+  .graph { grid-template-columns: minmax(0, 1fr); } .node { min-height: 0; }
+  .nav .hide { display: none; }
+  .pbar { grid-template-columns: minmax(0, 1fr) auto; } .pbar .spark { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .hero h1 .ch { transform: none; } .rv { transform: none; } }
+</style>
+
+<header class="nav"><div class="in">
+  <img src="media/symbol-white-purple.svg" alt="SayTamm" width="27" height="32"><b id="nm"></b>
+  <span class="sp"></span>
+  <a href="#work" class="hide" data-t="navWork"></a><a href="#numbers" class="hide" data-t="navNum"></a>
+  <button type="button" id="lang"></button><a href="#top" class="pri" data-t="navStart"></a>
+</div></header>
+
+<main>
+  <section class="hero" id="top">
+    <canvas id="field" aria-hidden="true"></canvas>
+    <div class="in">
+      <span class="eyebrow" data-t="eyebrow"></span>
+      <h1 id="h1"></h1>
+      <p class="lead" data-t="sub"></p>
+      <form class="prompt" id="pf">
+        <label for="pin" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)" data-t="pLabel"></label>
+        <div class="pbar"><span class="spark" aria-hidden="true"></span><input id="pin" autocomplete="off"><button type="submit" data-t="pGo"></button></div>
+        <div class="chips" id="chips"></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="answer"><div class="in">
+    <div class="out" id="out" aria-live="polite">
+      <div class="hd"><i></i><span>tamm.engine</span><span class="st" id="st"></span></div>
+      <div class="bd" id="bd"></div>
+      <div class="ft"><span data-t="honest"></span><span style="flex:1"></span><button type="button" id="copyPlan" data-t="copyPlan"></button></div>
+    </div>
+  </div></section>
+
+  <section class="pipe"><div class="in">
+    <span class="eyebrow rv" data-t="pipeE"></span>
+    <h2 class="rv" data-t="pipeH"></h2>
+    <p class="lead rv" data-t="pipeP"></p>
+    <div class="graph" id="graph"></div>
+    <div class="target rv"><i></i><span data-t="target"></span></div>
+  </div></section>
+
+  <section class="ringsec" id="work"><div class="in">
+    <span class="eyebrow rv" data-t="workE"></span>
+    <h2 class="rv" data-t="workH"></h2>
+    <p class="lead rv" data-t="workP"></p>
+  </div>
+    <div class="stage3d" id="stage"><div class="ring" id="ring"></div></div>
+    <p class="ringhint" data-t="ringHint"></p>
+    <div class="in"><div class="reel rv" id="reelBox"><video id="reelV" muted loop playsinline preload="metadata"></video><button type="button" id="reelSnd"></button></div>
+    <p class="fine" data-t="reelNote"></p></div>
+  </section>
+
+  <section class="nums" id="numbers"><div class="in">
+    <span class="eyebrow rv" data-t="numE"></span>
+    <h2 class="rv" data-t="numH"></h2>
+    <p class="lead rv" data-t="numP"></p>
+    <div class="cases" id="cases"></div>
+    <p class="fine" data-t="track"></p>
+  </div></section>
+
+  <section class="clsec"><div class="in">
+    <span class="eyebrow rv" data-t="clE"></span>
+    <h2 class="rv" data-t="clH"></h2>
+    <div class="plane" id="plane"><div class="grid" id="logos"></div></div>
+  </div></section>
+
+  <section class="endsec"><div class="in">
+    <div class="big rv"><span data-t="endA"></span><br><em data-t="endB"></em></div>
+    <div class="row"><span class="mail">info@saytamm.com</span><span class="mail">saytamm.com</span><a href="#top" class="pri" style="color:#fff;background:var(--pu);border-radius:999px;padding:10px 18px;text-decoration:none;font-weight:600" data-t="navStart"></a></div>
+    <small data-t="foot"></small>
+  </div></section>
+</main>
+<div class="viewer" id="viewer" hidden><video id="vv" controls playsinline></video><button type="button" id="vx" aria-label="Close">×</button></div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+"use strict";
+const D = JSON.parse(document.getElementById('data').textContent);
+const T = {
+  ar: { nm: 'قول تم', lang: 'English', navWork: 'الأعمال', navNum: 'الأرقام', navStart: 'ابدأ مشروعاً', eyebrow: 'وكالة تسويق رقمي وأداء',
+    h1: ['قولها.', 'تمّت.'], sub: 'الاستراتيجية والإبداع والإعلانات والتقنية في منظومة واحدة. اكتب هدفك، وشاهد كيف نرتّب الخدمات حوله.',
+    pLabel: 'اكتب هدفك', pGo: 'حلّل', ph: 'مثال: نريد مبيعات أكثر من متجرنا في موسم رمضان',
+    chips: ['مبيعات أكثر من المتجر', 'عملاء محتملون مؤهَّلون', 'إطلاق علامة جديدة', 'الظهور في نتائج البحث', 'محتوى للسوشيال'],
+    st: ['جاهز', 'يحلّل…', 'تم'], honest: 'مخطط مبدئي مبني من خدماتنا فقط، وليس وعداً بنتائج.', copyPlan: 'انسخ المخطط', copied: 'نُسخ',
+    plan: { goal: 'الهدف', num: 'الرقم الذي نُحاسَب عليه', numV: { sales: 'المبيعات', leads: 'العملاء المحتملون المؤهَّلون', brand: 'الوعي والمبيعات بعد الإطلاق', search: 'الزيارات من البحث والطلبات', social: 'التفاعل الذي يقود إلى طلب', any: 'الرقم التجاري الذي نتفق عليه في البداية' },
+      steps: 'الخدمات بالترتيب', next: 'الخطوة التالية', nextV: 'أرسل لنا هذا الهدف، ونعود إليك بالنهج وما سنقيسه وما نحتاجه منك.' },
+    pipeE: 'كيف نعمل', pipeH: 'أربعة تخصصات. رقم واحد.', pipeP: 'كل تخصص يُسلّم التالي شيئاً يمكن العمل عليه، وكلها تُحاسَب على الرقم نفسه.', target: 'المبيعات · العملاء المحتملون · الإيراد',
+    workE: 'من الاستوديو', workH: 'أفلام نصنعها داخل الفريق.', workP: 'اسحب الدائرة لتدور، واضغط على أي فيلم لتشغيله بالصوت.', ringHint: '← اسحب →',
+    sound: 'شغّل الصوت', mute: 'اكتم الصوت', reelNote: '«قولها… تمّت»: أعمال حقيقية لعملائنا (Altopiano وZahid Electra وClean Basket وExodus). البريفات صياغة توضيحية.',
+    films: [['ep-01_discounts', 'قالوا لك… الخصومات'], ['ep-02_prettypicture', 'قالوا لك… الصورة الحلوة'], ['ep-03_budget', 'قالوا لك… الميزانية'], ['ep-04_audience', 'قالوا لك… الجمهور'], ['sector-food', 'المطاعم · Altopiano'], ['sector-homeappliances', 'الأجهزة المنزلية · Zahid Electra'], ['sector-electronics', 'الإلكترونيات · Tech Hive'], ['sector-apps', 'الأبلكيشنز · Clean Basket'], ['sector-travel', 'السفر · Exodus']],
+    numE: 'دراسات حالة', numH: 'العمل، بالأرقام.', numP: 'كل رقم يذكر ما يقيسه ومن أين جاء. العائد على الإنفاق الإعلاني (ROAS) هو الإيراد مقسومًا على الإنفاق، وليس ربحًا.', measured: 'كيف قيس الرقم',
+    track: 'مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.',
+    clE: 'العملاء', clH: 'عملاء وثقوا بفريق قول تم.', endA: 'قولها.', endB: 'ونحن نُتمّها.',
+    foot: 'نسخة تجريبية للمراجعة، ليست الموقع المنشور. السعودية ومصر والإمارات، إلى جانب أعمال في الكويت وعُمان: أسواق يعرفها الفريق، لا مكاتب.' },
+  en: { nm: 'SayTamm', lang: 'العربية', navWork: 'Work', navNum: 'Numbers', navStart: 'Start a project', eyebrow: 'Digital marketing & performance agency',
+    h1: ['Say it.', 'Tamm it.'], sub: 'Strategy, creative, media and technology under one connected approach to growth. Type your goal and watch how we line up the services around it.',
+    pLabel: 'Type your goal', pGo: 'Analyse', ph: 'e.g. We need more sales from our online store this Ramadan',
+    chips: ['More online sales', 'More qualified leads', 'Launch a new brand', 'Be found in search', 'Content for social'],
+    st: ['ready', 'analysing…', 'done'], honest: 'A draft built only from our services. Not a promise of results.', copyPlan: 'Copy the draft', copied: 'Copied',
+    plan: { goal: 'Goal', num: 'The number we answer to', numV: { sales: 'Sales', leads: 'Qualified leads', brand: 'Awareness, then sales after launch', search: 'Search visits and enquiries', social: 'Engagement that leads to enquiries', any: 'The business number we agree at the start' },
+      steps: 'Services, in order', next: 'Next', nextV: 'Send us this goal; we come back with the approach, what we would measure and what we need from you.' },
+    pipeE: 'How we work', pipeH: 'Four disciplines. One number.', pipeP: 'Each discipline hands the next something it can act on, and all of them answer to the same number.', target: 'Sales · Leads · Revenue',
+    workE: 'From the studio', workH: 'Films we make in-house.', workP: 'Drag the ring to turn it; tap a film to play it with sound.', ringHint: '← drag →',
+    sound: 'Turn sound on', mute: 'Mute', reelNote: '«Say it. Done.»: real client work (Altopiano, Zahid Electra, Clean Basket, Exodus). The briefs are illustrative.',
+    films: [['ep-01_discounts', 'They told you… Discounts'], ['ep-02_prettypicture', 'They told you… The pretty picture'], ['ep-03_budget', 'They told you… Budget'], ['ep-04_audience', 'They told you… Audience'], ['sector-food', 'Food · Altopiano'], ['sector-homeappliances', 'Home appliances · Zahid Electra'], ['sector-electronics', 'Electronics · Tech Hive'], ['sector-apps', 'Apps · Clean Basket'], ['sector-travel', 'Travel · Exodus']],
+    numE: 'Case studies', numH: 'The work, measured.', numP: 'Each figure says what it measures and where it comes from. ROAS is revenue divided by ad spend, not profit.', measured: 'How it was measured',
+    track: 'Results from projects led by members of the SayTamm team, including work delivered at other agencies.',
+    clE: 'Clients', clH: 'Clients who trusted the SayTamm team.', endA: 'Say it.', endB: 'We’ll Tamm it.',
+    foot: 'Review preview, not the live site. Saudi Arabia, Egypt and the UAE, with work in Kuwait and Oman: markets the team knows first-hand, not offices.' },
+};
+let L = 'ar'; try { L = localStorage.getItem('te-lang') || 'ar'; } catch (e) {}
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const k = (o) => o[L];
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const SV = {}; D.discs.forEach((d) => d.services.forEach((s) => { SV[s.name.en] = { s, d }; }));
+
+/* ---------- the engine: a draft plan from the real services (rules, not a model) ---------- */
+const RULES = [
+  ['sales', /sale|sell|store|shop|ecom|revenue|ramadan|مبيع|بيع|متجر|إيراد|رمضان|موسم/i, ['Digital Marketing Strategy', 'Performance Marketing', 'Website Development & CRO', 'Content Marketing', 'Analytics & Growth']],
+  ['leads', /lead|enquir|b2b|عملاء محتمل|ليد|استفسار/i, ['Digital Marketing Strategy', 'Performance Marketing', 'Website Development & CRO', 'Analytics & Growth']],
+  ['brand', /brand|launch|identity|logo|علامة|إطلاق|هوية|شعار/i, ['Digital Marketing Strategy', 'Branding & Identity', 'Media Production', 'Social Media Marketing', 'Performance Marketing']],
+  ['search', /search|seo|google|بحث|جوجل|محركات/i, ['Digital Marketing Strategy', 'SEO', 'Content Marketing', 'Website Development & CRO', 'Analytics & Growth']],
+  ['social', /social|content|instagram|tiktok|snap|سوشيال|محتوى|انستقرام|تيك توك|سناب/i, ['Digital Marketing Strategy', 'Social Media Marketing', 'Content Marketing', 'Media Production', 'Analytics & Growth']],
+];
+let planText = '', runId = 0;
+function plan(goal) {
+  const t = T[L], p = t.plan; let kind = 'any', list = ['Digital Marketing Strategy', 'Performance Marketing', 'Content Marketing', 'Analytics & Growth'];
+  for (const [kd, re, ls] of RULES) if (re.test(goal)) { kind = kd; list = ls; break; }
+  const lines = [[`<span class="k">${p.goal}:</span> `, `<b>${esc(goal)}</b>`], [`<span class="k">${p.num}:</span> `, esc(p.numV[kind])], ['', ''], [`<span class="k">${p.steps}:</span>`, '']];
+  list.forEach((n, i) => { const x = SV[n]; if (x) lines.push([`  ${String(i + 1).padStart(2, '0')} · `, `<b>${esc(k(x.s.name))}</b> — ${esc(k(x.s.summary))}`]); });
+  lines.push(['', ''], [`<span class="k">${p.next}:</span> `, esc(p.nextV)]);
+  planText = lines.map(([a, b]) => (a + b).replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')).join('\n');
+  stream(lines);
+}
+function stream(lines) {
+  const id = ++runId, bd = $('bd'), t = T[L]; $('st').textContent = t.st[1];
+  if (still) { bd.innerHTML = lines.map(([a, b]) => a + b).join('\n'); $('st').textContent = t.st[2]; return; }
+  // reveal word by word: html tags stay whole, text arrives in small chunks like a model's answer
+  const html = lines.map(([a, b]) => a + b).join('\n'), toks = html.match(/<[^>]+>|[^<\s]+|\s+/g) || []; let i = 0, acc = '';
+  const step = () => {
+    if (id !== runId) return;
+    for (let n = 0; n < 2 && i < toks.length; n++) { acc += toks[i++]; while (i < toks.length && toks[i].startsWith('<')) acc += toks[i++]; }
+    bd.innerHTML = acc + (i < toks.length ? '<span class="caret"></span>' : '');
+    if (i < toks.length) setTimeout(step, 28 + Math.random() * 40); else $('st').textContent = t.st[2];
+  };
+  bd.innerHTML = '<span class="caret"></span>'; setTimeout(step, 420);
+}
+
+/* ---------- render ---------- */
+function render() {
+  const t = T[L]; document.documentElement.lang = L; document.documentElement.dir = L === 'ar' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t[el.dataset.t]; });
+  $('nm').textContent = t.nm; $('lang').textContent = t.lang; $('pin').placeholder = t.ph; $('st').textContent = t.st[0];
+  $('h1').innerHTML = t.h1.map((w) => `<span class="ln">${[...w].map((c, i) => `<span class="ch" style="--i:${i}">${c === ' ' ? '&nbsp;' : esc(c)}</span>`).join('')}</span>`).join('');
+  if (L === 'ar') $('h1').innerHTML = t.h1.map((w) => `<span class="ln"><span class="ch" style="--i:0">${esc(w)}</span></span>`).join('');   // Arabic letters stay joined: the line rises as one
+  $('chips').innerHTML = t.chips.map((c) => `<button type="button">${esc(c)}</button>`).join('');
+  $('graph').innerHTML = D.discs.map((d, i) => `<article class="node rv"><span class="n">0${i + 1}</span><h3>${esc(k(d.name))}</h3><p>${esc(k(d.value))}</p><ul>${d.services.map((s) => `<li>${esc(k(s.name))}</li>`).join('')}</ul></article>`).join('')
+    + `<div class="wire" aria-hidden="true"><svg viewBox="0 0 400 64" preserveAspectRatio="none">${[50, 150, 250, 350].map((x) => `<path d="M${x},0 C${x},40 200,24 200,64"/><path class="flow" d="M${x},0 C${x},40 200,24 200,64"/>`).join('')}</svg></div>`;
+  $('cases').innerHTML = D.cases.map((c, i) => { const b = c.bar, max = b ? Math.max(b.spend, b.result) : 1; return `<article class="case rv" style="transition-delay:${i * 80}ms">
+      <span class="m">${esc(k(c.sector))} · ${esc(k(c.period))}</span><span class="big" data-count="${esc(c.kpis[0].value)}">${esc(c.kpis[0].value)}</span><span class="lb">${esc(k(c.kpis[0].label))}</span>
+      <h3>${esc(k(c.client))}</h3><p>${esc(k(c.headline))}</p>
+      ${b ? `<div class="bars"><div class="bar"><span>${esc(k(b.spendLabel))} · ${b.spend.toLocaleString('en-US')} ${esc(k(b.unit))}</span><span class="tr"><i data-w="${(b.spend / max * 100).toFixed(1)}"></i></span></div><div class="bar r"><span>${esc(k(b.resultLabel))} · ${b.result.toLocaleString('en-US')} ${esc(k(b.unit))}</span><span class="tr"><i data-w="${(b.result / max * 100).toFixed(1)}"></i></span></div></div>` : `<p>${c.kpis.slice(1).map((x) => `${esc(x.value)} ${esc(k(x.label))}`).join(' · ')}</p>`}
+      <details><summary>${t.measured}</summary><p>${esc(k(c.measured))}${c.note ? ' ' + esc(k(c.note)) : ''}</p></details></article>`; }).join('');
+  $('logos').innerHTML = D.clients.map((c) => `<div title="${esc(k(c.name))}"><img src="media${(L === 'ar' && c.logoAr) || c.logo}" alt="${esc(k(c.name))}" loading="lazy"></div>`).join('');
+  ring(); reel(); plan(t.chips[0]); seen = new WeakSet(); tick();
+}
+
+/* ---------- the field: 45° strokes bending toward the pointer ---------- */
+const cv = $('field'), cx = cv.getContext('2d'); let FW = 0, FH = 0, mx = -9999, my = -9999, tm = 0, dpr = 1;
+function size() { dpr = Math.min(2, devicePixelRatio || 1); FW = cv.clientWidth; FH = cv.clientHeight; cv.width = FW * dpr; cv.height = FH * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+function field() {
+  cx.clearRect(0, 0, FW, FH); const g = 34, len = 13, R = 220;
+  for (let y = g / 2; y < FH; y += g) for (let x = g / 2; x < FW; x += g) {
+    const dx = mx - x, dy = my - y, d = Math.hypot(dx, dy), w = Math.max(0, 1 - d / R);
+    const base = -Math.PI / 4 + Math.sin((x + y) * .006 + tm) * .18;
+    const a = base * (1 - w) + Math.atan2(dy, dx) * w, l = len + w * 14;
+    cx.strokeStyle = w > .05 ? `rgba(167,139,250,${.25 + w * .6})` : 'rgba(245,243,250,.11)'; cx.lineWidth = w > .05 ? 1.6 : 1;
+    cx.beginPath(); cx.moveTo(x - Math.cos(a) * l / 2, y - Math.sin(a) * l / 2); cx.lineTo(x + Math.cos(a) * l / 2, y + Math.sin(a) * l / 2); cx.stroke();
+  }
+}
+function loop() { tm += .012; field(); if (!still && heroOn) requestAnimationFrame(loop); }
+let heroOn = true;
+addEventListener('pointermove', (e) => { const r = cv.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; if (still) field(); });
+addEventListener('resize', () => { size(); field(); });
+
+/* ---------- the ring ---------- */
+let ry = 0, vel = 0, drag = null;
+function ring() {
+  const t = T[L], n = t.films.length, w = $('ring').offsetWidth || 220, r = Math.round(w / 2 / Math.tan(Math.PI / n)) + 30;
+  $('ring').innerHTML = t.films.map(([id, cap], i) => `<div class="card" style="transform: rotateY(${i * 360 / n}deg) translateZ(${r}px)"><img src="media/studio/${id}-${L}.jpg" alt="" loading="lazy"><button class="pl" type="button" data-f="${i}" aria-label="${esc(cap)}"></button><span class="cap">${esc(cap)}</span></div>`).join('');
+}
+const st3 = $('stage');
+st3.addEventListener('pointerdown', (e) => { if (e.target.closest('button')) return; drag = { x: e.clientX, r: ry }; st3.setPointerCapture(e.pointerId); vel = 0; });
+st3.addEventListener('pointermove', (e) => { if (!drag) return; const nr = drag.r + (e.clientX - drag.x) * .25; vel = nr - ry; ry = nr; $('ring').style.setProperty('--ry', ry + 'deg'); });
+st3.addEventListener('pointerup', () => { drag = null; });
+function spin() { if (!drag) { ry += vel; vel *= .95; if (Math.abs(vel) < .05 && !still) ry -= .08; $('ring').style.setProperty('--ry', ry + 'deg'); } requestAnimationFrame(spin); }
+$('ring').addEventListener('click', (e) => { const b = e.target.closest('[data-f]'); if (!b) return; const [id] = T[L].films[+b.dataset.f]; $('vv').src = `media/studio/${id}-${L}.mp4`; $('viewer').hidden = false; $('vv').play().catch(() => {}); });
+$('vx').addEventListener('click', () => { $('vv').pause(); $('viewer').hidden = true; });
+$('viewer').addEventListener('click', (e) => { if (e.target === $('viewer')) $('vx').click(); });
+addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('viewer').hidden) $('vx').click(); });
+
+/* ---------- showreel ---------- */
+function reel() { const t = T[L], v = $('reelV'); v.poster = `media/showreel-${L}.jpg`; v.src = `media/showreel-${L}.mp4`; v.muted = true; $('reelSnd').textContent = t.sound; }
+$('reelSnd').addEventListener('click', () => { const v = $('reelV'), t = T[L]; v.muted = !v.muted; if (!v.muted) { v.currentTime = 0; v.play().catch(() => {}); } $('reelSnd').textContent = v.muted ? t.sound : t.mute; });
+
+/* ---------- scroll: reveals, counters, bars, the clients plane, the reel zoom ---------- */
+let seen = new WeakSet(), tk = false;
+function countUp(el) {
+  const s = el.dataset.count, m = s.match(/^([^\d]*)([\d,]+(?:\.\d+)?)(.*)$/); if (!m || still) return;
+  const raw = m[2].replace(/,/g, ''), dec = (raw.split('.')[1] || '').length, end = parseFloat(raw), t0 = performance.now();
+  const f = (now) => { const u = Math.min(1, (now - t0) / 1300), v = end * (1 - Math.pow(2, -10 * u)); let n = v.toFixed(dec); if (m[2].includes(',')) n = Number(n).toLocaleString('en-US', { minimumFractionDigits: dec }); el.textContent = u >= 1 ? s : m[1] + n + m[3]; if (u < 1) requestAnimationFrame(f); };
+  requestAnimationFrame(f);
+}
+function tick() {
+  tk = false; const vh = innerHeight;
+  document.querySelectorAll('.rv').forEach((el) => { if (el.getBoundingClientRect().top < vh * .92) el.classList.add('on'); });
+  document.querySelectorAll('[data-count]').forEach((el) => { if (!seen.has(el) && el.getBoundingClientRect().top < vh * .85) { seen.add(el); countUp(el); } });
+  document.querySelectorAll('.tr i').forEach((el) => { if (el.getBoundingClientRect().top < vh * .9) el.style.width = el.dataset.w + '%'; });
+  const pl = $('plane').getBoundingClientRect(); $('plane').classList.toggle('flat', pl.top < vh * .45);
+  const rb = $('reelBox').getBoundingClientRect(), v = $('reelV'), u = Math.min(1, Math.max(0, 1 - rb.top / vh));
+  $('reelBox').style.setProperty('--rs', (1.12 - u * .12).toFixed(3));
+  if (!still) { if (rb.top < vh * .7 && rb.bottom > vh * .2) { if (v.paused) v.play().catch(() => {}); } else if (!v.paused && v.muted) v.pause(); }
+  const hb = $('top').getBoundingClientRect(), on = hb.bottom > 0; if (on && !heroOn) { heroOn = true; if (!still) requestAnimationFrame(loop); } heroOn = on;
+}
+addEventListener('scroll', () => { if (!tk) { tk = true; requestAnimationFrame(tick); } }, { passive: true });
+
+/* ---------- wiring ---------- */
+$('pf').addEventListener('submit', (e) => { e.preventDefault(); const g = $('pin').value.trim(); if (g) { plan(g); $('out').scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'center' }); } });
+$('chips').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { $('pin').value = b.textContent; plan(b.textContent); } });
+$('copyPlan').addEventListener('click', async () => { try { await navigator.clipboard.writeText(planText + '\n\ninfo@saytamm.com'); $('copyPlan').textContent = T[L].copied; } catch (e) { const r = document.createRange(); r.selectNodeContents($('bd')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } });
+$('lang').addEventListener('click', () => { L = L === 'ar' ? 'en' : 'ar'; try { localStorage.setItem('te-lang', L); } catch (e) {} render(); });
+size(); render(); field(); if (!still) { requestAnimationFrame(loop); requestAnimationFrame(spin); }
+</script>
