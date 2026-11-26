@@ -1,17 +1,433 @@
 {
- "food": {"name": "Food", "sector": "المطاعم والضيافة", "hook": ["الأكل بيتباع…", "بالعين الأول."], "client": "Altopiano", "chips": ["تصوير", "ريلز", "محتوى"],
-  "cuts": [["a_facade", 1.4], ["a_salt", 1], ["a_flame", 1], ["a_steak", 0.5], ["a_pizza", 1], ["a_oil", 1], ["a_pasta", 1], ["a_pour", 1], ["a_choc", 1.4], ["a_plate", 2.5]],
-  "caps": [[2.0, "تصوير بدقة 4K"], [5.9, "لقطة لكل طبق"], [9.4, "ريلز بإيقاع المطبخ"]]},
- "appliances": {"name": "HomeAppliances", "sector": "الأجهزة المنزلية", "hook": ["الميزة اللي متتشافش…", "متتباعش."], "client": "Zahid Electra", "chips": ["موشن 3D", "جرافيك", "سوشيال"],
-  "cuts": [["z_wash", 3.0, 1.0, "sq"], ["z_fridge", 3.0, 1.0, "sq"], ["z_rpm", 3.6, 0.4, "sq"], ["z_logo", 2.2, 0.6, "sq"]],
-  "caps": [[2.0, "موشن 3D للمنتج"], [5.0, "كل ميزة في لقطة"], [8.0, "الرقم يتشاف… مش يتقري"]]},
- "electronics": {"name": "Electronics", "sector": "الإلكترونيات والتقنية", "hook": ["جمهور التقنية بيقارن…", "قبل ما يدفع."], "client": "Tech Hive", "chips": ["فيديو", "إعلانات", "سوشيال"],
-  "cuts": [["t_street", 2.0], ["t_pc", 1.5], ["t_done", 1.5], ["t_hookA", 1.6], ["t_hookB", 1.6], ["t_bf", 1.8], ["t_memes", 1.8]],
-  "caps": [[2.0, "فيديو بقصة"], [7.0, "هوكين… والأرقام تقرر"], [10.2, "وحملة كاملة للموسم"]]},
- "apps": {"name": "Apps", "sector": "الأبلكيشنز والخدمات", "hook": ["الأبلكيشن لازم يتفهم…", "من أول ثانية."], "client": "Clean Basket", "chips": ["موشن 2D", "جرافيك"],
-  "cuts": [["c_app", 11.8, 0, "", 1.2]],
-  "caps": [[2.0, "الفكرة كلها في موشن 2D"], [5.5, "خطوة… بخطوة"], [9.0, "لحد باب البيت"]]},
- "travel": {"name": "Travel", "sector": "السفر والسياحة", "hook": ["الرحلة بتتباع…", "قبل ما تبدأ."], "client": "Exodus", "chips": ["ريلز", "موشن", "سوشيال"],
-  "cuts": [["e_nile", 1.5], ["e_explore", 1.1], ["e_sphinx", 1.5], ["e_adv", 1.3], ["e_awaits", 1.5], ["e_dog", 4.9]],
-  "caps": [[2.0, "ريلز سفر للسوشيال"], [5.6, "لقطات تتحكي"], [8.9, "وموشن يحكي الأسطورة"]]}
+ "food": {
+  "name": "Food",
+  "sector": "المطاعم والضيافة",
+  "hook": [
+   "الأكل بيتباع…",
+   "بالعين الأول."
+  ],
+  "client": "Altopiano",
+  "chips": [
+   "تصوير",
+   "ريلز",
+   "محتوى"
+  ],
+  "cuts": [
+   [
+    "a_facade",
+    1.4
+   ],
+   [
+    "a_salt",
+    1
+   ],
+   [
+    "a_flame",
+    1
+   ],
+   [
+    "a_steak",
+    0.5
+   ],
+   [
+    "a_pizza",
+    1
+   ],
+   [
+    "a_oil",
+    1
+   ],
+   [
+    "a_pasta",
+    1
+   ],
+   [
+    "a_pour",
+    1
+   ],
+   [
+    "a_choc",
+    1.4
+   ],
+   [
+    "a_plate",
+    2.5
+   ]
+  ],
+  "caps": [
+   [
+    2.0,
+    "تصوير بدقة 4K"
+   ],
+   [
+    5.9,
+    "لقطة لكل طبق"
+   ],
+   [
+    9.4,
+    "ريلز بإيقاع المطبخ"
+   ]
+  ],
+  "en": {
+   "sector": "Food & hospitality",
+   "hook": [
+    "People buy food…",
+    "with their eyes first."
+   ],
+   "chips": [
+    "Photography",
+    "Reels",
+    "Content"
+   ],
+   "caps": [
+    [
+     2.0,
+     "Shot in 4K"
+    ],
+    [
+     5.9,
+     "A shot for every dish"
+    ],
+    [
+     9.4,
+     "Reels cut to the kitchen’s rhythm"
+    ]
+   ]
+  }
+ },
+ "appliances": {
+  "name": "HomeAppliances",
+  "sector": "الأجهزة المنزلية",
+  "hook": [
+   "الميزة اللي متتشافش…",
+   "متتباعش."
+  ],
+  "client": "Zahid Electra",
+  "chips": [
+   "موشن 3D",
+   "جرافيك",
+   "سوشيال"
+  ],
+  "cuts": [
+   [
+    "z_wash",
+    3.0,
+    1.0,
+    "sq"
+   ],
+   [
+    "z_fridge",
+    3.0,
+    1.0,
+    "sq"
+   ],
+   [
+    "z_rpm",
+    3.6,
+    0.4,
+    "sq"
+   ],
+   [
+    "z_logo",
+    2.2,
+    0.6,
+    "sq"
+   ]
+  ],
+  "caps": [
+   [
+    2.0,
+    "موشن 3D للمنتج"
+   ],
+   [
+    5.0,
+    "كل ميزة في لقطة"
+   ],
+   [
+    8.0,
+    "الرقم يتشاف… مش يتقري"
+   ]
+  ],
+  "en": {
+   "sector": "Home appliances",
+   "hook": [
+    "A feature they can’t see…",
+    "is a feature they won’t buy."
+   ],
+   "chips": [
+    "3D motion",
+    "Graphics",
+    "Social"
+   ],
+   "caps": [
+    [
+     2.0,
+     "3D product motion"
+    ],
+    [
+     5.0,
+     "Every feature, one shot"
+    ],
+    [
+     8.0,
+     "Numbers you see, not read"
+    ]
+   ]
+  }
+ },
+ "electronics": {
+  "name": "Electronics",
+  "sector": "الإلكترونيات والتقنية",
+  "hook": [
+   "جمهور التقنية بيقارن…",
+   "قبل ما يدفع."
+  ],
+  "client": "Tech Hive",
+  "chips": [
+   "فيديو",
+   "إعلانات",
+   "سوشيال"
+  ],
+  "cuts": [
+   [
+    "t_street",
+    2.0
+   ],
+   [
+    "t_pc",
+    1.5
+   ],
+   [
+    "t_done",
+    1.5
+   ],
+   [
+    "t_hookA",
+    1.6
+   ],
+   [
+    "t_hookB",
+    1.6
+   ],
+   [
+    "t_bf",
+    1.8
+   ],
+   [
+    "t_memes",
+    1.8
+   ]
+  ],
+  "caps": [
+   [
+    2.0,
+    "فيديو بقصة"
+   ],
+   [
+    7.0,
+    "هوكين… والأرقام تقرر"
+   ],
+   [
+    10.2,
+    "وحملة كاملة للموسم"
+   ]
+  ],
+  "en": {
+   "sector": "Consumer electronics",
+   "hook": [
+    "Tech buyers compare…",
+    "before they pay."
+   ],
+   "chips": [
+    "Video",
+    "Ads",
+    "Social"
+   ],
+   "caps": [
+    [
+     2.0,
+     "Films with a story"
+    ],
+    [
+     7.0,
+     "Two hooks… the numbers decide"
+    ],
+    [
+     10.2,
+     "And a full season campaign"
+    ]
+   ],
+   "cuts": [
+    [
+     "t_street_en",
+     2.0
+    ],
+    [
+     "t_pc_en",
+     1.5
+    ],
+    [
+     "t_done_en",
+     1.5
+    ],
+    [
+     "t_hookA",
+     1.6
+    ],
+    [
+     "t_hookB",
+     1.6
+    ],
+    [
+     "t_bf",
+     1.8
+    ],
+    [
+     "t_memes",
+     1.8
+    ]
+   ]
+  }
+ },
+ "apps": {
+  "name": "Apps",
+  "sector": "الأبلكيشنز والخدمات",
+  "hook": [
+   "الأبلكيشن لازم يتفهم…",
+   "من أول ثانية."
+  ],
+  "client": "Clean Basket",
+  "chips": [
+   "موشن 2D",
+   "جرافيك"
+  ],
+  "cuts": [
+   [
+    "c_app",
+    11.8,
+    0,
+    "",
+    1.2
+   ]
+  ],
+  "caps": [
+   [
+    2.0,
+    "الفكرة كلها في موشن 2D"
+   ],
+   [
+    5.5,
+    "خطوة… بخطوة"
+   ],
+   [
+    9.0,
+    "لحد باب البيت"
+   ]
+  ],
+  "en": {
+   "sector": "Apps & services",
+   "hook": [
+    "An app has to make sense…",
+    "in the first second."
+   ],
+   "chips": [
+    "2D motion",
+    "Graphics"
+   ],
+   "caps": [
+    [
+     2.0,
+     "The whole idea in 2D motion"
+    ],
+    [
+     5.5,
+     "Step… by step"
+    ],
+    [
+     9.0,
+     "Right to the door"
+    ]
+   ]
+  }
+ },
+ "travel": {
+  "name": "Travel",
+  "sector": "السفر والسياحة",
+  "hook": [
+   "الرحلة بتتباع…",
+   "قبل ما تبدأ."
+  ],
+  "client": "Exodus",
+  "chips": [
+   "ريلز",
+   "موشن",
+   "سوشيال"
+  ],
+  "cuts": [
+   [
+    "e_nile",
+    1.5
+   ],
+   [
+    "e_explore",
+    1.1
+   ],
+   [
+    "e_sphinx",
+    1.5
+   ],
+   [
+    "e_adv",
+    1.3
+   ],
+   [
+    "e_awaits",
+    1.5
+   ],
+   [
+    "e_dog",
+    4.9
+   ]
+  ],
+  "caps": [
+   [
+    2.0,
+    "ريلز سفر للسوشيال"
+   ],
+   [
+    5.6,
+    "لقطات تتحكي"
+   ],
+   [
+    8.9,
+    "وموشن يحكي الأسطورة"
+   ]
+  ],
+  "en": {
+   "sector": "Travel & tourism",
+   "hook": [
+    "A trip is sold…",
+    "before it starts."
+   ],
+   "chips": [
+    "Reels",
+    "Motion",
+    "Social"
+   ],
+   "caps": [
+    [
+     2.0,
+     "Travel reels for social"
+    ],
+    [
+     5.6,
+     "Shots that tell the story"
+    ],
+    [
+     8.9,
+     "And motion that tells the legend"
+    ]
+   ]
+  }
+ }
 }

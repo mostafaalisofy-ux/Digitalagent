@@ -10,12 +10,14 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const OUT = path.join(ROOT, 'handover', 'launch-film', 'sectors'); fs.mkdirSync(OUT, { recursive: true });
 const arg = (k) => { const i = process.argv.indexOf(k); return i < 0 ? null : process.argv[i + 1] ?? true; };
 const FPS = 60, SUB = 2, SEQD = path.join(OUT, 'seq');
-const SEC = process.env.SECTOR || 'food', CFG = JSON.parse(fs.readFileSync(path.join(ROOT, 'film/sectors/sectors.json'), 'utf8'))[SEC];
-if (!CFG) throw new Error('unknown sector ' + SEC);
-const V = SEC;
+const SEC = process.env.SECTOR || 'food', L = process.env.SECTOR_LANG || 'ar', BASE = JSON.parse(fs.readFileSync(path.join(ROOT, 'film/sectors/sectors.json'), 'utf8'))[SEC];
+if (!BASE) throw new Error('unknown sector ' + SEC);
+const CFG = L === 'en' ? { ...BASE, ...BASE.en, lang: 'en' } : BASE;   // English overrides copy (and cuts where a client has an English cut)
+const V = SEC + (L === 'en' ? 'en' : '');
 const html = fs.readFileSync(path.join(ROOT, 'film/sectors/film.html'), 'utf8').replace('__CFG__', JSON.stringify(CFG))
   .replaceAll('__SEQ__', pathToFileURL(SEQD).href)
   .replace('__SEQN__', JSON.stringify(Object.fromEntries(fs.readdirSync(SEQD).map((d) => [d, fs.readdirSync(path.join(SEQD, d)).length]))))
+  .replaceAll('__SAT__', pathToFileURL(path.join(ROOT, 'site/public/fonts/satoshi')).href)
   .replaceAll('__PLEX__', pathToFileURL(path.join(ROOT, 'site/node_modules/@fontsource/ibm-plex-sans-arabic/files')).href)
   .replaceAll('__SYMBOL__', pathToFileURL(path.join(ROOT, 'brand/production/logo/SayTamm_Symbol_Signature_White-Purple.svg')).href);
 const PART = arg('--part'), PARTS = Number(arg('--parts') || 1);
@@ -36,7 +38,7 @@ if (arg('--frames')) {
   for (const t of String(arg('--frames')).split(',').map(Number)) await at(t, { path: path.join(d, `t${t.toFixed(2).padStart(5, '0')}.jpg`), quality: 85 });
   await done(); console.log('frames in', d); process.exit(0);
 }
-if (arg('--audio-only')) { fs.writeFileSync(path.join(OUT, `${SEC}_Score.wav`), Buffer.from(await page.evaluate(() => window.renderAudio()), 'base64')); await done(); console.log('wrote score'); process.exit(0); }
+if (arg('--audio-only')) { fs.writeFileSync(path.join(OUT, `${V}_Score.wav`), Buffer.from(await page.evaluate(() => window.renderAudio()), 'base64')); await done(); console.log('wrote score'); process.exit(0); }
 const DUR = await page.evaluate(() => window.DUR_S), FT = Math.round(FPS * DUR);
 const F0 = PART === null ? 0 : Math.floor((Number(PART) * FT) / PARTS), F1 = PART === null ? FT : Math.floor(((Number(PART) + 1) * FT) / PARTS);
 const MP4 = path.join(OUT, `_part${V}${TAG}.mp4`);

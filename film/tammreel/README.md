@@ -36,3 +36,16 @@ bash film/tammreel/render_parallel.sh 169
 ```
 
 Output: `SayTamm_QolhaTammat_AR_16x9.mp4`, `cover169.jpg`, `cover_end169.jpg`.
+
+**English** (same timing and score, Satoshi; internal until the Satoshi licence is confirmed): copy lives in the `TXT` table at the top of
+`film.html` / `film169.html` ("Say it. / Leave the rest to us.", briefs, "Done", "You said it… Done.", "Say it. Tamm it."). Edge-aligned text mirrors to the left.
+
+```bash
+bash film/tammreel/render_parallel.sh "" en
+```
+
+```bash
+bash film/tammreel/render_parallel.sh 169 en
+```
+
+Output: `SayTamm_QolhaTammat_EN_9x16.mp4`, `SayTamm_QolhaTammat_EN_16x9.mp4`.

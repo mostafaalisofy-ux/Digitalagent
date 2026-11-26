@@ -31,3 +31,12 @@ bash film/sectors/render_parallel.sh
 
 One sector only: `bash film/sectors/render_parallel.sh travel`. Output: `handover/launch-film/sectors/SayTamm_Sector_<Name>_AR_9x16.mp4` and `cover_<sector>.jpg`.
 To add a sector: add its shots to `shots.json`, run `prep.py <ids>`, add an entry to `sectors.json` (cuts must total 11.8 s).
+
+**English**: each sector in `sectors.json` has an `en` block (sector, hook, captions, chips; Tech Hive also swaps in its English story film).
+Satoshi, so internal until the licence is confirmed.
+
+```bash
+SECTOR_LANG=en bash film/sectors/render_parallel.sh
+```
+
+Output: `SayTamm_Sector_<Name>_EN_9x16.mp4`.

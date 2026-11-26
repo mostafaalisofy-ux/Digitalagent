@@ -5,6 +5,8 @@
   @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
   @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-500-normal.woff2); font-weight: 500; }
   @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-700-normal.woff2); font-weight: 700; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
   html, body { margin: 0; background: #09090D; overflow: hidden; } canvas { display: block; }
 </style></head>
 <body><canvas id="c" width="1080" height="1920"></canvas>
@@ -13,7 +15,10 @@
 // Sector reels — 9:16, Arabic, Plex only, 120 BPM, 16 s. One engine, five sectors (sectors.json, injected as CFG):
 // hook (2 s) → the client's real work cut on the beat with short captions (2–13.8 s) → client + what was made → end card.
 // window.seek(t) is async (footage frames load on demand).
-const CFG = __CFG__;
+const CFG = __CFG__, LANG = CFG.lang || 'ar';   // 'en' uses Satoshi (internal until the licence is confirmed)
+const TXT = LANG === 'en' ? { sector: 'Sector', made: 'Made for', tag: 'Say it. Tamm it.', line: 'A digital marketing & performance agency',
+  track: ['Results from projects led by members of the SayTamm team,', 'including work delivered at other agencies.'] } :
+  { sector: 'قطاع', made: 'عمل لـ', tag: 'قول. تم.', line: 'وكالة تسويق رقمي وأداء', track: ['مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.'] };
 const W = 1080, H = 1920, BEAT = 0.5, DUR = 16;
 window.DUR_S = DUR;
 const PU = '#6C35FF', OB = '#09090D', GR = '#17171E', WH = '#F5F3FA', MU = '#96939F', LI = '#C9C6D2';
@@ -29,9 +34,10 @@ function frameImg(id, k) {
   if (!CACHE.has(key)) { const im = new Image(); im.src = `${SEQ}/${id}/${String(k).padStart(3, '0')}.jpg`; CACHE.set(key, im.decode().then(() => im)); if (CACHE.size > 120) CACHE.delete(CACHE.keys().next().value); }
   return CACHE.get(key);
 }
-function font(px, w, latin) { c.font = `${w} ${px}px ${latin ? 'PlexL' : 'Plex, PlexL'}`; c.direction = latin ? 'ltr' : 'rtl'; }
-function T(s, x, y, px, { w = 700, col = WH, al = 'center', a = 1, latin = false } = {}) {
+function font(px, w, latin) { const en = LANG === 'en'; c.font = `${w} ${px}px ${en ? 'Sat' : latin ? 'PlexL' : 'Plex, PlexL'}`; c.direction = latin || en ? 'ltr' : 'rtl'; }
+function T(s, x, y, px, { w = 700, col = WH, al = 'center', a = 1, latin = false, m = false } = {}) {
   if (a <= 0 || !s) return;
+  if (m && LANG === 'en') { x = W - x; al = al === 'right' ? 'left' : al === 'left' ? 'right' : al; }   // edge-aligned text mirrors in English
   font(px, w, latin); c.textAlign = al; c.fillStyle = col; c.globalAlpha = a; c.fillText(s, x, y); c.globalAlpha = 1; c.direction = 'ltr';
 }
 const tw = (s, px, w = 700, latin = false) => { font(px, w, latin); const v = c.measureText(s).width; c.direction = 'ltr'; return v; };
@@ -66,8 +72,8 @@ async function shot(k, lt, o = {}) {
 }
 function sectorTag(t, a) {   // top safe zone: the sector and the progress of the reel
   topShade(0.7);
-  T(CFG.sector, 1000, 300, 40, { al: 'right', a });
-  T('قطاع', 80, 300, 30, { al: 'left', w: 500, col: LI, a });
+  T(CFG.sector, 1000, 300, 40, { al: 'right', a, m: true });
+  T(TXT.sector, 80, 300, 30, { al: 'left', w: 500, col: LI, a, m: true });
   RR(80, 330, 920, 7, 3.5, WH, 0.25 * a); RR(80, 330, 920 * clamp((t - CUT0) / (END - CUT0)), 7, 3.5, PU, a);
 }
 function caption(t) {
@@ -78,12 +84,12 @@ function caption(t) {
 function clientCard(t) {
   if (t < CLIENT) return;
   botShade(0.94, 1050);
-  T('عمل لـ', W / 2, 1330, 36, { w: 500, col: LI, a: E(t, CLIENT, CLIENT + 0.3) });
+  T(TXT.made, W / 2, 1330, 36, { w: 500, col: LI, a: E(t, CLIENT, CLIENT + 0.3) });
   line(CFG.client, 1450, 96, CLIENT + 0.1, t, { latin: true });
   const px = 36, gap = 20, ws = CFG.chips.map((x) => tw(x, px) + 64), tot = ws.reduce((a, b) => a + b, 0) + gap * (ws.length - 1);
-  let x = W / 2 + tot / 2;   // RTL: first chip on the right
+  const dir = LANG === 'en' ? 1 : -1; let x = W / 2 - dir * tot / 2;   // reading order: first chip on the right in Arabic, on the left in English
   CFG.chips.forEach((ch, i) => {
-    const u = spr(t - CLIENT - 0.35 - i * 0.12, 22), w = ws[i], cx = x - w / 2; x -= w + gap; if (u <= 0) return;
+    const u = spr(t - CLIENT - 0.35 - i * 0.12, 22), w = ws[i], cx = x + dir * w / 2; x += dir * (w + gap); if (u <= 0) return;
     c.save(); c.translate(cx, 1600); c.scale(u, u); RR(-w / 2, -38, w, 76, 38, i === 0 ? PU : GR); T(ch, 0, 13, px, { col: WH }); c.restore();
   });
 }
@@ -96,10 +102,10 @@ function outro(t) {
   bg();
   const u = E(t, END, END + 0.45), h = 210, w = (h * 600) / 721;
   c.drawImage(SYMBOL, W / 2 - w / 2 + 220 * (1 - u), 560 - 220 * (1 - u), w, h);
-  line('قول. تم.', 1000, 120, END + 0.3, t);
-  T('وكالة تسويق رقمي وأداء', W / 2, 1100, 40, { w: 500, col: MU, a: E(t, END + 0.6, END + 0.9) });
+  line(TXT.tag, 1000, 120, END + 0.3, t);
+  T(TXT.line, W / 2, 1100, 40, { w: 500, col: MU, a: E(t, END + 0.6, END + 0.9) });
   T('saytamm.com', W / 2, 1180, 38, { w: 500, a: E(t, END + 0.6, END + 0.9), latin: true });
-  T('مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.', W / 2, 1560, 26, { w: 500, col: MU, a: E(t, END + 0.8, END + 1.2) });
+  TXT.track.forEach((s, i) => T(s, W / 2, 1560 + i * 36, 26, { w: 500, col: MU, a: E(t, END + 0.8, END + 1.2) }));
 }
 async function sceneAt(t) {
   if (t < CUT0) return hook(t);
@@ -167,7 +173,7 @@ const buf = await A.startRendering();
   return btoa(bin);
 };
 window.ready = (async () => {
-  await Promise.all(['500 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول')).concat(['500 40px PlexL', '700 40px PlexL'].map((f) => document.fonts.load(f, 'Aa'))));
+  await Promise.all(['500 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول')).concat(['500 40px PlexL', '700 40px PlexL', '500 40px Sat', '700 40px Sat'].map((f) => document.fonts.load(f, 'Aa'))));
   SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
   await window.seek(0); return true;
 })();

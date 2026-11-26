@@ -5,17 +5,32 @@
   @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
   @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-500-normal.woff2); font-weight: 500; }
   @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-700-normal.woff2); font-weight: 700; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
   html, body { margin: 0; background: #09090D; overflow: hidden; } canvas { display: block; }
 </style></head>
 <body><canvas id="c" width="1920" height="1080"></canvas>
 <script>
 'use strict';
+const LANG = '__LANG__';   // 'ar' (Plex, RTL) or 'en' (Satoshi, LTR; internal until the Satoshi licence is confirmed)
 // «قولها… تمّت» — 16:9 cut, Arabic, Plex only, 120 BPM, 38 s.
 // Tamm opens and closes; four briefs, each answered by real client work (Altopiano 4K production, Zahid Electra 3D motion,
 // Clean Basket 2D motion, Exodus travel content) and stamped «تمّت». window.seek(t) is async (footage frames load on demand).
 const W = 1920, H = 1080, BEAT = 0.5, DUR = 38;
 window.DUR_S = DUR;
 const PU = '#6C35FF', OB = '#09090D', GR = '#17171E', WH = '#F5F3FA', MU = '#96939F', LI = '#C9C6D2';
+const MIR = (x) => 2870 - x;
+const TXT = LANG === 'en' ? {
+  i1: 'Say it.', i2: 'Leave the rest to us.', brief: 'The brief', done: 'Done',
+  svc: ['Production & photography', '3D motion', '2D motion', 'Content & social'],
+  briefs: ['Food that looks as good as it tastes.', 'Let the product explain itself.', 'The whole idea in one tap.', 'A trip told in seconds.'],
+  g1: 'You said it…', g2: 'Done.', o1: 'Say it.', o2: 'We’ll Tamm it.', tag: 'Say it. Tamm it.', line: 'A digital marketing & performance agency',
+  track: 'Results from projects led by members of the SayTamm team,', track2: 'including work delivered at other agencies.', note: 'The briefs in this film are illustrative.' } : {
+  i1: 'قولها.', i2: 'وسيبها علينا.', brief: 'البريف', done: 'تمّت',
+  svc: ['الإنتاج والتصوير', 'موشن 3D', 'موشن 2D', 'محتوى وسوشيال'],
+  briefs: ['أكل يبان زي طعمه.', 'المنتج يشرح نفسه.', 'الفكرة كلها في ضغطة.', 'رحلة تتحكي في ثواني.'],
+  g1: 'قلتوها…', g2: 'وتمّت.', o1: 'قولها.', o2: 'وإحنا نخلّيها تمّت.', tag: 'قول. تم.', line: 'وكالة تسويق رقمي وأداء',
+  track: 'مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.', track2: '', note: 'البريفات في الفيلم صياغة توضيحية.' };
 const SEQ = '__SEQ__', SEQN = __SEQN__;
 const c = document.getElementById('c').getContext('2d');
 const clamp = (x, a = 0, b = 1) => (x < a ? a : x > b ? b : x), lerp = (a, b, u) => a + (b - a) * u, inv = (a, b, x) => clamp((x - a) / (b - a));
@@ -28,9 +43,10 @@ function frameImg(id, k) {
   if (!CACHE.has(key)) { const im = new Image(); im.src = `${SEQ}/${id}/${String(k).padStart(3, '0')}.jpg`; CACHE.set(key, im.decode().then(() => im)); if (CACHE.size > 120) CACHE.delete(CACHE.keys().next().value); }
   return CACHE.get(key);
 }
-function font(px, w, latin) { c.font = `${w} ${px}px ${latin ? 'PlexL' : 'Plex, PlexL'}`; c.direction = latin ? 'ltr' : 'rtl'; }
-function T(s, x, y, px, { w = 700, col = WH, al = 'center', a = 1, latin = false } = {}) {
+function font(px, w, latin) { const en = LANG === 'en'; c.font = `${w} ${px}px ${en ? 'Sat' : latin ? 'PlexL' : 'Plex, PlexL'}`; c.direction = latin || en ? 'ltr' : 'rtl'; }
+function T(s, x, y, px, { w = 700, col = WH, al = 'center', a = 1, latin = false, m = false } = {}) {
   if (a <= 0 || !s) return;
+  if (m && LANG === 'en') { x = MIR(x); al = al === 'right' ? 'left' : al === 'left' ? 'right' : al; }   // edge-aligned text mirrors in English
   font(px, w, latin); c.textAlign = al; c.fillStyle = col; c.globalAlpha = a; c.fillText(s, x, y); c.globalAlpha = 1; c.direction = 'ltr';
 }
 const tw = (s, px, w = 700, latin = false) => { font(px, w, latin); const v = c.measureText(s).width; c.direction = 'ltr'; return v; };
@@ -56,10 +72,9 @@ function botShade(a = 0.88, y0 = 1180) { const g = c.createLinearGradient(0, y0,
 // ---------- the four briefs ----------
 // 16:9 layout: the type column on the right (RTL reading starts there), the vertical footage in panels on the left.
 const CH = [
-  { a: 3.5, b: 15.5, n: '01', svc: 'الإنتاج والتصوير', client: 'Altopiano', brief: 'أكل يبان زي طعمه.', stamp: 13.2 },
-  { a: 15.5, b: 22.0, n: '02', svc: 'موشن 3D', client: 'Zahid Electra', brief: 'المنتج يشرح نفسه.', stamp: 20.2 },
-  { a: 22.0, b: 27.0, n: '03', svc: 'موشن 2D', client: 'Clean Basket', brief: 'الفكرة كلها في ضغطة.', stamp: 25.2 },
-  { a: 27.0, b: 31.5, n: '04', svc: 'محتوى وسوشيال', client: 'Exodus', brief: 'رحلة تتحكي في ثواني.', stamp: 30.0 }];
+  { a: 3.5, b: 15.5, n: '01', client: 'Altopiano', stamp: 13.2 }, { a: 15.5, b: 22.0, n: '02', client: 'Zahid Electra', stamp: 20.2 },
+  { a: 22.0, b: 27.0, n: '03', client: 'Clean Basket', stamp: 25.2 }, { a: 27.0, b: 31.5, n: '04', client: 'Exodus', stamp: 30.0 }]
+  .map((ch, i) => ({ ...ch, svc: TXT.svc[i], brief: TXT.briefs[i] }));
 const BLADES = [3.5, 15.5, 22.0, 27.0, 31.5, 33.5];
 const BRIEF_LEN = 1.0;
 const TX = 1810, TC = 1440;              // type column: right edge and centre
@@ -67,27 +82,28 @@ const PW = 450, PH = 800, PY = 140, PX = [80, 550];   // two 9:16 panels on the 
 
 function bubble(s, t0, t, settle) {   // the client's message; after the brief it settles higher and stays
   const u = spr(t - t0, 16); if (u <= 0) return;
-  const m = settle ? E(t, settle, settle + 0.45, eio) : 0, px = 56, w = Math.min(760, tw(s, px) + 110), h = 180, x = TX - w, y = lerp(420, 250, m);
+  const m = settle ? E(t, settle, settle + 0.45, eio) : 0; let px = 56; while (tw(s, px) + 110 > 760) px -= 2; const w = tw(s, px) + 110, h = 180, x = TX - w, y = lerp(420, 250, m);
   c.save(); c.translate(TX, y + h); c.scale(lerp(0.6, 1, u), lerp(0.6, 1, u)); c.translate(-TX, -(y + h)); c.globalAlpha = clamp(u * 1.4);
   RR(x, y, w, h, 40, WH); c.beginPath(); c.moveTo(TX, y + h - 40); c.lineTo(TX, y + h + 24); c.lineTo(TX - 56, y + h); c.closePath(); c.fillStyle = WH; c.fill();
-  T('البريف', TX - 56, y + 58, 30, { al: 'right', col: MU, w: 500 }); T(s, TX - 56, y + 138, px, { al: 'right', col: OB });
+  const ix = LANG === 'en' ? x + 56 : TX - 56, ia = LANG === 'en' ? 'left' : 'right';
+  T(TXT.brief, ix, y + 58, 30, { al: ia, col: MU, w: 500 }); T(s, ix, y + 138, px, { al: ia, col: OB });
   c.restore();
 }
 function stamp(ch, t) {   // «تمّت» + service and client, under the brief
   const u = spr(t - ch.stamp, 20); if (u <= 0) return;
-  const px = 72, w = tw('تمّت', px) + 170, h = 128, cx = TC + 120, cy = 640;
+  const px = 72, w = tw(TXT.done, px) + 170, h = 128, cx = TC + 120, cy = 640;
   c.save(); c.translate(cx, cy); c.scale(u, u); c.rotate(-0.035 * (1 - u));
-  RR(-w / 2, -h / 2, w, h, h / 2, PU); T('تمّت', 34, px * 0.36, px, { col: WH });
+  RR(-w / 2, -h / 2, w, h, h / 2, PU); T(TXT.done, 34, px * 0.36, px, { col: WH });
   c.strokeStyle = WH; c.lineWidth = 11; c.lineCap = 'round'; c.lineJoin = 'round'; c.beginPath();
   const k = E(t, ch.stamp + 0.1, ch.stamp + 0.35); const x0 = -w / 2 + 50;
   c.moveTo(x0, 2); c.lineTo(x0 + 18 * Math.min(1, k * 2), 2 + 18 * Math.min(1, k * 2)); if (k > 0.5) c.lineTo(x0 + 18 + 34 * (k - 0.5) * 2, 20 - 40 * (k - 0.5) * 2); c.stroke();
   c.restore();
-  T(ch.svc, TX, 800, 50, { al: 'right', a: E(t, ch.stamp + 0.2, ch.stamp + 0.45) });
-  T(ch.client, TX, 862, 38, { al: 'right', w: 500, col: LI, latin: true, a: E(t, ch.stamp + 0.3, ch.stamp + 0.55) });
+  T(ch.svc, TX, 800, 50, { al: 'right', m: true, a: E(t, ch.stamp + 0.2, ch.stamp + 0.45) });
+  T(ch.client, TX, 862, 38, { al: 'right', m: true, w: 500, col: LI, latin: true, a: E(t, ch.stamp + 0.3, ch.stamp + 0.55) });
 }
 function label(ch, t) {   // chapter counter, top of the type column
   const u = E(t, ch.a, ch.a + 0.35);
-  T(`${ch.n} / 04`, TX, 120, 30, { al: 'right', latin: true, w: 500, col: LI, a: u });
+  T(`${ch.n} / 04`, TX, 120, 30, { al: 'right', m: true, latin: true, w: 500, col: LI, a: u });
   for (let k = 0; k < 4; k++) RR(TX - 760 + k * 195, 150, 180, 7, 3.5, k < Number(ch.n) ? PU : WH, k < Number(ch.n) ? u : 0.25 * u);
 }
 const panel = (id, lt, i, o = {}) => clip(id, lt, PX[i], PY, PW, PH, 22, o);
@@ -146,28 +162,28 @@ async function grid(t) {
     const x = gx + i * (gw + gap), w = gw * s, h = gh * s;
     await clip(G[i][0], G[i][1] + (t - 31.5), x + (gw - w) / 2, gy + (gh - h) / 2, w, h, 22);
   }
-  line('قلتوها…', 850, 96, 32.0, t);
-  line('وتمّت.', 980, 104, 32.5, t, { col: PU });
+  line(TXT.g1, 850, 96, 32.0, t);
+  line(TXT.g2, 980, 104, 32.5, t, { col: PU });
 }
 function sideShade() { const g = c.createLinearGradient(1050, 0, 1920, 0); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(0.45, 'rgba(9,9,13,0.75)'); g.addColorStop(1, 'rgba(9,9,13,0.9)'); c.fillStyle = g; c.fillRect(1050, 0, 870, H); }
 // Tamm closes, then the end card
 async function outro(t) {
   if (t < 35.0) {
     await clip('tamm_bw', t - 33.5, 0, 0, W, H); sideShade();
-    line('قولها.', 560, 150, 33.7, t, { x: TX, al: 'right' }); line('وإحنا نخلّيها تمّت.', 700, 64, 34.1, t, { x: TX, al: 'right', col: LI, w: 500 }); return;
+    line(TXT.o1, 560, 150, 33.7, t, { x: TX, al: 'right' }); line(TXT.o2, 700, 64, 34.1, t, { x: TX, al: 'right', col: LI, w: 500 }); return;
   }
   bg();
   const u = E(t, 35.0, 35.45), h = 190, w = (h * 600) / 721;
   c.drawImage(SYMBOL, W / 2 - w / 2 + 200 * (1 - u), 200 - 200 * (1 - u), w, h);
-  line('قول. تم.', 560, 120, 35.3, t);
-  T('وكالة تسويق رقمي وأداء', W / 2, 660, 40, { w: 500, col: MU, a: E(t, 35.7, 36.0) });
+  line(TXT.tag, 560, 120, 35.3, t);
+  T(TXT.line, W / 2, 660, 40, { w: 500, col: MU, a: E(t, 35.7, 36.0) });
   T('saytamm.com', W / 2, 735, 38, { w: 500, a: E(t, 35.7, 36.0), latin: true });
-  T('مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.', W / 2, 960, 26, { w: 500, col: MU, a: E(t, 35.9, 36.3) });
-  T('البريفات في الفيلم صياغة توضيحية.', W / 2, 1005, 24, { w: 500, col: MU, a: E(t, 35.9, 36.3) });
+  T(TXT.track + (TXT.track2 ? ' ' + TXT.track2 : ''), W / 2, 960, 26, { w: 500, col: MU, a: E(t, 35.9, 36.3) });
+  T(TXT.note, W / 2, 1005, 24, { w: 500, col: MU, a: E(t, 35.9, 36.3) });
 }
 async function intro(t) {
   await clip('tamm_aw', t, 0, 0, W, H); sideShade();
-  line('قولها.', 560, 150, 0.3, t, { x: TX, al: 'right' }); line('وسيبها علينا.', 700, 72, 1.3, t, { x: TX, al: 'right', col: LI, w: 500 });
+  line(TXT.i1, 560, 150, 0.3, t, { x: TX, al: 'right' }); line(TXT.i2, 700, 72, 1.3, t, { x: TX, al: 'right', col: LI, w: 500 });
 }
 async function sceneAt(t) {
   if (t < 3.5) return intro(t);
@@ -237,7 +253,7 @@ window.renderAudio = async () => {
   return btoa(bin);
 };
 window.ready = (async () => {
-  await Promise.all(['500 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول')).concat(['500 40px PlexL', '700 40px PlexL'].map((f) => document.fonts.load(f, 'Aa'))));
+  await Promise.all(['500 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول')).concat(['500 40px PlexL', '700 40px PlexL', '500 40px Sat', '700 40px Sat'].map((f) => document.fonts.load(f, 'Aa'))));
   SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
   await window.seek(0); return true;
 })();

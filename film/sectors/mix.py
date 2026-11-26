@@ -3,10 +3,11 @@
 and write cover_<sector>.jpg. Usage (repo root): python3 film/sectors/mix.py <sector>"""
 import json, os, subprocess, sys
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')); D = os.path.join(ROOT, 'handover/launch-film/sectors')
-S = sys.argv[1]; NAME = json.load(open(os.path.join(ROOT, 'film/sectors/sectors.json')))[S]['name']
+S0 = sys.argv[1]; L = sys.argv[2] if len(sys.argv) > 2 else 'ar'; S = S0 + ('en' if L == 'en' else '')
+NAME = json.load(open(os.path.join(ROOT, 'film/sectors/sectors.json')))[S0]['name']
 run = lambda *a: subprocess.run(list(a), capture_output=True, text=True)
 pre, mas = os.path.join(D, f'{S}_Score.wav'), os.path.join(D, f'{S}_master.wav')
-pic, out = os.path.join(D, f'{S}_picture.mp4'), os.path.join(D, f'SayTamm_Sector_{NAME}_AR_9x16.mp4')
+pic, out = os.path.join(D, f'{S}_picture.mp4'), os.path.join(D, f'SayTamm_Sector_{NAME}_{L.upper()}_9x16.mp4')
 lufs = lambda f: float([l for l in run('ffmpeg', '-hide_banner', '-i', f, '-af', 'ebur128', '-f', 'null', '-').stderr.splitlines() if l.strip().startswith('I:')][-1].split()[1])
 G = -14.0 - lufs(pre) + 0.4
 for _ in range(5):
