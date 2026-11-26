@@ -22,8 +22,7 @@ const a = h(lang).aboutPage;
 const schema = [{
   '@context': 'https://schema.org', '@type': 'AboutPage', inLanguage: lang,
   mainEntity: { '@type': 'Organization', name: SITE.name, url: SITE.url, foundingDate: '2021',
-    description: 'A digital marketing and performance agency that brings strategy, creative, media and technology together under one connected approach to growth.',
-    founder: { '@type': 'Person', name: a.founderName, jobTitle: 'Founder', image: new URL('/team/mostafa-sofy.webp', SITE.url).href } },
+    description: 'A digital marketing and performance agency that brings strategy, creative, media and technology together under one connected approach to growth.' },
 }];
 ---
 <Base lang={lang} page="about" title={d.meta.aboutTitle} description={d.meta.aboutDesc} schema={schema}>
@@ -100,28 +99,6 @@ const schema = [{
       <div class="ab__body">
         <h2 class="ph5__h" id="ab-phil" data-reveal>{a.philosophy.title.map((l) => <span class="ab__line">{l}</span>)}</h2>
         {a.philosophy.body.map((p, i) => <p class:list={['ab__p', { 'ab__p--lead': i === 0 }]} data-reveal>{p}</p>)}
-      </div>
-    </div>
-  </section>
-
-  <!-- Leadership: the experience behind the agency (owner-supplied facts, D-015) -->
-  <section class="section lead-sec" aria-labelledby="lead-title">
-    <div class="container ab__grid">
-      <header class="ab__head"><h2 id="lead-title" class="ab__h" data-reveal>{a.founderTitle}</h2></header>
-      <div class="person">
-        <figure class="person__fig" data-reveal>
-          <div class="person__photo"><img src="/team/mostafa-sofy.webp" width="900" height="900" alt={a.photoAlt} loading="lazy" decoding="async" /></div>
-          <figcaption class="person__text">
-            <Logo variant="signature" height={28} decorative />
-            <p class="person__name">{a.founderName}</p>
-            <p class="person__role">{a.founderRole}</p>
-          </figcaption>
-        </figure>
-        <div class="person__bio" data-reveal style="--delay:120ms">
-          {a.bio.map((p) => <p>{p}</p>)}
-          <h3 class="person__k">{a.expertiseTitle}</h3>
-          <ul role="list" class="person__tags">{a.expertise.map((x) => <li>{x}</li>)}</ul>
-        </div>
       </div>
     </div>
   </section>

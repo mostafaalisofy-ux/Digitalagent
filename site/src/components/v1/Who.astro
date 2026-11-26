@@ -1,0 +1,80 @@
+---
+// v1.0 (owner 2026-11-26): the first section is who we are — approved positioning, why we started (from the founder's
+// own account, told as the company's), mission and vision, the name «قول تم», Tamm, and the approved facts.
+// Nothing about the founder as a person (no name, no photo).
+import { type Lang } from '../../config/site';
+import { v1 } from '../../i18n/v1';
+import { V1, v1src } from '../../data/v1assets';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = v1(lang).who; const facts = v1(lang).facts;
+const [w, h] = V1['tamm_capcard'];
+---
+<section class="section who" aria-labelledby="who-title">
+  <div class="container who__top">
+    <div class="who__copy">
+      <p class="eyebrow" data-reveal><span class="t-rule" aria-hidden="true"></span>{c.eyebrow}</p>
+      <h2 class="who__title" id="who-title" data-reveal>{c.title}</h2>
+      <p class="who__lead" data-reveal>{c.lead}</p>
+      <div class="who__story" data-reveal>
+        <h3>{c.storyTitle}</h3>
+        <p>{c.story}</p>
+      </div>
+    </div>
+    <figure class="who__card" data-reveal="mask">
+      <img src={v1src('tamm_capcard')} width={w} height={h} alt="" loading="lazy" decoding="async" />
+      <figcaption>{c.card}</figcaption>
+    </figure>
+  </div>
+  <div class="container who__mv">
+    {[c.mission, c.vision].map(([k, v], i) => (
+      <article class={`who__box${i ? '' : ' who__box--m'}`} data-reveal style={`--delay:${i * 100}ms`}>
+        <h3>{k}</h3>
+        <p>{v}</p>
+      </article>
+    ))}
+    <article class="who__box who__name" data-reveal style="--delay:200ms">
+      <span class="who__ar" lang="ar" dir="rtl">قول تم</span>
+      <p>{c.name}</p>
+    </article>
+  </div>
+  <div class="container">
+    <dl class="who__facts">
+      {facts.map(([v, k], i) => <div data-reveal style={`--delay:${i * 60}ms`}><dt class="latin">{v}</dt><dd>{k}</dd></div>)}
+    </dl>
+  </div>
+</section>
+<style>
+  .who__top { display: grid; gap: var(--s-6); align-items: end; }
+  .who__copy { display: grid; gap: var(--s-4); }
+  .who .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
+  .who__title { font-size: var(--fs-h1); line-height: 1.05; letter-spacing: var(--track-tight); max-width: 20ch; }
+  :global([dir='rtl']) .who__title { letter-spacing: 0; line-height: 1.3; }
+  .who__lead { font-size: var(--fs-lead); max-width: 52ch; }
+  .who__story { border-top: 1px solid var(--line); padding-top: var(--s-4); margin-top: var(--s-3); display: grid; gap: var(--s-2); }
+  .who__story h3 { font-size: var(--fs-small); color: var(--accent-text); letter-spacing: .08em; text-transform: uppercase; }
+  :global([dir='rtl']) .who__story h3 { letter-spacing: 0; }
+  .who__story p { color: var(--text-muted); max-width: 60ch; font-size: var(--fs-body); line-height: 1.65; }
+  .who__card { position: relative; margin: 0; border-radius: 14px; overflow: hidden; background: var(--surface); max-width: 380px; justify-self: end; }
+  .who__card img { display: block; width: 100%; height: auto; }
+  .who__card figcaption { position: absolute; inset-inline: 0; bottom: 0; padding: 48px 20px 18px; font-size: var(--fs-small); background: linear-gradient(transparent, rgb(9 9 13 / .92)); }
+  .who__mv { display: grid; gap: var(--s-4); margin-top: var(--s-8, 96px); }
+  .who__box { background: var(--surface); border-radius: 14px; padding: var(--s-5); display: grid; gap: var(--s-3); align-content: start; }
+  .who__box h3 { font-size: var(--fs-h3); }
+  .who__box p { color: var(--text-muted); line-height: 1.6; }
+  .who__box--m { box-shadow: inset 0 3px 0 var(--accent); }
+  .who__ar { font-family: var(--font-ar); font-weight: 700; color: var(--accent); font-size: clamp(2.2rem, 1.6rem + 2vw, 3.2rem); line-height: 1; }
+  .who__facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5) var(--s-4); margin: var(--s-8, 96px) 0 0; }
+  .who__facts div { border-top: 1px solid var(--line); padding-top: var(--s-3); display: grid; gap: var(--s-2); }
+  .who__facts dt { font-size: clamp(2.6rem, 1.6rem + 3.6vw, 5rem); font-weight: 700; line-height: .9; letter-spacing: -0.04em; }
+  .who__facts div:first-child dt { color: var(--accent); }
+  .who__facts dd { margin: 0; color: var(--text-muted); font-size: var(--fs-small); max-width: 22ch; }
+  @media (min-width: 1024px) {
+    .who__top { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
+    .who__copy { grid-column: 1 / span 8; }
+    .who__card { grid-column: 9 / -1; }
+    .who__mv { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .who__facts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  @media (max-width: 1023px) { .who__card { justify-self: start; max-width: 300px; } }
+</style>

@@ -1,6 +1,7 @@
 ---
-// v1.0 hero (D-026): the line on the left, a tilted wall of real client work on the right (as the 2026 profile
-// cover), and Tamm in front of the wall pointing at it. The mosaic drifts slowly; reduced motion: still.
+// v1.0 hero (D-026, owner review 2026-11-26): the line on one side; on the other, an editorial collage of real client
+// work in three clean columns (sharp, straight, staggered — no tilted crops), with Tamm standing in front.
+// The columns drift a few pixels; reduced motion: still. Phone: one row of three cards, Tamm beside them.
 import { type Lang } from '../../config/site';
 import { href } from '../../i18n/paths';
 import { t } from '../../i18n/ui';
@@ -9,18 +10,10 @@ import { V1, v1src } from '../../data/v1assets';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = t(lang).hero; const c = v1(lang);
-const MOSAIC = ['sp_012', 'cp_altopiano1', 'sp_027', 'sp_019', 'cp_xiaomi1', 'sp_015', 'cp_jora1', 'sp_002', 'cp_alia', 'sp_013', 'cp_music', 'sp_020'];
+const COLS = [['sp_012', 'alto4k_d'], ['sp_019', 'sp_027'], ['sp_015', 'post_xiaomi1_1']];
 const [tw, th] = V1['tamm_hero'];
 ---
 <section class="vh" aria-labelledby="vh-title">
-  <div class="vh__wall" aria-hidden="true">
-    <div class="vh__grid">
-      {[...MOSAIC, ...MOSAIC.slice(0, 8)].map((m, i) => (
-        <img src={v1src(m)} width={V1[m][0]} height={V1[m][1]} alt="" loading={i < 8 ? 'eager' : 'lazy'} decoding="async" fetchpriority={i < 2 ? 'high' : undefined} />
-      ))}
-    </div>
-  </div>
-  <div class="vh__fade" aria-hidden="true"></div>
   <div class="container vh__in">
     <div class="vh__copy">
       <p class="eyebrow" data-reveal style="--delay:80ms"><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
@@ -34,20 +27,23 @@ const [tw, th] = V1['tamm_hero'];
         <a class="link-diag" href={href(lang, 'work')} data-track="cta_click" data-cta-id="explore_work" data-cta-location="hero">{d.cta2}</a>
       </div>
     </div>
+    <div class="vh__art" aria-hidden="true">
+      <div class="vh__cols">
+        {COLS.map((col, i) => (
+          <div class={`vh__col vh__col--${i}`}>
+            {col.map((m, k) => <img src={v1src(m)} width={V1[m][0]} height={V1[m][1]} alt="" decoding="async" loading={k === 0 ? 'eager' : 'lazy'} fetchpriority={i === 1 && k === 0 ? 'high' : undefined} />)}
+          </div>
+        ))}
+      </div>
+      <img class="vh__tamm" src={v1src('tamm_hero')} width={tw} height={th} alt={c.tammAlt} decoding="async" data-reveal style="--delay:360ms" />
+    </div>
   </div>
-  <img class="vh__tamm" src={v1src('tamm_hero')} width={tw} height={th} alt={c.tammAlt} decoding="async" fetchpriority="high" data-reveal style="--delay:360ms" />
 </section>
 
 <style>
-  .vh { position: relative; overflow: hidden; isolation: isolate; min-height: min(calc(100svh - 128px), 860px); display: grid; align-items: center; }
-  .vh__wall { position: absolute; z-index: -2; inset: -10% -6% -10% 46%; }
-  .vh__grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; transform: rotate(-8deg) scale(1.15); transform-origin: center; }
-  .vh__grid img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 10px; display: block; background: var(--surface); }
-  .vh__fade { position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, var(--bg) 38%, rgb(9 9 13 / .55) 62%, rgb(9 9 13 / .12)); }
-  :global([dir='rtl']) .vh__wall { inset: -10% 46% -10% -6%; }
-  :global([dir='rtl']) .vh__fade { background: linear-gradient(270deg, var(--bg) 38%, rgb(9 9 13 / .55) 62%, rgb(9 9 13 / .12)); }
-  .vh__in { position: relative; z-index: 2; padding-block: var(--s-6) var(--s-6); }
-  .vh__copy { display: grid; gap: var(--s-5); max-width: 40rem; }
+  .vh { position: relative; overflow: hidden; isolation: isolate; }
+  .vh__in { display: grid; gap: var(--s-6); padding-block: var(--s-6) var(--s-7, 72px); }
+  .vh__copy { display: grid; gap: var(--s-5); align-content: center; }
   .vh .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
   .vh__title { font-size: min(var(--fs-mega), 15vh); line-height: .88; letter-spacing: -0.05em; font-weight: 700; }
   .vh__title .line { display: block; }
@@ -55,23 +51,41 @@ const [tw, th] = V1['tamm_hero'];
   :global([dir='rtl']) .vh__title { line-height: 1.05; letter-spacing: 0; font-size: min(var(--fs-mega), 12vh); }
   .vh__sub { font-size: var(--fs-lead); max-width: 36ch; line-height: 1.5; }
   .vh__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-6); }
-  .vh__tamm { position: absolute; z-index: 1; bottom: 0; inset-inline-start: 58%; height: min(56vh, 520px); width: auto; pointer-events: none;
-    filter: drop-shadow(0 24px 40px rgb(0 0 0 / .45)); }
+
+  .vh__art { position: relative; }
+  .vh__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .vh__col { display: grid; gap: 12px; align-content: start; }
+  .vh__col img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 12px; background: var(--surface); }
+  .vh__col--1 { margin-top: 56px; }
+  .vh__col--2 { margin-top: 24px; }
+  /* the collage sits in shadow toward the copy, the way a stage is lit */
+  .vh__art::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(180deg, transparent 55%, var(--bg) 98%), linear-gradient(90deg, rgb(9 9 13 / .35), transparent 40%); }
+  :global([dir='rtl']) .vh__art::before { background: linear-gradient(180deg, transparent 55%, var(--bg) 98%), linear-gradient(270deg, rgb(9 9 13 / .35), transparent 40%); }
+  .vh__tamm { position: absolute; z-index: 2; bottom: -4%; inset-inline-end: -6%; height: 72%; max-height: 560px; width: auto; pointer-events: none; filter: drop-shadow(0 24px 40px rgb(0 0 0 / .5)); }
   @media (prefers-reduced-motion: no-preference) {
-    .vh__grid { animation: drift 40s linear infinite alternate; }
-    @keyframes drift { from { transform: rotate(-8deg) scale(1.15) translateY(0); } to { transform: rotate(-8deg) scale(1.15) translateY(-12%); } }
+    .vh__col { animation: float 9s ease-in-out infinite alternate; }
+    .vh__col--1 { animation-delay: -3s; } .vh__col--2 { animation-delay: -6s; }
+    @keyframes float { from { transform: translateY(0); } to { transform: translateY(-14px); } }
   }
-  /* tablet and phone: the wall becomes a band above the line, Tamm stands at its foot */
+  @media (min-width: 1024px) {
+    .vh__in { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: center; min-height: min(calc(100svh - 128px), 860px); padding-block: var(--s-5); }
+    .vh__copy { grid-column: 1 / span 6; }
+    .vh__art { grid-column: 7 / -1; max-height: min(calc(100svh - 170px), 780px); overflow: hidden; border-radius: 16px; }
+    .vh__art { overflow: visible; }
+    .vh__cols { max-height: min(calc(100svh - 170px), 780px); overflow: hidden; }
+  }
+  /* phone and tablet: a single row of three cards under the header, Tamm at its edge */
   @media (max-width: 1023px) {
-    .vh { min-height: 0; align-items: start; }
-    .vh__wall { position: relative; inset: auto; height: 30svh; margin-inline: -10%; overflow: hidden; }
-    :global([dir='rtl']) .vh__wall { inset: auto; }
-    .vh__grid { grid-template-columns: repeat(6, 1fr); gap: 8px; transform: rotate(-8deg) scale(1.1) translateY(-4%); animation: none; }
-    .vh__fade { background: linear-gradient(180deg, rgb(9 9 13 / .1) 0, rgb(9 9 13 / .35) 18svh, var(--bg) 30svh); }
-    :global([dir='rtl']) .vh__fade { background: linear-gradient(180deg, rgb(9 9 13 / .1) 0, rgb(9 9 13 / .35) 18svh, var(--bg) 30svh); }
-    .vh__in { padding-block: var(--s-3) var(--s-6); }
+    .vh__in { padding-top: var(--s-4); }
+    .vh__art { order: -1; }
+    .vh__col img + img { display: none; }
+    .vh__col--1, .vh__col--2 { margin-top: 0; }
+    .vh__col--1 { transform: translateY(16px); }
+    .vh__tamm { height: 112%; max-height: 300px; bottom: -14%; inset-inline-end: -3%; }
+    .vh__cols { width: 78%; }
+    :global([dir='rtl']) .vh__cols { margin-inline-start: 0; }
     .vh__title { font-size: clamp(3.2rem, 15vw, 5.5rem); }
     .vh__copy { gap: var(--s-4); }
-    .vh__tamm { top: calc(30svh - min(26svh, 230px)); bottom: auto; inset-inline-start: auto; inset-inline-end: 2%; height: min(26svh, 230px); }
   }
 </style>

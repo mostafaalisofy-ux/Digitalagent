@@ -90,9 +90,9 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
     ok((await p.locator('#e-phone').innerText()) === '' && (await p.locator('#e-website').innerText()) === '', `${lang} valid phone/website accepted`);
   }
   await p.goto(`${B}/en/`);
-    ok((await p.locator('.clw__item').count()) === 77, 'staging: one client list, 77 entries (owner logo collection, QNB removed D-026)');
+    ok((await p.locator('.clw__item').count()) === 48, 'staging: one client list, 48 logos (low-resolution logos and name-only clients removed 2026-11-26)');
   ok((await p.locator('#brands').count()) === 0, 'no separate team-experience section');
-  ok((await p.locator('.clw__tag').count()) === 11, 'exactly 11 government bodies tagged permission-pending in staging (hidden in production)');
+  ok((await p.locator('.clw__tag').count()) === 8, 'exactly 8 government bodies tagged permission-pending in staging (hidden in production)');
     // production build is checked separately (indexable, no pending figures)
   console.log(`${pass} passed, ${fail} failed (${checked.size} unique internal links)`);
   await br.close();

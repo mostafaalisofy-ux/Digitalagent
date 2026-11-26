@@ -70,7 +70,7 @@ export const HOME = {
       facts: [
         { v: '2021', k: 'SayTamm founded' },
         { v: '30', k: 'People on the SayTamm team' },
-        { v: '15+', k: 'Years of digital marketing leadership, led by our founder' },
+        { v: '20+', k: 'Industries in the team’s track record' },
         { v: '5', k: 'Markets in the team’s track record: Saudi Arabia, UAE, Kuwait, Oman, Egypt' },
       ],
       more: 'More about us',
@@ -97,7 +97,7 @@ export const HOME = {
           'That experience informs how we work today: commercially minded, creatively ambitious and accountable to outcomes.',
           'We don’t believe in marketing for the sake of activity. We believe in clear thinking, purposeful execution and continuous improvement.',
         ],
-        origin: 'SayTamm was founded in 2021 to close a gap many businesses know well: the distance between what a client needs and what their agency delivers, made worse by slow communication and by marketing that is not tied to a clear goal. The experience behind it is older: our founder has led digital marketing work for more than 15 years.',
+        origin: 'SayTamm was founded in 2021 to close a gap many businesses know well: the distance between what a client needs and what their agency delivers, made worse by slow communication and by marketing that is not tied to a clear goal.',
         factsLabel: 'SayTamm in numbers',
       },
       regional: {
@@ -227,7 +227,7 @@ export const HOME = {
       facts: [
         { v: '2021', k: 'سنة تأسيس قول تم' },
         { v: '30', k: 'عضواً في فريق قول تم' },
-        { v: '+15', k: 'عاماً من قيادة التسويق الرقمي لدى مؤسس الوكالة' },
+        { v: '+20', k: 'قطاعاً في سجل الفريق' },
         { v: '5', k: 'أسواق في سجل الفريق: السعودية، الإمارات، الكويت، عُمان، مصر' },
       ],
       more: 'المزيد عنّا',
@@ -252,7 +252,7 @@ export const HOME = {
           'وهذه الخبرة هي ما يوجّه طريقة عملنا اليوم: تفكير تجاري، وطموح إبداعي، ومسؤولية عن النتائج.',
           'لا نؤمن بالتسويق لمجرد النشاط، بل بالتفكير الواضح والتنفيذ الهادف والتحسين المستمر.',
         ],
-        origin: 'تأسست قول تم عام 2021 لسد فجوة تعرفها شركات كثيرة: المسافة بين ما يحتاجه العميل وما تقدمه له الوكالة، ويزيدها بطء التواصل وتسويق لا يرتبط بهدف واضح. أما الخبرة التي تقف خلفها فأقدم من ذلك: يقود مؤسسها أعمال التسويق الرقمي منذ أكثر من 15 عاماً.',
+        origin: 'تأسست قول تم عام 2021 لسد فجوة تعرفها شركات كثيرة: المسافة بين ما يحتاجه العميل وما تقدمه له الوكالة، ويزيدها بطء التواصل وتسويق لا يرتبط بهدف واضح.',
         factsLabel: 'قول تم بالأرقام',
       },
       regional: {

@@ -10,10 +10,11 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = h(lang).clients;
 // clients with an official logo first, name-only clients after (stable order within each group)
-const list = [...CLIENTS.filter((c) => c.logo), ...CLIENTS.filter((c) => !c.logo)];
-const wall = visibleWall();
+// 2026-11-26 owner: clients without a logo file are not listed
+const list = CLIENTS.filter((c) => c.logo);
+const wall = visibleWall().filter((c) => c.logo);
 // brands without a logo file on the wall are set as their name (one list: "clients who trusted us", owner 2026-11-05)
-const named = visibleBrands();
+const named = visibleBrands().filter((b) => b.logo);
 const moreTitle = lang === 'ar' ? 'ومن عملائنا أيضاً' : 'Also among our clients';
 ---
 <section class="section cl" id="clients" aria-labelledby="cl-title">

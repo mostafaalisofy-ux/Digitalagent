@@ -1,17 +1,14 @@
 ---
 // Homepage v1.0 (D-026, docs/WEBSITE_V1_PLAN.md): follows the 2026 company profile.
-// Hero (work wall + Tamm) → the name → work by industry → case studies → client journey → services →
-// clients → testimonials → markets + brief. Each section either shows the work, shows a measured number,
-// or moves the visitor to the brief.
+// Owner order (2026-11-26): hero → who we are (mission, vision) → services → case studies → working with us →
+// clients and their logos → brief. Work by industry lives on /work.
 import Base from '../../layouts/Base.astro';
 import Hero from '../../components/v1/Hero.astro';
-import Name from '../../components/v1/Name.astro';
-import Industries from '../../components/v1/Industries.astro';
+import Who from '../../components/v1/Who.astro';
 import Cases from '../../components/v1/Cases.astro';
 import Journey from '../../components/v1/Journey.astro';
 import HomeServices from '../../components/home/HomeServices.astro';
 import Clients from '../../components/home/Clients.astro';
-import Quotes from '../../components/v1/Quotes.astro';
 import End from '../../components/v1/End.astro';
 import { staticLangPaths } from '../../i18n/paths';
 import { t } from '../../i18n/ui';
@@ -22,12 +19,10 @@ const d = t(lang);
 ---
 <Base lang={lang} page="home" title={d.meta.homeTitle} description={d.meta.homeDesc}>
   <Hero lang={lang} />
-  <Name lang={lang} />
-  <Industries lang={lang} />
+  <Who lang={lang} />
+  <HomeServices lang={lang} />
   <Cases lang={lang} />
   <Journey lang={lang} />
-  <HomeServices lang={lang} />
   <Clients lang={lang} />
-  <Quotes lang={lang} />
   <End lang={lang} />
 </Base>
