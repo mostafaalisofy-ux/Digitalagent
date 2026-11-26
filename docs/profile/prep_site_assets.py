@@ -19,10 +19,15 @@ for m in D['mosaic']: jobs[m] = 720
 for w in D['WORK']:
     for im in w[4]: jobs[im] = 1400 if im.startswith(('alto4k', 'sp_', 'cp_')) else 640
 for j in D['JIMG']: jobs[j] = 900
-for n in ('stk_cs_unbox', 'stk_cs_shop', 'stk_ks_cushion', 'tamm_capcard', 'tamm_welcomecard'): jobs[n] = 1000
+for n in ('stk_cs_unbox', 'stk_cs_shop', 'stk_ks_cushion'): jobs[n] = 1000
+# tamm_capcard, tamm_welcomecard, tamm_404 and hero_tamm_* are owner-generated key visuals (2026-11-26), placed by hand: never overwritten here
 jobs['tamm_hero'] = 900
 
+import re as _re
 manifest = {}
+_old = os.path.join(ROOT, 'site/src/data/v1assets.ts')
+if os.path.exists(_old):
+    for k, w, h in _re.findall(r'"(\w+)": \[\s*(\d+),\s*(\d+)\s*\]', open(_old, encoding='utf-8').read()): manifest[k] = [int(w), int(h)]
 for name, mx in jobs.items():
     p = os.path.join(A, name + '.png') if os.path.exists(os.path.join(A, name + '.png')) else os.path.join(A, name + '.jpg')
     im = Image.open(p); im = im.convert('RGBA' if im.mode in ('RGBA', 'LA') else 'RGB'); im.thumbnail((mx, mx), Image.LANCZOS)
