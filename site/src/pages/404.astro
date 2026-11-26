@@ -2,12 +2,13 @@
 import Base from '../layouts/Base.astro';
 import { href } from '../i18n/paths';
 import { t } from '../i18n/ui';
+import { V1, v1src } from '../data/v1assets';
 const en = t('en').notFound;
 const ar = t('ar').notFound;
 ---
 <Base lang="en" page="home" title="404 — SayTamm" description={en.body} noindex>
   <section class="section nf">
-    <div class="nf__tex" aria-hidden="true"><img src="/visuals/404-texture.webp" width="1600" height="1200" alt="" decoding="async" /></div>
+    <div class="nf__tex" aria-hidden="true"><img src={v1src('tamm_capcard')} width={V1['tamm_capcard'][0]} height={V1['tamm_capcard'][1]} alt="" decoding="async" /></div>
     <div class="container nf__in">
       <p class="nf__code num" aria-hidden="true">404</p>
       <div class="nf__pair">

@@ -33,7 +33,7 @@ const { class: cls = '', label } = Astro.props;
   .rt { fill: none; stroke: var(--text-muted); stroke-width: 1.2; stroke-dasharray: 3 6; opacity: .65; vector-effect: non-scaling-stroke; }
   .pin { fill: var(--accent); }
   @media (prefers-reduced-motion: no-preference) {
-    :global(.js) .sky .lm, :global(.js) .sky .rt { stroke-dasharray: 1400; stroke-dashoffset: 1400; transition: stroke-dashoffset 2.4s var(--ease-out); }
+    :global(.js) .sky .lm, :global(.js) .sky .rt { stroke-dasharray: 3000; stroke-dashoffset: 3000; transition: stroke-dashoffset 2.4s var(--ease-out); }
     :global(.js) .sky .rt { stroke-dasharray: 3 6; stroke-dashoffset: 0; opacity: 0; transition: opacity 1s 1.6s; }
     :global(.js) .sky .pin { opacity: 0; transition: opacity .5s 2s; }
     :global(.js) .is-in .sky .lm { stroke-dashoffset: 0; }

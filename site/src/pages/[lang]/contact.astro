@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ContactForm from '../../components/ContactForm.astro';
-import Logo from '../../components/Logo.astro';
+import { V1, v1src } from '../../data/v1assets';
 import { SITE, type Lang } from '../../config/site';
 import { staticLangPaths } from '../../i18n/paths';
 import { t } from '../../i18n/ui';
@@ -22,7 +22,7 @@ const c = d.contact;
           <p class="eyebrow">{c.direct}</p>
           <a class="link-diag latin contact__mail" href={`mailto:${SITE.email}`} data-track="email_click" data-cta-location="contact">{SITE.email}</a>
         </div>
-        <div class="contact__mark" aria-hidden="true"><Logo variant="signature" height="100%" decorative /></div>
+        <figure class="contact__tamm" aria-hidden="true" data-reveal="mask"><img src={v1src('tamm_welcomecard')} width={V1['tamm_welcomecard'][0]} height={V1['tamm_welcomecard'][1]} alt="" loading="lazy" decoding="async" /></figure>
       </div>
       <div class="contact__form"><ContactForm lang={lang} /></div>  <!-- no reveal: a form must never move while being used -->
     </div>
@@ -38,6 +38,8 @@ const c = d.contact;
   .contact__direct { display: grid; gap: var(--s-2); margin-top: var(--s-4); }
   .contact__mail { font-size: var(--fs-h3); color: var(--text-strong); justify-self: start; }
   .contact__mark { display: none; }
+  .contact__tamm { margin: var(--s-4) 0 0; max-width: 260px; border-radius: 14px; overflow: hidden; background: var(--surface); }
+  .contact__tamm img { display: block; width: 100%; height: auto; }
   @media (min-width: 1024px) {
     .contact__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
     .contact__intro { grid-column: 1 / span 5; position: sticky; top: 120px; align-self: start; }

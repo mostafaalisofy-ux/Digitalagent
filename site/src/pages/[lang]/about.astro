@@ -9,6 +9,7 @@ import PageHero from '../../components/PageHero.astro';
 import Facts from '../../components/Facts.astro';
 import Clients from '../../components/home/Clients.astro';
 import Logo from '../../components/Logo.astro';
+import Skyline from '../../components/v1/Skyline.astro';
 import { DISCIPLINES } from '../../data/services';
 import { staticLangPaths, href } from '../../i18n/paths';
 import { t } from '../../i18n/ui';
@@ -60,6 +61,7 @@ const schema = [{
           <ul role="list" class="mk__list">{a.regional.markets.map((m) => <li>{m}</li>)}</ul>
           <p class="mk__note">{a.regional.marketsNote}</p>
         </div>
+        <div class="ab__sky" data-reveal-group><Skyline /></div>
       </div>
     </div>
   </section>
@@ -208,4 +210,5 @@ const schema = [{
     .close__h { grid-column: 1 / span 6; }
     .close__body { grid-column: 8 / -1; }
   }
+  .ab__sky { margin-top: var(--s-6); }
 </style>
