@@ -1,19 +1,22 @@
 ---
-// v1.0 hero (D-026, owner review 2026-11-26): the line on one side; on the other, an editorial collage of real client
-// work in three clean columns (sharp, straight, staggered — no tilted crops), with Tamm standing in front.
-// The columns drift a few pixels; reduced motion: still. Phone: one row of three cards, Tamm beside them.
+// v1.0 hero (owner 2026-11-26): a full-bleed studio scene of Tamm leaning on the purple 45° blade (owner-generated
+// key visual, no text in the image). The website copy is real HTML over the empty side of the scene.
+// English: Tamm on the right, copy on the left. Arabic: a separate render with Tamm on the left (never a mirrored
+// image, so the "T" on Tamm reads correctly), copy on the right. Phone: portrait render, Tamm above, copy below.
 import { type Lang } from '../../config/site';
 import { href } from '../../i18n/paths';
 import { t } from '../../i18n/ui';
 import { v1 } from '../../i18n/v1';
-import { V1, v1src } from '../../data/v1assets';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const d = t(lang).hero; const c = v1(lang);
-const COLS = [['sp_012', 'alto4k_d'], ['sp_019', 'sp_027'], ['sp_015', 'post_xiaomi1_1']];
-const [tw, th] = V1['tamm_hero'];
+const desk = lang === 'ar' ? '/v1/hero_tamm_ar.webp' : '/v1/hero_tamm_en.webp';
 ---
 <section class="vh" aria-labelledby="vh-title">
+  <picture class="vh__bg">
+    <source media="(max-width: 767px)" srcset="/v1/hero_tamm_m.webp" width="1024" height="1536" />
+    <img src={desk} width="1672" height="941" alt={c.tammAlt} decoding="async" fetchpriority="high" />
+  </picture>
   <div class="container vh__in">
     <div class="vh__copy">
       <p class="eyebrow" data-reveal style="--delay:80ms"><span class="t-rule" aria-hidden="true"></span>{d.eyebrow}</p>
@@ -27,23 +30,20 @@ const [tw, th] = V1['tamm_hero'];
         <a class="link-diag" href={href(lang, 'work')} data-track="cta_click" data-cta-id="explore_work" data-cta-location="hero">{d.cta2}</a>
       </div>
     </div>
-    <div class="vh__art" aria-hidden="true">
-      <div class="vh__cols">
-        {COLS.map((col, i) => (
-          <div class={`vh__col vh__col--${i}`}>
-            {col.map((m, k) => <img src={v1src(m)} width={V1[m][0]} height={V1[m][1]} alt="" decoding="async" loading={k === 0 ? 'eager' : 'lazy'} fetchpriority={i === 1 && k === 0 ? 'high' : undefined} />)}
-          </div>
-        ))}
-      </div>
-      <img class="vh__tamm" src={v1src('tamm_hero')} width={tw} height={th} alt={c.tammAlt} decoding="async" data-reveal style="--delay:360ms" />
-    </div>
   </div>
 </section>
 
 <style>
-  .vh { position: relative; overflow: hidden; isolation: isolate; }
-  .vh__in { display: grid; gap: var(--s-6); padding-block: var(--s-6) var(--s-7, 72px); }
-  .vh__copy { display: grid; gap: var(--s-5); align-content: center; }
+  .vh { position: relative; overflow: hidden; isolation: isolate; background: #0b0a10; min-height: min(calc(100svh - 110px), 900px); display: grid; align-items: center; }
+  .vh__bg { position: absolute; inset: 0; z-index: -1; }
+  .vh__bg img { width: 100%; height: 100%; object-fit: cover; object-position: 100% 60%; }
+  :global([dir='rtl']) .vh__bg img { object-position: 0% 60%; }
+  /* keeps the copy side calm on very wide or short screens where the scene is cropped */
+  .vh::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(90deg, rgb(11 10 16 / .55) 0%, rgb(11 10 16 / .15) 45%, transparent 60%); }
+  :global([dir='rtl']) .vh::after { background: linear-gradient(270deg, rgb(11 10 16 / .55) 0%, rgb(11 10 16 / .15) 45%, transparent 60%); }
+  .vh__in { padding-block: var(--s-7, 72px); }
+  .vh__copy { display: grid; gap: var(--s-5); max-width: min(40rem, 52%); }
   .vh .eyebrow .t-rule { color: var(--accent); width: 32px; height: 4px; }
   .vh__title { font-size: min(var(--fs-mega), 15vh); line-height: .88; letter-spacing: -0.05em; font-weight: 700; }
   .vh__title .line { display: block; }
@@ -51,41 +51,16 @@ const [tw, th] = V1['tamm_hero'];
   :global([dir='rtl']) .vh__title { line-height: 1.05; letter-spacing: 0; font-size: min(var(--fs-mega), 12vh); }
   .vh__sub { font-size: var(--fs-lead); max-width: 36ch; line-height: 1.5; }
   .vh__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-6); }
-
-  .vh__art { position: relative; }
-  .vh__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-  .vh__col { display: grid; gap: 12px; align-content: start; }
-  .vh__col img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 12px; background: var(--surface); }
-  .vh__col--1 { margin-top: 56px; }
-  .vh__col--2 { margin-top: 24px; }
-  /* the collage sits in shadow toward the copy, the way a stage is lit */
-  .vh__art::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-    background: linear-gradient(180deg, transparent 55%, var(--bg) 98%), linear-gradient(90deg, rgb(9 9 13 / .35), transparent 40%); }
-  :global([dir='rtl']) .vh__art::before { background: linear-gradient(180deg, transparent 55%, var(--bg) 98%), linear-gradient(270deg, rgb(9 9 13 / .35), transparent 40%); }
-  .vh__tamm { position: absolute; z-index: 2; bottom: -4%; inset-inline-end: -6%; height: 72%; max-height: 560px; width: auto; pointer-events: none; filter: drop-shadow(0 24px 40px rgb(0 0 0 / .5)); }
-  @media (prefers-reduced-motion: no-preference) {
-    .vh__col { animation: float 9s ease-in-out infinite alternate; }
-    .vh__col--1 { animation-delay: -3s; } .vh__col--2 { animation-delay: -6s; }
-    @keyframes float { from { transform: translateY(0); } to { transform: translateY(-14px); } }
-  }
-  @media (min-width: 1024px) {
-    .vh__in { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: center; min-height: min(calc(100svh - 128px), 860px); padding-block: var(--s-5); }
-    .vh__copy { grid-column: 1 / span 6; }
-    .vh__art { grid-column: 7 / -1; max-height: min(calc(100svh - 170px), 780px); overflow: hidden; border-radius: 16px; }
-    .vh__art { overflow: visible; }
-    .vh__cols { max-height: min(calc(100svh - 170px), 780px); overflow: hidden; }
-  }
-  /* phone and tablet: a single row of three cards under the header, Tamm at its edge */
-  @media (max-width: 1023px) {
-    .vh__in { padding-top: var(--s-4); }
-    .vh__art { order: -1; }
-    .vh__col img + img { display: none; }
-    .vh__col--1, .vh__col--2 { margin-top: 0; }
-    .vh__col--1 { transform: translateY(16px); }
-    .vh__tamm { height: 112%; max-height: 300px; bottom: -14%; inset-inline-end: -3%; }
-    .vh__cols { width: 78%; }
-    :global([dir='rtl']) .vh__cols { margin-inline-start: 0; }
+  /* phone: portrait scene, Tamm in the top half, the copy on the dark floor below */
+  @media (max-width: 767px) {
+    .vh { min-height: 0; align-items: end; }
+    .vh__bg img { object-position: 50% 0%; }
+    :global([dir='rtl']) .vh__bg img { object-position: 50% 0%; }
+    .vh::after { background: linear-gradient(180deg, transparent 52%, rgb(11 10 16 / .7) 68%); }
+    :global([dir='rtl']) .vh::after { background: linear-gradient(180deg, transparent 52%, rgb(11 10 16 / .7) 68%); }
+    .vh__in { padding-top: 118vw; padding-bottom: var(--s-6); }
+    .vh__copy { max-width: none; gap: var(--s-4); }
     .vh__title { font-size: clamp(3.2rem, 15vw, 5.5rem); }
-    .vh__copy { gap: var(--s-4); }
   }
+  @media (min-width: 768px) and (max-width: 1023px) { .vh__copy { max-width: 58%; } .vh__title { font-size: clamp(3.4rem, 9vw, 6rem); } }
 </style>
