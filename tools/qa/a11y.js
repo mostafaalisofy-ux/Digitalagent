@@ -18,7 +18,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
   const br = await chromium.launch();
   for (const p of paths) {
     const page = await br.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto(BASE + p, { waitUntil: 'networkidle' });
+    await page.goto(BASE + p, { waitUntil: 'load' }); await page.waitForTimeout(1200);
     await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 600) { scrollTo({ top: y, behavior: 'instant' }); await new Promise((r) => setTimeout(r, 20)); } scrollTo({ top: 0, behavior: 'instant' }); });
     await page.waitForTimeout(1200);
     // axe
@@ -56,7 +56,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('✗', m); } };
   for (const lang of ['en', 'ar']) {
     const ctx = await br.newContext({ reducedMotion: 'reduce', viewport: { width: 1440, height: 900 } });
     const page = await ctx.newPage();
-    await page.goto(`${BASE}/${lang}/`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/${lang}/`, { waitUntil: 'load' }); await page.waitForTimeout(1200);
     const st = await page.evaluate(() => ['.stage__tamm', '.vh__title .line > span', '.vh__sub'].map((s) => { const e = document.querySelector(s); const cs = getComputedStyle(e); return cs.opacity + '|' + cs.transform; }));
     ok(st.every((x, i) => x.startsWith('1|') && (i === 0 || x.endsWith('none') || x.endsWith('matrix(1, 0, 0, 1, 0, 0)'))), `${lang} reduced motion: ${st.join(' ; ')}`);   // Tamm keeps his static centring translate
     await ctx.close();

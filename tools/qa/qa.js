@@ -12,7 +12,7 @@ async function settle(page) {
   if (mode === 'shot') {
     const [path, w, h, out, full] = a;
     const page = await browser.newPage({ viewport: { width: +w, height: +h }, deviceScaleFactor: +(process.env.DSF || 1) });
-    await page.goto(BASE + path, { waitUntil: 'networkidle' });
+    await page.goto(BASE + path, { waitUntil: 'load' }); await page.waitForTimeout(1200);
     if (full) await settle(page); else await page.waitForTimeout(1800);
     await page.screenshot({ path: out, fullPage: !!full });
   } else {
@@ -24,7 +24,7 @@ async function settle(page) {
       page.on('console', (m) => m.type() === 'error' && errs.push(m.text()));
       page.on('pageerror', (e) => errs.push(e.message));
       page.on('requestfailed', (r) => { if (!/\.mp4(\?|$)/.test(r.url())) errs.push('FAIL ' + r.url()); });   // a video range request aborted by pause is not an error
-      const res = await page.goto(BASE + p, { waitUntil: 'networkidle' });
+      const res = await page.goto(BASE + p, { waitUntil: 'load' }); await page.waitForTimeout(1200);
       await page.waitForTimeout(1500);
       const first = await page.evaluate(() => { const c = document.querySelector('.vh .btn--primary, .hero .btn--primary'); if (!c) return null; const b = c.getBoundingClientRect(); return { bottom: b.bottom, hidden: getComputedStyle(c.closest('[data-reveal]') || c).opacity !== '1' }; });
       await settle(page);
