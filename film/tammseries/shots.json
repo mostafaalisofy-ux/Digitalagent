@@ -1,0 +1,12 @@
+[
+ {"id":"walk","file":"intro/src/tamm_vertical.mp4","in":0.0,"len":4.6,"vf":"fps=30,scale=1080:-2"},
+ {"id":"talk","file":"intro/src/tamm_vertical.mp4","in":4.6,"len":4.6,"vf":"fps=30,scale=1080:-2"},
+ {"id":"tamm_end","file":"tammreel/src/mini_tamm.mp4","in":5.6,"len":4.3,"vf":"fps=30,scale=-2:1920,crop=1080:1920:(iw-1080)*0.5:0"},
+ {"id":"t_hookA","file":"clientreel/src/th_hookA.mp4","in":0.0,"len":10.2},
+ {"id":"t_hookB","file":"clientreel/src/th_hookB.mp4","in":0.0,"len":10.2},
+ {"id":"a_flame","file":"tammreel/src/alto_5731.mp4","in":7.2,"len":1.1},
+ {"id":"a_pizza","file":"tammreel/src/alto_r10.mp4","in":2.4,"len":1.1},
+ {"id":"a_pour","file":"tammreel/src/alto_r6.mp4","in":2.6,"len":1.1},
+ {"id":"a_choc","file":"tammreel/src/alto_5730.mp4","in":3.2,"len":1.6},
+ {"id":"a_plate","file":"tammreel/src/alto_r6.mp4","in":8.6,"len":3.2}
+]
