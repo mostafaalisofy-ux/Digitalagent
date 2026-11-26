@@ -12,8 +12,9 @@ const arg = (k) => { const i = process.argv.indexOf(k); return i < 0 ? null : pr
 const FPS = 60, SUB = 2, SEQD = path.join(OUT, 'seq');
 const EPI = process.env.EPISODE || 'ep1', EPC = JSON.parse(fs.readFileSync(path.join(ROOT, 'film/tammseries/episodes.json'), 'utf8'))[EPI];
 if (!EPC) throw new Error('unknown episode ' + EPI);
-const V = EPI, SEC = EPI;
-const html = fs.readFileSync(path.join(ROOT, 'film/tammseries/film.html'), 'utf8').replace('__EP__', JSON.stringify(EPC))
+const L = process.env.EP_LANG || 'ar', CFG = L === 'en' ? { ...EPC, ...EPC.en, lang: 'en' } : EPC;   // English overrides the copy and the case text
+const V = EPI + (L === 'en' ? 'en' : ''), SEC = EPI;
+const html = fs.readFileSync(path.join(ROOT, 'film/tammseries/film.html'), 'utf8').replace('__EP__', JSON.stringify(CFG))
   .replaceAll('__ASSETS__', pathToFileURL(path.join(ROOT, 'handover/profile/assets')).href)
   .replaceAll('__SEQ__', pathToFileURL(SEQD).href)
   .replace('__SEQN__', JSON.stringify(Object.fromEntries(fs.readdirSync(SEQD).map((d) => [d, fs.readdirSync(path.join(SEQD, d)).length]))))

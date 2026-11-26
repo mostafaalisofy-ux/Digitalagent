@@ -1,29 +1,241 @@
 {
- "ep1": {"name": "01_Discounts", "n": "01", "disc": "الاستراتيجية", "img": "tamm_strategy",
-  "myth": ["عشان تبيع في الموسم…", "لازم تخصم أكتر."], "retort": ["نافس بالمنتج…", "مش بالسعر."],
+ "ep1": {
+  "name": "01_Discounts",
+  "n": "01",
+  "disc": "الاستراتيجية",
+  "img": "tamm_strategy",
+  "myth": [
+   "عشان تبيع في الموسم…",
+   "لازم تخصم أكتر."
+  ],
+  "retort": [
+   "نافس بالمنتج…",
+   "مش بالسعر."
+  ],
   "move": "discount",
-  "case": {"client": "K.S للأثاث", "meta": "تجارة إلكترونية · أثاث وديكور · السعودية", "period": "أغسطس – أوائل أكتوبر 2024 · اليوم الوطني السعودي",
-   "kpis": [["507", "طلب"], ["15–20", "طلباً يومياً"], ["446", "عميل جديد"]],
+  "case": {
+   "client": "K.S للأثاث",
+   "meta": "تجارة إلكترونية · أثاث وديكور · السعودية",
+   "period": "أغسطس – أوائل أكتوبر 2024 · اليوم الوطني السعودي",
+   "kpis": [
+    [
+     "507",
+     "طلب"
+    ],
+    [
+     "15–20",
+     "طلباً يومياً"
+    ],
+    [
+     "446",
+     "عميل جديد"
+    ]
+   ],
    "note": "العائد كما ورد في دراسة الحالة (4 في البداية و10 في النهاية مقابل مستهدف 7). وإجمالي مبيعات المتجر والطلبات والعملاء الجدد من لوحة منصة المتجر، مقابل إجمالي الميزانية الإعلانية.",
-   "photo": "stk_ks_cushion"}},
- "ep2": {"name": "02_PrettyPicture", "n": "02", "disc": "الإبداع والمحتوى", "img": "tamm_creative",
-  "myth": ["الصورة الحلوة…", "بتبيع لوحدها."], "retort": ["الصورة بتتشاف…", "الهوك هو اللي بيوقّف."],
+   "photo": "stk_ks_cushion"
+  },
+  "en": {
+   "disc": "Strategy",
+   "myth": [
+    "To sell in season…",
+    "you have to discount harder."
+   ],
+   "retort": [
+    "Compete on product…",
+    "not on price."
+   ],
+   "case": {
+    "client": "K.S Furniture",
+    "meta": "E-commerce · Furniture & décor · Saudi Arabia",
+    "period": "Aug – early Oct 2024 · Saudi National Day",
+    "kpis": [
+     [
+      "507",
+      "Orders"
+     ],
+     [
+      "15–20",
+      "Orders a day"
+     ],
+     [
+      "446",
+      "First-time customers"
+     ]
+    ],
+    "note": "ROAS as reported in the case study (4 at the start, 10 at the end, against a target of 7). Total store sales, orders and new customers from the store platform’s dashboard, set against the total media budget.",
+    "photo": "stk_ks_cushion"
+   }
+  }
+ },
+ "ep2": {
+  "name": "02_PrettyPicture",
+  "n": "02",
+  "disc": "الإبداع والمحتوى",
+  "img": "tamm_creative",
+  "myth": [
+   "الصورة الحلوة…",
+   "بتبيع لوحدها."
+  ],
+  "retort": [
+   "الصورة بتتشاف…",
+   "الهوك هو اللي بيوقّف."
+  ],
   "move": "hooks",
-  "case": null},
- "ep3": {"name": "03_Budget", "n": "03", "disc": "الميديا والأداء", "img": "tamm_media",
-  "myth": ["زوّد الميزانية…", "والمبيعات هتزيد لوحدها."], "retort": ["الميزانية لازم تتحرك…", "كل يوم."],
+  "case": null,
+  "en": {
+   "disc": "Creative & content",
+   "myth": [
+    "A pretty picture…",
+    "sells on its own."
+   ],
+   "retort": [
+    "A picture gets seen…",
+    "a hook makes them stop."
+   ]
+  }
+ },
+ "ep3": {
+  "name": "03_Budget",
+  "n": "03",
+  "disc": "الميديا والأداء",
+  "img": "tamm_media",
+  "myth": [
+   "زوّد الميزانية…",
+   "والمبيعات هتزيد لوحدها."
+  ],
+  "retort": [
+   "الميزانية لازم تتحرك…",
+   "كل يوم."
+  ],
   "move": "budget",
-  "case": {"client": "علامات أزياء وتجميل للتجارة الإلكترونية", "meta": "تجارة إلكترونية · أزياء وتجميل · مصر", "period": "10 مارس – 30 مايو 2022",
-   "big": ["13.84×", "العائد على الإنفاق · الحساب A"],
-   "kpis": [["27,703", "عملية شراء · الحساب A"], ["8.91×", "العائد · الحساب B"], ["6,930", "عملية شراء · الحساب B"]],
+  "case": {
+   "client": "علامات أزياء وتجميل للتجارة الإلكترونية",
+   "meta": "تجارة إلكترونية · أزياء وتجميل · مصر",
+   "period": "10 مارس – 30 مايو 2022",
+   "big": [
+    "13.84×",
+    "العائد على الإنفاق · الحساب A"
+   ],
+   "kpis": [
+    [
+     "27,703",
+     "عملية شراء · الحساب A"
+    ],
+    [
+     "8.91×",
+     "العائد · الحساب B"
+    ],
+    [
+     "6,930",
+     "عملية شراء · الحساب B"
+    ]
+   ],
    "note": "العائد على الإنفاق = قيمة المشتريات المنسوبة من Meta ÷ الإنفاق الإعلاني، لكل حساب. العائد مش ربح.",
-   "photo": "stk_cs_unbox"}},
- "ep4": {"name": "04_Audience", "n": "04", "disc": "الجمهور والاستهداف", "img": "tamm_digital",
-  "myth": ["كل الناس…", "جمهورك."], "retort": ["جمهورك هو اللي…", "ناوي يشتري."],
+   "photo": "stk_cs_unbox"
+  },
+  "en": {
+   "disc": "Media & performance",
+   "myth": [
+    "Raise the budget…",
+    "and sales will follow."
+   ],
+   "retort": [
+    "Budget has to move…",
+    "every single day."
+   ],
+   "case": {
+    "client": "Fashion & beauty e-commerce brands",
+    "meta": "E-commerce · Fashion & beauty · Egypt",
+    "period": "10 Mar – 30 May 2022",
+    "big": [
+     "13.84×",
+     "ROAS · account A"
+    ],
+    "kpis": [
+     [
+      "27,703",
+      "Purchases · account A"
+     ],
+     [
+      "8.91×",
+      "ROAS · account B"
+     ],
+     [
+      "6,930",
+      "Purchases · account B"
+     ]
+    ],
+    "note": "Return on ad spend = Meta-attributed purchase value ÷ ad spend, per ad account. ROAS is not profit.",
+    "photo": "stk_cs_unbox"
+   }
+  }
+ },
+ "ep4": {
+  "name": "04_Audience",
+  "n": "04",
+  "disc": "الجمهور والاستهداف",
+  "img": "tamm_digital",
+  "myth": [
+   "كل الناس…",
+   "جمهورك."
+  ],
+  "retort": [
+   "جمهورك هو اللي…",
+   "ناوي يشتري."
+  ],
   "move": "funnel",
-  "case": {"client": "علامة إلكترونيات للتجارة الإلكترونية", "meta": "تجارة إلكترونية · إلكترونيات · مصر", "period": "1 أكتوبر 2021 – 18 يناير 2022",
-   "big": ["$897K", "قيمة المشتريات"],
-   "kpis": [["747", "طلب"], ["$1,201", "متوسط قيمة الطلب"]],
+  "case": {
+   "client": "علامة إلكترونيات للتجارة الإلكترونية",
+   "meta": "تجارة إلكترونية · إلكترونيات · مصر",
+   "period": "1 أكتوبر 2021 – 18 يناير 2022",
+   "big": [
+    "$897K",
+    "قيمة المشتريات"
+   ],
+   "kpis": [
+    [
+     "747",
+     "طلب"
+    ],
+    [
+     "$1,201",
+     "متوسط قيمة الطلب"
+    ]
+   ],
    "note": "قيمة المشتريات وعددها كما تنسبها Meta؛ متوسط الطلب = القيمة ÷ عدد المشتريات.",
-   "photo": "stk_cs_shop"}}
+   "photo": "stk_cs_shop"
+  },
+  "en": {
+   "disc": "Audience & targeting",
+   "myth": [
+    "Everyone…",
+    "is your audience."
+   ],
+   "retort": [
+    "Your audience is…",
+    "whoever is ready to buy."
+   ],
+   "case": {
+    "client": "Electronics e-commerce brand",
+    "meta": "E-commerce · Electronics · Egypt",
+    "period": "1 Oct 2021 – 18 Jan 2022",
+    "big": [
+     "$897K",
+     "Purchase value"
+    ],
+    "kpis": [
+     [
+      "747",
+      "Orders"
+     ],
+     [
+      "$1,201",
+      "Average order value"
+     ]
+    ],
+    "note": "Meta-attributed purchase value and purchases; average order value = value ÷ purchases.",
+    "photo": "stk_cs_shop"
+   }
+  }
+ }
 }

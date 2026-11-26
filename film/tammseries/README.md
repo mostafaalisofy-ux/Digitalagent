@@ -34,3 +34,13 @@ bash film/tammseries/render_parallel.sh
 ```
 
 Output: `handover/launch-film/tammseries/SayTamm_QaloLak_<NN_Name>_AR_9x16.mp4` and `cover_<ep>.jpg`.
+
+**English** ("They told you…"): each episode in `episodes.json` has an `en` block (myth, answer, discipline, case text from the English side of
+`cases.ts`); fixed copy is in the `TXT` table at the top of `film.html`. Satoshi, so internal until the licence is confirmed. Edge-aligned
+text and bars mirror; long lines shrink to fit.
+
+```bash
+EP_LANG=en bash film/tammseries/render_parallel.sh
+```
+
+Output: `SayTamm_QaloLak_<NN_Name>_EN_9x16.mp4`.

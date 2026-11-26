@@ -5,6 +5,8 @@
   @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
   @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-500-normal.woff2); font-weight: 500; }
   @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-700-normal.woff2); font-weight: 700; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
   html, body { margin: 0; background: #09090D; overflow: hidden; } canvas { display: block; }
 </style></head>
 <body><canvas id="c" width="1080" height="1920"></canvas>
@@ -14,7 +16,28 @@
 // 0–4.5 the myth arrives as a message while Tamm walks in · 4.5 the brand blade cuts it in two · 4.5–9 Tamm answers (3D) ·
 // 9–19 the move, drawn as a live diagram · 19–26 the proof: an approved case, figures verbatim with how they were measured ·
 // 26–30 Tamm, «قول. تم.». window.seek(t) is async.
-const EP = __EP__;
+const EP = __EP__, LANG = EP.lang || 'ar', EN = LANG === 'en';   // English: Satoshi (internal until the licence is confirmed), edge-aligned text mirrors
+const TXT = EN ? {
+  series: 'They told you…', told: 'They told you:', move: 'The move', proof: 'The proof', illus: 'Illustrative image',
+  steps: ['New hero products', 'Store rebuilt around demand', 'Bundle: a key piece + a cheaper add-on'],
+  disc: 'And the discount?', under: 'Under 20%', budget: 'Budget', b90: '90% conversion', b10: '10% awareness', noDisc: 'No deep discounts. No influencers.',
+  idea: 'One idea…', hooks: 'Two hooks.', test: 'We test both. The numbers decide.',
+  day: (d) => `Day ${d}`, set: (i) => `Ad set ${i}`, purch: 'Purchases', everyDay: 'Every day, budget goes where purchases come from.',
+  funnel: ['Awareness', 'Interest', 'Intent'], spend: 'Spend only where purchase intent shows.',
+  prod: 'And the production?', real: 'Real work for real clients.',
+  target: 'Target 7×', roas: 'Return on ad spend: start → result',
+  tag: 'Say it. Tamm it.', ep: (n) => `They told you… · Episode ${n}`,
+  track: ['Results from projects led by members of the SayTamm team,', 'including work delivered at other agencies.'] } : {
+  series: 'قالوا لك…', told: 'قالوا لك:', move: 'الحركة', proof: 'الدليل', illus: 'صورة توضيحية',
+  steps: ['منتجات رئيسية جديدة', 'المتجر يترتّب حول الأكثر طلباً', 'باقة: قطعة غالية + مكمّل أرخص'],
+  disc: 'والخصم؟', under: 'تحت 20%', budget: 'الميزانية', b90: '90% للتحويل', b10: '10% وعي', noDisc: 'بدون خصومات كبيرة… وبدون مؤثرين.',
+  idea: 'فكرة واحدة…', hooks: 'هوكين.', test: 'نختبر الاتنين… والأرقام تقرر.',
+  day: (d) => `اليوم ${d}`, set: (i) => `مجموعة ${i}`, purch: 'مشتريات', everyDay: 'كل يوم: الميزانية للي بيجيب مشتريات.',
+  funnel: ['وعي', 'اهتمام', 'نية شراء'], spend: 'الإنفاق بس عند اللي ظاهر عنده نية شراء.',
+  prod: 'والإنتاج نفسه؟', real: 'شغل حقيقي لعملاء حقيقيين.',
+  target: 'المستهدف ‎7×', roas: 'العائد على الإنفاق الإعلاني: البداية ← النتيجة',
+  tag: 'قول. تم.', ep: (n) => `قالوا لك… · الحلقة ${n}`,
+  track: ['مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.'] };
 const W = 1080, H = 1920, BEAT = 0.5, DUR = 30;
 window.DUR_S = DUR;
 const PU = '#6C35FF', PI = '#B9A3FF', OB = '#09090D', GR = '#17171E', GR2 = '#202029', WH = '#F5F3FA', MU = '#96939F', LI = '#C9C6D2';
@@ -31,9 +54,11 @@ function frameImg(id, k) {
   if (!CACHE.has(key)) { const im = new Image(); im.src = `${SEQ}/${id}/${String(k).padStart(3, '0')}.jpg`; CACHE.set(key, im.decode().then(() => im)); if (CACHE.size > 120) CACHE.delete(CACHE.keys().next().value); }
   return CACHE.get(key);
 }
-function font(px, w, latin) { c.font = `${w} ${px}px ${latin ? 'PlexL' : 'Plex, PlexL'}`; c.direction = latin ? 'ltr' : 'rtl'; }
-function T(s, x, y, px, { w = 700, col = WH, al = 'center', a = 1, latin = false } = {}) {
+function font(px, w, latin) { c.font = `${w} ${px}px ${EN ? 'Sat' : latin ? 'PlexL' : 'Plex, PlexL'}`; c.direction = latin || EN ? 'ltr' : 'rtl'; }
+const MXr = (x, w) => (EN ? W - x - w : x);   // mirror a rect in English
+function T(s, x, y, px, { w = 700, col = WH, al = 'center', a = 1, latin = false, k = false } = {}) {
   if (a <= 0 || !s) return;
+  if (EN && !k && al !== 'center') { x = W - x; al = al === 'right' ? 'left' : 'right'; }
   font(px, w, latin); c.textAlign = al; c.fillStyle = col; c.globalAlpha = a; c.fillText(s, x, y); c.globalAlpha = 1; c.direction = 'ltr';
 }
 const tw = (s, px, w = 700, latin = false) => { font(px, w, latin); const v = c.measureText(s).width; c.direction = 'ltr'; return v; };
@@ -55,12 +80,14 @@ function cover(im, x, y, w, h, r = 0, dim = 0, zoom = 1, fx = 0.5, fy = 0.5) {
 }
 function line(s, y, px, t0, t, o = {}) {
   const u = spr(t - t0, 20); if (u <= 0) return;
+  while (px > 20 && tw(s, px, o.w ?? 700) > (o.max ?? 960)) px -= 2;   // long English lines shrink to fit
   c.save(); c.beginPath(); c.rect(0, y - px * 1.15, W, px * 1.6); c.clip(); T(s, o.x ?? W / 2, y + px * 1.3 * (1 - u), px, o); c.restore();
 }
 function chip(s, x, y, t0, t, { col = PU, px = 34, txt = WH, latin = false, al = 'center' } = {}) {
   const u = spr(t - t0, 22); if (u <= 0) return;
+  if (EN && al !== 'center') { x = W - x; al = al === 'right' ? 'left' : 'right'; }
   const w = tw(s, px, 700, latin) + 56, h = px * 2, cx = al === 'right' ? x - w / 2 : al === 'left' ? x + w / 2 : x;
-  c.save(); c.translate(cx, y); c.scale(u, u); RR(-w / 2, -h / 2, w, h, h / 2, col); T(s, 0, px * 0.36, px, { col: txt, latin }); c.restore();
+  c.save(); c.translate(cx, y); c.scale(u, u); RR(-w / 2, -h / 2, w, h, h / 2, col); T(s, 0, px * 0.36, px, { col: txt, latin, k: true }); c.restore();
 }
 function topShade(a = 0.8) { const g = c.createLinearGradient(0, 160, 0, 560); g.addColorStop(0, `rgba(9,9,13,${a})`); g.addColorStop(1, 'rgba(9,9,13,0)'); c.fillStyle = g; c.fillRect(0, 160, W, 400); }
 function botShade(a = 0.9, y0 = 1150) { const g = c.createLinearGradient(0, y0, 0, 1760); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(1, `rgba(9,9,13,${a})`); c.fillStyle = g; c.fillRect(0, y0, W, H - y0); }
@@ -72,7 +99,7 @@ function countUp(s, u) {   // animates the number inside a figure string, keepin
 }
 function badge(t) {   // the series mark, top safe zone
   topShade(0.75);
-  T('قالوا لك…', 1000, 300, 42, { al: 'right', a: E(t, 0.1, 0.4) });
+  T(TXT.series, 1000, 300, 42, { al: 'right', a: E(t, 0.1, 0.4) });
   T(`${EP.n}`, 80, 300, 34, { al: 'left', latin: true, w: 500, col: LI, a: E(t, 0.1, 0.4) });
   T(EP.disc, 1000, 352, 30, { al: 'right', w: 500, col: MU, a: E(t, 0.3, 0.6) });
 }
@@ -83,9 +110,10 @@ function mythCard(t, cut = 0) {
   const x = 90, y = 760, w = 900, h = 400;
   const draw = () => {
     RR(x, y, w, h, 40, GR); SR(x, y, w, h, 40, '#2A2A33', 2);
-    T('قالوا لك:', x + w - 60, y + 90, 36, { al: 'right', col: MU, w: 500 });
-    T('“', x + 70, y + 130, 120, { latin: true, col: '#2A2A33' });
-    T(EP.myth[0], x + w - 60, y + 210, 60, { al: 'right' }); T(EP.myth[1], x + w - 60, y + 310, 66, { al: 'right' });
+    T(TXT.told, x + w - 60, y + 90, 36, { al: 'right', col: MU, w: 500 });
+    T(EN ? '”' : '“', EN ? x + w - 70 : x + 70, y + 130, 120, { latin: true, col: '#2A2A33' });
+    const fit = (s, px) => { while (tw(s, px) > w - 120) px -= 2; return px; };
+    T(EP.myth[0], x + w - 60, y + 210, fit(EP.myth[0], 60), { al: 'right' }); T(EP.myth[1], x + w - 60, y + 310, fit(EP.myth[1], 66), { al: 'right' });
   };
   c.save(); c.globalAlpha = clamp(u * 1.5); c.translate(0, 80 * (1 - u));
   if (cut <= 0) { draw(); c.restore(); return; }
@@ -118,55 +146,55 @@ async function answer(t) {
   await clip('talk', t - A0 + 0.3, 0, 0, W, H); botShade(0.94, 1050); badge(t);
   mythCard(t, inv(A0, A0 + 0.9, t));
   chip('Tamm', 1000, 1330, A0 + 0.5, t, { latin: true, al: 'right', px: 32 });
-  line(EP.retort[0], 1470, 76, A0 + 0.7, t, { x: 1000, al: 'right' });
-  line(EP.retort[1], 1600, 92, A0 + 1.3, t, { x: 1000, al: 'right', col: PI });
+  line(EP.retort[0], 1470, 76, A0 + 0.7, t, { x: 1000, al: 'right', max: 920 });
+  line(EP.retort[1], 1600, 92, A0 + 1.3, t, { x: 1000, al: 'right', col: PI, max: 920 });
 }
 
 // ---------- C · the move ----------
 function panel(t, h = 520) {   // Tamm's discipline still, as the stage for the move
   const im = IMGS[EP.img]; const u = E(t, M0, M0 + 0.5);
   cover(im, 60, 420, 960, h, 32, 0.15, lerp(1.0, 1.08, inv(M0, P0, t)), 0.2, 0.5);
-  T('الحركة', 1000, 1010 + (h - 520), 30, { al: 'right', w: 500, col: MU, a: u });
+  T(TXT.move, 1000, 1010 + (h - 520), 30, { al: 'right', w: 500, col: MU, a: u });
 }
 function stepRow(i, s, y, t0, t) {
   const u = spr(t - t0, 18); if (u <= 0) return;
   c.save(); c.globalAlpha = clamp(u * 1.4); c.translate(60 * (1 - u), 0);
   RR(60, y - 58, 960, 116, 28, GR);
   T(String(i).padStart(2, '0'), 120, y + 14, 34, { latin: true, col: PI, w: 500, al: 'left' });
-  T(s, 980, y + 16, 46, { al: 'right' }); c.restore();
+  let px = 46; while (tw(s, px) > 760) px -= 2; T(s, 980, y + 16, px, { al: 'right' }); c.restore();
 }
 const MOVES = {
   discount(t) {   // K.S Furniture: product, bundles, discounts under 20%, budget 90/10
     const lt = t - M0;
     if (lt < 5.2) {
       panel(t);
-      stepRow(1, 'منتجات رئيسية جديدة', 1110, M0 + 0.5, t);
-      stepRow(2, 'المتجر يترتّب حول الأكثر طلباً', 1250, M0 + 1.4, t);
-      stepRow(3, 'باقة: قطعة غالية + مكمّل أرخص', 1390, M0 + 2.3, t);
+      stepRow(1, TXT.steps[0], 1110, M0 + 0.5, t);
+      stepRow(2, TXT.steps[1], 1250, M0 + 1.4, t);
+      stepRow(3, TXT.steps[2], 1390, M0 + 2.3, t);
       return;
     }
     bg(); const u0 = M0 + 5.2;
-    T('والخصم؟', W / 2, 560, 64, { a: E(t, u0, u0 + 0.3) });
+    T(TXT.disc, W / 2, 560, 64, { a: E(t, u0, u0 + 0.3) });
     // the tag: −50% gets struck, «تحت 20%» stays
     const tu = spr(t - u0 - 0.2, 16); c.save(); c.translate(W / 2, 800); c.scale(tu, tu); c.rotate(-0.08);
     RR(-300, -120, 600, 240, 40, GR); c.beginPath(); c.arc(-230, 0, 18, 0, 7); c.fillStyle = OB; c.fill();
     const st = E(t, u0 + 0.9, u0 + 1.2);
     T('−50%', 40, 40 - 90 * E(t, u0 + 1.3, u0 + 1.6), 120, { latin: true, col: st > 0 ? MU : WH, a: 1 - E(t, u0 + 1.3, u0 + 1.6) });
     if (st > 0) { c.strokeStyle = PU; c.lineWidth = 14; c.lineCap = 'round'; c.beginPath(); c.moveTo(-150, 0); c.lineTo(-150 + 380 * st, 0); c.stroke(); }
-    T('تحت 20%', 30, 40 + 90 * (1 - E(t, u0 + 1.4, u0 + 1.7)), 96, { a: E(t, u0 + 1.4, u0 + 1.7) });
+    T(TXT.under, 30, 40 + 90 * (1 - E(t, u0 + 1.4, u0 + 1.7)), 96, { a: E(t, u0 + 1.4, u0 + 1.7) });
     c.restore();
     // the budget: 90 conversion / 10 awareness
     const bu = E(t, u0 + 2.2, u0 + 3.2, eio), bx = 90, bw = 900, by = 1180;
-    T('الميزانية', 990, by - 40, 36, { al: 'right', col: MU, w: 500, a: E(t, u0 + 2.0, u0 + 2.3) });
+    T(TXT.budget, 990, by - 40, 36, { al: 'right', col: MU, w: 500, a: E(t, u0 + 2.0, u0 + 2.3) });
     RR(bx, by, bw, 110, 24, GR2, E(t, u0 + 2.0, u0 + 2.3));
-    RR(bx + bw * 0.1, by, bw * 0.9 * bu, 110, 24, PU);
-    T('90% للتحويل', bx + bw - 30, by + 72, 44, { al: 'right', a: E(t, u0 + 2.9, u0 + 3.2) });
-    T('10% وعي', bx + 20, by + 172, 34, { al: 'left', col: MU, w: 500, a: E(t, u0 + 3.0, u0 + 3.3) });
-    line('بدون خصومات كبيرة… وبدون مؤثرين.', 1520, 46, u0 + 3.6, t, { col: LI, w: 500 });
+    RR(MXr(bx + bw * 0.1, bw * 0.9 * bu), by, bw * 0.9 * bu, 110, 24, PU);
+    T(TXT.b90, bx + bw - 30, by + 72, 44, { al: 'right', a: E(t, u0 + 2.9, u0 + 3.2) });
+    T(TXT.b10, bx + 20, by + 172, 34, { al: 'left', col: MU, w: 500, a: E(t, u0 + 3.0, u0 + 3.3) });
+    line(TXT.noDisc, 1520, 46, u0 + 3.6, t, { col: LI, w: 500 });
   },
   async hooks(t) {   // Tech Hive: one idea, two hooks, the numbers decide (no winner is claimed)
     const lt = t - M0; bg();
-    line('فكرة واحدة…', 520, 72, M0 + 0.1, t); line('هوكين.', 620, 84, M0 + 0.6, t, { col: PI });
+    line(TXT.idea, 520, 72, M0 + 0.1, t); line(TXT.hooks, 620, 84, M0 + 0.6, t, { col: PI });
     const pw = 430, ph = 764, y = 720;
     for (const [i, id, lab] of [[0, 't_hookA', 'A'], [1, 't_hookB', 'B']]) {
       const u = spr(t - M0 - 0.8 - i * 0.2, 16); if (u <= 0) continue;
@@ -179,27 +207,27 @@ const MOVES = {
       const k = lt - 5.5;
       for (const i of [0, 1]) { const x = i ? 570 : 80, v = 0.35 + 0.3 * Math.sin(k * 2.4 + i * 2.1) * Math.min(1, k / 1.5) + 0.25 * Math.min(1, k / 2);
         RR(x, 1540, pw, 26, 13, GR2); RR(x, 1540, pw * clamp(v), 26, 13, i ? LI : PU); }
-      line('نختبر الاتنين… والأرقام تقرر.', 1650, 50, M0 + 6.0, t);
+      line(TXT.test, 1650, 50, M0 + 6.0, t);
     }
   },
   budget(t) {   // the lever: budget moves every day toward the ad sets that bring purchases
     const lt = t - M0; panel(t, 420);
     const SETS = [0.62, 0.15, 0.71, 0.1, 0.55, 0.2], day = Math.min(82, 1 + Math.floor(lt * 9));
-    T(`اليوم ${day}`, 1000, 1040, 40, { al: 'right', a: E(t, M0 + 0.4, M0 + 0.7) });
+    T(TXT.day(day), 1000, 1040, 40, { al: 'right', a: E(t, M0 + 0.4, M0 + 0.7) });
     T('/ 82', 80, 1040, 32, { al: 'left', latin: true, col: MU, w: 500, a: E(t, M0 + 0.4, M0 + 0.7) });
     const k = clamp((lt - 1.0) / 7);
     SETS.forEach((q, i) => {
       const y = 1110 + i * 86, u = spr(t - M0 - 0.5 - i * 0.08, 18); if (u <= 0) return;
       const share = lerp(1 / 6, q > 0.5 ? q / 1.88 : q / 4, eio(k)), w = 820 * share * 2.2 * u;
-      T(`مجموعة ${i + 1}`, 1000, y + 14, 30, { al: 'right', col: MU, w: 500 });
-      RR(90, y - 22, 760, 44, 22, GR2); RR(90, y - 22, Math.min(760, w), 44, 22, q > 0.5 ? PU : '#3A3A46');
-      if (q > 0.5 && k > 0.6) T('مشتريات', 90 + Math.min(760, w) + 16, y + 12, 26, { al: 'left', col: PI, a: E(t, M0 + 5.4, M0 + 5.8) });
+      T(TXT.set(i + 1), 1000, y + 14, 30, { al: 'right', col: MU, w: 500 });
+      RR(MXr(90, 760), y - 22, 760, 44, 22, GR2); RR(MXr(90, Math.min(760, w)), y - 22, Math.min(760, w), 44, 22, q > 0.5 ? PU : '#3A3A46');
+      if (q > 0.5 && k > 0.6) T(TXT.purch, 90 + Math.min(760, w) - 22, y + 10, 24, { al: 'right', col: WH, a: E(t, M0 + 5.4, M0 + 5.8) });
     });
-    line('كل يوم: الميزانية للي بيجيب مشتريات.', 1680, 46, M0 + 6.2, t);
+    line(TXT.everyDay, 1680, 46, M0 + 6.2, t);
   },
   funnel(t) {   // three layers; the money leaves the top and stays where purchase intent shows
     const lt = t - M0; panel(t, 420);
-    const L = [['وعي', 900, false], ['اهتمام', 680, true], ['نية شراء', 460, true]];
+    const L = [[TXT.funnel[0], 900, false], [TXT.funnel[1], 680, true], [TXT.funnel[2], 460, true]];
     const off = E(t, M0 + 3.5, M0 + 4.3);
     L.forEach(([s, w, keep], i) => {
       const u = spr(t - M0 - 0.4 - i * 0.25, 16); if (u <= 0) return;
@@ -215,7 +243,7 @@ const MOVES = {
       if (u <= 0) break; const y = lerp(1000, 1480, ph), x = lerp(sx, tx, ph);
       c.beginPath(); c.arc(x, y, 9, 0, 7); c.fillStyle = PI; c.globalAlpha = u * (1 - ph * 0.6); c.fill(); c.globalAlpha = 1;
     }
-    line('الإنفاق بس عند اللي ظاهر عنده نية شراء.', 1640, 44, M0 + 5.4, t);
+    line(TXT.spend, 1640, 44, M0 + 5.4, t);
   },
 };
 async function move(t) { bg(); await MOVES[EP.move](t); badge(t); }
@@ -224,20 +252,20 @@ async function move(t) { bg(); await MOVES[EP.move](t); badge(t); }
 async function proof(t) {
   bg(); const C = EP.case, lt = t - P0;
   if (!C) {   // ep 2: the production itself, from real client work
-    line('والإنتاج نفسه؟', 520, 72, P0 + 0.1, t);
+    line(TXT.prod, 520, 72, P0 + 0.1, t);
     const S = [['a_flame', 0], ['a_pizza', 1.2], ['a_pour', 2.4], ['a_choc', 3.6], ['a_plate', 4.8]];
     let k = 0; for (let i = 0; i < S.length; i++) if (lt >= S[i][1]) k = i;
     const u = spr(t - P0 - 0.3, 14);
     c.save(); c.translate(W / 2, 1110); c.scale(lerp(0.9, 1, u), lerp(0.9, 1, u)); c.translate(-W / 2, -1110); c.globalAlpha = clamp(u * 1.4);
     await clip(S[k][0], lt - S[k][1], 190, 640, 700, 940, 40, { zoom: lerp(1.07, 1, eo((lt - S[k][1]) / 1.2)) }); c.restore();
     T('Altopiano · Tech Hive', W / 2, 1680, 40, { latin: true, a: E(t, P0 + 1.0, P0 + 1.4) });
-    T('شغل حقيقي لعملاء حقيقيين.', W / 2, 1740, 34, { w: 500, col: LI, a: E(t, P0 + 1.2, P0 + 1.6) });
+    T(TXT.real, W / 2, 1740, 34, { w: 500, col: LI, a: E(t, P0 + 1.2, P0 + 1.6) });
     badge(t); return;
   }
   cover(IMGS[C.photo], 0, 0, W, 760, 0, 0.35, lerp(1.0, 1.06, inv(P0, E0, t)));
   { const g = c.createLinearGradient(0, 420, 0, 780); g.addColorStop(0, 'rgba(9,9,13,0)'); g.addColorStop(1, OB); c.fillStyle = g; c.fillRect(0, 420, W, 360); }
-  T('صورة توضيحية', 80, 735, 22, { al: 'left', col: MU, w: 500 });
-  T('الدليل', 1000, 830, 30, { al: 'right', col: MU, w: 500, a: E(t, P0 + 0.1, P0 + 0.4) });
+  T(TXT.illus, 80, 735, 22, { al: 'left', col: MU, w: 500 });
+  T(TXT.proof, 1000, 830, 30, { al: 'right', col: MU, w: 500, a: E(t, P0 + 0.1, P0 + 0.4) });
   line(C.client, 910, 54, P0 + 0.2, t, { x: 1000, al: 'right' });
   T(C.meta, 1000, 970, 30, { al: 'right', col: LI, w: 500, a: E(t, P0 + 0.4, P0 + 0.7) });
   T(C.period, 1000, 1015, 28, { al: 'right', col: MU, w: 500, a: E(t, P0 + 0.5, P0 + 0.8) });
@@ -245,13 +273,13 @@ async function proof(t) {
   if (EP.move === 'discount') {   // the ROAS line: 4 → 10 against a target of 7
     const gx = 120, gw = 840, gy = 1110, gh = 300, Y = (v) => gy + gh - (v / 11) * gh, u = E(t, P0 + 0.9, P0 + 2.4, eio);
     c.strokeStyle = MU; c.globalAlpha = 0.5; c.setLineDash([10, 12]); c.lineWidth = 3; c.beginPath(); c.moveTo(gx, Y(7)); c.lineTo(gx + gw, Y(7)); c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
-    T('المستهدف ‎7×', gx + gw, Y(7) - 16, 28, { al: 'right', col: MU, w: 500, a: E(t, P0 + 0.8, P0 + 1.1) });
+    T(TXT.target, gx + gw, Y(7) - 16, 28, { al: 'right', k: true, col: MU, w: 500, a: E(t, P0 + 0.8, P0 + 1.1) });
     c.strokeStyle = PU; c.lineWidth = 12; c.lineCap = 'round'; c.beginPath(); c.moveTo(gx, Y(4)); c.lineTo(gx + gw * u, Y(lerp(4, 10, Math.pow(u, 1.6)))); c.stroke();
     c.beginPath(); c.arc(gx, Y(4), 14, 0, 7); c.fillStyle = WH; c.fill();
-    T('4×', gx, Y(4) + 60, 44, { latin: true, al: 'left', a: E(t, P0 + 0.9, P0 + 1.2) });
+    T('4×', gx, Y(4) + 60, 44, { latin: true, al: 'left', k: true, a: E(t, P0 + 0.9, P0 + 1.2) });
     if (u >= 1) { c.beginPath(); c.arc(gx + gw, Y(10), 18, 0, 7); c.fillStyle = PU; c.fill(); }
-    T(countUp('10×', u), gx + gw, Y(10) - 34, 92, { latin: true, al: 'right', a: E(t, P0 + 1.2, P0 + 1.5) });
-    T('العائد على الإنفاق الإعلاني: البداية ← النتيجة', W / 2, gy + gh + 60, 28, { col: LI, w: 500, a: E(t, P0 + 1.4, P0 + 1.8) });
+    T(countUp('10×', u), gx + gw, Y(10) - 34, 92, { latin: true, al: 'right', k: true, a: E(t, P0 + 1.2, P0 + 1.5) });
+    T(TXT.roas, W / 2, gy + gh + 60, 28, { col: LI, w: 500, a: E(t, P0 + 1.4, P0 + 1.8) });
     y = 1540;
   } else {
     const u = E(t, P0 + 0.8, P0 + 2.4);
@@ -262,7 +290,7 @@ async function proof(t) {
   const n = C.kpis.length, kw = (960 - (n - 1) * 20) / n;
   C.kpis.forEach(([v, l], i) => {   // reading order: first figure on the right
     const u = spr(t - P0 - 2.2 - i * 0.15, 18); if (u <= 0) return; const x = 1020 - (i + 1) * kw - i * 20;
-    c.save(); c.globalAlpha = clamp(u * 1.4); RR(x, y, kw, 150, 26, GR);
+    c.save(); c.globalAlpha = clamp(u * 1.4); RR(MXr(x, kw), y, kw, 150, 26, GR);
     T(countUp(v, E(t, P0 + 2.2, P0 + 3.4)), x + kw - 30, y + 74, 52, { latin: true, al: 'right' }); T(l, x + kw - 30, y + 120, 26, { al: 'right', col: MU, w: 500 }); c.restore();
   });
   const nl = wrap(C.note, 920, 24); nl.forEach((s, i) => T(s, 1000, y + 200 + i * 34, 24, { al: 'right', col: MU, w: 500, a: E(t, P0 + 3.0, P0 + 3.5) }));
@@ -273,10 +301,10 @@ async function proof(t) {
 async function outro(t) {
   await clip('tamm_end', t - E0, 0, 0, W, H); botShade(0.95, 1000);
   const h = 110, w = (h * 600) / 721; c.globalAlpha = E(t, E0 + 0.3, E0 + 0.6); c.drawImage(SYMBOL, W / 2 - w / 2, 1180, w, h); c.globalAlpha = 1;
-  line('قول. تم.', 1420, 110, E0 + 0.4, t);
+  line(TXT.tag, 1420, 110, E0 + 0.4, t);
   T('saytamm.com', W / 2, 1510, 36, { w: 500, latin: true, a: E(t, E0 + 0.8, E0 + 1.1) });
-  T(`قالوا لك… · الحلقة ${EP.n}`, W / 2, 1570, 30, { w: 500, col: LI, a: E(t, E0 + 0.9, E0 + 1.2) });
-  T('مشاريع قادها أعضاء من فريق قول تم، ومنها أعمال نُفّذت في وكالات أخرى.', W / 2, 1650, 24, { w: 500, col: MU, a: E(t, E0 + 1.0, E0 + 1.4) });
+  T(TXT.ep(EP.n), W / 2, 1570, 30, { w: 500, col: LI, a: E(t, E0 + 0.9, E0 + 1.2) });
+  TXT.track.forEach((s, i) => T(s, W / 2, 1650 + i * 34, 24, { w: 500, col: MU, a: E(t, E0 + 1.0, E0 + 1.4) }));
 }
 async function sceneAt(t) {
   if (t < A0) return myth(t); if (t < M0) return answer(t); if (t < P0) return move(t); if (t < E0) return proof(t); return outro(t);
@@ -339,7 +367,7 @@ window.renderAudio = async () => {
   return btoa(bin);
 };
 window.ready = (async () => {
-  await Promise.all(['500 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول')).concat(['500 40px PlexL', '700 40px PlexL'].map((f) => document.fonts.load(f, 'Aa'))));
+  await Promise.all(['500 40px Plex', '700 40px Plex'].map((f) => document.fonts.load(f, 'قول')).concat(['500 40px PlexL', '700 40px PlexL', '500 40px Sat', '700 40px Sat'].map((f) => document.fonts.load(f, 'Aa'))));
   SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
   for (const n of [EP.img, EP.case && EP.case.photo].filter(Boolean)) { const im = new Image(); im.src = `${ASSETS}/${n}.jpg`; await im.decode(); IMGS[n] = im; }
   await window.seek(0); return true;
