@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>The Rally</title>
+<style>
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-500.woff2); font-weight: 500; }
+  @font-face { font-family: Sat; src: url(__SAT__/Satoshi-700.woff2); font-weight: 700; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  html, body { margin: 0; background: #09090D; overflow: hidden; } canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="1080" height="1080"></canvas>
+<script>
+'use strict';
+// «The Rally» — SayTamm, 20 s, 1080×1080, English, 120 BPM. The client–agency back-and-forth as a tennis rally.
+// Through-line object: the purple ball (full stop → request badge → comment pin → next button → Approve → data point → the
+// blade of the SayTamm symbol). Everything is computed from t inside window.seek(t): no CSS animation, no timers, no state.
+const W = 1080, H = 1080, DUR = 20, BEAT = 0.5; window.DUR_S = DUR;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const C = { ob: '#09090D', gr: '#17171E', card: '#211F29', line: 'rgba(245,243,250,0.16)', soft: '#F5F3FA', mu: '#96939F', pu: '#6C35FF', seam: '#4F22D9' };
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), lerp = (a, b, u) => a + (b - a) * u, seg = (t, a, b) => clamp((t - a) / (b - a));
+const expo = (u) => (u <= 0 ? 0 : u >= 1 ? 1 : 1 - Math.pow(2, -10 * u));
+const cub = (u) => (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
+// a damped spring (ζ 0.72: about 4% overshoot), as a function of time since it was released
+const spring = (dt, w = 17, z = 0.72) => { if (dt <= 0) return 0; const wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * dt) * (Math.cos(wd * dt) + (z * w / wd) * Math.sin(wd * dt)); };
+const sp = (t, t0, w) => spring(t - t0, w);
+let SYM_T, SYM_B, BLADE;   // the symbol, split into its two original layers; the blade measured at runtime
+const font = (wt, px, fam = 'Sat') => `${wt} ${px}px ${fam}`;
+
+// ---------- camera: springs between framings, a slow push inside each ----------
+const CAM = [ // t, cx, cy, zoom, how we got here
+  [0, 540, 540, 1.0, 'push'], [1.95, 540, 540, 1.04, 'push'], [2.6, 540, 540, 1.06, 'move'],
+  [3.1, 765, 440, 1.55, 'move'], [4.9, 765, 440, 1.61, 'push'], [5.4, 540, 520, 1.12, 'move'], [5.9, 300, 450, 1.55, 'move'], [6.45, 300, 450, 1.59, 'push'],
+  [6.95, 540, 520, 1.14, 'move'], [7.3, 775, 450, 1.58, 'move'], [8.45, 775, 450, 1.64, 'push'], [8.95, 540, 520, 1.15, 'move'], [9.35, 305, 445, 1.6, 'move'],
+  [11.4, 305, 445, 1.68, 'push'], [11.85, 540, 520, 1.16, 'move'], [12.25, 770, 445, 1.6, 'move'], [13.3, 770, 445, 1.66, 'push'], [13.75, 540, 540, 1.02, 'move'],
+  [15.45, 540, 540, 1.07, 'push'], [16.0, 540, 540, 1.0, 'move'], [17.5, 540, 540, 1.04, 'push'], [20, 540, 540, 1.08, 'push'],
+];
+let cam = { x: 540, y: 540, z: 1 };
+function camAt(t) {
+  let i = 0; while (i < CAM.length - 1 && t > CAM[i + 1][0]) i++;
+  const a = CAM[i], b = CAM[Math.min(i + 1, CAM.length - 1)], u = a === b ? 1 : seg(t, a[0], b[0]);
+  const k = b[4] === 'move' ? (u >= 1 ? 1 : spring(u * (b[0] - a[0]), 13) / spring(b[0] - a[0], 13)) : u;
+  cam.x = lerp(a[1], b[1], k); cam.y = lerp(a[2], b[2], k); cam.z = Math.exp(lerp(Math.log(a[3]), Math.log(b[3]), k));
+}
+const S = (x, y) => [(x - cam.x) * cam.z + W / 2, (y - cam.y) * cam.z + H / 2];
+const worldTf = () => ctx.setTransform(cam.z, 0, 0, cam.z, W / 2 - cam.x * cam.z, H / 2 - cam.y * cam.z);
+const screenTf = () => ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+// ---------- drawing helpers ----------
+function rr(x, y, w, h, r) { r = Math.min(r, w / 2, h / 2); ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function text(s, x, y, f, col, align = 'left', dir = 'ltr') { ctx.font = f; ctx.fillStyle = col; ctx.textAlign = align; ctx.direction = dir; ctx.fillText(s, x, y); }
+// grow from a point: scale about (ox, oy) by a spring, clipped while it unfolds
+function grow(t0, t, ox, oy, fn, w = 17) { const s = sp(t, t0, w); if (s <= 0.001) return 0; ctx.save(); ctx.translate(ox, oy); ctx.scale(s, s); ctx.translate(-ox, -oy); fn(s); ctx.restore(); return s; }
+// a line of type that rises out of a mask and later falls into it (separate in/out timing)
+function maskLine(s, x, y, f, col, tin, tout, t, align = 'left', dir = 'ltr', up = true) {
+  const pin = spring(t - tin, 15), pout = tout === null ? 0 : expo(seg(t, tout, tout + 0.32)); if (pin <= 0 || pout >= 1) return;
+  ctx.font = f; const m = ctx.measureText(s), hgt = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent + 16;
+  ctx.save(); ctx.beginPath(); ctx.rect(-2000, y - m.actualBoundingBoxAscent - 8, 6000, hgt); ctx.clip();
+  const dy = (1 - pin) * hgt + (up ? -pout * hgt : pout * hgt); text(s, x, y + dy, f, col, align, dir); ctx.restore();
+}
+
+// ---------- the ball ----------
+// flights [t0, t1, x0, y0, x1, y1, peak]: a top-down arc (height lifts and scales the ball, the shadow stays on the court)
+const FL = [
+  [1.12, 1.5, 1180, -260, null, null, 160],          // drops in as the full stop (x1/y1: measured)
+  [2.0, 2.42, null, null, 230, 600, 260],             // smashed to the client's side
+  [2.5, 3.0, 230, 600, 707, 432, 220],                // F1 serve → request badge
+  [5.0, 5.5, 860, 620, 300, 742, 230],                // F2 → design card
+  [6.5, 7.0, 362, 428, 884, 676, 230],                // F3 the amend → next button
+  [8.5, 9.0, 884, 676, 305, 646, 230],                // F4 → Approve
+  [11.5, 12.0, 305, 646, 892, 470, 240],              // F5 → data point
+  [13.5, 14.0, 892, 420, 232, 522, 260], [14.0, 14.5, 232, 522, 892, 380, 260], [14.5, 15.0, 892, 380, 232, 602, 260], [15.0, 15.5, 232, 602, 892, 330, 260],
+  [15.5, 16.0, 892, 330, 540, 540, 380],               // the lob
+];
+let HOOK_STOP = [0, 0], BACK_STOP = [0, 0];
+function ballAt(t) {   // {x, y, h, r}
+  for (const f of FL) if (t >= f[0] && t < f[1]) {
+    const u = (t - f[0]) / (f[1] - f[0]), x0 = f[2] ?? HOOK_STOP[0], y0 = f[3] ?? HOOK_STOP[1], x1 = f[4] ?? HOOK_STOP[0], y1 = f[5] ?? HOOK_STOP[1];
+    const lob = f === FL[FL.length - 1], k = f === FL[0] ? u * u : lob ? 1 - Math.pow(1 - u, 1.6) : u;
+    return { x: lerp(x0, x1, k), y: lerp(y0, y1, k), h: lob ? f[6] * (1 - (1 - u) * (1 - u)) : f[6] * 4 * u * (1 - u) * (f === FL[0] ? (1 - u) : 1), r: 20 };
+  }
+  if (t < FL[0][0]) return null;
+  if (t < 2.0) return { x: HOOK_STOP[0], y: HOOK_STOP[1], h: 0, r: 20, land: 1.5 };
+  if (t < 2.5) return { x: 230, y: 600, h: 0, r: 20, land: 2.42 };
+  if (t < 4.45) return { x: 707, y: 432, h: 0, r: lerp(20, 13, expo(seg(t, 3.0, 3.3))), land: 3.0, role: 'badge' };
+  if (t < 5.0) { const u = cub(seg(t, 4.45, 4.95)); return { x: lerp(707, 860, u), y: lerp(432, 620, u), h: 18 * Math.sin(Math.PI * u), r: lerp(13, 20, expo(seg(t, 4.45, 4.7))) }; }
+  if (t < 5.9) return { x: 300, y: 742, h: 0, r: 20, land: 5.5 };
+  if (t < 6.5) { const u = cub(seg(t, 5.9, 6.2)); return { x: lerp(300, 362, u), y: lerp(742, 428, u), h: 14 * Math.sin(Math.PI * u), r: lerp(20, 15, u), role: u >= 1 ? 'pin' : null }; }
+  if (t < 8.5) return { x: 884, y: 676, h: 0, r: 22, land: 7.0, role: 'next' };
+  if (t < 11.5) return { x: 305, y: 646, h: 0, r: 22, land: 9.0, role: t < 10.5 ? 'approve' : 'check' };
+  if (t < 13.5) { const u = cub(seg(t, 13.0, 13.4)); return { x: 892, y: lerp(470, 420, u), h: 0, r: 14, land: 12.0, role: 'point' }; }
+  if (t < 16.45) { const u = seg(t, 16.0, 16.45); return { x: lerp(540, 1260, u * u), y: lerp(540, 380, u), h: lerp(380, 700, u), r: 20 }; }   // up and out, top right
+  if (t < 17.0) { const u = seg(t, 16.45, 17.0); return { x: lerp(1240, BACK_STOP[0], 1 - (1 - u) * (1 - u)), y: BACK_STOP[1], h: 150 * 4 * u * (1 - u) * (1 - u * 0.3), r: 20, land: 17.0 }; }   // back in from the right, onto the full stop
+  if (t < 17.5) return { x: BACK_STOP[0], y: BACK_STOP[1], h: 0, r: 20, land: 17.0 };
+  if (t < 18.0) { const u = cub(seg(t, 17.5, 17.85)); return { x: lerp(BACK_STOP[0], BLADE.cx, u), y: lerp(BACK_STOP[1], BLADE.cy, u), h: 40 * Math.sin(Math.PI * u), r: 20, morph: seg(t, 17.82, 18.15) }; }
+  return { x: BLADE.cx, y: BLADE.cy, h: 0, r: 20, morph: seg(t, 17.82, 18.15) };
+}
+function drawBall(t) {
+  const b = ballAt(t); if (!b || (b.morph ?? 0) >= 1 || b.role === 'approve' || b.role === 'check') return;
+  const p = ballAt(t - 1 / 120) || b, q = ballAt(t + 1 / 120) || b;
+  const vx = (q.x - p.x) * cam.z * 60, vy = ((q.y - q.h) - (p.y - p.h)) * cam.z * 60, v = Math.hypot(vx, vy);   // screen px / s
+  const sq = b.land !== undefined ? 1 - 0.28 * Math.exp(-14 * (t - b.land)) * Math.cos((t - b.land) * 34) * (t >= b.land ? 1 : 0) : 1;
+  const sc = 1 + b.h / 420, r = b.r * sc * (1 - (b.morph || 0));
+  // shadow on the court
+  if (b.h > 1 || b.role === undefined) { const [sx, sy] = S(b.x + b.h * 0.12, b.y + b.h * 0.08); ctx.fillStyle = `rgba(0,0,0,${0.35 * (1 - Math.min(1, b.h / 700))})`; ctx.beginPath(); ctx.ellipse(sx, sy + b.r * cam.z * 0.6, b.r * cam.z * (1 + b.h / 600), b.r * cam.z * 0.45, 0, 0, Math.PI * 2); ctx.fill(); }
+  const [sx, sy] = S(b.x, b.y - b.h); const R = r * cam.z, stretch = Math.min(1.7, 1 + v / 4200), ang = Math.atan2(vy, vx);
+  ctx.save(); ctx.translate(sx, sy); ctx.rotate(ang); ctx.scale(stretch * (t >= (b.land ?? 99) ? 1 / Math.sqrt(sq) : 1), (t >= (b.land ?? 99) ? sq : 1) / Math.sqrt(stretch)); ctx.rotate(-ang);
+  ctx.fillStyle = C.pu; ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.fill();
+  if (b.role === 'next') { const k = Math.min(1, spring(t - 7.05, 18)); ctx.strokeStyle = C.soft; ctx.lineWidth = R * 0.16; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-R * 0.42 * k, 0); ctx.lineTo(R * 0.42 * k, 0); ctx.moveTo(R * 0.1 * k, -R * 0.32 * k); ctx.lineTo(R * 0.42 * k, 0); ctx.lineTo(R * 0.1 * k, R * 0.32 * k); ctx.stroke(); ctx.lineCap = 'butt'; }
+  if (!b.role || b.role === 'badge' || b.role === 'pin') { ctx.save(); ctx.clip(); ctx.strokeStyle = C.seam; ctx.lineWidth = Math.max(1, R * 0.12); ctx.beginPath(); ctx.arc(-R * 1.05, 0, R * 0.78, -0.95, 0.95); ctx.stroke(); ctx.beginPath(); ctx.arc(R * 1.05, 0, R * 0.78, Math.PI - 0.95, Math.PI + 0.95); ctx.stroke(); ctx.restore(); }
+  ctx.restore();
+  return b;
+}
+
+// ---------- the court ----------
+function court(t) {
+  const g = expo(seg(t, 2.0, 2.55)) * (1 - expo(seg(t, 16.0, 16.4)));   // lines grow out from the net, and fold back into it
+  if (g <= 0) return;
+  worldTf(); const cx = 540, cy = 540, gy = t >= 16.0 ? g : 1;   // in: out from the net; out: down into the centre
+  const x0 = 120, x1 = 960, y0 = lerp(cy, 300, gy), y1 = lerp(cy, 780, gy);
+  ctx.fillStyle = C.gr; ctx.fillRect(cx - (cx - x0) * g, y0, (x1 - x0) * g, y1 - y0);
+  ctx.strokeStyle = 'rgba(245,243,250,0.72)'; ctx.lineWidth = 3;
+  const L = (ax, ay, bx, by) => { ctx.beginPath(); ctx.moveTo(lerp(cx, ax, g), ay); ctx.lineTo(lerp(cx, bx, g), by); ctx.stroke(); };
+  L(x0, y0, x1, y0); L(x0, y1, x1, y1); L(x0, y0 + 60 * gy, x1, y0 + 60 * gy); L(x0, y1 - 60 * gy, x1, y1 - 60 * gy); L(330, cy, 750, cy);
+  for (const x of [x0, 330, 750, x1]) { const xx = lerp(cx, x, g); ctx.beginPath(); ctx.moveTo(xx, x === x0 || x === x1 ? y0 : y0 + 60 * gy); ctx.lineTo(xx, x === x0 || x === x1 ? y1 : y1 - 60 * gy); ctx.stroke(); }
+  const ng = Math.min(1, g * 1.6); ctx.strokeStyle = C.soft; ctx.lineWidth = 5; ctx.setLineDash([10, 7]); ctx.beginPath(); ctx.moveTo(cx, cy - (cy - y0 + 26 * gy) * ng); ctx.lineTo(cx, cy + (y1 - cy + 26 * gy) * ng); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = C.soft; if (gy > 0.2) { ctx.fillRect(cx - 5, cy - (cy - y0 + 30) * ng, 10, 10); ctx.fillRect(cx - 5, cy + (y1 - cy + 20) * ng, 10, 10); }
+  maskLine('CLIENT', x0, y0 - 22, font(700, 22), 'rgba(245,243,250,0.75)', 2.25, 16.0, t);
+  maskLine('SAY TAMM', x1, y0 - 22, font(700, 22), 'rgba(245,243,250,0.75)', 2.3, 16.0, t, 'right');
+  screenTf();
+}
+
+// ---------- the four moments (UI rebuilt as vector layers, in world space) ----------
+function bubble(t) {   // REQUESTS
+  const a = 1 - expo(seg(t, 5.0, 5.3)); if (t < 3.0 || a <= 0) return;
+  worldTf(); ctx.save(); ctx.translate(707, 432); ctx.scale(a, a); ctx.translate(-707, -432);
+  grow(3.0, t, 707, 432, () => { ctx.font = font(700, 24); const bw = ctx.measureText('Can the logo be bigger?').width + 52; rr(707, 432, bw, 104, 22); ctx.fillStyle = C.soft; ctx.fill();
+    text('Client · now', 732, 470, font(500, 17), '#6E6A7C'); text('Can the logo be bigger?', 732, 510, font(700, 24), C.ob); });
+  grow(3.25, t, 952, 568, () => { rr(892, 552, 112, 36, 18); ctx.strokeStyle = 'rgba(245,243,250,0.5)'; ctx.lineWidth = 1.6; ctx.stroke(); text('Reply', 948, 576, font(500, 17), C.soft, 'center'); });
+  grow(4.0, t, 948, 590, () => { rr(760, 606, 244, 76, 22); ctx.fillStyle = C.card; ctx.fill(); ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.stroke();
+    text('Say Tamm · now', 784, 634, font(500, 16), C.mu); text('Done.', 784, 666, font(700, 26), C.soft);
+    ctx.strokeStyle = C.soft; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(962, 642); ctx.lineTo(972, 652); ctx.lineTo(988, 632); ctx.stroke(); });
+  ctx.restore(); screenTf();
+}
+function poster(x, y, w, h, v, k = 1) {   // an abstract key visual: three versions, no brand, no copy
+  rr(x, y, w, h, 14); ctx.fillStyle = '#EDEAF3'; ctx.fill();
+  const L = [
+    { img: [0.1, 0.1, 0.8, 0.42, '#C9C5D3'], hl: [[0.1, 0.6, 0.62, 0.05], [0.1, 0.68, 0.45, 0.05]], cta: [0.1, 0.82, 0.3, 0.07, '#B8B4C2'] },
+    { img: [0.1, 0.32, 0.8, 0.5, '#9C98A8'], hl: [[0.1, 0.1, 0.78, 0.07], [0.1, 0.2, 0.5, 0.07]], cta: [0.6, 0.86, 0.3, 0.07, '#5E5A6A'] },
+    { img: [0, 0, 1, 0.55, '#2A2833'], hl: [[0.08, 0.62, 0.84, 0.1], [0.08, 0.75, 0.6, 0.1]], cta: [0.08, 0.89, 0.36, 0.07, '#09090D'] },
+  ][v];
+  ctx.save(); rr(x, y, w, h, 14); ctx.clip();
+  const R = (a) => [x + a[0] * w, y + a[1] * h, a[2] * w, a[3] * h];
+  ctx.fillStyle = L.img[4]; ctx.fillRect(...R(L.img)); ctx.fillStyle = v === 2 ? '#09090D' : '#3A3846'; L.hl.forEach((b) => ctx.fillRect(...R(b)));
+  ctx.fillStyle = L.cta[4]; const c = R(L.cta); rr(c[0], c[1], c[2], c[3], c[3] / 2); ctx.fill(); ctx.restore();
+}
+function amends(t) {   // AMENDS: the client's card with a pin, then the team's card with versions
+  worldTf();
+  const a1 = 1 - expo(seg(t, 8.5, 8.8));
+  if (t >= 5.5 && a1 > 0) { ctx.save(); ctx.translate(300, 742); ctx.scale(a1, a1); ctx.translate(-300, -742);
+    grow(5.5, t, 300, 742, () => { rr(150, 330, 300, 380, 18); ctx.fillStyle = C.card; ctx.fill(); ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.stroke();
+      text('Key visual · V1', 172, 364, font(500, 17), C.mu); poster(172, 380, 256, 300, 0); });
+    if (t >= 6.2) grow(6.2, t, 376, 428, () => { rr(392, 398, 236, 82, 18); ctx.fillStyle = C.soft; ctx.fill(); text('Client', 412, 428, font(500, 15), '#6E6A7C'); text('Warmer. Bolder. Again?', 412, 460, font(700, 19), C.ob); });
+    ctx.restore(); }
+  const a2 = 1 - expo(seg(t, 8.55, 8.85));
+  if (t >= 7.0 && a2 > 0) { ctx.save(); ctx.translate(884, 676); ctx.scale(a2, a2); ctx.translate(-884, -676);
+    grow(7.0, t, 884, 676, () => { rr(624, 300, 300, 410, 18); ctx.fillStyle = C.card; ctx.fill(); ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.stroke();
+      const v = t < 7.5 ? 0 : t < 8.0 ? 1 : 2, flip = t >= 7.5 ? Math.min(1, spring(t - (t < 8.0 ? 7.5 : 8.0), 20)) : 1;
+      ctx.save(); ctx.beginPath(); ctx.rect(646, 330, 256, 300); ctx.clip(); poster(646 + (1 - flip) * 256, 330, 256, 300, v); if (flip < 1 && v > 0) poster(646 - flip * 256, 330, 256, 300, v - 1); ctx.restore();
+      ['V1', 'V2', 'V3'].forEach((s, i) => { const on = i === v; rr(646 + i * 58, 652, 50, 32, 16); ctx.fillStyle = on ? C.soft : 'transparent'; ctx.fill(); ctx.strokeStyle = 'rgba(245,243,250,0.4)'; ctx.lineWidth = 1.4; ctx.stroke(); text(s, 671 + i * 58, 674, font(700, 15), on ? C.ob : C.mu, 'center'); });
+      if (t >= 8.3) grow(8.3, t, 760, 314, () => { rr(800, 312, 104, 30, 15); ctx.fillStyle = C.soft; ctx.fill(); text('Resolved', 852, 333, font(700, 14), C.ob, 'center'); });
+    });
+    ctx.restore(); }
+  screenTf();
+}
+function approvals(t) {   // APPROVALS: a review card; the ball unfolds into the Approve button
+  const a = 1 - expo(seg(t, 11.5, 11.8)); if (t < 9.0 || a <= 0) return;
+  worldTf(); ctx.save(); ctx.translate(305, 646); ctx.scale(a, a); ctx.translate(-305, -646);
+  const g = spring(t - 9.0, 15);
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 646 - 330 * g, 1080, 400); ctx.clip();   // the card is revealed upward from the button
+  rr(150, 340, 310, 360, 18); ctx.fillStyle = C.card; ctx.fill(); ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.stroke();
+  text('Round 3', 172, 376, font(500, 17), C.mu); text('Ready for review', 172, 410, font(700, 26), C.soft);
+  [0, 1, 2].forEach((i) => poster(172 + i * 92, 432, 84, 120, 2)); ctx.restore();
+  // the button: the ball stretches into a pill, then folds back into the ball with a tick
+  const open = Math.min(1.03, spring(t - 9.02, 16)) * (1 - expo(seg(t, 10.55, 10.85))), press = t >= 10.42 && t < 10.62 ? 0.94 : 1;
+  const w = lerp(44, 270, open) * press, h = lerp(44, 52, Math.min(1, open)) * press;
+  if (t < 11.5) { rr(305 - w / 2, 646 - h / 2, w, h, h / 2); ctx.fillStyle = C.pu; ctx.fill();
+    if (open > 0.6) { ctx.save(); ctx.beginPath(); ctx.rect(305 - w / 2, 600, w, 100); ctx.clip(); text(t < 10.5 ? 'Approve' : 'Approved', 305, 655, font(700, 22), C.soft, 'center'); ctx.restore(); }
+    const ck = seg(t, 10.8, 11.0) * (1 - seg(t, 11.2, 11.35)); if (ck > 0) { ctx.strokeStyle = C.soft; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(294, 646); ctx.lineTo(302, 654); ctx.lineTo(318, 637); ctx.save(); ctx.setLineDash([60]); ctx.lineDashOffset = 60 * (1 - ck); ctx.stroke(); ctx.restore(); ctx.lineCap = 'butt'; } }
+  ctx.restore(); screenTf();
+}
+const PTS = [[652, 612], [700, 596], [748, 604], [796, 566], [844, 520]];
+function results(t) {   // RESULTS: the ball is the last point of the line; every return lands it higher
+  const a = 1 - expo(seg(t, 15.7, 16.1)); if (t < 12.0 || a <= 0) return;
+  worldTf(); ctx.save(); ctx.translate(892, 470); ctx.scale(a, a); ctx.translate(-892, -470);
+  grow(12.0, t, 892, 470, () => { rr(624, 290, 300, 400, 18); ctx.fillStyle = C.card; ctx.fill(); ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.stroke();
+    text('Performance', 646, 326, font(500, 17), C.mu);
+    ctx.strokeStyle = 'rgba(245,243,250,0.1)'; ctx.lineWidth = 1; for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.moveTo(646, 360 + i * 85); ctx.lineTo(902, 360 + i * 85); ctx.stroke(); }
+    const lastY = t < 13.0 ? 470 : t < 14.5 ? lerp(470, 420, cub(seg(t, 13.0, 13.4))) : t < 15.5 ? lerp(420, 380, Math.min(1, spring(t - 14.5, 16))) : lerp(380, 330, Math.min(1, spring(t - 15.5, 16)));
+    const pts = [...PTS, [892, lastY]], d = expo(seg(t, 12.0, 12.45)), n = pts.length - 1;
+    ctx.strokeStyle = C.soft; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i <= n; i++) { const f = clamp(d * n - (i - 1)); if (f <= 0) break; ctx.lineTo(lerp(pts[i - 1][0], pts[i][0], f), lerp(pts[i - 1][1], pts[i][1], f)); }
+    ctx.stroke(); ctx.lineJoin = 'miter';
+    const away = (t >= 13.5 && t < 14.5) || t >= 15.0; if (away) { ctx.strokeStyle = C.soft; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(892, lastY, 10, 0, Math.PI * 2); ctx.stroke(); }
+  });
+  ctx.restore(); screenTf();
+}
+
+// ---------- cursors (screen space, constant size), each with a name tag ----------
+const CUR = {
+  client: { tag: 'Client', bg: C.mu, keys: [[2.05, -60, 650], [2.42, 246, 614], [2.9, 205, 648], [5.3, 130, 760], [5.86, 304, 748], [6.2, 366, 434], [6.48, 372, 440], [7.0, 260, 520], [8.9, 232, 560], [9.6, 292, 612], [10.0, 238, 590], [10.4, 318, 652], [11.0, 300, 690], [11.42, 312, 655], [12.0, 240, 600], [13.92, 238, 532], [14.92, 238, 612], [15.6, 150, 720], [16.1, -80, 760]],
+    clicks: [2.5, 5.9, 6.5, 10.5, 11.5, 14.0, 15.0], drags: [[5.9, 6.2]] },
+  team: { tag: 'Say Tamm', bg: C.soft, keys: [[3.3, 1200, 620], [3.88, 954, 575], [4.0, 954, 575], [4.4, 714, 440], [4.95, 866, 628], [5.6, 1000, 760], [6.9, 1000, 760], [7.38, 888, 684], [8.5, 888, 684], [9.0, 1010, 770], [11.9, 1010, 770], [12.92, 898, 478], [13.4, 898, 428], [13.5, 898, 428], [14.42, 900, 390], [15.42, 900, 340], [16.1, 1220, 400]],
+    clicks: [4.0, 4.45, 7.5, 8.0, 8.5, 13.0, 13.5, 14.5, 15.5], drags: [[4.45, 4.95], [13.0, 13.4]] },
+};
+function cursorAt(c, t) {
+  const K = c.keys; if (t < K[0][0] || t > K[K.length - 1][0]) return null;
+  let i = 0; while (i < K.length - 1 && t > K[i + 1][0]) i++; const a = K[i], b = K[Math.min(i + 1, K.length - 1)];
+  const u = a === b ? 1 : cub(seg(t, a[0], b[0])); return [lerp(a[1], b[1], u), lerp(a[2], b[2], u)];
+}
+function drawCursor(c, t) {
+  const p = cursorAt(c, t); if (!p) return; const [sx, sy] = S(p[0], p[1]);
+  let press = 1, ring = -1; for (const k of c.clicks) { const d = t - k; if (d > -0.06 && d < 0.12) press = 0.82; if (d >= 0 && d < 0.3) ring = d / 0.3; }
+  const held = c.drags.some(([a, b]) => t >= a && t <= b); if (held) press = 0.86;
+  if (ring >= 0) { ctx.strokeStyle = `rgba(245,243,250,${0.6 * (1 - ring)})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(sx, sy, 8 + 26 * expo(ring), 0, Math.PI * 2); ctx.stroke(); }
+  ctx.save(); ctx.translate(sx, sy); ctx.scale(press, press);
+  ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 30); ctx.lineTo(8, 23); ctx.lineTo(13.5, 35); ctx.lineTo(18.5, 33); ctx.lineTo(13, 21.5); ctx.lineTo(23, 21.5); ctx.closePath();
+  ctx.fillStyle = C.soft; ctx.fill(); ctx.strokeStyle = C.ob; ctx.lineWidth = 2; ctx.stroke();
+  ctx.font = font(700, 15); const w = ctx.measureText(c.tag).width + 20; rr(20, 34, w, 26, 13); ctx.fillStyle = c.bg; ctx.fill(); text(c.tag, 30, 52, font(700, 15), C.ob);
+  ctx.restore();
+}
+
+// ---------- type on screen ----------
+const MOMENTS = [['REQUESTS.', 'Every ask gets an answer.', 3.5, 5.0], ['AMENDS.', 'Round after round.', 6.0, 8.5], ['APPROVALS.', 'Until it’s a yes.', 9.5, 11.5], ['RESULTS.', 'Then we push the number.', 12.5, 15.5]];
+function labels(t) {
+  screenTf();
+  MOMENTS.forEach(([a, b, t0, t1], i) => {
+    maskLine(a, 64, 132, font(700, 84), C.soft, t0, t1, t);
+    maskLine(b, 66, 184, font(500, 30), C.mu, t0 + 0.12, t1 + 0.04, t);
+  });
+  // the rally counter, top right: rolls on every landing
+  const lands = FL.slice(2, 11).map((f) => f[1]); const n = lands.filter((x) => t >= x).length;
+  const on = spring(t - 2.6, 15) * (1 - expo(seg(t, 16.0, 16.3))); if (on <= 0) return;
+  ctx.save(); ctx.beginPath(); ctx.rect(760, 60, 300, 120); ctx.clip(); const dy = (1 - on) * 120;
+  text('RALLY', 1016, 86 + dy, font(700, 17), C.mu, 'right');
+  const last = lands[n - 1] ?? 0, roll = n ? expo(seg(t, last, last + 0.22)) : 1;
+  ctx.beginPath(); ctx.rect(760, 92, 300, 70); ctx.clip();
+  text(String(n).padStart(2, '0'), 1016, 150 + dy + (1 - roll) * 64, font(700, 56), C.soft, 'right');
+  if (n > 0 && roll < 1) text(String(n - 1).padStart(2, '0'), 1016, 150 + dy - roll * 64, font(700, 56), C.soft, 'right');
+  ctx.restore();
+}
+const HOOK = ['ONE MORE', 'SMALL', 'CHANGE'], PAY = ['EVERY BALL', 'COMES', 'BACK'];
+let HOOK_F = 150, PAY_F = 150;
+function bigType(t) {
+  worldTf();
+  HOOK.forEach((s, i) => maskLine(s, 120, 470 + i * 150, font(700, HOOK_F), C.soft, i * 0.5, 2.0 + i * 0.06, t, 'left', 'ltr', false));
+  PAY.forEach((s, i) => maskLine(s, 120, 470 + i * 150, font(700, PAY_F), i === 2 ? C.pu : C.soft, 16.0 + i * 0.5, 17.5 + i * 0.06, t, 'left', 'ltr', false));
+  screenTf();
+}
+function endCard(t) {
+  if (t < 17.8) return;
+  worldTf();
+  const L = BLADE.logo;   // where the symbol sits (world)
+  // the blade: revealed by a capsule mask that grows out of the ball along the blade's own axis
+  const m = Math.min(1.02, spring(t - 17.82, 15));
+  ctx.save(); ctx.translate(BLADE.cx, BLADE.cy); ctx.rotate(BLADE.ang); const hl = lerp(20, BLADE.hl * 1.15, m), hw = lerp(20, BLADE.hw * 1.3, Math.min(1, m * 1.4));
+  rr(-hl, -hw, hl * 2, hw * 2, 20 * (1 - Math.min(1, m))); ctx.restore(); ctx.save(); ctx.clip(); ctx.drawImage(SYM_B, L.x, L.y, L.w, L.h); ctx.restore();
+  // the T: revealed by a circle that opens from the blade
+  const r = expo(seg(t, 18.0, 18.45)) * L.h * 1.3; if (r > 0) { ctx.save(); ctx.beginPath(); ctx.arc(BLADE.cx, BLADE.cy, r, 0, Math.PI * 2); ctx.clip(); ctx.drawImage(SYM_T, L.x, L.y, L.w, L.h); ctx.restore(); }
+  maskLine('Say Tamm', 540, 742, font(700, 92), C.soft, 18.5, null, t, 'center');
+  maskLine('قول تم', 540, 838, font(700, 66, 'Plex'), C.soft, 19.0, null, t, 'center', 'rtl');
+  maskLine('saytamm.com  ·  A digital marketing & performance agency', 540, 906, font(500, 25), C.mu, 19.5, null, t, 'center');
+  screenTf();
+}
+
+// ---------- seek ----------
+window.seek = async (t) => {
+  screenTf(); ctx.globalAlpha = 1; ctx.fillStyle = C.ob; ctx.fillRect(0, 0, W, H);
+  camAt(t);
+  court(t); bigType(t);
+  bubble(t); amends(t); approvals(t); results(t);
+  screenTf(); drawBall(t);
+  drawCursor(CUR.client, t); drawCursor(CUR.team, t);
+  labels(t); endCard(t);
+};
+
+// ---------- the soundtrack: 120 BPM, a kick on every beat, a hit on every scene change, the ball on every shot ----------
+window.renderAudio = async () => {
+  const SR = 48000, A = new OfflineAudioContext(2, SR * DUR, SR), OUT = A.createGain(); OUT.gain.value = 0.7; OUT.connect(A.destination);
+  const NB = A.createBuffer(1, SR * 2, SR); { const d = NB.getChannelData(0); let s = 99; for (let i = 0; i < d.length; i++) { s = (s * 1103515245 + 12345) & 0x7fffffff; d[i] = s / 0x3fffffff - 1; } }
+  const env = (g, t, at, pk, dec) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + at); g.gain.exponentialRampToValueAtTime(0.0001, t + at + dec); };
+  const route = (n, pan) => { if (pan) { const p = A.createStereoPanner(); p.pan.value = pan; n.connect(p).connect(OUT); } else n.connect(OUT); };
+  function osc(type, f0, f1, t, dec, pk, at = 0.002, pan = 0, lp = 0) { if (t < 0 || t >= DUR) return; const o = A.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + Math.max(0.02, dec * 0.6));
+    const g = A.createGain(); env(g, t, at, pk, dec); let n = o; if (lp) { const f = A.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = lp; n = n.connect(f); } route(n.connect(g), pan); o.start(t); o.stop(t + at + dec + 0.05); }
+  function noise(t, dec, type, fr, q, pk, at = 0.001, pan = 0, f1 = 0) { if (t < 0 || t >= DUR) return; const s = A.createBufferSource(); s.buffer = NB; const f = A.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(fr, t); if (f1) f.frequency.exponentialRampToValueAtTime(f1, t + at + dec); f.Q.value = q;
+    const g = A.createGain(); env(g, t, at, pk, dec); route(s.connect(f).connect(g), pan); s.start(t, (t * 0.613) % 1.5); s.stop(t + at + dec + 0.05); }
+  const CH = { A: [220, 261.63, 329.63], F: [174.61, 220, 261.63], C: [196, 261.63, 329.63], G: [196, 246.94, 293.66] }, RT = { A: 55, F: 43.65, C: 65.41, G: 49 };
+  const stab = (t, ch, p = 0.06, dec = 0.35) => CH[ch].forEach((f, i) => { for (const dt of [-0.004, 0.004]) osc('sawtooth', f * (1 + dt), f * (1 + dt), t, dec, p, 0.003, (i - 1) * 0.35, 3200); });
+  for (let b = 0; b < 40; b++) {
+    const t = b * BEAT, bar = Math.floor(t / 2), ch = ['A', 'F', 'C', 'G'][bar % 4], body = t >= 2.0 && t < 17.5, end = t >= 17.5;
+    osc('sine', 165, 44, t, 0.32, end ? 0.7 : 0.95);                                                     // the kick, every beat
+    if (body) { noise(t + 0.25, 0.02, 'highpass', 7500, 0.7, 0.09, 0.001, 0.2); noise(t, 0.012, 'highpass', 9000, 0.7, 0.05, 0.001, -0.2);
+      if (b % 2 === 1) { for (const d of [0, 0.011]) noise(t + d, 0.012, 'bandpass', 1500, 0.9, 0.3); noise(t + 0.02, 0.14, 'bandpass', 1300, 0.8, 0.2); }
+      const f = RT[ch]; osc('sawtooth', f, f, t + 0.25, 0.17, 0.24, 0.004, 0, 700); osc('sine', f, f, t + 0.25, 0.19, 0.24, 0.004); }
+    if (b % 4 === 0 && t >= 2 && t < 16) stab(t, ch, 0.04, 0.45);
+  }
+  for (const t of [2.0, 5.5, 9.0, 12.0, 17.5]) { osc('sine', 110, 36, t, 0.7, 0.8); noise(t, 0.3, 'lowpass', 1600, 0.7, 0.35); stab(t, 'A', 0.06, 0.5); }   // scene changes
+  osc('sine', 120, 30, 16.0, 1.4, 1.0); noise(16.0, 0.6, 'lowpass', 1200, 0.7, 0.55); stab(16.0, 'A', 0.1, 1.2); noise(15.5, 0.5, 'bandpass', 500, 1, 0.25, 0.45, 0, 6000);   // the biggest beat
+  const pock = (t, pan = 0) => { noise(t, 0.05, 'bandpass', 1150, 3, 0.55, 0.001, pan); osc('sine', 620, 380, t, 0.06, 0.25, 0.001, pan); };
+  const bounce = (t, pan = 0) => { noise(t, 0.035, 'bandpass', 900, 2.5, 0.25, 0.001, pan); osc('sine', 300, 200, t, 0.05, 0.15, 0.001, pan); };
+  for (const f of FL) { const pan = f[2] === null ? 0 : (f[2] < 540 ? -0.35 : 0.35); if (f !== FL[0]) pock(f[0], pan); bounce(f[1], -pan); }
+  for (const t of [4.0, 7.5, 8.0, 13.0]) { noise(t, 0.015, 'bandpass', 3000, 2, 0.2); osc('sine', 2000, 2000, t, 0.02, 0.04); }                 // clicks
+  for (const t of [3.0, 4.0, 5.5, 6.2, 7.0, 12.0]) osc('sine', 880, 1320, t + 0.04, 0.09, 0.07, 0.003);                                         // things unfolding
+  osc('sine', 1046.5, 1046.5, 10.5, 0.25, 0.08); osc('sine', 1568, 1568, 10.62, 0.4, 0.07);                                                      // approved
+  [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => osc('triangle', f, f, 12.05 + i * 0.08, 0.25, 0.05));                                       // the line draws
+  [220, 261.63, 329.63, 440].forEach((f, i) => osc('triangle', f, f, 17.85 + i * 0.03, 2.1, 0.06, 0.02, (i - 1.5) * 0.3)); stab(19.5, 'A', 0.05, 0.5);
+  const buf = await A.startRendering();
+  let pk = 0; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) pk = Math.max(pk, Math.abs(d[i])); }
+  const g = 0.89 / pk, n = buf.length, ab = new ArrayBuffer(44 + n * 4), v = new DataView(ab), ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + n * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true);
+  v.setUint32(24, SR, true); v.setUint32(28, SR * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); ws(36, 'data'); v.setUint32(40, n * 4, true);
+  const Lc = buf.getChannelData(0), Rc = buf.getChannelData(1); let o = 44;
+  for (let i = 0; i < n; i++) for (const d of [Lc, Rc]) { const s = Math.max(-1, Math.min(1, d[i] * g)); v.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true); o += 2; }
+  const u8 = new Uint8Array(ab); let bin = ''; for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+
+window.ready = (async () => {
+  await Promise.all([document.fonts.load('500 40px Sat', 'Aa'), document.fonts.load('700 40px Sat', 'Aa'), document.fonts.load('700 40px Plex', 'قول تم')]);
+  // the symbol: the original SVG, split into its two layers (the white T and the purple blade) without redrawing anything
+  const src = __SYMBOL_SVG__, vb = src.match(/viewBox="([^"]+)"/)[1].split(/\s+/).map(Number);
+  const paths = [...src.matchAll(/<path[^>]*\/>/g)].map((m) => m[0]);
+  const layer = (keep) => { const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.join(' ')}" width="${vb[2]}" height="${vb[3]}">${paths.filter(keep).join('')}</svg>`;
+    const im = new Image(); im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); return im.decode().then(() => im); };
+  SYM_T = await layer((p) => /#FFFFFF/i.test(p)); SYM_B = await layer((p) => /#6C35FF/i.test(p));
+  // where the symbol goes on the end card (world), and the blade measured from its pixels: centre, axis, half length, half width
+  const lh = 330, lw = lh * vb[2] / vb[3], logo = { x: 540 - lw / 2, y: 470 - lh / 2 - 60, w: lw, h: lh };
+  const oc = document.createElement('canvas'); oc.width = Math.round(lw); oc.height = Math.round(lh); const o = oc.getContext('2d'); o.drawImage(SYM_B, 0, 0, oc.width, oc.height);
+  const d = o.getImageData(0, 0, oc.width, oc.height).data; let n = 0, sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
+  for (let y = 0; y < oc.height; y++) for (let x = 0; x < oc.width; x++) if (d[(y * oc.width + x) * 4 + 3] > 128) { n++; sx += x; sy += y; sxx += x * x; syy += y * y; sxy += x * y; }
+  const mx = sx / n, my = sy / n, cxx = sxx / n - mx * mx, cyy = syy / n - my * my, cxy = sxy / n - mx * my, ang = 0.5 * Math.atan2(2 * cxy, cxx - cyy);
+  let hl = 0, hw = 0; for (let y = 0; y < oc.height; y++) for (let x = 0; x < oc.width; x++) if (d[(y * oc.width + x) * 4 + 3] > 128) { const dx = x - mx, dy = y - my; hl = Math.max(hl, Math.abs(dx * Math.cos(ang) + dy * Math.sin(ang))); hw = Math.max(hw, Math.abs(-dx * Math.sin(ang) + dy * Math.cos(ang))); }
+  BLADE = { cx: logo.x + mx, cy: logo.y + my, ang, hl, hw, logo };
+  // the full stops: measured from the type, so the ball lands exactly after «CHANGE» and «BACK»
+  const fit = (lines) => { let f = 160; ctx.font = font(700, f); const wmax = Math.max(...lines.map((s) => ctx.measureText(s).width)); return Math.min(f, Math.floor(f * 820 / wmax)); };
+  HOOK_F = fit(HOOK); PAY_F = fit(PAY);
+  ctx.font = font(700, HOOK_F); HOOK_STOP = [120 + ctx.measureText('CHANGE').width + 30, 770 - 22];
+  ctx.font = font(700, PAY_F); BACK_STOP = [120 + ctx.measureText('BACK').width + 30, 770 - 22];
+  await window.seek(0); return true;
+})();
+</script></body></html>
