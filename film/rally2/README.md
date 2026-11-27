@@ -40,6 +40,8 @@ Words stay between y 250 and ~1520 and low lines stay under ~860 px wide, clear 
 the right. Differences from the square: the broadcast strip sits at y 190; the client's words go at the top of the phone shots
 in two big lines (the chat stays readable below); the ad is a bigger card with a deeper text band; the cursor's name tag sits on
 its left while it drags the handle; the phone's clock is left out (it sat beside the score); A/B adds «B WINS.».
+Both cuts: the case's counters keep every character in the column it has in the final figure, so the number never shifts
+sideways while it counts; each 60 fps frame blends its own three sub-frames, centred on the frame's time.
 
 ## Stock (Pexels, free licence; IDs to re-download)
 

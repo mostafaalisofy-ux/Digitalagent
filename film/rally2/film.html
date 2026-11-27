@@ -56,6 +56,16 @@ function line(s, x, y, size, t, tin, tout, o = {}) {
   if (o.shadow !== false) { ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 34; ctx.shadowOffsetY = 6; }
   ctx.fillStyle = o.color || C.soft; ctx.fillText(s, x, y + dy); ctx.restore();
 }
+// a counter: each character sits in the column it has in the final figure (right-aligned), so the figure never shifts sideways
+function counter(fin, cur, x, y, size, t, tin, tout) {
+  const pin = spring(t - tin, 16), pout = tout == null ? 0 : expo(seg(t, tout, tout + 0.22)); if (pin <= 0.001 || pout >= 1) return;
+  ctx.save(); ctx.font = font(700, size); ctx.letterSpacing = `${-size * 0.025}px`;
+  const m = ctx.measureText(fin), asc = m.actualBoundingBoxAscent, hgt = asc + m.actualBoundingBoxDescent + size * 0.18;
+  ctx.beginPath(); ctx.rect(-50, y - asc - size * 0.1, W + 100, hgt); ctx.clip();
+  const dy = (1 - pin) * hgt * 1.05 - pout * hgt * 1.05, cols = [...fin].map((c, i) => [ctx.measureText(fin.slice(0, i)).width, ctx.measureText(c).width]), off = fin.length - cur.length;
+  ctx.fillStyle = C.soft; [...cur].forEach((c, i) => { const [cx, cw] = cols[Math.max(0, i + off)]; ctx.fillText(c, x + cx + (cw - ctx.measureText(c).width) / 2, y + dy); });
+  ctx.restore();
+}
 function fitSize(lines, maxW, max) { ctx.font = font(700, 100); ctx.letterSpacing = '-2.5px'; const w = Math.max(...lines.map((s) => ctx.measureText(s).width)); ctx.letterSpacing = '0px'; return Math.min(max, Math.floor(100 * maxW / w)); }
 function scrim(y0, y1, a = 0.6, down = true) { const g = ctx.createLinearGradient(0, y0, 0, y1); g.addColorStop(down ? 0 : 1, 'rgba(9,9,13,0)'); g.addColorStop(down ? 1 : 0, `rgba(9,9,13,${a})`); ctx.fillStyle = g; ctx.fillRect(0, Math.min(y0, y1), W, Math.abs(y1 - y0)); }
 
@@ -221,7 +231,7 @@ async function sHook(t) {
 async function sPhone(id, t, s0, s1, conv, quote) {
   await phone(id, t, s0, s1, conv);
   if (!quote) return; const [tq, txt, l1, l2] = quote, a = seg(t, tq - 0.05, tq + 0.2); if (a <= 0) return;
-  if (V) { scrim(820, 0, 0.88 * a); line('CLIENT:', 70, 330, 32, t, tq, s1 - 0.12, { color: C.pi, ls: '2px' });
+  if (V) { ctx.fillStyle = `rgba(9,9,13,${0.9 * a})`; ctx.fillRect(0, 0, W, 620); scrim(920, 620, 0.9 * a); line('CLIENT:', 70, 330, 32, t, tq, s1 - 0.12, { color: C.pi, ls: '2px' });
     const f = fitSize([l1, l2], 940, 120); line(l1, 66, 354 + f * 0.92, f, t, tq + 0.06, s1 - 0.12); line(l2, 66, 354 + f * 1.92, f, t, tq + 0.12, s1 - 0.12); return; }
   scrim(640, 1080, 0.85 * a); line('CLIENT:', 70, 860, 30, t, tq, s1 - 0.12, { color: C.pi, ls: '2px' });
   const f = fitSize([txt], 940, 76); line(txt, 66, 940, f, t, tq + 0.06, s1 - 0.12);
@@ -310,9 +320,9 @@ function caseCard(t) {   // a real, approved case from the team's track record: 
               : { e: 190, s: 240, d: 292, r: 590, rf: 250, rl: 660, p: 810, pf: 120, pl: 866, n: 980, nf: 21, nl: 32 };
   line('REAL RESULTS', 66, L.e, 30, t, 24.0, 26.9, { color: C.pi, ls: '3px', shadow: false }); line('From the team’s track record', 66, L.s, V ? 40 : 34, t, 24.1, 26.9, { shadow: false });
   line('E-commerce · Fashion & beauty  ·  10 Mar – 30 May 2022', 66, L.d, 26, t, 24.2, 26.9, { color: C.mu, shadow: false });
-  const u = expo(seg(t, 24.35, 25.35)), v = (13.84 * u).toFixed(2) + '×'; line(u >= 1 ? '13.84×' : v, 60, L.r, L.rf, t, 24.3, 26.9, { shadow: false });
+  const u = expo(seg(t, 24.35, 25.35)); counter('13.84×', u >= 1 ? '13.84×' : (13.84 * u).toFixed(2) + '×', 60, L.r, L.rf, t, 24.3, 26.9);
   line('ROAS · account A', 70, L.rl, V ? 44 : 40, t, 24.45, 26.9, { color: C.mu, shadow: false });
-  const u2 = expo(seg(t, 24.8, 25.8)), p = Math.round(27703 * u2).toLocaleString('en-US'); line(u2 >= 1 ? '27,703' : p, 66, L.p, L.pf, t, 24.75, 26.9, { shadow: false });
+  const u2 = expo(seg(t, 24.8, 25.8)); counter('27,703', u2 >= 1 ? '27,703' : Math.round(27703 * u2).toLocaleString('en-US'), 66, L.p, L.pf, t, 24.75, 26.9);
   line('Purchases · account A', 70, L.pl, V ? 40 : 36, t, 24.9, 26.9, { color: C.mu, shadow: false });
   ctx.font = font(500, L.nf); ctx.fillStyle = C.mu; const n = seg(t, 25.0, 25.3);
   if (n > 0) { ctx.globalAlpha = n; let y = L.n; for (const s of ['Return on ad spend = Meta-attributed purchase value ÷ ad spend, per ad account. ROAS is not profit.', 'Results from projects led by members of the SayTamm team, including work delivered at other agencies.']) { for (const r of (V ? wrap(ctx, s, 900) : [s])) { ctx.fillText(r, 66, y); y += L.nl; } y += V ? 12 : 0; } ctx.globalAlpha = 1; }
