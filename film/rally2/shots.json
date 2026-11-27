@@ -1,0 +1,100 @@
+[
+ {
+  "id": "hook_court",
+  "file": "P_33175804.mp4",
+  "in": 2.0,
+  "len": 1.6,
+  "cy": 0.5
+ },
+ {
+  "id": "hook_balls",
+  "file": "P_5740595.mp4",
+  "in": 0.9,
+  "len": 1.6,
+  "cy": 0.22
+ },
+ {
+  "id": "p1_phone",
+  "file": "P_12280159.mp4",
+  "in": 0.4,
+  "len": 2.1,
+  "cx": 0.27,
+  "key": true
+ },
+ {
+  "id": "p1_design",
+  "file": "P_20463055.mp4",
+  "in": 3.0,
+  "len": 1.1,
+  "cx": 0.42
+ },
+ {
+  "id": "p2_phone",
+  "file": "P_13863534.mp4",
+  "in": 0.4,
+  "len": 1.6,
+  "cx": 0.39,
+  "key": true
+ },
+ {
+  "id": "p3_phone",
+  "file": "P_9558749.mp4",
+  "in": 2.0,
+  "len": 1.6,
+  "cx": 0.69,
+  "key": true,
+  "zoom": 1.5,
+  "cy": 0.5
+ },
+ {
+  "id": "t_hands",
+  "file": "P_6192771.mp4",
+  "in": 1.0,
+  "len": 0.6,
+  "cx": 0.5
+ },
+ {
+  "id": "t_tablet",
+  "file": "P_37116270.mp4",
+  "in": 2.0,
+  "len": 0.6,
+  "cy": 0.5
+ },
+ {
+  "id": "t_cards",
+  "file": "../../journey/stock/P_8035618.mp4",
+  "in": 3.0,
+  "len": 0.6,
+  "cx": 0.62
+ },
+ {
+  "id": "t_camera",
+  "file": "../../journey/stock/P_35313946.mp4",
+  "in": 1.0,
+  "len": 0.6,
+  "cy": 0.42
+ },
+ {
+  "id": "p3_approve",
+  "file": "P_12280159.mp4",
+  "in": 4.2,
+  "len": 1.6,
+  "cx": 0.27,
+  "key": true
+ },
+ {
+  "id": "p4_phone",
+  "file": "P_13863534.mp4",
+  "in": 4.2,
+  "len": 1.6,
+  "cx": 0.39,
+  "key": true
+ },
+ {
+  "id": "pay_ball",
+  "file": "P_5738571.mp4",
+  "in": 0.6,
+  "len": 2.1,
+  "cy": 0.6
+ }
+]
