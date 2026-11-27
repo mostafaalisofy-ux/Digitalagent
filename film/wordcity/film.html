@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="ar"><head><meta charset="utf-8"><title>Word City</title>
+<style>
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-300-normal.woff2); font-weight: 300; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-400-normal.woff2); font-weight: 400; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-600-normal.woff2); font-weight: 600; }
+  @font-face { font-family: Plex; src: url(__PLEX__/ibm-plex-sans-arabic-arabic-700-normal.woff2); font-weight: 700; }
+  @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-500-normal.woff2); font-weight: 500; }
+  @font-face { font-family: PlexL; src: url(__PLEX__/ibm-plex-sans-arabic-latin-600-normal.woff2); font-weight: 600; }
+  html, body { margin: 0; background: #09090D; overflow: hidden; } canvas { display: block; }
+</style></head>
+<body><canvas id="c"></canvas>
+<script>
+'use strict';
+// «مدينة الكلمات» (Word City) — a new SayTamm intro film. Arabic, IBM Plex Sans Arabic only, 120 BPM, 38 s.
+// Idea: everything starts with a word. Each service is said as one word; the word falls from the sky and lands as a building
+// in an isometric city, then comes alive with what that service does. Strategy lands first and draws the roads; analytics
+// lands last and the data flows to it. The city stands; the Gulf «قول…» plays; the last and biggest word, «تمّ», lands on «تم».
+// The blade wipes to the end card: the symbol (original file), www.saytamm.com. window.seek(t) is async.
+const CFG = __CFG__, W = CFG.w, H = CFG.h, VERT = H > W;
+const cv = document.getElementById('c'); cv.width = W; cv.height = H; const ctx = cv.getContext('2d');
+const DUR = 38, BEAT = 0.5; window.DUR_S = DUR;
+const COL = { ob: '#09090D', gr: '#17171E', soft: '#F5F3FA', mu: '#96939F', pu: '#6C35FF', pi: '#A78BFA' };
+const C30 = Math.cos(Math.PI / 6), S30 = 0.5;
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), lerp = (a, b, t) => a + (b - a) * t;
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eio = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2), eo = (t) => 1 - Math.pow(1 - t, 3), eo5 = (t) => 1 - Math.pow(1 - t, 5);
+const back = (t, s = 1.7) => 1 + (s + 1) * Math.pow(t - 1, 3) + s * Math.pow(t - 1, 2);
+const hex = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+const mix = (a, b, k) => { const A = hex(a), B2 = hex(b); return `rgb(${A.map((v, i) => Math.round(lerp(v, B2[i], k))).join(',')})`; };
+const rgba = (h, a) => { const c = hex(h); return `rgba(${c[0]},${c[1]},${c[2]},${a})`; };
+let SYMBOL;
+
+// ---------- the city: nine words around an empty centre plot ----------
+const B = [
+  { w: 'استراتيجية', s: 'استراتيجية التسويق الرقمي', d: 'الاستراتيجية والاستشارات', x: -900, y: -600, f: 'y', fs: 150, life: 'roads' },
+  { w: 'هوية', s: 'الهوية والعلامة التجارية', d: 'الإبداع والمحتوى', x: -250, y: -1000, f: 'x', fs: 190, life: 'brand' },
+  { w: 'تواصل', s: 'التسويق عبر منصات التواصل', d: 'الإبداع والمحتوى', x: 400, y: -1050, f: 'y', fs: 175, life: 'social' },
+  { w: 'محتوى', s: 'تسويق المحتوى', d: 'الإبداع والمحتوى', x: 1050, y: -450, f: 'x', fs: 175, life: 'content' },
+  { w: 'إنتاج', s: 'الإنتاج الإعلامي', d: 'الإبداع والمحتوى', x: 1050, y: 250, f: 'y', fs: 185, life: 'prod' },
+  { w: 'إعلانات', s: 'التسويق بالأداء والإعلانات الممولة', d: 'الإعلانات والأداء', x: 650, y: 950, f: 'x', fs: 165, life: 'ads' },
+  { w: 'بحث', s: 'تحسين محركات البحث', d: 'التقنية والقنوات الرقمية', x: -100, y: 1100, f: 'y', fs: 200, life: 'search' },
+  { w: 'مواقع', s: 'تطوير المواقع وتحسين التحويل', d: 'التقنية والقنوات الرقمية', x: -800, y: 850, f: 'x', fs: 180, life: 'web' },
+  { w: 'تحليلات', s: 'التحليلات والنمو', d: 'التقنية والقنوات الرقمية', x: -1150, y: 150, f: 'y', fs: 160, life: 'data' },
+];
+const IMP = [4.0, 6.5, 8.5, 10.5, 12.5, 14.5, 16.5, 18.5, 20.5]; B.forEach((b, i) => { b.t = IMP[i]; b.i = i; });
+const TAMM = { w: 'تمّ', x: 100, y: 100, f: 'y', fs: 780, t: 28.5, big: true };
+const ALL = [...B, TAMM];
+const FACE = { y: { U: [C30, S30], E: [C30, -S30], u: [1, 0], n: [0, 1], e: [0, -1] }, x: { U: [C30, -S30], E: [-C30, -S30], u: [0, -1], n: [1, 0], e: [-1, 0] } };
+const DEPTH = 0.3;
+const T_CUT = 2.4, T_WORLD = 2.45, T_STRAT = 4.0, T_OVER = 21.3, T_LINE = 22.3, T_WIPE = 31.6, T_END = 32.25;
+
+// ---------- camera ----------
+const ZF = VERT ? 1.12 : 1.3, ZO = VERT ? 0.36 : 0.48;
+let cam = { x: 0, y: 0, z: 1 }, shX = 0, shY = 0;
+const isoXY = (x, y, z = 0) => [(x - y) * C30, (x + y) * S30 - z];
+const P = (x, y, z = 0) => { const [ix, iy] = isoXY(x, y, z); return [(ix - cam.x) * cam.z + W / 2 + shX, (iy - cam.y) * cam.z + H / 2 + shY]; };
+function focus(b, extra = 0) {   // the iso point at the middle of a standing word
+  const F = FACE[b.f], [ix, iy] = isoXY(b.x, b.y, 0), h = b.fs * 0.62, D = b.fs * DEPTH;
+  return [ix + F.E[0] * D * 0.5 + (VERT ? 0 : 150), iy - h * 0.55 + F.E[1] * D * 0.5 - extra + (VERT ? 40 : 60)];
+}
+let KEYS = [];
+function buildKeys() {
+  const k = (t, xy, z) => KEYS.push({ t, x: xy[0], y: xy[1], z });
+  const mid = (a, b2, w = 0.5) => [lerp(a[0], b2[0], w), lerp(a[1], b2[1], w)];
+  const p0 = focus(B[0]);
+  k(0, p0, ZF * 0.24); k(T_WORLD, p0, ZF * 0.28); k(3.55, p0, ZF); k(4.55, p0, ZF * 1.02);
+  k(5.45, mid(p0, [0, -150], 0.55), ZO * 1.05);                                   // strategy pulls back to show the plan
+  for (let i = 1; i < B.length; i++) { const f = focus(B[i], B[i].life === 'search' ? 60 : 0); k(B[i].t - 0.46, f, ZF); k(B[i].t + 0.95, f, ZF * 1.06); }
+  const ov = VERT ? [0, -110] : [0, -250];
+  k(T_OVER, focus(B[8]), ZF * 1.1); k(22.4, ov, ZO); k(26.2, ov, ZO * 1.06); k(27.6, [0, ov[1] + 20], ZO * 1.1);
+  k(28.5, [0, ov[1] + 20], ZO * 1.13); k(31.5, [0, -280], ZO * 1.55); k(DUR, [0, -280], ZO * 1.6);
+}
+function camAt(t) {
+  let a = KEYS[0], b2 = KEYS[KEYS.length - 1];
+  for (let i = 0; i < KEYS.length - 1; i++) if (t >= KEYS[i].t && t <= KEYS[i + 1].t) { a = KEYS[i]; b2 = KEYS[i + 1]; break; }
+  if (t > KEYS[KEYS.length - 1].t) a = b2;
+  const u = a === b2 ? 0 : eio(seg(t, a.t, b2.t));
+  cam.x = lerp(a.x, b2.x, u); cam.y = lerp(a.y, b2.y, u); cam.z = Math.exp(lerp(Math.log(a.z), Math.log(b2.z), u));
+  shX = 0; shY = 0;
+  for (const b of ALL) { const dt = t - b.t; if (dt < 0 || dt > 0.8) continue; const A = (b.big ? 30 : b.i === 0 ? 11 : 7) * Math.exp(-8 * dt); shX += A * Math.sin(dt * 58 + b.fs); shY += A * Math.cos(dt * 47 + b.fs * 0.5); }
+}
+
+// ---------- drawing helpers ----------
+function poly(pts, fill, stroke, lw = 1) { ctx.beginPath(); pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath(); if (fill) { ctx.fillStyle = fill; ctx.fill(); } if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke(); } }
+function box(x, y, z0, w, d, h, top, left, right) {   // world box x..x+w, y..y+d, z0..z0+h; three visible faces
+  const z1 = z0 + h;
+  poly([P(x + w, y, z0), P(x + w, y + d, z0), P(x + w, y + d, z1), P(x + w, y, z1)], right);
+  poly([P(x, y + d, z0), P(x + w, y + d, z0), P(x + w, y + d, z1), P(x, y + d, z1)], left);
+  poly([P(x, y, z1), P(x + w, y, z1), P(x + w, y + d, z1), P(x, y + d, z1)], top);
+}
+function planeQuad(b, u0, u1, z0, z1, off = 0) {   // a rectangle on a word's face plane (off: along the facing normal)
+  const F = FACE[b.f], pt = (u, z) => P(b.x + F.u[0] * u + F.n[0] * off, b.y + F.u[1] * u + F.n[1] * off, z);
+  return [pt(u0, z0), pt(u1, z0), pt(u1, z1), pt(u0, z1)];
+}
+function groundPt(b, u, n) { const F = FACE[b.f]; return [b.x + F.u[0] * u + F.n[0] * n, b.y + F.u[1] * u + F.n[1] * n]; }
+function ellipse(x, y, r, stroke, lw, fill) { const [sx, sy] = P(x, y, 0); ctx.beginPath(); ctx.ellipse(sx, sy, r * 1.2247 * cam.z, r * 0.7071 * cam.z, 0, 0, Math.PI * 2); if (fill) { ctx.fillStyle = fill; ctx.fill(); } if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke(); } }
+const font = (wt, px, fam = 'Plex') => `${wt} ${px}px ${fam}`;
+
+// the word as a building: the face drawn on its plane, extruded backwards in layers
+function word(b, o = {}) {
+  const F = FACE[b.f], z = cam.z, lift = o.lift || 0, sq = o.sq || 1;
+  const [ox, oy] = P(b.x, b.y, lift), Ux = F.U[0] * z, Uy = F.U[1] * z, Vy = z * sq;
+  const D = b.fs * DEPTH * (o.depth ?? 1), n = Math.max(4, Math.min(160, Math.ceil(D * z / 0.85)));
+  ctx.font = font(o.wt || 700, b.fs); ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'; ctx.direction = 'rtl';
+  const near = o.near || (b.f === 'y' ? '#8D899B' : '#77738A'), far = o.far || '#1C1B24', base = -b.desc;
+  ctx.globalAlpha = o.alpha ?? 1;
+  if (D > 0 && !o.outline) for (let i = n; i >= 1; i--) {
+    const k = i / n; ctx.setTransform(Ux, Uy, 0, Vy, ox + F.E[0] * D * k * z, oy + F.E[1] * D * k * z * sq);
+    ctx.fillStyle = mix(near, far, Math.pow(k, 0.8)); ctx.fillText(b.w, 0, base);
+  }
+  ctx.setTransform(Ux, Uy, 0, Vy, ox, oy);
+  if (o.outline) { ctx.strokeStyle = o.front || COL.soft; ctx.lineWidth = 2.2 / z; ctx.strokeText(b.w, 0, base); }
+  else { ctx.fillStyle = o.front || (b.f === 'y' ? COL.soft : '#E4E1EC'); ctx.fillText(b.w, 0, base); }
+  if (o.fill !== undefined && o.fill > 0) {   // the outline fills from the ground up
+    ctx.save(); ctx.beginPath(); ctx.rect(-b.wd, base - b.asc * o.fill, b.wd * 2, b.asc + b.desc + 20); ctx.clip();
+    for (let i = n; i >= 1; i--) { const k = i / n; ctx.setTransform(Ux, Uy, 0, Vy, ox + F.E[0] * D * k * z, oy + F.E[1] * D * k * z); ctx.fillStyle = mix(near, far, Math.pow(k, 0.8)); ctx.fillText(b.w, 0, base); }
+    ctx.setTransform(Ux, Uy, 0, Vy, ox, oy); ctx.fillStyle = COL.soft; ctx.fillText(b.w, 0, base); ctx.restore();
+  }
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
+}
+function shadow(b, lift, a) {
+  if (a <= 0.01) return;
+  const F = FACE[b.f], z = cam.z, [ox, oy] = P(b.x, b.y, 0), kx = -0.55, ky = 0.35, s = 1 + lift / 900;
+  ctx.font = font(700, b.fs); ctx.textAlign = 'center'; ctx.direction = 'rtl'; ctx.globalAlpha = a; ctx.fillStyle = '#000'; ctx.filter = `blur(${Math.round(4 + lift * z / 60)}px)`;
+  ctx.setTransform(F.U[0] * z * s, F.U[1] * z * s, (kx - ky) * C30 * z * s, (kx + ky) * S30 * z * s, ox, oy); ctx.fillText(b.w, 0, -b.desc);
+  ctx.filter = 'none'; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
+}
+
+// ---------- the plan: a ring road and spokes to the centre, drawn by strategy ----------
+let ROADS = [], PLOTS = [];
+function anchor(b) { const F = FACE[b.f]; const g = (v) => Math.round(v / 50) * 50; return [g(b.x + F.n[0] * 110), g(b.y + F.n[1] * 110)]; }
+function buildRoads() {
+  const A = B.map(anchor);
+  for (let i = 0; i < A.length; i++) { const a = A[i], c = A[(i + 1) % A.length]; ROADS.push({ pts: [a, [c[0], a[1]], c], ring: true, to: (i + 1) % A.length }); }
+  for (let i = 0; i < A.length; i++) { const a = A[i]; ROADS.push({ pts: [a, [a[0], 260 * Math.sign(a[1] || 1)], [0, 260 * Math.sign(a[1] || 1)], [0, 200 * Math.sign(a[1] || 1)]], spoke: true, from: i }); }
+  for (const r of ROADS) { r.len = []; let L = 0; for (let i = 1; i < r.pts.length; i++) { L += Math.hypot(r.pts[i][0] - r.pts[i - 1][0], r.pts[i][1] - r.pts[i - 1][1]); r.len.push(L); } r.L = L; }
+}
+function roadPath(r, frac) {
+  const end = r.L * frac; ctx.beginPath(); let p = P(r.pts[0][0], r.pts[0][1]); ctx.moveTo(p[0], p[1]);
+  for (let i = 1; i < r.pts.length; i++) {
+    const L0 = i === 1 ? 0 : r.len[i - 2], L1 = r.len[i - 1];
+    if (end >= L1) { p = P(r.pts[i][0], r.pts[i][1]); ctx.lineTo(p[0], p[1]); continue; }
+    const k = (end - L0) / (L1 - L0); p = P(lerp(r.pts[i - 1][0], r.pts[i][0], k), lerp(r.pts[i - 1][1], r.pts[i][1], k)); ctx.lineTo(p[0], p[1]); break;
+  }
+}
+function plotOutline(b, a, pad = 50) {
+  const F = FACE[b.f], D = b.fs * DEPTH, u0 = -b.wd / 2 - pad, u1 = b.wd / 2 + pad, n0 = -D - pad, n1 = pad + 20;
+  const c = [[u0, n0], [u1, n0], [u1, n1], [u0, n1]].map(([u, n]) => P(...groundPt(b, u, n)));
+  ctx.setLineDash([7, 9]); poly(c, null, rgba(COL.mu, a), 1.4); ctx.setLineDash([]);
+}
+
+// ---------- each service comes alive ----------
+const LIFE = {
+  roads(b, lt) {},
+  brand(b, lt) {   // the brand palette lands in front of the word
+    const cols = [COL.ob, COL.gr, COL.soft, COL.mu, COL.pu];
+    cols.forEach((c, i) => { const p = back(seg(lt, 0.45 + i * 0.07, 0.75 + i * 0.07)); if (p <= 0) return; const s = 70 * p, [gx, gy] = groundPt(b, -170 + i * 85, 200);
+      box(gx - s / 2, gy - s / 2, 0, s, s, 14 * p, c, mix(c, '#000000', 0.25), mix(c, '#000000', 0.4)); if (c === COL.ob) poly([P(gx - s / 2, gy - s / 2, 14 * p), P(gx + s / 2, gy - s / 2, 14 * p), P(gx + s / 2, gy + s / 2, 14 * p), P(gx - s / 2, gy + s / 2, 14 * p)], null, rgba(COL.soft, 0.3), 1); });
+  },
+  social(b, lt, front) {   // a feed of cards rising out of the roof, with reactions
+    if (!front) return; const top = b.asc + 40;
+    for (let k = 0; k < 5; k++) {
+      const s = lt * 1.2 - k * 0.22; if (s < 0) continue; const zc = top + s * 260, a = clamp(1 - (s - 0.9) / 0.6) * clamp(s * 6);
+      if (a <= 0) continue; const off = (k % 2 ? 1 : -1) * 70;
+      ctx.globalAlpha = a; poly(planeQuad(b, off - 90, off + 90, zc, zc + 110, 30), rgba(COL.soft, 0.94), null);
+      const q = planeQuad(b, off + 40, off + 72, zc + 66, zc + 98, 31); poly(q, COL.pu);
+      poly(planeQuad(b, off - 70, off + 25, zc + 82, zc + 92, 31), '#3A3846'); poly(planeQuad(b, off - 70, off + 5, zc + 62, zc + 70, 31), '#8D899B');
+      poly(planeQuad(b, off - 70, off + 70, zc + 14, zc + 50, 31), '#D8D5E0');
+      ctx.globalAlpha = 1;
+    }
+  },
+  content(b, lt) {   // pages fly out of the word and land around it
+    for (let k = 0; k < 7; k++) {
+      const s = seg(lt, 0.12 + k * 0.08, 0.72 + k * 0.08); if (s <= 0) continue;
+      const ang = -0.6 + k * 0.55, R = 260 + (k % 3) * 70, [sx0, sy0] = groundPt(b, 0, -40), [ex, ey] = groundPt(b, Math.cos(ang) * R, Math.sin(ang) * R * 0.6 + 120);
+      const x = lerp(sx0, ex, eo(s)), y = lerp(sy0, ey, eo(s)), zc = Math.sin(Math.PI * s) * 320 + (1 - s) * b.asc * 0.6, w = 60, d = 80;
+      poly([P(x - w / 2, y - d / 2, zc), P(x + w / 2, y - d / 2, zc), P(x + w / 2, y + d / 2, zc), P(x - w / 2, y + d / 2, zc)], rgba(COL.soft, 0.95), null);
+      for (let l = 0; l < 3; l++) { const yy = y - d / 2 + 18 + l * 18; ctx.beginPath(); const a1 = P(x - w / 2 + 10, yy, zc), a2 = P(x + w / 2 - 10 - (l === 2 ? 18 : 0), yy, zc); ctx.moveTo(a1[0], a1[1]); ctx.lineTo(a2[0], a2[1]); ctx.strokeStyle = l ? '#8D899B' : COL.pu; ctx.lineWidth = Math.max(1, 3 * cam.z); ctx.stroke(); }
+    }
+  },
+  prod(b, lt) {},   // drawn as an overlay (viewfinder) and a light cone
+  ads(b, lt, front) {   // billboards pop up and an arrow launches from the roof
+    if (front) {
+      [[-330, 0.2], [330, 0.32]].forEach(([u, t0]) => { const p = back(seg(lt, t0, t0 + 0.35)); if (p <= 0) return;
+        const pole = planeQuad(b, u - 6, u + 6, 0, 150 * p, 60); poly(pole, '#3A3846');
+        poly(planeQuad(b, u - 110, u + 110, 150 * p, 150 * p + 130 * p, 60), COL.gr, rgba(COL.soft, 0.5), 1.5);
+        const bars = [0.35, 0.55, 0.8]; bars.forEach((h, i) => { const g = eo(seg(lt, t0 + 0.3 + i * 0.08, t0 + 0.6 + i * 0.08)); poly(planeQuad(b, u - 80 + i * 60, u - 40 + i * 60, 150 * p + 18, 150 * p + 18 + 95 * h * g, 61), i === 2 ? COL.pu : '#8D899B'); }); });
+      const s = seg(lt, 0.55, 1.25); if (s > 0) {
+        const z0 = b.asc + 30, z1 = z0 + 900 * eo(s), F = FACE[b.f], a = 1 - seg(lt, 1.3, 1.7);
+        const p0 = P(b.x, b.y, z0), p1 = P(b.x, b.y, z1); ctx.globalAlpha = a; ctx.strokeStyle = COL.pu; ctx.lineWidth = Math.max(2, 7 * cam.z); ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke(); const ah = 40 * cam.z;
+        ctx.beginPath(); ctx.moveTo(p1[0] - ah, p1[1] + ah); ctx.lineTo(p1[0], p1[1]); ctx.lineTo(p1[0] + ah, p1[1] + ah); ctx.stroke(); ctx.globalAlpha = 1; ctx.lineCap = 'butt';
+      }
+    }
+  },
+  search(b, lt, front) {   // the search bar appears; the word rises on its column above its neighbours
+    if (!front) return; const p = back(seg(lt, 0.05, 0.4)); if (p <= 0) return; const z0 = b.asc + 70 + rise(b, lt);
+    const q = planeQuad(b, -230 * p, 230 * p, z0, z0 + 70, 40); poly(q, rgba(COL.soft, 0.96));
+    const c = planeQuad(b, 150 * p, 190 * p, z0 + 18, z0 + 52, 41); ctx.lineWidth = Math.max(1.5, 4 * cam.z); poly(c, null, COL.pu, Math.max(1.5, 4 * cam.z));
+    const typed = clamp((lt - 0.3) / 0.5); if (typed > 0) poly(planeQuad(b, 120 - 300 * typed, 120, z0 + 30, z0 + 40, 41), '#8D899B');
+  },
+  web(b, lt, front) {},   // the frame is drawn behind the word
+  data(b, lt) {   // a radar sweeps at its base; three bars grow beside it
+    const [gx, gy] = groundPt(b, 0, 180), r = 280, a = clamp(lt * 3) * (1 - seg(lt, 3.5, 4.5) * 0.4);
+    ctx.globalAlpha = a; ellipse(gx, gy, r, rgba(COL.soft, 0.25), 1.4); ellipse(gx, gy, r * 0.6, rgba(COL.soft, 0.15), 1.2);
+    const ang = lt * 3.2; const e = P(gx + Math.cos(ang) * r, gy + Math.sin(ang) * r), c = P(gx, gy);
+    ctx.strokeStyle = COL.pi; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(c[0], c[1]); ctx.lineTo(e[0], e[1]); ctx.stroke(); ctx.globalAlpha = 1;
+    [0.45, 0.7, 1].forEach((h, i) => { const g = eo(seg(lt, 0.25 + i * 0.1, 0.8 + i * 0.1)); if (g <= 0) return; const [bx, by] = groundPt(b, b.wd / 2 + 80 + i * 70, -20);
+      box(bx, by, 0, 50, 50, 260 * h * g, i === 2 ? COL.pi : '#D8D5E0', i === 2 ? COL.pu : '#8D899B', i === 2 ? '#4A22C8' : '#5E5A6A'); });
+  },
+};
+const rise = (b, lt) => (b.life === 'search' ? 200 * eio(seg(lt, 0.45, 1.05)) : 0);
+
+// ---------- the frame ----------
+function world(t) {
+  const wa = seg(t, T_WORLD, 3.0);
+  // ground grid
+  const inv = (sx, sy) => { const ix = (sx - W / 2) / cam.z + cam.x, iy = (sy - H / 2) / cam.z + cam.y; return [(ix / C30 + iy / S30) / 2, (iy / S30 - ix / C30) / 2]; };
+  const cs = [inv(0, 0), inv(W, 0), inv(0, H + 400), inv(W, H + 400)], xs = cs.map((c) => c[0]), ys = cs.map((c) => c[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), G = 100;
+  ctx.lineWidth = 1;
+  for (let x = Math.floor(x0 / G) * G; x <= x1; x += G) { const a = P(x, y0), c = P(x, y1); ctx.strokeStyle = rgba(COL.soft, (x % 400 === 0 ? 0.085 : 0.045) * wa); ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(c[0], c[1]); ctx.stroke(); }
+  for (let y = Math.floor(y0 / G) * G; y <= y1; y += G) { const a = P(x0, y), c = P(x1, y); ctx.strokeStyle = rgba(COL.soft, (y % 400 === 0 ? 0.085 : 0.045) * wa); ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(c[0], c[1]); ctx.stroke(); }
+  // roads: strategy draws the plan; analytics and the finale run data along them
+  const rp = eio(seg(t, T_STRAT + 0.12, T_STRAT + 1.7));
+  if (rp > 0) {
+    ctx.lineCap = 'round';
+    for (const r of ROADS) { roadPath(r, rp); ctx.strokeStyle = r.spoke ? rgba(COL.pu, 0.55) : COL.pu; ctx.lineWidth = Math.max(1.5, (r.spoke ? 3 : 5) * cam.z); ctx.stroke(); }
+    const fl = Math.max(seg(t, B[8].t + 0.15, B[8].t + 0.5) * (1 - seg(t, T_OVER + 0.2, T_OVER + 0.8)) , seg(t, T_OVER + 0.6, T_OVER + 1.4) * (1 - seg(t, 31.0, 31.6)));
+    if (fl > 0) { ctx.setLineDash([Math.max(3, 14 * cam.z), Math.max(6, 26 * cam.z)]); ctx.lineDashOffset = -t * 140 * cam.z;
+      for (const r of ROADS) { roadPath(r, 1); ctx.strokeStyle = rgba(COL.soft, 0.85 * fl); ctx.lineWidth = Math.max(1.2, 2.4 * cam.z); ctx.stroke(); }
+      ctx.setLineDash([]); }
+    ctx.lineCap = 'butt';
+  }
+  // plots: dashed outlines for the words still to come (and the centre, kept empty until the end)
+  const pa = seg(t, T_STRAT + 1.0, T_STRAT + 1.8);
+  if (pa > 0) {
+    B.forEach((b) => { if (t < b.t + 0.05) plotOutline(b, 0.6 * pa); });
+    if (t < TAMM.t + 0.05) { const pul = t > 26.0 ? 0.5 + 0.5 * Math.abs(Math.sin((t - 26) * Math.PI * 2)) : 0.6; plotOutline(TAMM, pa * pul, 80); }
+  }
+  // impact rings
+  for (const b of ALL) { const dt = t - b.t; if (dt < 0 || dt > 1.1) continue; for (const [d0, k] of [[0, 1], [0.12, 0.6]]) { const s = seg(dt, d0, d0 + 0.9); if (s <= 0 || s >= 1) continue;
+    const R = (b.big ? 2200 : 700) * eo(s) + 80; ellipse(b.x, b.y, R, rgba(COL.soft, 0.5 * k * (1 - s)), b.big ? 3 : 2); } }
+  // anticipation rings at the centre, on the beat, before «تمّ»
+  for (const tb of [26.5, 27.0, 27.5, 28.0]) { const s = seg(t, tb, tb + 0.7); if (s > 0 && s < 1) ellipse(0, 0, 120 + 500 * eo(s), rgba(COL.pi, 0.5 * (1 - s)), 2); }
+  // shadows and the light cone, then buildings back to front
+  const order = ALL.filter((b) => t >= b.t - (b.big ? 0.75 : 0.5)).sort((a, c) => (a.x + a.y) - (c.x + c.y));
+  for (const b of order) { const st = state(b, t); shadow(b, st.lift, (b.big ? 0.5 : 0.42) * (1 - Math.min(1, st.lift / (b.big ? 2600 : 1400)))); }
+  for (const b of order) {
+    const st = state(b, t), lt = t - b.t;
+    if (b.life === 'brand' || b.life === 'content' || b.life === 'data') LIFE[b.life](b, lt);
+    if (b.life === 'prod' && lt > 0.05) cone(b, lt);
+    if (b.life === 'web' && lt > -0.1) webFrame(b, lt);
+    if (b.life === 'search' && lt > 0) { const r = rise(b, lt), F = FACE[b.f];
+      [[-b.wd / 2 - 150, 230], [b.wd / 2 + 60, 290]].forEach(([u, h]) => { const [gx, gy] = groundPt(b, u + 45, -60); box(gx - 45, gy - 45, 0, 90, 90, h * eo(seg(lt, 0, 0.3)), '#3A3846', '#24232D', '#1C1B24'); });
+      if (r > 0) { const [gx, gy] = groundPt(b, 0, -b.fs * DEPTH / 2); const w = b.wd * 0.9, d = b.fs * DEPTH + 40;
+        if (F.u[0]) box(gx - w / 2, gy - d / 2, 0, w, d, r - 4, '#5E5A6A', '#3A3846', '#24232D'); else box(gx - d / 2, gy - w / 2, 0, d, w, r - 4, '#5E5A6A', '#3A3846', '#24232D'); } }
+    if (LIFE[b.life] && ['social', 'ads', 'search'].includes(b.life) && lt > 0) LIFE[b.life](b, lt, false);
+    const o = { lift: st.lift + rise(b, lt), sq: st.sq };
+    if (b.big) { o.near = '#5A2FE8'; o.far = '#170C45'; }
+    if (b.life === 'brand') { const k = seg(lt, 0, 0.42); o.wt = [300, 400, 500, 600, 700][Math.min(4, Math.floor(k * 5))]; if (lt > 0 && lt < 0.42) o.front = [COL.pi, COL.soft, COL.mu, COL.soft, COL.pi][Math.floor(k * 5) % 5]; }
+    if (b.life === 'web') { const f = seg(lt, 0.4, 1.0); if (f < 1) { o.outline = true; o.fill = f; } }
+    word(b, o);
+    if (LIFE[b.life] && ['social', 'ads', 'search'].includes(b.life) && lt > 0) LIFE[b.life](b, lt, true);
+  }
+}
+function state(b, t) {
+  const lt = t - b.t, fall = b.big ? 0.62 : 0.46, H0 = b.big ? 4200 : 1900;
+  let lift = 0, sq = 1;
+  if (lt < 0) { const p = clamp(1 + lt / fall); lift = H0 * (1 - p * p); }
+  else sq = 1 - (b.big ? 0.16 : 0.13) * Math.exp(-11 * lt) * Math.cos(lt * 30);
+  const dT = t - TAMM.t; if (!b.big && dT > 0 && dT < 1.4) lift += (b.i % 2 ? 34 : 24) * Math.exp(-4.5 * dT) * Math.abs(Math.sin(dT * 11 + b.i));
+  return { lift, sq };
+}
+function cone(b, lt) {   // production: a flat light cone from above (no glow: one translucent shape)
+  const a = clamp(lt * 4) * (1 - seg(lt, 1.9, 2.4)) * 0.09; if (a <= 0) return;
+  const top = P(b.x - 300, b.y - 300, 1500), [l1, l2] = [groundPt(b, -b.wd / 2 - 120, 120), groundPt(b, b.wd / 2 + 120, 120)], [l3, l4] = [groundPt(b, b.wd / 2 + 120, -200), groundPt(b, -b.wd / 2 - 120, -200)];
+  poly([top, P(...l1), P(...l2), P(...l3)], rgba(COL.soft, a)); poly([top, P(...l4), P(...l1)], rgba(COL.soft, a * 0.7));
+}
+function webFrame(b, lt) {   // websites: a browser window stands behind the word while it is built
+  const p = back(seg(lt, -0.1, 0.3)), a = 1 - seg(lt, 1.6, 2.0) * 0.55; if (p <= 0) return; const D = b.fs * DEPTH + 40, w = (b.wd / 2 + 110) * p, h0 = b.asc + 150;
+  ctx.globalAlpha = a; poly(planeQuad(b, -w, w, 0, h0 * p, -D), rgba(COL.gr, 0.96), rgba(COL.soft, 0.55), 1.5);
+  poly(planeQuad(b, -w, w, h0 * p - 44 * p, h0 * p, -D + 1), '#24232D');
+  [0, 1, 2].forEach((i) => poly(planeQuad(b, w - 30 - i * 26, w - 16 - i * 26, h0 * p - 30 * p, h0 * p - 16 * p, -D + 2), i === 0 ? COL.pu : '#5E5A6A'));
+  ctx.globalAlpha = 1;
+}
+function viewfinder(t) {   // production: the camera's frame and a running timecode
+  const b = B[4], lt = t - b.t; const a = clamp((lt - 0.05) * 6) * (1 - seg(lt, 1.6, 1.85)); if (a <= 0) return;
+  const m = VERT ? 70 : 90, x0 = m, y0 = m + 40, x1 = W - m, y1 = H - m - 40, L = VERT ? 70 : 90;
+  ctx.globalAlpha = a; ctx.strokeStyle = COL.soft; ctx.lineWidth = 3;
+  [[x0, y0, 1, 1], [x1, y0, -1, 1], [x0, y1, 1, -1], [x1, y1, -1, -1]].forEach(([x, y, sx, sy]) => { ctx.beginPath(); ctx.moveTo(x, y + sy * L); ctx.lineTo(x, y); ctx.lineTo(x + sx * L, y); ctx.stroke(); });
+  ctx.fillStyle = COL.pu; if (Math.floor(lt * 4) % 2 === 0) { ctx.beginPath(); ctx.arc(x0 + 30, y0 + 40, 9, 0, Math.PI * 2); ctx.fill(); }
+  ctx.font = font(600, 24, 'PlexL'); ctx.textAlign = 'left'; ctx.direction = 'ltr'; ctx.fillStyle = COL.soft; ctx.fillText('REC', x0 + 50, y0 + 49);
+  const f = Math.floor((lt + 12) * 25); ctx.textAlign = 'right'; ctx.fillText(`00:00:${String(Math.floor(f / 25)).padStart(2, '0')}:${String(f % 25).padStart(2, '0')}`, x1 - 30, y0 + 49);
+  ctx.globalAlpha = 1;
+}
+
+// ---------- type on screen ----------
+function caption(t) {   // the service's full name as each word lands
+  const on = B.some((b) => t > b.t - 0.05 && t < (b.i < 8 ? B[b.i + 1].t - 0.3 : T_OVER + 0.5)); if (on) {
+    const g = ctx.createRadialGradient(W, H, 0, W, H, VERT ? 900 : 1000); g.addColorStop(0, 'rgba(9,9,13,0.9)'); g.addColorStop(0.55, 'rgba(9,9,13,0.6)'); g.addColorStop(1, 'rgba(9,9,13,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
+  for (const b of B) {
+    const t0 = b.t + 0.05, t1 = b.i < 8 ? B[b.i + 1].t - 0.52 : T_OVER + 0.2; if (t < t0 - 0.05 || t > t1 + 0.3) continue;
+    const xr = W - (VERT ? 80 : 110), yb = H - (VERT ? 300 : 140), sz = VERT ? 54 : 52;
+    const rows = [[`0${b.i + 1}  /  09`, font(600, VERT ? 26 : 24, 'PlexL'), COL.pi, yb - sz - 64, 'ltr'], [b.d, font(500, VERT ? 30 : 27), COL.mu, yb - sz - 14, 'rtl'], [b.s, font(700, sz), COL.soft, yb, 'rtl']];
+    rows.forEach(([txt, f, c, y, dir], k) => {
+      const pin = eo5(seg(t, t0 + k * 0.05, t0 + 0.32 + k * 0.05)), pout = seg(t, t1 - 0.02 * k, t1 + 0.18); if (pin <= 0) return;
+      ctx.save(); ctx.beginPath(); ctx.rect(0, y - sz - 20, W, sz + 40); ctx.clip();
+      ctx.font = f; ctx.direction = dir; ctx.textAlign = 'right'; ctx.fillStyle = c; ctx.globalAlpha = 1 - pout;
+      if (dir === 'ltr') { ctx.textAlign = 'right'; }
+      ctx.fillText(txt, xr, y + (1 - pin) * (sz + 10) - pout * 20); ctx.restore();
+    });
+    const bar = eo5(seg(t, t0 + 0.18, t0 + 0.6)) * (1 - seg(t, t1, t1 + 0.2)); if (bar > 0) { ctx.fillStyle = COL.pu; ctx.fillRect(xr - 90 * bar, yb + 22, 90 * bar, 6); }
+  }
+}
+function lineCard(t) {   // over the city: «تسع خدمات. فريق واحد.»
+  const ba = seg(t, T_LINE - 0.2, T_LINE + 0.3) * (1 - seg(t, 26.1, 26.5)); if (ba > 0) { const g = ctx.createLinearGradient(0, 0, 0, VERT ? 640 : 330); g.addColorStop(0, `rgba(9,9,13,${0.92 * ba})`); g.addColorStop(1, 'rgba(9,9,13,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, VERT ? 640 : 330); }
+  const ws = ['تسع خدمات.', 'فريق واحد.'], y0 = VERT ? 330 : 150, sz = VERT ? 84 : 76, t1 = 26.1;
+  ws.forEach((w, k) => { const t0 = T_LINE + k * 0.55, pin = eo5(seg(t, t0, t0 + 0.5)), pout = seg(t, t1 + k * 0.05, t1 + 0.35 + k * 0.05); if (pin <= 0 || pout >= 1) return;
+    const y = VERT ? y0 + k * (sz + 22) : y0; const x = VERT ? W / 2 : W / 2 + (k === 0 ? 1 : -1) * 0; ctx.save();
+    ctx.font = font(700, sz); ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.fillStyle = k ? COL.pi : COL.soft; ctx.globalAlpha = 1 - pout;
+    if (!VERT) { const full = ws.join('  '); ctx.textAlign = 'center'; const wAll = ctx.measureText(full).width, w0 = ctx.measureText(ws[0] + '  ').width; const xs = W / 2 + wAll / 2 - (k === 0 ? 0 : w0); ctx.textAlign = 'right';
+      ctx.beginPath(); ctx.rect(0, y - sz, W, sz + 30); ctx.clip(); ctx.fillText(w, xs, y + (1 - pin) * (sz + 10)); }
+    else { ctx.beginPath(); ctx.rect(0, y - sz, W, sz + 30); ctx.clip(); ctx.fillText(w, x, y + (1 - pin) * (sz + 10)); }
+    ctx.restore(); });
+}
+function intro(t) {   // «كل شيء يبدأ بكلمة.» typed, then cut by the blade
+  const txt = 'كل شيء يبدأ بكلمة.', n = [...txt].length, typed = Math.floor(clamp((t - 0.35) / 1.45) * n), shown = [...txt].slice(0, typed).join('');
+  const sz = VERT ? 92 : 84; ctx.font = font(700, sz); ctx.direction = 'rtl'; ctx.textAlign = 'center';
+  const full = ctx.measureText(txt).width, cut = seg(t, T_CUT + 0.12, T_CUT + 0.9), ang = -Math.PI / 4;
+  const draw = () => { ctx.fillStyle = COL.soft; ctx.textAlign = 'right'; ctx.fillText(shown, W / 2 + full / 2, H / 2 + sz * 0.35);
+    if (cut === 0 && Math.floor(t * 2.2) % 2 === 0) { const cw = ctx.measureText(shown).width; ctx.fillStyle = COL.pu; ctx.fillRect(W / 2 + full / 2 - cw - 18, H / 2 - sz * 0.55, 6, sz * 1.0); } };
+  if (cut <= 0) { draw(); return; }
+  const nx = Math.cos(ang + Math.PI / 2), ny = Math.sin(ang + Math.PI / 2), R = Math.hypot(W, H), dist = eo(cut) * (VERT ? 500 : 420);
+  [1, -1].forEach((s) => { ctx.save(); ctx.translate(s * nx * dist, s * ny * dist); ctx.beginPath(); const cx = W / 2, cy = H / 2, dx = Math.cos(ang) * R, dy = Math.sin(ang) * R;
+    ctx.moveTo(cx - dx, cy - dy); ctx.lineTo(cx + dx, cy + dy); ctx.lineTo(cx + dx + s * nx * R, cy + dy + s * ny * R); ctx.lineTo(cx - dx + s * nx * R, cy - dy + s * ny * R); ctx.closePath(); ctx.clip();
+    ctx.globalAlpha = 1 - eo(cut); draw(); ctx.restore(); });   // each half moves away from the cut, clipped where it was cut
+}
+function blade(t) {   // the cut: one purple bar crossing the screen at 45°
+  const p = seg(t, T_CUT, T_CUT + 0.28), out = seg(t, T_CUT + 0.3, T_CUT + 0.7); if (p <= 0 || out >= 1) return;
+  const R = Math.hypot(W, H) * 0.62, c = [W / 2, H / 2], d = [Math.cos(-Math.PI / 4), Math.sin(-Math.PI / 4)];
+  const a = [c[0] - d[0] * R, c[1] - d[1] * R], e = [lerp(a[0], c[0] + d[0] * R, eo(p)), lerp(a[1], c[1] + d[1] * R, eo(p))];
+  ctx.strokeStyle = COL.pu; ctx.lineCap = 'round'; ctx.lineWidth = (VERT ? 34 : 30) * (1 - out); ctx.beginPath(); ctx.moveTo(lerp(a[0], e[0], eo(out)), lerp(a[1], e[1], eo(out))); ctx.lineTo(e[0], e[1]); ctx.stroke(); ctx.lineCap = 'butt';
+}
+function endCard(t) {
+  ctx.fillStyle = COL.ob; ctx.fillRect(0, 0, W, H);
+  const p = back(seg(t, T_END + 0.05, T_END + 0.7), 1.3), h = (VERT ? 320 : 270) * p, w = h * 600 / 721, cy = H / 2 - (VERT ? 150 : 95);
+  if (p > 0) ctx.drawImage(SYMBOL, W / 2 - w / 2, cy - h / 2, w, h);
+  const r1 = eo5(seg(t, T_END + 0.55, T_END + 1.05)), r2 = eo5(seg(t, T_END + 0.75, T_END + 1.25));
+  ctx.save(); ctx.beginPath(); ctx.rect(0, cy + (VERT ? 190 : 150), W, VERT ? 200 : 160); ctx.clip();
+  ctx.font = font(600, VERT ? 60 : 50, 'PlexL'); ctx.direction = 'ltr'; ctx.textAlign = 'center'; ctx.fillStyle = COL.soft; ctx.letterSpacing = '2px';
+  ctx.fillText('www.saytamm.com', W / 2, cy + (VERT ? 270 : 215) + (1 - r1) * 80); ctx.letterSpacing = '0px';
+  ctx.font = font(500, VERT ? 36 : 30); ctx.direction = 'rtl'; ctx.fillStyle = COL.mu; ctx.fillText('وكالة تسويق رقمي وأداء', W / 2, cy + (VERT ? 340 : 272) + (1 - r2) * 80);
+  ctx.restore();
+  const bw = eo5(seg(t, T_END + 0.9, T_END + 1.5)) * (VERT ? 120 : 100); ctx.fillStyle = COL.pu; ctx.fillRect(W / 2 - bw / 2, cy + (VERT ? 380 : 304), bw, 5);
+}
+
+// ---------- seek ----------
+window.seek = async (t) => {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.filter = 'none';
+  ctx.fillStyle = COL.ob; ctx.fillRect(0, 0, W, H);
+  camAt(t);
+  if (t >= T_WORLD && t < T_WIPE + 0.8) { world(t); viewfinder(t); caption(t); lineCard(t); }
+  if (t < T_CUT + 1.0) intro(t);
+  blade(t);
+  if (t >= T_WIPE) {   // the wipe: a wide blade crosses at 45°; behind it, the end card
+    const R = Math.hypot(W, H), n = [Math.SQRT1_2, Math.SQRT1_2], pos = lerp(-R / 2 - 300, R / 2 + 300, eio(seg(t, T_WIPE, T_WIPE + 0.75))), th = VERT ? 360 : 300;
+    const half = (d0, fillFn) => { ctx.save(); ctx.beginPath(); const c = [W / 2 + n[0] * d0, H / 2 + n[1] * d0], tg = [-n[1], n[0]];
+      ctx.moveTo(c[0] - tg[0] * R, c[1] - tg[1] * R); ctx.lineTo(c[0] + tg[0] * R, c[1] + tg[1] * R); ctx.lineTo(c[0] + tg[0] * R - n[0] * R * 2, c[1] + tg[1] * R - n[1] * R * 2); ctx.lineTo(c[0] - tg[0] * R - n[0] * R * 2, c[1] - tg[1] * R - n[1] * R * 2); ctx.closePath(); ctx.clip(); fillFn(); ctx.restore(); };
+    half(pos - th / 2, () => endCard(t));
+    ctx.save(); ctx.beginPath(); const c0 = [W / 2 + n[0] * (pos - th / 2), H / 2 + n[1] * (pos - th / 2)], c1 = [W / 2 + n[0] * (pos + th / 2), H / 2 + n[1] * (pos + th / 2)], tg = [-n[1], n[0]];
+    ctx.moveTo(c0[0] - tg[0] * R, c0[1] - tg[1] * R); ctx.lineTo(c0[0] + tg[0] * R, c0[1] + tg[1] * R); ctx.lineTo(c1[0] + tg[0] * R, c1[1] + tg[1] * R); ctx.lineTo(c1[0] - tg[0] * R, c1[1] - tg[1] * R); ctx.closePath();
+    if (pos - th / 2 < R) { ctx.fillStyle = COL.pu; ctx.fill(); } ctx.restore();
+  }
+  const fo = seg(t, DUR - 0.7, DUR); if (fo > 0) { ctx.fillStyle = `rgba(9,9,13,${fo})`; ctx.fillRect(0, 0, W, H); }
+};
+
+// ---------- the score: 120 BPM, a thud for every word that lands ----------
+window.renderAudio = async () => {
+  const SR = 48000, A = new OfflineAudioContext(2, Math.round(SR * DUR), SR), OUT = A.createGain(); OUT.gain.value = 0.7; OUT.connect(A.destination);
+  const NB = A.createBuffer(1, SR * 2, SR); { const d = NB.getChannelData(0); let s = 777; for (let i = 0; i < d.length; i++) { s = (s * 1103515245 + 12345) & 0x7fffffff; d[i] = s / 0x3fffffff - 1; } }
+  const env = (g, t, at, pk, dec) => { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(pk, t + at); g.gain.exponentialRampToValueAtTime(0.0001, t + at + dec); };
+  const route = (n, pan) => { if (pan) { const p = A.createStereoPanner(); p.pan.value = pan; n.connect(p).connect(OUT); } else n.connect(OUT); };
+  function osc(type, f0, f1, t, dec, pk, at = 0.002, pan = 0, lp = 0) {
+    if (t < 0 || t > DUR) return; const o = A.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + Math.max(0.02, dec * 0.6));
+    const g = A.createGain(); env(g, t, at, pk, dec); let n = o;
+    if (lp) { const f = A.createBiquadFilter(); f.type = 'lowpass'; f.frequency.setValueAtTime(lp, t); f.frequency.exponentialRampToValueAtTime(Math.max(120, lp / 5), t + dec); n = n.connect(f); }
+    route(n.connect(g), pan); o.start(t); o.stop(t + at + dec + 0.05);
+  }
+  function noise(t, dec, type, fr, q, pk, at = 0.001, pan = 0, f1 = 0) {
+    if (t < 0 || t > DUR) return; const s = A.createBufferSource(); s.buffer = NB; const f = A.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(fr, t); if (f1) f.frequency.exponentialRampToValueAtTime(f1, t + at + dec); f.Q.value = q;
+    const g = A.createGain(); env(g, t, at, pk, dec); route(s.connect(f).connect(g), pan); s.start(t, (t * 0.731) % 1.4); s.stop(t + at + dec + 0.05);
+  }
+  const CH = { A: [220, 261.63, 329.63], F: [174.61, 220, 261.63], C: [196, 261.63, 329.63], G: [196, 246.94, 293.66], E: [164.81, 207.65, 246.94] }, RT = { A: 55, F: 43.65, C: 65.41, G: 49, E: 41.2 };
+  const stab = (t, ch, p = 0.07, dec = 0.4) => CH[ch].forEach((f, i) => { for (const dt of [-0.004, 0.004]) osc('sawtooth', f * (1 + dt), f * (1 + dt), t, dec, p, 0.004, (i - 1) * 0.35, 3000); });
+  const pad = (t, ch, len, p = 0.03) => CH[ch].forEach((f, i) => osc('triangle', f / 2, f / 2, t, len, p, 0.4, (i - 1) * 0.4));
+  // intro: typing, a low pad, the blade
+  [...'كل شيء يبدأ بكلمة.'].forEach((c, i) => { const t = 0.35 + i * (1.45 / 18); if (c !== ' ') { noise(t, 0.018, 'bandpass', 3200 + (i % 3) * 500, 2, 0.16); osc('sine', 1800, 1800, t, 0.015, 0.02); } });
+  pad(0, 'A', 2.6, 0.035); osc('sine', 55, 55, 0.2, 2.4, 0.12, 0.6);
+  noise(T_CUT - 0.18, 0.28, 'bandpass', 600, 1.1, 0.5, 0.15, 0, 8000); osc('sine', 110, 34, T_CUT + 0.1, 0.9, 0.9); stab(T_CUT + 0.1, 'E', 0.08, 0.8);
+  // the groove: 3.0 → the overview; halftime under the line card; back for the finale
+  for (let b = 0; b < DUR / BEAT; b++) {
+    const t = b * BEAT; if (t < 3.0 || t >= T_WIPE + 0.5) continue;
+    const bar = Math.floor((t - 3) / 2), ch = ['A', 'F', 'C', 'G'][((bar % 4) + 4) % 4], brk = t >= T_OVER + 0.7 && t < 26.4, hold = t >= 26.4 && t < TAMM.t, fin = t >= TAMM.t;
+    if (hold) { noise(t, 0.012, 'highpass', 7000, 0.7, 0.05 + (t - 26.4) * 0.03); continue; }
+    if (!brk) osc('sine', 160, 42, t, 0.34, fin ? (b % 2 ? 0.55 : 0.9) : 0.85);
+    else if (b % 2 === 0) osc('sine', 150, 44, t, 0.3, 0.45);
+    noise(t + 0.25, 0.02, 'highpass', 7500, 0.7, brk ? 0.04 : 0.09, 0.001, 0.2);
+    noise(t, 0.012, 'highpass', 9000, 0.7, brk ? 0.03 : 0.06, 0.001, -0.2);
+    if (!brk && b % 2 === 1) { for (const d of [0, 0.012]) noise(t + d, 0.012, 'bandpass', 1500, 0.9, 0.28); noise(t + 0.02, 0.15, 'bandpass', 1300, 0.8, 0.2); }
+    const f = RT[ch]; if (!brk) { osc('sawtooth', f, f, t + 0.25, 0.18, 0.24, 0.004, 0, 650); osc('sine', f, f, t + 0.25, 0.2, 0.24, 0.004); osc('sine', f * 2, f * 2, t + 0.375, 0.08, 0.08, 0.004); }
+    if (Math.abs((t - 3) % 2) < 0.01) { if (!brk) stab(t, ch, 0.045, 0.5); else pad(t, ch, 2.1, 0.03); }
+  }
+  // every landing: a falling whistle, then the thud
+  for (const b of ALL) {
+    const big = !!b.big, fall = big ? 0.62 : 0.46;
+    osc('sine', big ? 1400 : 2200, big ? 180 : 400, b.t - fall, fall, big ? 0.06 : 0.04, 0.05);
+    noise(b.t - fall, fall, 'bandpass', 300, 1.4, big ? 0.3 : 0.18, fall * 0.9, 0, big ? 5000 : 3500);
+    osc('sine', big ? 120 : 95, big ? 26 : 30, b.t, big ? 1.8 : 0.7, big ? 1.0 : 0.85); noise(b.t, big ? 0.6 : 0.22, 'lowpass', big ? 900 : 1400, 0.7, big ? 0.6 : 0.4);
+    noise(b.t, 0.03, 'highpass', 4000, 0.7, 0.18);
+    if (big) { stab(b.t, 'A', 0.11, 1.6); stab(b.t + 0.02, 'E', 0.05, 2.0); [220, 261.63, 329.63, 440].forEach((f, i) => osc('triangle', f, f, b.t + 0.05, 3.0, 0.05, 0.02, (i - 1.5) * 0.3)); }
+  }
+  // what each service does, as sound
+  const L = (i) => B[i].t;
+  for (let k = 0; k < 12; k++) osc('sine', 660 * Math.pow(2, (k % 6) / 6), 660 * Math.pow(2, (k % 6) / 6), L(0) + 0.15 + k * 0.12, 0.08, 0.05, 0.003, (k % 2 ? 0.3 : -0.3));   // roads drawing
+  for (let k = 0; k < 5; k++) noise(L(1) + k * 0.084, 0.02, 'bandpass', 2400 + k * 300, 3, 0.18);                                                              // identity snaps
+  for (let k = 0; k < 5; k++) osc('sine', 880, 1320, L(2) + 0.1 + k * 0.2, 0.06, 0.06, 0.003, (k % 2 ? 0.25 : -0.25));                                        // feed pops
+  for (let k = 0; k < 7; k++) noise(L(3) + 0.12 + k * 0.08, 0.09, 'bandpass', 1800, 1.5, 0.12, 0.02, (k % 2 ? 0.35 : -0.35), 4000);                          // pages
+  noise(L(4) + 0.05, 0.04, 'bandpass', 2500, 2, 0.3); noise(L(4) + 0.1, 0.05, 'bandpass', 1800, 2, 0.25); osc('sine', 1000, 1000, L(4) + 0.3, 0.12, 0.05);  // shutter, beep
+  [0.2, 0.32].forEach((d) => { noise(L(5) + d, 0.05, 'bandpass', 900, 2, 0.3); }); noise(L(5) + 0.55, 0.6, 'bandpass', 400, 1, 0.2, 0.2, 0, 6000);           // billboards, launch
+  for (let k = 0; k < 6; k++) noise(L(6) + 0.3 + k * 0.08, 0.015, 'bandpass', 3000, 2, 0.14); osc('sine', 300, 900, L(6) + 0.45, 0.6, 0.05, 0.2);           // typing, rising
+  stab(L(7) + 1.0, 'C', 0.04, 0.6);                                                                                                                           // built
+  for (let k = 0; k < 4; k++) osc('sine', 1568, 1568, L(8) + 0.3 + k * 0.5, 0.25, 0.035, 0.003);                                                            // radar
+  // the build to «تمّ»: a riser and air, a gap for the voice
+  noise(26.3, 1.7, 'bandpass', 400, 0.8, 0.22, 1.6, 0, 6000); osc('sawtooth', 55, 110, 26.4, 1.0, 0.06, 0.8, 0, 900);
+  // the wipe and the end card
+  noise(T_WIPE - 0.1, 0.5, 'bandpass', 500, 1.0, 0.45, 0.35, 0, 7000); osc('sine', 90, 36, T_WIPE + 0.35, 0.9, 0.7);
+  pad(T_END, 'A', 5.5, 0.04); stab(T_END + 0.1, 'A', 0.06, 1.4); [440, 523.25, 659.25].forEach((f, i) => osc('sine', f, f, T_END + 0.6 + i * 0.12, 1.6, 0.04, 0.01, (i - 1) * 0.3));
+  const buf = await A.startRendering();
+  let pk = 0; for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < d.length; i++) pk = Math.max(pk, Math.abs(d[i])); }
+  const g = 0.89 / pk, n = buf.length, ab = new ArrayBuffer(44 + n * 4), v = new DataView(ab), ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + n * 4, true); ws(8, 'WAVE'); ws(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true);
+  v.setUint32(24, SR, true); v.setUint32(28, SR * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); ws(36, 'data'); v.setUint32(40, n * 4, true);
+  const Lc = buf.getChannelData(0), Rc = buf.getChannelData(1); let o = 44;
+  for (let i = 0; i < n; i++) for (const d of [Lc, Rc]) { const s = Math.max(-1, Math.min(1, d[i] * g)); v.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true); o += 2; }
+  const u8 = new Uint8Array(ab); let bin = ''; for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+window.ready = (async () => {
+  await Promise.all([300, 400, 500, 600, 700].map((w) => document.fonts.load(`${w} 40px Plex`, 'قول تم')).concat([500, 600].map((w) => document.fonts.load(`${w} 40px PlexL`, 'www.saytamm.com 0123'))));
+  SYMBOL = new Image(); SYMBOL.src = '__SYMBOL__'; await SYMBOL.decode();
+  ctx.direction = 'rtl';
+  for (const b of ALL) { ctx.font = font(700, b.fs); const m = ctx.measureText(b.w); b.wd = m.width; b.asc = m.actualBoundingBoxAscent; b.desc = m.actualBoundingBoxDescent; }
+  buildRoads(); buildKeys(); await window.seek(0); return true;
+})();
+</script></body></html>
