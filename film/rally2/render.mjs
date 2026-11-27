@@ -1,4 +1,4 @@
-// «The Rally» v2 renderer, 1080×1080. After `python3 film/rally2/prep.py`. Usage (repo root):
+// «The Rally» v2 renderer: 1080×1080, or 1080×1920 with RV=916 (after `python3 film/rally2/prep.py [--v 916]`). Usage (repo root):
 //   node film/rally2/render.mjs --frames 0.5,1 → spot frames      node film/rally2/render.mjs --audio-only → score
 //   node film/rally2/render.mjs --part k --parts 4 → one slice of the 60 fps picture (3 sub-frames blended)
 import fs from 'node:fs';
@@ -9,12 +9,12 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const OUT = path.join(ROOT, 'handover', 'launch-film', 'rally2'); fs.mkdirSync(OUT, { recursive: true });
 const arg = (k) => { const i = process.argv.indexOf(k); return i < 0 ? null : process.argv[i + 1] ?? true; };
-const FPS = 60, SUB = 3, V = '11', [W, H] = [1080, 1080];
-const SEQD = path.join(OUT, 'seq'), dirs = fs.readdirSync(SEQD);
+const FPS = 60, SUB = 3, V = process.env.RV === '916' ? '916' : '11', [W, H] = V === '916' ? [1080, 1920] : [1080, 1080];
+const SEQD = path.join(OUT, V === '916' ? 'seq916' : 'seq'), dirs = fs.readdirSync(SEQD);
 const SEQN = Object.fromEntries(dirs.map((d) => [d, fs.readdirSync(path.join(SEQD, d)).filter((f) => /\.(jpg|webp)$/.test(f)).length]));
 const QUADS = Object.fromEntries(dirs.filter((d) => fs.existsSync(path.join(SEQD, d, 'quad.json'))).map((d) => [d, JSON.parse(fs.readFileSync(path.join(SEQD, d, 'quad.json'), 'utf8'))]));
 const html = fs.readFileSync(path.join(ROOT, 'film/rally2/film.html'), 'utf8')
-  .replace('__SEQN__', JSON.stringify(SEQN)).replace('__QUADS__', JSON.stringify(QUADS))
+  .replace('__CFG__', JSON.stringify({ w: W, h: H })).replace('__SEQN__', JSON.stringify(SEQN)).replace('__QUADS__', JSON.stringify(QUADS))
   .replaceAll('__SEQ__', pathToFileURL(SEQD).href).replaceAll('__ASSETS__', pathToFileURL(path.join(ROOT, 'handover/profile/assets')).href)
   .replaceAll('__PHOTO__', pathToFileURL(path.join(OUT, 'photo')).href)
   .replace('__SYMBOL_SVG__', JSON.stringify(fs.readFileSync(path.join(ROOT, 'brand/production/logo/SayTamm_Symbol_Signature_White-Purple.svg'), 'utf8')))

@@ -1,4 +1,4 @@
-# «The Rally» v2 — SayTamm, 32 s, 1080×1080, English
+# «The Rally» v2 — SayTamm, 32 s, 1080×1080 and a Reels cut at 1080×1920, English
 
 Owner feedback on v1 (2026-11-27): no realism, no creativity, nothing that says "digital marketing agency", the logo should
 actually get bigger when the client asks, show the team's work, use free stock or drawn characters, as strong as the reference.
@@ -32,6 +32,15 @@ product photo has no label; branded sneaker photos were rejected); the ad's logo
 the approved case, verbatim, with its measurement note; ROAS is called "not profit"; Tamm is the brand's character.
 **Satoshi is embedded: keep the film internal until the font licence is confirmed** (or swap to IBM Plex Sans for a publishable cut).
 
+## Reels cut (9:16)
+
+Same film, same score, laid out again for 1080×1920 rather than cropped. The footage is re-cut from the full-size Pexels
+originals (`handover/launch-film/rally2/orig/`, crops in `shots916.json`), so every phone stays whole in the frame and its screen is tracked again.
+Words stay between y 250 and ~1520 and low lines stay under ~860 px wide, clear of the app's caption area and the buttons on
+the right. Differences from the square: the broadcast strip sits at y 190; the client's words go at the top of the phone shots
+in two big lines (the chat stays readable below); the ad is a bigger card with a deeper text band; the cursor's name tag sits on
+its left while it drags the handle; the phone's clock is left out (it sat beside the score); A/B adds «B WINS.».
+
 ## Stock (Pexels, free licence; IDs to re-download)
 
 Tennis: 33175804 (aerial court), 5740595 (balls on clay), 5738571 (racket shadow). Phones (green screen): 12280159, 13863534, 9558749.
@@ -43,10 +52,13 @@ Product photo: 15369086. Downloaded with `https://www.pexels.com/download/video/
 ```bash
 python3 film/rally2/prep.py
 bash film/rally2/render_parallel.sh
+# Reels cut: download the originals of 12280159, 13863534, 9558749, 20463055 and 6192771 into handover/launch-film/rally2/orig/
+python3 film/rally2/prep.py --v 916
+RV=916 bash film/rally2/render_parallel.sh
 ```
 
 `prep.py` cuts each shot to 30 fps 1080×1080 frames; for the phone shots it keys the green screen (OpenCV), despills, and tracks
 the screen's corners per frame (`quad.json`). `film.html` draws the chat into the screen through a bilinear grid of affine
 triangles and lays the real hand back on top, so the thumb stays in front of the screen. Score generated in code (120 BPM:
 kick on every beat, a hit on every cut, ball hits, message pops, the logo stretching, crowd swells, a stamp on every «DONE»).
-Output: `handover/launch-film/rally2/SayTamm_The_Rally_v2_EN_1x1.mp4`.
+Output: `handover/launch-film/rally2/SayTamm_The_Rally_v2_EN_1x1.mp4` and `SayTamm_The_Rally_v2_EN_9x16.mp4`.

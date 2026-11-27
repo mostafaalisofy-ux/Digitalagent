@@ -1,0 +1,15 @@
+[
+ {"id": "hook_court", "file": "P_33175804.mp4", "in": 2.0, "len": 1.6, "cy": 0.5},
+ {"id": "hook_balls", "file": "P_5740595.mp4", "in": 0.9, "len": 1.6, "cy": 0.2},
+ {"id": "p1_phone", "file": "../orig/P_12280159.mp4", "in": 0.4, "len": 2.1, "cx": 0.36, "key": true, "sharpen": true},
+ {"id": "p1_design", "file": "../orig/P_20463055.mp4", "in": 3.0, "len": 1.1, "cx": 0.55, "sharpen": true},
+ {"id": "p2_phone", "file": "../orig/P_13863534.mp4", "in": 0.4, "len": 1.6, "cx": 0.5, "key": true},
+ {"id": "p3_phone", "file": "../orig/P_9558749.mp4", "in": 2.0, "len": 1.6, "cx": 0.687, "zoom": 1.3, "key": true, "cy": 0.65},
+ {"id": "t_hands", "file": "../orig/P_6192771.mp4", "in": 1.0, "len": 0.6, "cx": 0.5},
+ {"id": "t_tablet", "file": "P_37116270.mp4", "in": 2.0, "len": 0.6, "cy": 0.5},
+ {"id": "t_cards", "file": "../../journey/stock/P_8035618.mp4", "in": 3.0, "len": 0.6, "cx": 0.7},
+ {"id": "t_camera", "file": "../../journey/stock/P_35313946.mp4", "in": 1.0, "len": 0.6, "cy": 0.5},
+ {"id": "p3_approve", "file": "../orig/P_12280159.mp4", "in": 4.2, "len": 1.6, "cx": 0.36, "key": true, "sharpen": true},
+ {"id": "p4_phone", "file": "../orig/P_13863534.mp4", "in": 4.2, "len": 1.6, "cx": 0.5, "key": true},
+ {"id": "pay_ball", "file": "P_5738571.mp4", "in": 0.6, "len": 2.1, "cy": 0.5}
+]

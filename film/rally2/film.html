@@ -9,12 +9,13 @@
 <body><canvas id="c" width="1080" height="1080"></canvas>
 <script>
 'use strict';
-// «The Rally» v2 — SayTamm, 32 s, 1080×1080, English, 120 BPM. Client vs agency, covered like a live match.
+// «The Rally» v2 — SayTamm, 32 s, 1080×1080 (feed) or 1080×1920 (Reels), English, 120 BPM. Client vs agency, covered like a live match.
 // Real footage (Pexels, hands only), the client's real phone (green screen keyed, screen tracked per frame) with a chat UI,
 // a social ad whose logo literally grows, the team (hands at work and Tamm's line-up), a real approved case, the SayTamm symbol.
 // Everything is computed from t inside window.seek(t).
-const W = 1080, H = 1080, DUR = 32, BEAT = 0.5; window.DUR_S = DUR;
-const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const CFG = __CFG__, W = CFG.w, H = CFG.h, V = H > W, DUR = 32, BEAT = 0.5; window.DUR_S = DUR;   // V: the vertical cut
+const cv = document.getElementById('c'); cv.width = W; cv.height = H; const ctx = cv.getContext('2d');
+// Reels: keep words between y 250 and ~1520 and clear of the right-hand buttons (lines low in the frame stay under ~900 px wide)
 const SEQ = '__SEQ__', SEQN = __SEQN__, QUADS = __QUADS__, ASSETS = '__ASSETS__', PHOTO = '__PHOTO__';
 const C = { ob: '#09090D', gr: '#17171E', g2: '#211F2A', soft: '#F5F3FA', mu: '#96939F', pu: '#6C35FF', pi: '#A78BFA', ink: '#111014' };
 const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), lerp = (a, b, u) => a + (b - a) * u, seg = (t, a, b) => clamp((t - a) / (b - a));
@@ -25,7 +26,7 @@ const pad3 = (n) => String(n).padStart(3, '0');
 
 // ---------- images ----------
 const CACHE = new Map();
-function load(src) { let p = CACHE.get(src); if (!p) { const im = new Image(); im.src = src; p = im.decode().then(() => im); CACHE.set(src, p); if (CACHE.size > 90) CACHE.delete(CACHE.keys().next().value); } return p; }
+function load(src) { let p = CACHE.get(src); if (!p) { const im = new Image(); im.src = src; p = im.decode().then(() => im); CACHE.set(src, p); if (CACHE.size > (V ? 40 : 90)) CACHE.delete(CACHE.keys().next().value); } return p; }
 const frameOf = (id, lt) => Math.max(1, Math.min(SEQN[id], Math.floor(lt * 30) + 1));
 const shotSrc = (id, lt) => `${SEQ}/${id}/${pad3(frameOf(id, lt))}.${QUADS[id] ? 'webp' : 'jpg'}`;
 let IM = {};   // still images, loaded once
@@ -106,7 +107,7 @@ const CONV = {
 function chatUI(t, conv) {
   const c = ux, Wd = 720, Ht = 1560; c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = '#0D0C12'; c.fillRect(0, 0, Wd, Ht);
   // status bar
-  c.fillStyle = C.soft; c.font = font(700, 30); c.textAlign = 'left'; c.fillText('9:41', 52, 72);
+  c.fillStyle = C.soft; c.font = font(700, 30); c.textAlign = 'left'; if (!V) c.fillText('9:41', 52, 72);
   for (let i = 0; i < 4; i++) c.fillRect(560 + i * 14, 62 - i * 6, 9, 10 + i * 6); rr(c, 626, 50, 56, 26, 7); c.strokeStyle = C.soft; c.lineWidth = 2.5; c.stroke(); c.fillRect(631, 55, 40, 16);
   // header
   c.fillStyle = '#15141C'; c.fillRect(0, 100, Wd, 128); c.fillStyle = 'rgba(245,243,250,0.08)'; c.fillRect(0, 227, Wd, 1);
@@ -156,6 +157,9 @@ function approveCard(c, t, m, y0, h) {   // the team sends the final ad for appr
 const AD = { x: 0, y: 0, w: 720, head: 70, foot: 60 };   // drawn at the origin; each scene places it (image is w × w under the header)
 const CARD_H = AD.head + AD.w + AD.foot;
 function place(k, top, cx = 540) { ctx.translate(cx - AD.w * k / 2, top); ctx.scale(k, k); }
+const ADK = V ? 1.1 : 0.74, ADTOP = V ? 0 : 104, ADMID = ADTOP + CARD_H * ADK / 2;   // the card's scale and place
+function adCam(z, fx, fy) { ctx.translate(W / 2, V ? 760 : H / 2 - 40); ctx.scale(z, z); ctx.translate(-fx, -fy); place(ADK, ADTOP); }
+function band() { if (V) { scrim(1190, 1320, 0.95); ctx.fillStyle = 'rgba(9,9,13,0.95)'; ctx.fillRect(0, 1320, W, H - 1320); } else { scrim(700, 860, 0.95); ctx.fillStyle = 'rgba(9,9,13,0.95)'; ctx.fillRect(0, 860, W, 220); } }
 function adCard(t, st) {
   const { x, y, w, head, foot } = AD, iy = y + head;
   ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 50; ctx.shadowOffsetY = 18; rr(ctx, x, y, w, head + w + foot, 26); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.restore();
@@ -194,10 +198,10 @@ function selection(x, y, w, h, label) {   // a design tool's selection: outline,
   for (const [hx, hy] of [[x - 4, y - 4], [x + w + 4, y - 4], [x + w + 4, y + h + 4], [x - 4, y + h + 4]]) { ctx.fillRect(hx - 8, hy - 8, 16, 16); ctx.strokeRect(hx - 8, hy - 8, 16, 16); }
   ctx.font = font(700, 18); const lw = ctx.measureText(label).width + 22; rr(ctx, x + w / 2 - lw / 2, y + h + 18, lw, 30, 8); ctx.fillStyle = C.pu; ctx.fill(); ctx.fillStyle = C.soft; ctx.textAlign = 'center'; ctx.fillText(label, x + w / 2, y + h + 39); ctx.textAlign = 'left';
 }
-function cursor(x, y, tag, press = 1) {
+function cursor(x, y, tag, press = 1, left = false) {
   ctx.save(); ctx.translate(x, y); ctx.scale(press, press); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 34); ctx.lineTo(9, 26); ctx.lineTo(15, 40); ctx.lineTo(21, 37.5); ctx.lineTo(15, 24.5); ctx.lineTo(26, 24.5); ctx.closePath();
   ctx.fillStyle = C.ink; ctx.fill(); ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 2.5; ctx.stroke();
-  if (tag) { ctx.font = font(700, 17); const w = ctx.measureText(tag).width + 22; rr(ctx, 22, 38, w, 30, 15); ctx.fillStyle = C.pu; ctx.fill(); ctx.fillStyle = C.soft; ctx.fillText(tag, 33, 59); }
+  if (tag) { ctx.font = font(700, 17); const w = ctx.measureText(tag).width + 22, tx = left ? -w - 6 : 22; rr(ctx, tx, 38, w, 30, 15); ctx.fillStyle = C.pu; ctx.fill(); ctx.fillStyle = C.soft; ctx.fillText(tag, tx + 11, 59); }
   ctx.restore();
 }
 function stamp(t, t0, x, y, text = 'DONE.') {   // the team's answer, stamped
@@ -208,65 +212,70 @@ function stamp(t, t0, x, y, text = 'DONE.') {   // the team's answer, stamped
 
 // ---------- the scenes ----------
 async function sHook(t) {
-  if (t < 1.5) { await shot('hook_court', t, 0, 1.5); scrim(380, 1080, 0.75);
-    const f = fitSize(['AGENCY.'], 860, 190); line('CLIENT', 70, 640, f, t, 0.02, 1.45); line('VS.', 70, 640 + f * 0.95, f, t, 0.5, 1.45, { color: C.pi }); line('AGENCY.', 70, 640 + f * 1.9, f, t, 1.0, 1.45); }
-  else { await shot('hook_balls', t, 1.5, 3.0); scrim(420, 1080, 0.8);
-    const f = fitSize(['THE LONGEST RALLY'], 940, 120); line('THE LONGEST RALLY', 70, 820, f, t, 1.5, 2.95); line('IN MARKETING.', 70, 820 + f, f, t, 2.0, 2.95); }
+  if (t < 1.5) { await shot('hook_court', t, 0, 1.5); scrim(V ? 560 : 380, H, V ? 0.8 : 0.75);
+    const f = fitSize(['AGENCY.'], 860, V ? 210 : 190), y = V ? 1000 : 640; line('CLIENT', 70, y, f, t, 0.02, 1.45); line('VS.', 70, y + f * 0.95, f, t, 0.5, 1.45, { color: C.pi }); line('AGENCY.', 70, y + f * 1.9, f, t, 1.0, 1.45); }
+  else { await shot('hook_balls', t, 1.5, 3.0); scrim(V ? 700 : 420, H, V ? 0.85 : 0.8);
+    if (V) { const f = fitSize(['THE LONGEST', 'MARKETING.'], 860, 170); line('THE LONGEST', 70, 1100, f, t, 1.5, 2.95); line('RALLY IN', 70, 1100 + f, f, t, 1.75, 2.95); line('MARKETING.', 70, 1100 + 2 * f, f, t, 2.0, 2.95); }
+    else { const f = fitSize(['THE LONGEST RALLY'], 940, 120); line('THE LONGEST RALLY', 70, 820, f, t, 1.5, 2.95); line('IN MARKETING.', 70, 820 + f, f, t, 2.0, 2.95); } }
 }
 async function sPhone(id, t, s0, s1, conv, quote) {
   await phone(id, t, s0, s1, conv);
-  if (quote) { const [tq, txt] = quote; const a = seg(t, tq - 0.05, tq + 0.2); if (a > 0) { scrim(640, 1080, 0.85 * a); line('CLIENT:', 70, 860, 30, t, tq, s1 - 0.12, { color: C.pi, ls: '2px' });
-    const f = fitSize([txt], 940, 76); line(txt, 66, 940, f, t, tq + 0.06, s1 - 0.12); } }
+  if (!quote) return; const [tq, txt, l1, l2] = quote, a = seg(t, tq - 0.05, tq + 0.2); if (a <= 0) return;
+  if (V) { scrim(820, 0, 0.88 * a); line('CLIENT:', 70, 330, 32, t, tq, s1 - 0.12, { color: C.pi, ls: '2px' });
+    const f = fitSize([l1, l2], 940, 120); line(l1, 66, 354 + f * 0.92, f, t, tq + 0.06, s1 - 0.12); line(l2, 66, 354 + f * 1.92, f, t, tq + 0.12, s1 - 0.12); return; }
+  scrim(640, 1080, 0.85 * a); line('CLIENT:', 70, 860, 30, t, tq, s1 - 0.12, { color: C.pi, ls: '2px' });
+  const f = fitSize([txt], 940, 76); line(txt, 66, 940, f, t, tq + 0.06, s1 - 0.12);
 }
 function adLogo(t) {   // the logo grows on every beat: 100% → 160% → 260% → 420% → 560%
   const steps = [[5.5, 1.6], [6.0, 2.6], [6.5, 4.2], [7.0, 5.6]]; let k = 1, prev = 1;
   for (const [ts, v] of steps) if (t >= ts) { prev = k; k = v; }
   const last = steps.filter(([ts]) => t >= ts).pop(); const kk = last ? lerp(prev, k, Math.min(1.05, spring(t - last[0], 18))) : 1;
   ctx.fillStyle = C.ob; ctx.fillRect(0, 0, W, H);
-  const u = cub(seg(t, 5.3, 7.4)), z = shotZoom(t, 5.0, 7.5) * lerp(1, 1.22, u), fx = lerp(540, 400, u), fy = lerp(420, 330, u);
-  ctx.save(); ctx.translate(W / 2, H / 2 - 40); ctx.scale(z, z); ctx.translate(-fx, -fy); place(0.74, 104);
+  const u = cub(seg(t, 5.3, 7.4)), z = shotZoom(t, 5.0, 7.5) * lerp(1, V ? 1.1 : 1.22, u), fx = V ? 540 : lerp(540, 400, u), fy = V ? lerp(ADMID, 420, u) : lerp(420, 330, u);
+  ctx.save(); adCam(z, fx, fy);
   adCard(t, { logo: kk });
   const sel = t >= 5.38; const lx = AD.x + 36, ly = AD.y + AD.head + 36, lw = LOGO_W * kk, lh = LOGO_H * kk;
   if (sel) selection(lx, ly, Math.min(lw, AD.w - 40), Math.min(lh, AD.w - 40), `${Math.round(kk * 100)}%`);
   // the cursor: comes in, clicks the logo, then drags the corner handle on every beat
   const cx0 = [1150, 1180], hx = lx + Math.min(lw, AD.w - 40) + 4, hy = ly + Math.min(lh, AD.w - 40) + 4, inn = cub(seg(t, 5.05, 5.35));
   const px = t < 5.4 ? lerp(cx0[0], lx + 60, inn) : hx, py = t < 5.4 ? lerp(cx0[1], ly + 30, inn) : hy, press = (t > 5.36 && t < 5.46) || steps.some(([ts]) => t > ts - 0.05 && t < ts + 0.25) ? 0.86 : 1;
-  cursor(px, py, 'Say Tamm · Design', press);
+  cursor(px, py, 'Say Tamm · Design', press, V && t >= 5.4);
   ctx.restore();
-  const f = 138; scrim(700, 860, 0.95); ctx.fillStyle = 'rgba(9,9,13,0.95)'; ctx.fillRect(0, 860, W, 220);
-  line('BIGGER.', 66, 1000, f, t, 5.5, 5.98); line('BIGGER.', 66, 1000, f, t, 6.0, 6.48); line('BIGGER?!', 66, 1000, f, t, 6.5, 7.45, { color: C.pi });
+  band(); const f = V ? fitSize(['BIGGER?!'], 860, 180) : 138, y = V ? 1470 : 1000;
+  line('BIGGER.', 66, y, f, t, 5.5, 5.98); line('BIGGER.', 66, y, f, t, 6.0, 6.48); line('BIGGER?!', 66, y, f, t, 6.5, 7.45, { color: C.pi });
 }
 function adFinal(t) {   // the team's answer: bigger, and still beautiful
   ctx.fillStyle = C.ob; ctx.fillRect(0, 0, W, H);
-  const z = shotZoom(t, 8.5, 10.0); ctx.save(); ctx.translate(W / 2, H / 2 - 40); ctx.scale(z, z); ctx.translate(-540, -500); place(0.74, 104);
+  const z = shotZoom(t, 8.5, 10.0); ctx.save(); adCam(z, 540, V ? ADMID : 500);
   adCard(t, { logo: 1.55, lx: AD.w / 2, ly: 40, center: true });
   const g = seg(t, 8.5, 8.75) * (1 - seg(t, 9.2, 9.5)); if (g > 0) { ctx.strokeStyle = `rgba(108,53,255,${0.8 * g})`; ctx.lineWidth = 2; ctx.setLineDash([10, 8]);
     for (const x of [AD.x + 40, AD.x + AD.w / 2, AD.x + AD.w - 40]) { ctx.beginPath(); ctx.moveTo(x, AD.y + AD.head); ctx.lineTo(x, AD.y + AD.head + AD.w); ctx.stroke(); }
     for (const y of [AD.y + AD.head + 40, AD.y + AD.head + 40 + LOGO_H * 1.55]) { ctx.beginPath(); ctx.moveTo(AD.x, y); ctx.lineTo(AD.x + AD.w, y); ctx.stroke(); } ctx.setLineDash([]); }
   ctx.restore();
-  stamp(t, DONE[0], 800, 560);
-  scrim(720, 860, 0.95); ctx.fillStyle = 'rgba(9,9,13,0.95)'; ctx.fillRect(0, 860, W, 220);
-  line('BIGGER.', 66, 960, 100, t, 9.0, null); line('AND BETTER.', 66, 1050, 100, t, 9.25, null, { color: C.pi });
+  stamp(t, DONE[0], 800, V ? 1000 : 560);
+  band(); const f = V ? 124 : 100, y = V ? 1420 : 960;
+  line('BIGGER.', 66, y, f, t, 9.0, null); line('AND BETTER.', 66, y + f * 0.9, f, t, 9.25, null, { color: C.pi });
 }
 const PANELS = [['#F7D046', 0, 'final.jpg', 'V1'], ['#FF6F61', 0, 'final_v2.jpg', 'V2'], ['#3DD6C6', 0, 'final_FINAL.jpg', 'V3'], ['#FF9EC6', 0, 'final_FINAL_2.jpg', 'V4'], ['#111014', 1, 'final_FINAL_v7_REAL.jpg', 'V7']];
 function adColour(t) {   // a new colour on every beat, a new file name with it
   const i = Math.min(4, Math.floor((t - 11.5) / 0.5)), p = PANELS[i];
   ctx.fillStyle = C.ob; ctx.fillRect(0, 0, W, H);
-  const z = shotZoom(t, 11.5, 14.0); ctx.save(); ctx.translate(W / 2, H / 2 - 40); ctx.scale(z, z); ctx.translate(-540, -500); place(0.74, 104);
+  const z = shotZoom(t, 11.5, 14.0); ctx.save(); adCam(z, 540, V ? ADMID : 500);
   adCard(t, { split: true, panel: p[0], panelDark: p[1], file: p[2], sub: `${p[3]} · in review` });
   // the version tag punches in on each change
   const k = spring(t - (11.5 + i * 0.5), 18); ctx.save(); ctx.translate(AD.x + AD.w - 70, AD.y + 36); ctx.scale(lerp(1.5, 1, k), lerp(1.5, 1, k)); rr(ctx, -46, -20, 92, 40, 20); ctx.fillStyle = C.pu; ctx.fill(); ctx.fillStyle = C.soft; ctx.font = font(700, 20); ctx.textAlign = 'center'; ctx.fillText(p[3], 0, 7); ctx.restore();
   ctx.restore();
-  scrim(700, 860, 0.95); ctx.fillStyle = 'rgba(9,9,13,0.95)'; ctx.fillRect(0, 860, W, 220);
-  line('AMENDS.', 66, 968, 120, t, 11.5, 13.9); line('ROUND AFTER ROUND.', 70, 1040, 54, t, 12.0, 13.9, { color: C.pi });
+  band(); const y = V ? 1440 : 968;
+  line('AMENDS.', 66, y, V ? 160 : 120, t, 11.5, 13.9); line('ROUND AFTER ROUND.', 70, y + (V ? 84 : 72), V ? 64 : 54, t, 12.0, 13.9, { color: C.pi });
 }
 function lineup(t) {   // the team: Tamm in four roles, a card on every beat
   ctx.fillStyle = C.ob; ctx.fillRect(0, 0, W, H);
-  ctx.strokeStyle = 'rgba(245,243,250,0.06)'; ctx.lineWidth = 2; for (let x = -1080; x < 2160; x += 90) { ctx.beginPath(); ctx.moveTo(x + (t - 14) * 40, 0); ctx.lineTo(x + 540 + (t - 14) * 40, 1080); ctx.stroke(); }
-  line('THE LINE-UP', 66, 168, 72, t, 14.0, 15.92); line('SAY TAMM TEAM', 520, 166, 26, t, 14.1, 15.92, { color: C.pi, ls: '3px', shadow: false });
+  ctx.strokeStyle = 'rgba(245,243,250,0.06)'; ctx.lineWidth = 2; for (let x = -H; x < W + H; x += 90) { ctx.beginPath(); ctx.moveTo(x + (t - 14) * 40, 0); ctx.lineTo(x + H / 2 + (t - 14) * 40, H); ctx.stroke(); }
+  if (V) { line('THE LINE-UP', 66, 340, 104, t, 14.0, 15.92); line('SAY TAMM TEAM', 70, 398, 28, t, 14.1, 15.92, { color: C.pi, ls: '3px', shadow: false }); }
+  else { line('THE LINE-UP', 66, 168, 72, t, 14.0, 15.92); line('SAY TAMM TEAM', 520, 166, 26, t, 14.1, 15.92, { color: C.pi, ls: '3px', shadow: false }); }
   const cards = [['tamm_strategy', 'STRATEGY', 0.34], ['tamm_creative', 'CREATIVE', 0.26], ['tamm_media', 'MEDIA', 0.3], ['tamm_digital', 'TECH', 0.22]];
   cards.forEach(([img, name, fx], i) => {
-    const t0 = 14.0 + i * 0.5, s = spring(t - t0, 15); if (s <= 0.001) return; const cw = 468, ch = 392, x = 60 + (i % 2) * (cw + 24), y = 200 + Math.floor(i / 2) * (ch + 22);
+    const t0 = 14.0 + i * 0.5, s = spring(t - t0, 15); if (s <= 0.001) return; const cw = 468, ch = V ? 520 : 392, x = 60 + (i % 2) * (cw + 24), y = (V ? 446 : 200) + Math.floor(i / 2) * (ch + (V ? 24 : 22));
     const out = expo(seg(t, 15.92, 16.0));
     ctx.save(); ctx.translate(x + cw / 2, y + ch / 2 + (1 - s) * 260 - out * 40); ctx.rotate((1 - s) * (i % 2 ? 0.12 : -0.12)); ctx.translate(-cw / 2, -ch / 2);
     rr(ctx, 0, 0, cw, ch, 22); ctx.save(); ctx.clip(); const im = IM[img], sw = im.height * cw / (ch - 74); ctx.drawImage(im, clamp(im.width * fx - sw / 2, 0, im.width - sw), 0, sw, im.height, 0, 0, cw, ch - 74);
@@ -277,9 +286,10 @@ function lineup(t) {   // the team: Tamm in four roles, a card on every beat
 }
 function ab(t) {   // A/B: two versions run, the data picks one
   ctx.fillStyle = C.ob; ctx.fillRect(0, 0, W, H);
-  line('WE TEST.', 66, 190, 96, t, 16.0, 17.42); line('THE DATA DECIDES.', 66, 270, 64, t, 16.25, 17.42, { color: C.pi });
+  if (V) { line('WE TEST.', 66, 420, 130, t, 16.0, 17.42); line('THE DATA DECIDES.', 66, 516, 78, t, 16.25, 17.42, { color: C.pi }); line('B WINS.', 66, 1330, 120, t, 16.95, 17.42); }
+  else { line('WE TEST.', 66, 190, 96, t, 16.0, 17.42); line('THE DATA DECIDES.', 66, 270, 64, t, 16.25, 17.42, { color: C.pi }); }
   [['A', '#FF9EC6', 0, 0.48], ['B', '#111014', 1, 0.86]].forEach(([n, col, dark, v], i) => {
-    const s = spring(t - (16.0 + i * 0.12), 15), x = 60 + i * 492, y = 330, w = 468, h = 560; if (s <= 0) return;
+    const s = spring(t - (16.0 + i * 0.12), 15), x = 60 + i * 492, y = V ? 610 : 330, w = 468, h = 560; if (s <= 0) return;
     ctx.save(); ctx.translate(x + w / 2, y + h / 2 + (1 - s) * 140); ctx.translate(-w / 2, -h / 2);
     rr(ctx, 0, 0, w, h, 22); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.save(); rr(ctx, 14, 14, w - 28, 380, 14); ctx.clip();
     ctx.fillStyle = col; ctx.fillRect(14, 14, (w - 28) * 0.42, 380); const s2 = IM.photo, sw = s2.width * 0.62; ctx.drawImage(s2, (s2.width - sw) * 0.55, s2.height * 0.18, sw, sw * 380 / ((w - 28) * 0.58), 14 + (w - 28) * 0.42, 14, (w - 28) * 0.58, 380);
@@ -289,27 +299,29 @@ function ab(t) {   // A/B: two versions run, the data picks one
     if (i === 1) { const k = spring(t - 16.95, 16); if (k > 0) { ctx.save(); ctx.translate(w - 90, 40); ctx.scale(lerp(1.5, 1, k), lerp(1.5, 1, k)); rr(ctx, -70, -22, 140, 44, 22); ctx.fillStyle = C.pu; ctx.fill(); ctx.fillStyle = C.soft; ctx.font = font(700, 20); ctx.textAlign = 'center'; ctx.fillText('WINNER', 0, 7); ctx.restore(); } }
     ctx.restore();
   });
-  scrim(880, 1080, 0);
 }
-async function montage(id, t, s0, s1, word) { await shot(id, t, s0, s1); scrim(560, 1080, 0.8); const f = fitSize([word], 940, 150); line(word, 66, 1000, f, t, s0, s1 - 0.08); }
+async function montage(id, t, s0, s1, word) { await shot(id, t, s0, s1); scrim(V ? 900 : 560, H, V ? 0.85 : 0.8); const f = fitSize([word], V ? 860 : 940, V ? 200 : 150); line(word, 66, V ? 1440 : 1000, f, t, s0, s1 - 0.08); }
 function caseCard(t) {   // a real, approved case from the team's track record: verbatim, with how it was measured
   ctx.fillStyle = C.ob; ctx.fillRect(0, 0, W, H);
   ctx.strokeStyle = 'rgba(245,243,250,0.07)'; ctx.lineWidth = 3; const g = expo(seg(t, 24.0, 24.5));   // a court, drawn in the dark
-  ctx.strokeRect(540 - 470 * g, 150, 940 * g, 780); ctx.beginPath(); ctx.moveTo(540, 150); ctx.lineTo(540, 150 + 780 * g); ctx.stroke(); ctx.strokeRect(540 - 300 * g, 270, 600 * g, 540);
-  line('REAL RESULTS', 66, 190, 30, t, 24.0, 26.9, { color: C.pi, ls: '3px', shadow: false }); line('From the team’s track record', 66, 240, 34, t, 24.1, 26.9, { shadow: false });
-  line('E-commerce · Fashion & beauty  ·  10 Mar – 30 May 2022', 66, 292, 26, t, 24.2, 26.9, { color: C.mu, shadow: false });
-  const u = expo(seg(t, 24.35, 25.35)), v = (13.84 * u).toFixed(2) + '×'; line(u >= 1 ? '13.84×' : v, 60, 590, 250, t, 24.3, 26.9, { shadow: false });
-  line('ROAS · account A', 70, 660, 40, t, 24.45, 26.9, { color: C.mu, shadow: false });
-  const u2 = expo(seg(t, 24.8, 25.8)), p = Math.round(27703 * u2).toLocaleString('en-US'); line(u2 >= 1 ? '27,703' : p, 66, 810, 120, t, 24.75, 26.9, { shadow: false });
-  line('Purchases · account A', 70, 866, 36, t, 24.9, 26.9, { color: C.mu, shadow: false });
-  ctx.font = font(500, 21); ctx.fillStyle = C.mu; const n = seg(t, 25.0, 25.3);
-  if (n > 0) { ctx.globalAlpha = n; ['Return on ad spend = Meta-attributed purchase value ÷ ad spend, per ad account. ROAS is not profit.', 'Results from projects led by members of the SayTamm team, including work delivered at other agencies.'].forEach((s, k) => ctx.fillText(s, 66, 980 + k * 32)); ctx.globalAlpha = 1; }
+  const [ct, chh, it, ih] = V ? [250, 1300, 450, 900] : [150, 780, 270, 540];
+  ctx.strokeRect(540 - 470 * g, ct, 940 * g, chh); ctx.beginPath(); ctx.moveTo(540, ct); ctx.lineTo(540, ct + chh * g); ctx.stroke(); ctx.strokeRect(540 - 300 * g, it, 600 * g, ih);
+  const L = V ? { e: 330, s: 388, d: 442, r: 790, rf: 290, rl: 868, p: 1100, pf: 170, pl: 1168, n: 1290, nf: 24, nl: 34 }
+              : { e: 190, s: 240, d: 292, r: 590, rf: 250, rl: 660, p: 810, pf: 120, pl: 866, n: 980, nf: 21, nl: 32 };
+  line('REAL RESULTS', 66, L.e, 30, t, 24.0, 26.9, { color: C.pi, ls: '3px', shadow: false }); line('From the team’s track record', 66, L.s, V ? 40 : 34, t, 24.1, 26.9, { shadow: false });
+  line('E-commerce · Fashion & beauty  ·  10 Mar – 30 May 2022', 66, L.d, 26, t, 24.2, 26.9, { color: C.mu, shadow: false });
+  const u = expo(seg(t, 24.35, 25.35)), v = (13.84 * u).toFixed(2) + '×'; line(u >= 1 ? '13.84×' : v, 60, L.r, L.rf, t, 24.3, 26.9, { shadow: false });
+  line('ROAS · account A', 70, L.rl, V ? 44 : 40, t, 24.45, 26.9, { color: C.mu, shadow: false });
+  const u2 = expo(seg(t, 24.8, 25.8)), p = Math.round(27703 * u2).toLocaleString('en-US'); line(u2 >= 1 ? '27,703' : p, 66, L.p, L.pf, t, 24.75, 26.9, { shadow: false });
+  line('Purchases · account A', 70, L.pl, V ? 40 : 36, t, 24.9, 26.9, { color: C.mu, shadow: false });
+  ctx.font = font(500, L.nf); ctx.fillStyle = C.mu; const n = seg(t, 25.0, 25.3);
+  if (n > 0) { ctx.globalAlpha = n; let y = L.n; for (const s of ['Return on ad spend = Meta-attributed purchase value ÷ ad spend, per ad account. ROAS is not profit.', 'Results from projects led by members of the SayTamm team, including work delivered at other agencies.']) { for (const r of (V ? wrap(ctx, s, 900) : [s])) { ctx.fillText(r, 66, y); y += L.nl; } y += V ? 12 : 0; } ctx.globalAlpha = 1; }
 }
 async function payoff(t) {
-  if (t < 29.0) { await shot('pay_ball', t, 27.0, 29.0); scrim(300, 1080, 0.8); } else { ctx.fillStyle = C.ob; ctx.fillRect(0, 0, W, H); }
-  const f = PAYF; line('EVERY BALL', 70, 660, f, t, 27.0, 29.45); line('COMES', 70, 660 + f * 0.95, f, t, 27.5, 29.5); line('BACK', 70, 660 + f * 1.9, f, t, 28.0, 29.55, { color: C.pu });
+  if (t < 29.0) { await shot('pay_ball', t, 27.0, 29.0); scrim(V ? 560 : 300, H, 0.8); } else { ctx.fillStyle = C.ob; ctx.fillRect(0, 0, W, H); }
+  const f = PAYF; line('EVERY BALL', 70, PAYY, f, t, 27.0, 29.45); line('COMES', 70, PAYY + f * 0.95, f, t, 27.5, 29.5); line('BACK', 70, PAYY + f * 1.9, f, t, 28.0, 29.55, { color: C.pu });
 }
-let PAYF = 150, STOP = [0, 0], BLADE = null, SYM_T, SYM_B;
+let PAYF = 150, STOP = [0, 0], BLADE = null, SYM_T, SYM_B; const PAYY = V ? 1000 : 660;
 function ball(t) {   // the purple ball: the full stop of «BACK», then the blade of the symbol
   if (t < 28.0) return; const land = spring(t - 28.15, 16);
   let x = STOP[0], y = STOP[1], r = 22, m = 0;
@@ -324,16 +336,17 @@ function endCard(t) {
   ctx.save(); ctx.translate(BLADE.cx, BLADE.cy); ctx.rotate(BLADE.ang); const hl = lerp(22, BLADE.hl * 1.15, m), hw = lerp(22, BLADE.hw * 1.3, Math.min(1, m * 1.4));
   rr(ctx, -hl, -hw, hl * 2, hw * 2, 22 * (1 - Math.min(1, m))); ctx.restore(); ctx.save(); ctx.clip(); ctx.drawImage(SYM_B, L.x, L.y, L.w, L.h); ctx.restore();
   const r = expo(seg(t, 30.05, 30.5)) * L.h * 1.3; if (r > 0) { ctx.save(); ctx.beginPath(); ctx.arc(BLADE.cx, BLADE.cy, r, 0, Math.PI * 2); ctx.clip(); ctx.drawImage(SYM_T, L.x, L.y, L.w, L.h); ctx.restore(); }
-  line('Say Tamm', 540, 760, 100, t, 30.5, null, { align: 'center', shadow: false, ls: '-2px' });
-  line('قول تم', 540, 856, 70, t, 30.9, null, { align: 'center', dir: 'rtl', fam: 'Plex', shadow: false, ls: '0px' });
-  line('A digital marketing & performance agency', 540, 930, 30, t, 31.2, null, { align: 'center', color: C.mu, shadow: false, ls: '0px' });
-  line('saytamm.com', 540, 985, 34, t, 31.4, null, { align: 'center', color: C.soft, shadow: false, ls: '1px' });
+  const E = V ? [1110, 124, 1236, 86, 1322, 36, 1392, 42] : [760, 100, 856, 70, 930, 30, 985, 34];
+  line('Say Tamm', 540, E[0], E[1], t, 30.5, null, { align: 'center', shadow: false, ls: '-2px' });
+  line('قول تم', 540, E[2], E[3], t, 30.9, null, { align: 'center', dir: 'rtl', fam: 'Plex', shadow: false, ls: '0px' });
+  line('A digital marketing & performance agency', 540, E[4], E[5], t, 31.2, null, { align: 'center', color: C.mu, shadow: false, ls: '0px' });
+  line('saytamm.com', 540, E[6], E[7], t, 31.4, null, { align: 'center', color: C.soft, shadow: false, ls: '1px' });
 }
 
 // ---------- the broadcast layer: LIVE, the score, the point ----------
 function hud(t) {   // one row at the top: LIVE · requests · done, and the point on the right
   const a = spring(t - 0.15, 14) * (1 - expo(seg(t, 28.9, 29.2))); if (a <= 0.001) return;
-  ctx.save(); ctx.translate(0, (1 - a) * -90); const y = 30, h = 46;
+  const y = V ? 190 : 30, h = 46; ctx.save(); ctx.translate(0, (1 - a) * -(y + 60));
   const box = (x, w, fill) => { rr(ctx, x, y, w, h, 11); ctx.fillStyle = fill; ctx.fill(); };
   box(36, 108, 'rgba(9,9,13,0.8)'); ctx.fillStyle = C.pu; ctx.beginPath(); ctx.arc(60, y + h / 2, 8 * (0.75 + 0.25 * Math.abs(Math.sin(t * 4))), 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = C.soft; ctx.font = font(700, 21); ctx.letterSpacing = '2px'; ctx.fillText('LIVE', 78, y + 31); ctx.letterSpacing = '0px';
@@ -364,21 +377,22 @@ window.seek = async (t) => {
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.fillStyle = C.ob; ctx.fillRect(0, 0, W, H);
   const sc = SC.find(([a, b]) => t >= a && t < b) || SC[SC.length - 1], [s0, s1, id] = sc;
   if (id.startsWith('hook')) await sHook(t);
-  else if (id === 'p1_phone') await sPhone('p1_phone', t, s0, s1, CONV.p1, [4.15, '“Can you make the logo bigger?”']);
+  else if (id === 'p1_phone') await sPhone('p1_phone', t, s0, s1, CONV.p1, [4.15, '“Can you make the logo bigger?”', '“Can you make', 'the logo bigger?”']);
   else if (id === 'ad_logo') adLogo(t);
-  else if (id === 'p1_design') { await shot('p1_design', t, s0, s1); scrim(640, 1080, 0.8); line('OUR DESIGN TEAM', 70, 930, 74, t, s0, s1 - 0.08); line('IS ON IT.', 70, 1010, 74, t, s0 + 0.12, s1 - 0.08, { color: C.pi }); }
+  else if (id === 'p1_design') { await shot('p1_design', t, s0, s1); scrim(V ? 900 : 640, H, V ? 0.85 : 0.8); const f = V ? fitSize(['OUR DESIGN TEAM'], 860, 110) : 74, y = V ? 1360 : 930;
+    line('OUR DESIGN TEAM', 70, y, f, t, s0, s1 - 0.08); line('IS ON IT.', 70, y + f * 1.08, f, t, s0 + 0.12, s1 - 0.08, { color: C.pi }); }
   else if (id === 'ad_final') adFinal(t);
-  else if (id === 'p2_phone') await sPhone('p2_phone', t, s0, s1, CONV.p2, [10.85, '“Can it pop more?”']);
+  else if (id === 'p2_phone') await sPhone('p2_phone', t, s0, s1, CONV.p2, [10.85, '“Can it pop more?”', '“Can it', 'pop more?”']);
   else if (id === 'ad_colour') adColour(t);
   else if (id === 'lineup') lineup(t);
   else if (id === 'ab') ab(t);
-  else if (id === 'p3_phone') await sPhone('p3_phone', t, s0, s1, CONV.p3, [18.3, '“One more change.”']);
+  else if (id === 'p3_phone') await sPhone('p3_phone', t, s0, s1, CONV.p3, [18.3, '“One more change.”', '“One more', 'change.”']);
   else if (id === 't_cards') await montage('t_cards', t, s0, s1, 'STRATEGY.');
   else if (id === 't_tablet') await montage('t_tablet', t, s0, s1, 'DESIGN.');
   else if (id === 't_camera') await montage('t_camera', t, s0, s1, 'PRODUCTION.');
   else if (id === 't_hands') await montage('t_hands', t, s0, s1, 'ONE TEAM.');
-  else if (id === 'p3_approve') { await sPhone('p3_approve', t, s0, s1, CONV.ap, null); stamp(t, DONE[2], 560, 930, 'APPROVED.'); }
-  else if (id === 'p4_phone') await sPhone('p4_phone', t, s0, s1, CONV.p4, [23.35, '“So… results?”']);
+  else if (id === 'p3_approve') { await sPhone('p3_approve', t, s0, s1, CONV.ap, null); stamp(t, DONE[2], 560, V ? 700 : 930, 'APPROVED.'); }
+  else if (id === 'p4_phone') await sPhone('p4_phone', t, s0, s1, CONV.p4, [23.35, '“So… results?”', '“So…', 'results?”']);
   else if (id === 'case') caseCard(t);
   if (t >= 27.0) await payoff(t);
   hud(t); ball(t); endCard(t); grain(t);
@@ -442,14 +456,14 @@ window.ready = (async () => {
   const src = __SYMBOL_SVG__, vb = src.match(/viewBox="([^"]+)"/)[1].split(/\s+/).map(Number), paths = [...src.matchAll(/<path[^>]*\/>/g)].map((m) => m[0]);
   const layer = (keep) => { const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.join(' ')}" width="${vb[2]}" height="${vb[3]}">${paths.filter(keep).join('')}</svg>`; const im = new Image(); im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); return im.decode().then(() => im); };
   SYM_T = await layer((p) => /#FFFFFF/i.test(p)); SYM_B = await layer((p) => /#6C35FF/i.test(p));
-  const lh = 340, lw = lh * vb[2] / vb[3], logoBox = { x: 540 - lw / 2, y: 360 - lh / 2, w: lw, h: lh };
+  const lh = V ? 440 : 340, lw = lh * vb[2] / vb[3], logoBox = { x: 540 - lw / 2, y: (V ? 700 : 360) - lh / 2, w: lw, h: lh };
   const oc = document.createElement('canvas'); oc.width = Math.round(lw); oc.height = Math.round(lh); const o = oc.getContext('2d'); o.drawImage(SYM_B, 0, 0, oc.width, oc.height);
   const d = o.getImageData(0, 0, oc.width, oc.height).data; let n = 0, sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
   for (let y = 0; y < oc.height; y++) for (let x = 0; x < oc.width; x++) if (d[(y * oc.width + x) * 4 + 3] > 128) { n++; sx += x; sy += y; sxx += x * x; syy += y * y; sxy += x * y; }
   const mx = sx / n, my = sy / n, ang = 0.5 * Math.atan2(2 * (sxy / n - mx * my), (sxx / n - mx * mx) - (syy / n - my * my));
   let hl = 0, hw = 0; for (let y = 0; y < oc.height; y++) for (let x = 0; x < oc.width; x++) if (d[(y * oc.width + x) * 4 + 3] > 128) { const dx = x - mx, dy = y - my; hl = Math.max(hl, Math.abs(dx * Math.cos(ang) + dy * Math.sin(ang))); hw = Math.max(hw, Math.abs(-dx * Math.sin(ang) + dy * Math.cos(ang))); }
   BLADE = { cx: logoBox.x + mx, cy: logoBox.y + my, ang, hl, hw, logo: logoBox };
-  PAYF = fitSize(['EVERY BALL'], 900, 170); ctx.font = font(700, PAYF); ctx.letterSpacing = `${-PAYF * 0.025}px`; STOP = [70 + ctx.measureText('BACK').width + 26, 660 + PAYF * 1.9 - 18]; ctx.letterSpacing = '0px';
+  PAYF = fitSize(['EVERY BALL'], V ? 860 : 900, 170); ctx.font = font(700, PAYF); ctx.letterSpacing = `${-PAYF * 0.025}px`; STOP = [70 + ctx.measureText('BACK').width + 26, PAYY + PAYF * 1.9 - 18]; ctx.letterSpacing = '0px';
   await window.seek(0); return true;
 })();
 </script></body></html>

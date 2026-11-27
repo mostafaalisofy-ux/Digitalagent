@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Master «The Rally» v2 score (generated in code, no voice) to -14 LUFS integrated, under -1 dBTP after AAC, mux it with the
-picture and write a cover frame. Usage (repo root): python3 film/rally2/mix.py"""
+picture and write a cover frame. Usage (repo root): python3 film/rally2/mix.py   (Reels cut: RV=916 python3 film/rally2/mix.py)"""
 import os, subprocess, sys
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')); D = os.path.join(ROOT, 'handover/launch-film/rally2')
+V = '916' if os.environ.get('RV') == '916' else '11'
 run = lambda *a: subprocess.run(list(a), capture_output=True, text=True)
 pre, mas = os.path.join(D, 'Rally2_Score.wav'), os.path.join(D, 'Rally2_master.wav')
 lufs = lambda f: float([l for l in run('ffmpeg', '-hide_banner', '-i', f, '-af', 'ebur128', '-f', 'null', '-').stderr.splitlines() if l.strip().startswith('I:')][-1].split()[1])
@@ -13,8 +14,8 @@ for _ in range(5):
     I = lufs(mas)
     if abs(I + 14.0) < 0.25: break
     G += -14.0 - I
-out = os.path.join(D, 'SayTamm_The_Rally_v2_EN_1x1.mp4')
-r = run('ffmpeg', '-y', '-v', 'error', '-i', os.path.join(D, 'Rally2_picture.mp4'), '-i', mas, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '320k', '-shortest', '-movflags', '+faststart', out)
+out = os.path.join(D, 'SayTamm_The_Rally_v2_EN_9x16.mp4' if V == '916' else 'SayTamm_The_Rally_v2_EN_1x1.mp4')
+r = run('ffmpeg', '-y', '-v', 'error', '-i', os.path.join(D, 'Rally2_picture_916.mp4' if V == '916' else 'Rally2_picture.mp4'), '-i', mas, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '320k', '-shortest', '-movflags', '+faststart', out)
 if r.returncode: sys.exit(r.stderr)
-run('ffmpeg', '-y', '-v', 'error', '-ss', '6.9', '-i', out, '-frames:v', '1', '-q:v', '2', os.path.join(D, 'cover_rally2.jpg'))
+run('ffmpeg', '-y', '-v', 'error', '-ss', '6.9', '-i', out, '-frames:v', '1', '-q:v', '2', os.path.join(D, 'cover_rally2_9x16.jpg' if V == '916' else 'cover_rally2.jpg'))
 print('wrote', out, f'{I:.1f} LUFS')

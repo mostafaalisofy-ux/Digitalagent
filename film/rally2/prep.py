@@ -3,14 +3,17 @@
 Plain shots: JPEG, graded a little darker and cooler. Green-screen phone shots (`"key": true`): the green is keyed out to an
 RGBA WebP per frame (despilled), and the screen's four corners are tracked per frame into quad.json, so the film can draw the
 phone UI into the screen and lay the real hand back on top. Stock: Pexels (free licence), hands only, no faces.
-Usage (repo root): python3 film/rally2/prep.py [id ...]"""
+Usage (repo root): python3 film/rally2/prep.py [--v 916] [id ...]   (--v 916: 1080×1920 into seq916, from shots916.json)"""
 import json, os, subprocess, sys
 import numpy as np, cv2
 from PIL import Image
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
-BASE = os.path.join(ROOT, 'handover/launch-film/rally2'); SEQ = os.path.join(BASE, 'seq')
-SHOTS = json.load(open(os.path.join(os.path.dirname(__file__), 'shots.json')))
+V = sys.argv[sys.argv.index('--v') + 1] if '--v' in sys.argv else '11'
+OW, OH = (1080, 1920) if V == '916' else (1080, 1080)
+BASE = os.path.join(ROOT, 'handover/launch-film/rally2'); SEQ = os.path.join(BASE, 'seq916' if V == '916' else 'seq')
+SHOTS = json.load(open(os.path.join(os.path.dirname(__file__), 'shots916.json' if V == '916' else 'shots.json')))
+IDS = [a for a in sys.argv[1:] if not a.startswith('--') and a != V]
 
 
 def order(pts):
@@ -52,13 +55,14 @@ def key_frame(path):
 
 
 for s in SHOTS:
-    if sys.argv[1:] and s['id'] not in sys.argv[1:]: continue
+    if IDS and s['id'] not in IDS: continue
     d = os.path.join(SEQ, s['id']); os.makedirs(d, exist_ok=True)
     for f in os.listdir(d): os.remove(os.path.join(d, f))
     z, cx, cy = s.get('zoom', 1.0), s.get('cx', 0.5), s.get('cy', 0.5)
-    side = int(round(1080 * z))
-    vf = (f"fps=30,scale='if(gt(iw,ih),-2,{side})':'if(gt(iw,ih),{side},-2)',"
-          f"crop=1080:1080:(iw-1080)*{cx}:(ih-1080)*{cy}")
+    sw, sh = int(round(OW * z)), int(round(OH * z))   # scale to cover the frame (times zoom), then crop it
+    vf = (f"fps=30,scale='if(gt(iw/ih,{OW}/{OH}),-2,{sw})':'if(gt(iw/ih,{OW}/{OH}),{sh},-2)',"
+          f"crop={OW}:{OH}:(iw-{OW})*{cx}:(ih-{OH})*{cy}")
+    if s.get('sharpen'): vf += ',unsharp=5:5:0.7:5:5:0'
     if s.get('hflip'): vf += ',hflip'
     if not s.get('key'): vf += ',eq=contrast=1.06:brightness=-0.02:saturation=0.82,colorbalance=bs=0.03:bm=0.02'
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-ss', str(s['in']), '-t', str(s['len'] + 0.12), '-i', os.path.normpath(os.path.join(BASE, 'stock', s['file'])),
