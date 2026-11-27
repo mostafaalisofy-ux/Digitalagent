@@ -4,7 +4,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 OUT=handover/launch-film/rally2; R=film/rally2/render.mjs
-V=${RV:-11}; export RV=$V; PIC=Rally2_picture$([ "$V" = 916 ] && echo _916).mp4
+V=${RV:-11}; export RV=$V
+if [ "$V" = 916 ]; then PIC=Rally2_picture_916.mp4; else PIC=Rally2_picture.mp4; fi
 [ -f "$OUT/Rally2_Score.wav" ] || node $R --audio-only
 pids=(); for k in 0 1 2 3; do node $R --part $k --parts 4 > "$OUT/_p_${V}_$k.log" 2>&1 & pids+=($!); done
 for k in 0 1 2 3; do
